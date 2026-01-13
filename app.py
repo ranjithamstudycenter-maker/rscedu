@@ -7,6 +7,7 @@ app = Flask(__name__)
 # Razorpay keys from Render Environment Variables
 RAZORPAY_KEY = os.environ.get("RAZORPAY_KEY")
 RAZORPAY_SECRET = os.environ.get("RAZORPAY_SECRET")
+print("Razorpay key:", keys)
 
 client = razorpay.Client(auth=(RAZORPAY_KEY, RAZORPAY_SECRET))
 
