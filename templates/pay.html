@@ -1,35 +1,48 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Pay for {{ pdf }}</title>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <title>Pay ₹50</title>
 </head>
 <body>
-    <h2>Pay ₹50 to download {{ pdf }}</h2>
-    <button id="rzp-button">Pay Now</button>
 
-    <form id="success-form" method="POST" action="/success">
-        <input type="hidden" name="pdf" value="{{ pdf }}">
-    </form>
+<h2>Ranjitham Study Center</h2>
+<p>Pay ₹50 to download PDF</p>
 
-    <script>
-        var options = {
-            "key": "{{ key }}",
-            "amount": "{{ amount }}", 
-            "currency": "{{ currency }}",
-            "name": "Ranjitham Study Center",
-            "description": "Download PDF",
-            "order_id": "{{ order_id }}",
-            "handler": function (response){
-                // Payment success → submit form to auto-download PDF
-                document.getElementById("success-form").submit();
-            }
-        };
-        var rzp = new Razorpay(options);
-        document.getElementById('rzp-button').onclick = function(e){
-            rzp.open();
-            e.preventDefault();
-        }
-    </script>
+<form action="/success" method="POST" id="payment-form">
+    <input type="hidden" name="pdf" value="{{ pdf }}">
+    <input type="hidden" name="razorpay_payment_id" id="razorpay_payment_id">
+</form>
+
+<button id="pay-btn">Pay ₹50</button>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+var options = {
+    "key": "{{ key }}",
+    "amount": "{{ amount }}",
+    "currency": "INR",
+    "name": "Ranjitham Study Center",
+    "description": "PDF Download",
+    "order_id": "{{ order_id }}",
+    "handler": function (response){
+        document.getElementById("razorpay_payment_id").value =
+            response.razorpay_payment_id;
+
+        document.getElementById("payment-form").submit();
+    },
+    "theme": {
+        "color": "#3399cc"
+    }
+};
+
+var rzp1 = new Razorpay(options);
+
+document.getElementById("pay-btn").onclick = function(e){
+    rzp1.open();
+    e.preventDefault();
+}
+</script>
+
 </body>
 </html>
