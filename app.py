@@ -4,33 +4,27 @@ import os
 
 app = Flask(__name__)
 
-# Load Razorpay keys from Render Environment
-keys = {
-    "razorpay_key": os.environ.get("RAZORPAY_KEY"),
-    "razorpay_secret": os.environ.get("RAZORPAY_SECRET")
-}
+# Razorpay keys from Render Environment Variables
+RAZORPAY_KEY = os.environ.get("RAZORPAY_KEY")
+RAZORPAY_SECRET = os.environ.get("RAZORPAY_SECRET")
 
-client = razorpay.Client(auth=(keys["razorpay_key"], keys["razorpay_secret"]))
+client = razorpay.Client(auth=(RAZORPAY_KEY, RAZORPAY_SECRET))
 
-PDF_FOLDER = "static"  # folder where PDFs are stored
+PDF_FOLDER = "static"
 
-# ----- Homepage -----
 @app.route("/")
 def home():
-    return "<h2>Welcome to Ranjitham Study Center</h2>Click /download/maths1 or /download/tnpsc1 to start."
+    return "Ranjitham Study Center Backend Running"
 
-# ----- Download link redirects to payment -----
 @app.route("/download/<pdf_name>")
 def download(pdf_name):
     return redirect(f"/pay/{pdf_name}")
 
-# ----- Payment page -----
 @app.route("/pay/<pdf_name>")
 def pay(pdf_name):
     amount = 5000  # ₹50
     currency = "INR"
-
-    payment = client.order.create({
+    order = client.order.create({
         "amount": amount,
         "currency": currency,
         "payment_capture": 1
@@ -38,30 +32,18 @@ def pay(pdf_name):
 
     return render_template(
         "pay.html",
-        key=keys["razorpay_key"],
+        key=RAZORPAY_KEY,
         amount=amount,
-        currency=currency,
-        order_id=payment["id"],
+        order_id=order["id"],
         pdf=pdf_name
     )
 
-# ----- Payment success & auto-download -----
 @app.route("/success", methods=["POST"])
 def success():
-    pdf_name = request.form.get("pdf")
-    return send_from_directory(PDF_FOLDER, f"{pdf_name}.pdf", as_attachment=True)
-
-import os
-from flask import Flask, render_template
-
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return "Hello World!"
+    pdf = request.form.get("pdf")
+    return send_from_directory(PDF_FOLDER, f"{pdf}.pdf", as_attachment=True)
 
 if __name__ == "__main__":
-    port = int(os.environ.get("PORT", 4000))
-    print(f"Listening on port {port}")
-    app.run(host="0.0.0.0", port=port)
-
+    port = int(os.environ.get("PORT", 10000))
+    print(f"Starting server on port {port}")
+    app.run(host="0.0.0.0", port=port, debug=False)
