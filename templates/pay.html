@@ -7,6 +7,26 @@
 
 <h2>Ranjitham Study Center</h2>
 <p>Pay ₹50 to download PDF</p>
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Payment</title>
+</head>
+<body style="font-family:Poppins;text-align:center;padding:50px">
+
+<h2>🔐 Payment Required</h2>
+<p>File: <b>{{ file }}</b></p>
+<p>Price: ₹49</p>
+
+<!-- TEMP BUTTON (Later Razorpay) -->
+<a href="/success?file={{ file }}"
+   style="padding:12px 30px;background:#0b5394;color:white;
+   text-decoration:none;border-radius:6px;">
+   Pay & Download
+</a>
+
+</body>
+</html>
 
 <form action="/success" method="POST" id="payment-form">
     <input type="hidden" name="pdf" value="{{ pdf }}">
