@@ -227,6 +227,20 @@ def upload():
 def sitemap():
     return send_from_directory(".", "sitemap.xml")
 
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        name = request.form.get("name")
+        email = request.form.get("email")
+        phone = request.form.get("phone")
+        message = request.form.get("message")
+
+        # Later we can email or save this
+        print(name, email, phone, message)
+
+    return render_template("contact.html")
+
+
 # -------------------- RUN APP --------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
