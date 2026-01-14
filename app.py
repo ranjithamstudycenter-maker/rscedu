@@ -1,3 +1,6 @@
+from flask import session
+
+app.secret_key = "super-secret-key"
 from flask import Flask, render_template, request, redirect, send_from_directory
 import razorpay
 import json
