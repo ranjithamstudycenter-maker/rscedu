@@ -2,6 +2,8 @@ from flask import session
 
 app.secret_key = "super-secret-key"
 from flask import Flask, render_template, request, redirect, send_from_directory
+from flask import Flask, request, redirect, session
+import os
 import razorpay
 import json
 import os
@@ -12,7 +14,8 @@ PDF_FOLDER = "rsc-download"
 def downloads():
     pdfs = os.listdir(PDF_FOLDER)
     return render_template("downloads.html", pdfs=pdfs)
-
+app = Flask(__name__)
+app.secret_key = "supersecretkey123"
 # Razorpay keys from Render Environment Variables
 RAZORPAY_KEY = os.environ.get("RAZORPAY_KEY")
 RAZORPAY_SECRET = os.environ.get("RAZORPAY_SECRET")
@@ -77,6 +80,40 @@ def download_file(filename):
 def success():
     pdf = request.form.get("pdf")
     return send_from_directory(PDF_FOLDER, f"{pdf}.pdf", as_attachment=True)
+    @app.route("/admin", methods=["GET", "POST"])
+def admin():
+    if request.method == "POST":
+        if request.form["password"] == "admin123":
+            session["admin"] = True
+            return redirect("/upload")
+    return '''
+    <form method="post">
+        <h2>Admin Login</h2>
+        <input type="password" name="password" placeholder="Enter password" required>
+        <button>Login</button>
+    </form>
+    '''
+
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    if request.method == "POST":
+        file = request.files["pdf"]
+        if file:
+            os.makedirs("rsc-download", exist_ok=True)
+            file.save(os.path.join("rsc-download", file.filename))
+
+    return '''
+    <h2>Upload Maths PDF</h2>
+    <form method="post" enctype="multipart/form-data">
+        <input type="file" name="pdf" accept=".pdf" required>
+        <button>Upload</button>
+    </form>
+    '''
+
 
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
