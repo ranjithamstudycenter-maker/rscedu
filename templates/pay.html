@@ -1,16 +1,51 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<title>Payment</title>
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <meta charset="UTF-8">
+    <title>Secure Payment | Ranjitham Study Center</title>
+
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+    <style>
+        body {
+            text-align: center;
+            font-family: Poppins, Arial, sans-serif;
+            padding: 50px;
+        }
+        input {
+            padding: 10px;
+            margin: 8px;
+            width: 250px;
+        }
+        button {
+            padding: 12px 25px;
+            background: #0b5394;
+            color: white;
+            border: none;
+            cursor: pointer;
+            border-radius: 5px;
+        }
+    </style>
 </head>
 
-<body style="text-align:center;font-family:Poppins;padding:50px">
+<body>
 
 <h2>Pay ₹49 to Download</h2>
-<p>{{ file }}</p>
+<p><b>{{ file }}</b></p>
+
+<!-- USER DETAILS -->
+<input type="email" id="email" placeholder="Enter your Email" required><br>
+<input type="text" id="phone" placeholder="Enter your WhatsApp Number" required><br>
 
 <button id="rzp-button">Pay Now</button>
+
+<!-- HIDDEN FORM (POST TO SUCCESS) -->
+<form id="success-form" method="post" action="/success">
+    <input type="hidden" name="file" value="{{ file }}">
+    <input type="hidden" name="email" id="form-email">
+    <input type="hidden" name="phone" id="form-phone">
+</form>
 
 <script>
 var options = {
@@ -20,9 +55,15 @@ var options = {
     "name": "Ranjitham Study Center",
     "description": "Maths PDF Download",
     "order_id": "{{ order_id }}",
-    "handler": function (response){
-        window.location.href =
-        "/success?file={{ file }}&payment_id=" + response.razorpay_payment_id;
+    "handler": function (response) {
+        // copy user data into form
+        document.getElementById("form-email").value =
+            document.getElementById("email").value;
+        document.getElementById("form-phone").value =
+            document.getElementById("phone").value;
+
+        // submit form (POST)
+        document.getElementById("success-form").submit();
     },
     "theme": {
         "color": "#0b5394"
@@ -30,7 +71,13 @@ var options = {
 };
 
 var rzp = new Razorpay(options);
-document.getElementById('rzp-button').onclick = function(e){
+
+document.getElementById('rzp-button').onclick = function (e) {
+    if (!document.getElementById("email").value ||
+        !document.getElementById("phone").value) {
+        alert("Please enter Email and WhatsApp number");
+        return;
+    }
     rzp.open();
     e.preventDefault();
 }
