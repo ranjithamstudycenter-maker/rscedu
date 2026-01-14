@@ -1,106 +1,247 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <title>Best Maths Tuition in Tamil Nadu | Ranjitham Study Center</title>
+<meta charset="UTF-8">
+<title>Best Maths Tuition in Tamil Nadu | Ranjitham Study Center</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <meta name="description"
-          content="Best maths tuition with worksheets, practice tests and personal guidance. Download maths notes online.">
-    <meta name="keywords"
-          content="Maths tuition, Maths worksheets, Maths notes download, Ranjitham Study Center">
+<meta name="description"
+content="Best maths tuition with personalized coaching, worksheets, practice tests and exam preparation. Download maths notes online.">
+<meta name="keywords"
+content="Maths Tuition, Maths Coaching, Maths Worksheets, Maths Notes Download, Ranjitham Study Center">
 
-    <meta name="viewport" content="width=device-width, initial-scale=1">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            padding: 0;
-        }
-        header {
-            background: #004aad;
-            color: white;
-            padding: 15px;
-            text-align: center;
-        }
-        nav a {
-            color: white;
-            margin: 0 10px;
-            text-decoration: none;
-            font-weight: bold;
-        }
-        section {
-            padding: 40px;
-        }
-        .hero {
-            background: #f2f6ff;
-            text-align: center;
-        }
-        .hero h1 {
-            font-size: 32px;
-        }
-        .features div {
-            background: #f9f9f9;
-            margin: 10px 0;
-            padding: 15px;
-            border-radius: 6px;
-        }
-        .download a {
-            display: inline-block;
-            background: #28a745;
-            color: white;
-            padding: 12px 20px;
-            text-decoration: none;
-            border-radius: 5px;
-        }
-        footer {
-            background: #eee;
-            padding: 15px;
-            text-align: center;
-        }
-    </style>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{
+    font-family:'Poppins',sans-serif;
+    background:#f5f7fb;
+    color:#333;
+}
+
+/* NAVBAR */
+nav{
+    background:#0b5394;
+    padding:15px 25px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    position:sticky;
+    top:0;
+    z-index:1000;
+}
+nav h2{color:#fff}
+nav a{
+    color:#fff;
+    margin-left:20px;
+    text-decoration:none;
+    font-weight:500;
+}
+nav a:hover{text-decoration:underline}
+
+/* HERO */
+.hero{
+    background:linear-gradient(to right,#0b5394,#073763);
+    color:white;
+    padding:90px 20px;
+    text-align:center;
+}
+.hero h1{font-size:2.6rem}
+.hero p{margin:15px 0;font-size:1.15rem}
+.hero a{
+    background:white;
+    color:#0b5394;
+    padding:14px 30px;
+    text-decoration:none;
+    border-radius:30px;
+    font-weight:600;
+    display:inline-block;
+    margin-top:20px;
+}
+
+/* SECTIONS */
+.section{
+    padding:60px 20px;
+    max-width:1100px;
+    margin:auto;
+}
+.section h2{
+    text-align:center;
+    margin-bottom:40px;
+    color:#0b5394;
+}
+
+/* CARDS */
+.cards{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+.card{
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    transition:transform 0.3s;
+}
+.card:hover{transform:translateY(-8px)}
+.card h3{margin-bottom:10px;color:#073763}
+
+/* CTA */
+.cta{
+    background:#0b5394;
+    color:white;
+    text-align:center;
+    padding:60px 20px;
+}
+.cta a{
+    background:white;
+    color:#0b5394;
+    padding:15px 35px;
+    border-radius:30px;
+    text-decoration:none;
+    font-weight:600;
+    display:inline-block;
+    margin-top:20px;
+}
+
+/* CONTACT */
+.contact p{text-align:center;margin:10px 0}
+
+/* FOOTER */
+footer{
+    background:#073763;
+    color:white;
+    padding:30px 20px;
+    text-align:center;
+}
+
+/* WHATSAPP */
+.whatsapp{
+    position:fixed;
+    bottom:20px;
+    right:20px;
+    background:#25D366;
+    color:white;
+    padding:15px 18px;
+    border-radius:50%;
+    font-size:22px;
+    text-decoration:none;
+    box-shadow:0 5px 15px rgba(0,0,0,0.3);
+}
+
+/* MOBILE */
+@media(max-width:600px){
+    .hero h1{font-size:2rem}
+}
+</style>
 </head>
 
 <body>
 
-<!-- HEADER -->
-<header>
+<!-- NAVBAR -->
+<nav>
     <h2>Ranjitham Study Center</h2>
-    <nav>
+    <div>
         <a href="/">Home</a>
-        <a href="/courses">Courses</a>
-        <a href="/downloads">Downloads</a>
-        <a href="/contact">Contact</a>
-    </nav>
-</header>
+        <a href="#about">About</a>
+        <a href="#courses">Courses</a>
+        <a href="#downloads">Downloads</a>
+        <a href="#contact">Contact</a>
+    </div>
+</nav>
 
-<!-- HERO SECTION -->
+<!-- HERO -->
 <section class="hero">
     <h1>Best Maths Tuition in Tamil Nadu</h1>
-    <p>Expert guidance for school exams & board exams</p>
-    <a href="/courses">See Courses</a>
+    <p>Learn • Practice • Excel in Mathematics</p>
+    <a href="#downloads">Get Maths Notes / Worksheets</a>
+</section>
+
+<!-- WHY CHOOSE US -->
+<section class="section" id="about">
+    <h2>Why Choose Us</h2>
+    <div class="cards">
+        <div class="card">
+            <h3>Personalized Teaching</h3>
+            <p>Individual attention for strong fundamentals.</p>
+        </div>
+        <div class="card">
+            <h3>Expert Maths Faculty</h3>
+            <p>Concept-based and exam-oriented teaching.</p>
+        </div>
+        <div class="card">
+            <h3>Proven Results</h3>
+            <p>Excellent board exam and school results.</p>
+        </div>
+        <div class="card">
+            <h3>Online + Classroom Support</h3>
+            <p>Flexible learning with full support.</p>
+        </div>
+    </div>
 </section>
 
 <!-- FEATURES -->
-<section class="features">
-    <h2>Why Choose Us?</h2>
-    <div>✔ Personalized Attention</div>
-    <div>✔ Topic-wise Notes & Worksheets</div>
-    <div>✔ Regular Practice Tests</div>
-    <div>✔ Affordable Fees</div>
+<section class="section" id="courses">
+    <h2>Our Features</h2>
+    <div class="cards">
+        <div class="card">
+            <h3>Practice Tests</h3>
+            <p>Regular assessments and revision.</p>
+        </div>
+        <div class="card">
+            <h3>Daily Worksheets</h3>
+            <p>Topic-wise worksheets for clarity.</p>
+        </div>
+        <div class="card">
+            <h3>Topic-wise PDFs</h3>
+            <p>Easy-to-understand notes.</p>
+        </div>
+        <div class="card">
+            <h3>One-to-One Doubt Clearing</h3>
+            <p>Personal doubt-solving sessions.</p>
+        </div>
+    </div>
 </section>
 
-<!-- DOWNLOAD SECTION -->
-<section class="download">
-    <h2>Download Maths Notes</h2>
-    <p>High-quality PDFs prepared by expert faculty.</p>
-    <a href="/downloads">Get Maths Notes / Worksheets – ₹50</a>
+<!-- REVIEWS -->
+<section class="section" style="background:#f9f9f9">
+    <h2>🌟 Success Stories</h2>
+
+    <div class="card">
+        <p>⭐⭐⭐⭐⭐</p>
+        <p>“Best maths tuition ever! I scored <b>95%</b> in board exams.”</p>
+        <p><b>– Class 10 Student, Chennai</b></p>
+    </div>
+
+    <div class="card">
+        <p>⭐⭐⭐⭐⭐</p>
+        <p>“Daily worksheets improved my confidence a lot.”</p>
+        <p><b>– Class 12 Student</b></p>
+    </div>
 </section>
 
-<!-- FOOTER -->
+<!-- DOWNLOAD CTA -->
+<section class="cta" id="downloads">
+    <h2>Download Maths Notes & Worksheets</h2>
+    <p>High-quality PDFs prepared by expert faculty</p>
+    <a href="/downloads">Download Now – ₹50</a>
+</section>
+
+<!-- CONTACT -->
+<section class="section contact" id="contact">
+    <h2>Contact Us</h2>
+    <p>📍 Chennai, Tamil Nadu</p>
+    <p>📞 +91 77026 16245</p>
+    <p>📧 ranjithamstudycenter@gmail.com</p>
+</section>
+
 <footer>
-    <p>© 2026 Ranjitham Study Center | Chennai</p>
+    <p>© 2026 Ranjitham Study Center | Maths Tuition</p>
 </footer>
+
+<a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
 
 </body>
 </html>
