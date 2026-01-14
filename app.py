@@ -47,6 +47,14 @@ def pay():
         order_id=order["id"],
         pdf=pdf_name
     )
+@app.route("/success")
+def success():
+    file = request.args.get("file")
+    return render_template("success.html", file=file)
+
+@app.route("/download/<filename>")
+def download_file(filename):
+    return send_from_directory(PDF_FOLDER, filename, as_attachment=True)
 
 @app.route("/success", methods=["POST"])
 def success():
