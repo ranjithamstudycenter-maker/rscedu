@@ -1,29 +1,20 @@
-from flask import Flask, render_template, request, redirect, session, send_from_directory
+from flask import Flask, render_template, request, redirect, session, send_from_directory, url_for
 import os
 import razorpay
 import json
 import smtplib
 from email.message import EmailMessage
 from datetime import datetime, timedelta
-from flask import url_for
-from flask import Flask, render_template
 
-app = Flask(__name__)
-
-@app.route("/")
-def home():
-    return render_template("home.html")
-
-
-# -------------------- APP CONFIG --------------------
+# -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = "supersecretkey123"
 
-
+# -------------------- FOLDERS --------------------
 PDF_FOLDER = "rsc-download"
 os.makedirs(PDF_FOLDER, exist_ok=True)
 
-# ---------------- PRODUCTS CONFIG ----------------
+# -------------------- PRODUCTS --------------------
 PRODUCTS = {
     "math-basics-free": {
         "file": "math_basics.pdf",
@@ -51,14 +42,13 @@ PRODUCTS = {
     }
 }
 
-
-# ---------------- EMAIL CONFIG ----------------
+# -------------------- EMAIL CONFIG --------------------
 EMAIL_ID = "ranjithamstudycenter@gmail.com"
 EMAIL_PASS = "YOUR_APP_PASSWORD"
 
 download_tokens = {}
 
-def send_email(to_email, file, link):
+def send_email(to_email, link):
     msg = EmailMessage()
     msg["Subject"] = "Your Maths PDF – Ranjitham Study Center"
     msg["From"] = EMAIL_ID
@@ -84,8 +74,7 @@ def whatsapp_link(phone, link):
     msg = f"Payment successful! Download your Maths PDF (valid 1 hour): {link}"
     return f"https://wa.me/91{phone}?text={msg.replace(' ', '%20')}"
 
-
-# -------------------- LOAD RAZORPAY KEYS --------------------
+# -------------------- RAZORPAY --------------------
 with open("admin.json") as f:
     keys = json.load(f)
 
@@ -93,7 +82,7 @@ razorpay_client = razorpay.Client(
     auth=(keys["razorpay_key"], keys["razorpay_secret"])
 )
 
-# -------------------- HOME --------------------
+# -------------------- ROUTES --------------------
 @app.route("/")
 def home():
     return render_template("home.html")
@@ -102,153 +91,121 @@ def home():
 def courses():
     return render_template("courses.html")
 
-
-# -------------------- LIST PDF DOWNLOADS --------------------
 @app.route("/downloads")
 def downloads():
     return render_template("downloads.html", products=PRODUCTS)
 
-# -------------------- REDIRECT TO PAYMENT --------------------
 @app.route("/download/<product_id>")
 def download(product_id):
-    if product_id not in PRODUCTS:
+    product = PRODUCTS.get(product_id)
+    if not product:
         return "Invalid product"
-    return redirect(f"/pay?product={product_id}")
+
+    # FREE PDF
+    if product["price"] == 0:
+        return send_from_directory(PDF_FOLDER, product["file"], as_attachment=True)
+
+    return redirect(url_for("pay", product=product_id))
 
 # -------------------- PAYMENT PAGE --------------------
-@app.route("/download/<product_id>")
-def download(product_id):
+@app.route("/pay")
+def pay():
+    product_id = request.args.get("product")
     product = PRODUCTS.get(product_id)
 
     if not product:
         return "Invalid product"
 
-    # FREE DOWNLOAD
-    if product["price"] == 0:
-        return send_from_directory(
-            PDF_FOLDER,
-            product["file"],
-            as_attachment=True
-        )
-
-    # PAID DOWNLOAD → PAYMENT PAGE
-    return redirect(f"/pay?product={product_id}")
-
-
-product["price"]
-product["title"]
-product["file"]
-
     order = razorpay_client.order.create({
-        "amount": 4900,  # ₹49
+        "amount": product["price"] * 100,
         "currency": "INR",
         "payment_capture": 1
     })
 
     return render_template(
         "pay.html",
-        file=file,
+        product=product,
         order_id=order["id"],
         razorpay_key=keys["razorpay_key"]
     )
 
-@app.route("/downloads/<course>")
-def course_downloads(course):
-    filtered = {
-        pid: p for pid, p in PRODUCTS.items()
-        if p["course"] == course
-    }
-    return render_template(
-        "downloads.html",
-        products=filtered,
-        course=course
-    )
-
-
 # -------------------- PAYMENT SUCCESS --------------------
 @app.route("/success", methods=["POST"])
 def success():
-    product_id = request.args.get("product")
-file = PRODUCTS[product_id]["file"]
-    file = request.form.get("file")
+    product_id = request.form.get("product")
     email = request.form.get("email")
     phone = request.form.get("phone")
 
+    product = PRODUCTS.get(product_id)
+    if not product:
+        return "Invalid product"
+
     token = os.urandom(8).hex()
     expiry = datetime.now() + timedelta(hours=1)
-    download_tokens[token] = {"file": file, "expiry": expiry}
+    download_tokens[token] = {"file": product["file"], "expiry": expiry}
 
     secure_link = url_for("download_secure", token=token, _external=True)
 
     if email:
-        send_email(email, file, secure_link)
+        send_email(email, secure_link)
 
-    wa_link = whatsapp_link(phone, secure_link) if phone else None
+    wa = whatsapp_link(phone, secure_link) if phone else None
+    return render_template("success.html", whatsapp=wa)
 
-    return render_template("success.html", whatsapp=wa_link)
 @app.route("/download-secure/<token>")
 def download_secure(token):
     data = download_tokens.get(token)
-
     if not data or datetime.now() > data["expiry"]:
-        return "Link expired or invalid", 403
+        return "Link expired", 403
 
     return send_from_directory(PDF_FOLDER, data["file"], as_attachment=True)
 
-
-# -------------------- ADMIN LOGIN --------------------
+# -------------------- ADMIN --------------------
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    if request.method == "POST":
-        if request.form["password"] == "admin123":
-            session["admin"] = True
-            return redirect("/upload")
-    return '''
+    if request.method == "POST" and request.form.get("password") == "admin123":
+        session["admin"] = True
+        return redirect("/upload")
+
+    return """
     <h2>Admin Login</h2>
     <form method="post">
-        <input type="password" name="password" placeholder="Enter password" required>
+        <input type="password" name="password" required>
         <button>Login</button>
     </form>
-    '''
+    """
 
-# -------------------- PDF UPLOAD --------------------
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
     if not session.get("admin"):
         return redirect("/admin")
 
     if request.method == "POST":
-        file = request.files["pdf"]
+        file = request.files.get("pdf")
         if file:
             file.save(os.path.join(PDF_FOLDER, file.filename))
 
-    return '''
+    return """
     <h2>Upload Maths PDF</h2>
     <form method="post" enctype="multipart/form-data">
         <input type="file" name="pdf" accept=".pdf" required>
         <button>Upload</button>
     </form>
-    '''
-# ---------------- SITEMAP ----------------
+    """
+
+# -------------------- CONTACT --------------------
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        print(request.form)
+    return render_template("contact.html")
+
+# -------------------- SITEMAP --------------------
 @app.route("/sitemap.xml")
 def sitemap():
     return send_from_directory(".", "sitemap.xml")
 
-@app.route("/contact", methods=["GET", "POST"])
-def contact():
-    if request.method == "POST":
-        name = request.form.get("name")
-        email = request.form.get("email")
-        phone = request.form.get("phone")
-        message = request.form.get("message")
-
-        # Later we can email or save this
-        print(name, email, phone, message)
-
-    return render_template("contact.html")
-
-
-# -------------------- RUN APP --------------------
+# -------------------- RUN --------------------
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port)
