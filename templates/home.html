@@ -145,21 +145,125 @@ footer{
 
 <body>
 
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+/* NAVBAR */
+.navbar{
+    background:#ffffff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 30px;
+    position:sticky;
+    top:0;
+    z-index:1000;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* LEFT SECTION */
+.nav-left{
+    display:flex;
+    align-items:center;
+    gap:12px;
+}
+
+.brand-text h1{
+    color:#0b5394;
+    font-size:20px;
+    font-weight:700;
+    margin:0;
+}
+
+.brand-text p{
+    color:#0b5394;
+    font-size:13px;
+    margin:0;
+}
+
+/* CENTER MENU */
+.nav-center{
+    display:flex;
+    align-items:center;
+}
+
+.nav-center a{
+    margin:0 15px;
+    text-decoration:none;
+    color:#0b5394;
+    font-weight:600;
+}
+
+.nav-center a:hover{
+    text-decoration:underline;
+}
+
+/* RIGHT BUTTON */
+.demo-btn{
+    background:#ffcc00;
+    color:#000;
+    padding:12px 22px;
+    border-radius:30px;
+    font-weight:700;
+    text-decoration:none;
+    animation:blink 1s infinite;
+}
+
+/* BLINK EFFECT */
+@keyframes blink{
+    0%{opacity:1}
+    50%{opacity:0.5}
+    100%{opacity:1}
+}
+
+/* MOBILE */
+@media(max-width:900px){
+    .nav-center{
+        display:none;
+    }
+}
+</style>
+</head>
+
+<body>
+
 <!-- NAVBAR -->
-<nav>
-    <h1>RANJITHAM STUDY CENTER</h1>
-    <div>
+<nav class="navbar">
+
+    <!-- LEFT -->
+    <div class="nav-left">
+        <!-- Optional logo -->
+        <!-- <img src="logo.png" style="height:40px;"> -->
+
+        <div class="brand-text">
+            <h1>RANJITHAM STUDY CENTER</h1>
+            <p>Learn • Practice • Excel in Mathematics</p>
+        </div>
+    </div>
+
+    <!-- CENTER -->
+    <div class="nav-center">
         <a href="/">Home</a>
         <a href="#about">About</a>
         <a href="#courses">Courses</a>
         <a href="#downloads">Downloads</a>
         <a href="#contact">Contact</a>
     </div>
+
+    <!-- RIGHT -->
+    <div class="nav-right">
+        <a href="#contact" class="demo-btn">🎯 FREE DEMO CLASS</a>
+    </div>
+
 </nav>
 
-<center>
-<a href="#contact" class="blink">🎯 FREE DEMO CLASS</a>
-</center>
+</body>
+</html>
 
 <!-- HERO -->
 <section class="hero">
