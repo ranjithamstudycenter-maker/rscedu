@@ -113,7 +113,7 @@ body{
     display:flex;
     width:300%;            /* 3 images → 300% */
     height:100%;
-    transition:transform 9s ease-in-out;
+    transition:transform 20s ease-in-out;
 }
 
 /* each slide */
@@ -125,7 +125,7 @@ body{
 
 /* image */
 .slide img{
-    width:100%;
+    width:300%;
     height:100%;
     object-fit:contain;   /* shows FULL image without cutting */
     /* use 'cover' ONLY if crop is ok */
@@ -349,7 +349,7 @@ function showSlide(i){
 setInterval(() => {
     index = (index + 1) % totalSlides;
     showSlide(index);
-}, 9000);   // 3 seconds per image
+}, 15000);   // 3 seconds per image
 </script>
 
 
