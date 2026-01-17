@@ -127,7 +127,7 @@ body{
 .slide img{
     width:100%;
     height:100%;
-    object-fit:contain;       /* NO SPACE */
+    object-fit:cover;       /* NO SPACE */
     display:block;
 }
 
@@ -342,7 +342,7 @@ function showSlide(i){
 setInterval(() => {
     index = (index + 1) % totalSlides;
     showSlide(index);
-}, 15000);   // 3 seconds
+}, 10000);   // 3 seconds
 </script>
 
 
