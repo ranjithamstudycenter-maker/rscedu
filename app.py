@@ -99,14 +99,16 @@ def courses():
 
 
 @app.route("/downloads")
-def download():
+def downloads_page():
     return render_template("download.html", products=PRODUCTS)
 
+
 @app.route("/download/<product_id>")
-def download(product_id):
+def download_product(product_id):
     product = PRODUCTS.get(product_id)
     if not product:
         return "Invalid product"
+
 
     if product["price"] == 0:
         return send_from_directory(PDF_FOLDER, product["file"], as_attachment=True)
