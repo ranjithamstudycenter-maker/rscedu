@@ -94,8 +94,9 @@ def about():
 
 
 @app.route("/class")
-def class():
+def courses():  
     return render_template("class.html")
+
 
 @app.route("/downloads")
 def download():
