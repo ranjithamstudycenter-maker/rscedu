@@ -83,10 +83,16 @@ razorpay_client = razorpay.Client(
 )
 
 # -------------------- ROUTES --------------------
+
 @app.route("/")
 def home():
     return render_template("home.html")
 
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+@app.route("/class")
 @app.route("/courses")
 def courses():
     return render_template("courses.html")
@@ -101,13 +107,13 @@ def download(product_id):
     if not product:
         return "Invalid product"
 
-    # FREE PDF
     if product["price"] == 0:
         return send_from_directory(PDF_FOLDER, product["file"], as_attachment=True)
 
     return redirect(url_for("pay", product=product_id))
 
-# -------------------- PAYMENT PAGE --------------------
+# -------------------- PAYMENT --------------------
+
 @app.route("/pay")
 def pay():
     product_id = request.args.get("product")
@@ -129,7 +135,6 @@ def pay():
         razorpay_key=keys["razorpay_key"]
     )
 
-# -------------------- PAYMENT SUCCESS --------------------
 @app.route("/success", methods=["POST"])
 def success():
     product_id = request.form.get("product")
@@ -161,6 +166,7 @@ def download_secure(token):
     return send_from_directory(PDF_FOLDER, data["file"], as_attachment=True)
 
 # -------------------- ADMIN --------------------
+
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     if request.method == "POST" and request.form.get("password") == "admin123":
@@ -194,6 +200,7 @@ def upload():
     """
 
 # -------------------- CONTACT --------------------
+
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
@@ -201,11 +208,13 @@ def contact():
     return render_template("contact.html")
 
 # -------------------- SITEMAP --------------------
+
 @app.route("/sitemap.xml")
 def sitemap():
     return send_from_directory(".", "sitemap.xml")
 
 # -------------------- RUN --------------------
+
 if __name__ == "__main__":
     port = int(os.environ.get("PORT", 10000))
-    app.run(host="0.0.0.0", port=port)
+    app.run(host="0.0.0.0", port=port, debug=True)
