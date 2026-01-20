@@ -241,12 +241,13 @@ footer{
     </div>
 
     <div class="nav-center">
-        <a href="/">Home</a>
-        <a href="#About">About</a>
-        <a href="#class">class</a>
-        <a href="#Download">Download</a>
-        <a href="#Contact">Contact</a>
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('about') }}">About</a>
+    <a href="{{ url_for('class') }}">Class</a>
+    <a href="{{ url_for('download') }}">Download</a>
+    <a href="{{ url_for('contact') }}">Contact</a>
     </div>
+
 
     <a href="#contact" class="demo-btn">
         Free demo class
