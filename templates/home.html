@@ -5,121 +5,98 @@
 <title>Ranjitham Study Center</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<meta name="description" content="Best maths tuition for Class 6 to 12 with concept clarity, regular tests and personal attention.">
-<meta name="keywords" content="Maths Tuition, Ranjitham Study Center, Class 6 to 12 Maths">
+<meta name="description" content="Maths tuition with personalized coaching, worksheets, tests and exam preparation.">
+<meta name="keywords" content="Maths Tuition, Maths Notes, Ranjitham Study Center">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
 <style>
-/* ================= RESET ================= */
-*{
-    margin:0;
-    padding:0;
-    box-sizing:border-box;
-    font-family:'Poppins',sans-serif;
-}
-body{
-    background:#f5f7fb;
-    color:#333;
-    overflow-x:hidden;
-}
+*{margin:0;padding:0;box-sizing:border-box;font-family:'Poppins',sans-serif;}
+body{background:#f5f7fb;color:#333;overflow-x:hidden}
 
-/* ================= NAVBAR ================= */
+/* NAVBAR */
 .navbar{
     background:#fff;
     display:flex;
-    align-items:center;
     justify-content:space-between;
+    align-items:center;
     padding:10px 20px;
     position:sticky;
     top:0;
     z-index:1000;
     box-shadow:0 4px 12px rgba(0,0,0,0.08);
 }
-.nav-left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
-.logo{
-    height:70px;
-}
-.brand-text h1{
-    color:#0b5394;
-    font-size:24px;
-}
-.brand-text p{
-    font-size:13px;
-    color:#0b5394;
-}
+.nav-left{display:flex;align-items:center;gap:10px}
+.logo{height:80px}
+.brand-text h1{color:#0b5394;font-size:24px}
+.brand-text p{font-size:13px;color:#0b5394}
 .nav-center a{
-    margin:0 12px;
+    margin:0 14px;
     text-decoration:none;
     color:#0b5394;
     font-weight:600;
 }
-.nav-center a:hover{
-    text-decoration:underline;
-}
 .demo-btn{
     color:red;
     font-weight:600;
-    animation:blink 0.6s infinite;
+    animation:blink 1s infinite;
 }
-@keyframes blink{
-    0%,100%{opacity:1;}
-    50%{opacity:0;}
-}
+@keyframes blink{50%{opacity:0}}
 
-/* ================= HERO SLIDER ================= */
-.hero{
-    width:100%;
-    overflow:hidden;
-}
-.slider{
-    width:100%;
-    overflow:hidden;
-}
+/* HERO SLIDER */
+.hero{position:relative;overflow:hidden}
+.slider{overflow:hidden}
 .slides{
     display:flex;
     width:300%;
     animation:slideMove 12s infinite ease-in-out;
 }
 @keyframes slideMove{
-    0%,30%{transform:translateX(0);}
-    35%,65%{transform:translateX(-100%);}
-    70%,100%{transform:translateX(-200%);}
+    0%,33%{transform:translateX(0)}
+    36%,66%{transform:translateX(-100%)}
+    69%,100%{transform:translateX(-200%)}
 }
-.slide{
-    width:100%;
-    flex-shrink:0;
-}
-.slide img{
-    width:100%;
-    height:auto;
-    display:block;
-}
+.slide{width:100%}
+.slide img{width:100%;display:block}
 
-/* Pause slider */
-.slider:hover .slides,
-.slider:active .slides{
-    animation-play-state:paused;
+/* DOTS */
+.dots{
+    position:absolute;
+    bottom:15px;
+    left:50%;
+    transform:translateX(-50%);
+    display:flex;
+    gap:10px;
 }
+.dot{
+    width:10px;height:10px;
+    border-radius:50%;
+    background:#ccc;
+}
+.dot.active{background:#0b5ed7}
 
-/* ================= COMMON SECTIONS ================= */
-.section{
-    padding:60px 20px;
-}
-.section h2{
-    text-align:center;
-    color:#0a3d62;
-    margin-bottom:40px;
-}
+/* COMMON SECTION */
+section{padding:60px 20px}
+h2{text-align:center;color:#0a3d62;margin-bottom:35px}
 
-/* ================= CARDS ================= */
-.cards{
+/* ABOUT */
+.about-container{
     max-width:1100px;
     margin:auto;
+    background:#fff;
+    padding:40px;
+    border-radius:12px;
+}
+.about-content{
+    display:flex;
+    gap:40px;
+    flex-wrap:wrap;
+    align-items:center;
+}
+.about-photo img{width:260px;border-radius:10px}
+
+/* CARDS */
+.cards{
     display:grid;
     grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
     gap:25px;
@@ -128,56 +105,30 @@ body{
     background:#fff;
     padding:25px;
     border-radius:15px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.08);
     text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
     transition:0.3s;
 }
-.card:hover{
-    transform:translateY(-8px);
-}
+.card:hover{transform:translateY(-8px)}
 
-/* ================= ABOUT ================= */
-.about-box{
-    max-width:1100px;
-    margin:auto;
-    display:flex;
-    gap:40px;
-    flex-wrap:wrap;
-    align-items:center;
-}
-.about-box img{
-    width:260px;
-    border-radius:12px;
-    box-shadow:0 6px 15px rgba(0,0,0,0.2);
-}
-.about-text{
-    flex:1;
-    line-height:1.8;
-}
-
-/* ================= RESULTS ================= */
-.results-section{
-    background:#fff;
-}
-.results-section img{
-    width:120px;
-    height:120px;
+/* RESULTS IMAGE */
+.results-section .card img{
+    width:120px;height:120px;
     border-radius:50%;
-    border:3px solid #0b5394;
+    border:3px solid #0a3d62;
     margin-bottom:15px;
-    object-fit:cover;
 }
 
-/* ================= CTA ================= */
-.cta{
+/* CTA */
+.cta-section{
     background:linear-gradient(135deg,#b31217,#e52d27);
-    color:white;
-    text-align:center;
-    padding:70px 20px;
+    color:#fff;
 }
-.cta a{
+.cta-box{max-width:1100px;margin:auto}
+.cta-btn{
     display:inline-block;
-    background:white;
+    margin-top:20px;
+    background:#fff;
     color:#b31217;
     padding:14px 35px;
     border-radius:30px;
@@ -185,43 +136,45 @@ body{
     font-weight:600;
 }
 
-/* ================= FOOTER ================= */
+/* FOOTER */
 .footer{
     background:#0b0f17;
     color:#ccc;
     padding:40px 20px;
-    text-align:center;
 }
+.footer-container{
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:40px;
+}
+.footer-bottom{text-align:center;margin-top:30px}
 
-/* ================= WHATSAPP ================= */
+/* WHATSAPP */
 .whatsapp{
     position:fixed;
-    bottom:25px;
-    right:25px;
-    width:56px;
-    height:56px;
+    bottom:25px;right:25px;
     background:#25D366;
-    color:white;
+    width:55px;height:55px;
     border-radius:50%;
     display:flex;
     align-items:center;
     justify-content:center;
     font-size:26px;
+    color:#fff;
     text-decoration:none;
-    box-shadow:0 6px 18px rgba(0,0,0,0.25);
 }
 
-/* ================= MOBILE ================= */
+/* MOBILE */
 @media(max-width:900px){
-    .nav-center{display:none;}
-    .about-box{text-align:center;}
+    .nav-center{display:none}
 }
 </style>
 </head>
 
 <body>
 
-<!-- NAVBAR -->
 <nav class="navbar">
     <div class="nav-left">
         <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo">
@@ -230,19 +183,16 @@ body{
             <p>Learn • Practice • Excel</p>
         </div>
     </div>
-
     <div class="nav-center">
-        <a href="{{ url_for('home') }}">Home</a>
-        <a href="{{ url_for('about') }}">About</a>
-        <a href="{{ url_for('courses') }}">Class</a>
-        <a href="{{ url_for('downloads_page') }}">Download</a>
-        <a href="{{ url_for('contact') }}">Contact</a>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/courses">Class</a>
+        <a href="/downloads">Download</a>
+        <a href="/contact">Contact</a>
     </div>
-
-    <a href="{{ url_for('contact') }}" class="demo-btn">Free Demo</a>
+    <a href="#contact" class="demo-btn">Free Demo</a>
 </nav>
 
-<!-- HERO -->
 <section class="hero">
     <div class="slider">
         <div class="slides">
@@ -251,64 +201,79 @@ body{
             <div class="slide"><img src="{{ url_for('static', filename='images/banner3.jpg') }}"></div>
         </div>
     </div>
-</section>
-
-<!-- ABOUT -->
-<section class="section">
-<h2>About Ranjitham Study Center</h2>
-<div class="about-box">
-    <img src="{{ url_for('static', filename='images/sir.jpg') }}">
-    <div class="about-text">
-        <p><strong>Ranjitham Study Center</strong> provides structured maths coaching for Class 6–12.</p>
-        <p>Focus on concept clarity, regular tests, and individual attention.</p>
-        <p>We believe every student can excel with proper guidance and practice.</p>
+    <div class="dots">
+        <span class="dot active"></span>
+        <span class="dot"></span>
+        <span class="dot"></span>
     </div>
-</div>
 </section>
 
-<!-- ACHIEVEMENTS -->
-<section class="section results-section">
-<h2>Student Achievements</h2>
-<div class="cards">
-    <div class="card">
-        <img src="{{ url_for('static', filename='images/student1.jpg') }}">
-        <h3>Class 10 – 95%</h3>
+<section class="about-section">
+    <div class="about-container">
+        <h2>About Ranjitham Study Center</h2>
+        <div class="about-content">
+            <div class="about-text">
+                <p>Concept-based maths coaching for Class 6–12 with personal attention.</p>
+            </div>
+            <div class="about-photo">
+                <img src="{{ url_for('static', filename='images/sir.jpg') }}">
+            </div>
+        </div>
     </div>
-    <div class="card">
-        <img src="{{ url_for('static', filename='images/student2.jpg') }}">
-        <h3>Class 12 – 94%</h3>
+</section>
+
+<section class="results-section">
+    <h2>Student Achievements</h2>
+    <div class="cards">
+        <div class="card">
+            <img src="{{ url_for('static', filename='images/student1.jpg') }}">
+            <h3>Class 10 – 95%</h3>
+        </div>
+        <div class="card">
+            <img src="{{ url_for('static', filename='images/student2.jpg') }}">
+            <h3>Class 12 – 94%</h3>
+        </div>
     </div>
-</div>
 </section>
 
-<!-- FEATURES -->
-<section class="section">
-<h2>Why Choose Us</h2>
-<div class="cards">
-    <div class="card">Concept Clarity</div>
-    <div class="card">Weekly Tests</div>
-    <div class="card">Daily Worksheets</div>
-    <div class="card">Doubt Clearing</div>
-    <div class="card">Face-to-Face Teaching</div>
-    <div class="card">Exam Oriented Preparation</div>
-</div>
+<section class="cta-section">
+    <div class="cta-box">
+        <h2>Ready to Improve Your Maths?</h2>
+        <a href="/contact" class="cta-btn">Enroll Now</a>
+    </div>
 </section>
 
-<!-- CTA -->
-<section class="cta">
-<h2>Ready to Improve Your Maths?</h2>
-<p>Join Ranjitham Study Center today</p>
-<a href="{{ url_for('contact') }}">Enroll Now</a>
-</section>
-
-<!-- FOOTER -->
 <footer class="footer">
-<p>📞 7702616245 | 📧 ranjithamstudycenter@gmail.com</p>
-<p>© 2026 Ranjitham Study Center</p>
+    <div class="footer-container">
+        <div>
+            <h3>Ranjitham Study Center</h3>
+            <p>Focused maths coaching for Class 6–12.</p>
+        </div>
+        <div>
+            <h3>Contact</h3>
+            <p>📞 7702616245</p>
+            <p>📧 ranjithamstudycenter@gmail.com</p>
+        </div>
+    </div>
+    <div class="footer-bottom">
+        © 2026 Ranjitham Study Center
+    </div>
 </footer>
 
-<!-- WHATSAPP -->
-<a href="https://wa.me/917702616245" class="whatsapp" target="_blank">💬</a>
+<a class="whatsapp" href="https://wa.me/917702616245">💬</a>
+
+<script>
+let index=0;
+const slides=document.querySelector(".slides");
+const dots=document.querySelectorAll(".dot");
+
+setInterval(()=>{
+    index=(index+1)%dots.length;
+    slides.style.transform=`translateX(-${index*100}%)`;
+    dots.forEach(d=>d.classList.remove("active"));
+    dots[index].classList.add("active");
+},3000);
+</script>
 
 </body>
 </html>
