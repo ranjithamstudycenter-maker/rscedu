@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, send_from_directory, url_for
+from flask import Flask, render_template, request, redirect, session, send_from_directory, url_for,abort
 import os
 import razorpay
 import json
@@ -99,19 +99,27 @@ def courses():
 def downloads_page():
     return render_template("download.html", products=PRODUCTS)
 
-
 @app.route("/download/<product_id>")
 def download_product(product_id):
     product = PRODUCTS.get(product_id)
+
     if not product:
-        return "Invalid product"
+        abort(404)
 
-
+    # FREE PDF
     if product["price"] == 0:
-        folder_path = os.path.join(PDF_FOLDER, product["folder"])
-         return send_from_directory(folder_path, product["file"], as_attachment=True)
- 
+        folder_path = os.path.join(
+            app.root_path,
+            PDF_FOLDER,
+            product["folder"]
+        )
+        return send_from_directory(
+            folder_path,
+            product["file"],
+            as_attachment=True
+        )
 
+    # PAID PDF → redirect to payment page
     return redirect(url_for("pay", product=product_id))
 
 # -------------------- PAYMENT --------------------
