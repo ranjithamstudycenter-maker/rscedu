@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>RANJITHAM STUDY CENTER</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Maths tuition with personalized coaching, worksheets, practice tests and exam preparation."> 
+<meta name="keywords" content="Maths Tuition, Maths Notes, Ranjitham Study Center">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{ 
+box-sizing: border-box; 
+}
+
+body{ 
+margin:0; font-family: 'Poppins', sans-serif; 
+overflow-x:hidden; 
+} 
+
+*{ 
+margin:0; 
+padding:0; 
+box-sizing:border-box; 
+font-family:'Poppins', sans-serif; 
+}
+
+body{ 
+background:#f5f7fb; 
+color:#333; 
+}
+
+
+/* NAVBAR */ 
+.navbar
+{ background:#ffffff; 
+display:flex; 
+align-items:center; 
+justify-content:space-between; 
+padding:10px 20px; 
+position:sticky; 
+top:0; 
+z-index:1000; 
+box-shadow:0 4px 12px rgba(0,0,0,0.08); 
+}
+
+.nav-left{ 
+display:flex; 
+align-items:center; 
+gap:8px; 
+} 
+
+.logo{ 
+height:90px; 
+}
+
+
+.brand-text h1{ 
+color:#0b5394; 
+font-size:26px; 
+font-weight:700; 
+} 
+
+.brand-text p{ 
+color:#0b5394; 
+font-size:13px; 
+}
+
+ .nav-center{ 
+position:absolute; 
+left:60%; 
+transform:translateX(-60%); 
+}
+
+.nav-center a{ 
+margin:0 15px; 
+text-decoration:none; 
+color:#0b5394; 
+font-weight:600; 
+} 
+
+.nav-center a:hover{ 
+text-decoration:underline; 
+} 
+
+.demo-btn{ 
+padding:18px 22px; 
+border-radius:50%; 
+text-align:center; 
+font-weight:600; 
+text-decoration:none;
+line-height:1.2; 
+color:red; 
+font-size:16px; 
+animation: blink 0.5s infinite; 
+} 
+
+/* Blinking */ 
+@keyframes blink{ 
+0%,100%{opacity:1;} 
+50%{opacity:0;} 
+} 
+
+.hero{ width:100%; 
+aspect-ratio: 4/ 3; /* 🔥 same as banner image */ 
+overflow:hidden; 
+position:relative; 
+}
+
+/* slider wrapper */ 
+.slider{ 
+width:100%; 
+overflow:hidden; 
+}
+
+
+/* SLIDES CONTAINER */ 
+.slides{ 
+display:flex; 
+width:300%; /* 3 slides */ 
+animation: slideMove 12s infinite ease-in-out; 
+animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1); 
+} 
+
+@keyframes slideMove{ 
+0% { transform: translateX(0); } 
+33% { transform: translateX(0); } 
+
+36% { transform: translateX(-100%); } 
+66% { transform: translateX(-100%); } 
+
+69% { transform: translateX(-200%); } 
+100% { transform: translateX(-200%); } 
+
+}
+
+/* each slide */ 
+.slide{ 
+width:100%; 
+flex-shrink:0; 
+} 
+
+/* image full fit */ 
+.slide img{ 
+width:100%; 
+height:auto; /* 🔥 KEY */ 
+display:block; 
+
+}
+
+/* dots */ 
+.dots{ 
+position:absolute; 
+bottom:15px; 
+left:50%; 
+transform:translateX(-50%); 
+display:flex; 
+gap:10px; 
+}
+
+ .dot{
+ width:10px; 
+height:10px; 
+border-radius:50%; 
+background:#ccc; 
+
+}
+
+.dot.active{ 
+background:#0b5ed7; 
+} 
+
+.about-section{ 
+padding: 60px 20px; 
+background: #f5f7fa; 
+} 
+
+.about-container{ 
+max-width: 1100px; 
+margin: auto; 
+background: white; 
+padding: 40px; 
+border-radius: 12px; 
+}
+
+.about-container h2{ 
+text-align: center; 
+color: #0a3d62; 
+margin-bottom: 35px; 
+}
+
+ .about-content{ 
+display: flex; 
+gap: 40px; 
+align-items: center; 
+flex-wrap: wrap; 
+} 
+
+.about-text{ 
+flex: 1; 
+font-size: 17px; 
+line-height: 1.8; 
+}
+
+
+.about-photo{ 
+flex: 1; 
+text-align: center; 
+}
+
+ .about-photo img{
+ width: 260px; 
+border-radius: 10px; 
+box-shadow: 0 6px 15px rgba(0,0,0,0.2); 
+}
+
+<!-- ABOUT SECTION -->
+<section class="about-section">
+	<div class="about-container">
+		<h2>About Ranjitham Study Center</h2>
+	<div class="about-content">
+	<div class="about-text">
+<p>
+
+<strong>Ranjitham Study Center</strong> is a dedicated mathematics tuition center offering structured coaching for <strong>Class 6 to Class 12 students</strong>. Our goal is to build a strong academic foundation and help students approach mathematics with confidence and clarity.
+
+</p>
+
+
+<p>
+
+We focus on <strong>concept-based teaching</strong> rather than rote learning. Every topic is explained step by step, ensuring students clearly understand the fundamentals before moving to advanced problem solving.
+
+</p>
+
+<p>
+Continuous practice is an essential part of our teaching method. Students are regularly given <strong>classwork, homework, and weekly tests</strong> to strengthen their understanding and improve accuracy and speed.
+
+</p>
+
+<p>
+At Ranjitham Study Center, we give <strong>individual attention</strong> to every student. Doubts are addressed patiently, and special care is taken to support slow learners without pressure, while also challenging high-performing students.
+
+</p>
+
+<p> 
+Regular evaluation and performance tracking help students and parents clearly understand academic progress. Parents are kept informed about improvements, areas needing attention, and overall learning development. 
+</p>
+
+<p> We strongly believe that with the <strong>right guidance, disciplined practice, and personal mentoring</strong>, every student can excel in mathematics and perform confidently in school examinations. 
+</p> 
+
+</div>
+
+	<div class="about-photo">
+<img src="{{ url_for('static', filename='images/sir.jpg') }}" alt="Ranjitham Study Center">
+
+	</div> 
+</div>
+
+
+
+</div>
+
+</section>
+
+<!-- RESULTS / ACHIEVEMENTS SECTION -->
+<section class="results-section">
+	<div class="results-container">
+		<h2>Student Achievements</h2>
+	<div class="cards">
+	<div class="card">
+	<img src="{{ url_for('static', filename='images/student1.jpg') }}">
+		<h3>Class 10 – 95%</h3>
+		<p>Board Exam 2025</p>
+
+	</div>
+
+	<div class="card">
+	<img src="{{ url_for('static', filename='images/student2.jpg') }}">
+		<h3>Class 12 – 94%</h3>
+		<p>Board Exam 2025</p>
+	</div>
+
+
+	<div class="card">
+	<img src="{{ url_for('static', filename='images/student3.jpg') }}">
+		<h3>Class 12 – 94%</h3>
+		<p>Annual Examination</p>
+	</div>
+
+	</div>
+
+
+</div>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
