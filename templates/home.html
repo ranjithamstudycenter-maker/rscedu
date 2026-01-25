@@ -83,7 +83,7 @@ font-size:13px;
 
 /* Free demo class */
 .demo-btn{
-    position:absolute;        /* 🔥 keeps it top-right */
+    position:relative;        /* 🔥 keeps it top-right */
     right:30px;
     top:20px;
     color:red;
@@ -100,7 +100,7 @@ font-size:13px;
   width: 100%;
   height: calc(100vh - 80px); /* navbar height */
   overflow: hidden;
-  position: relative;
+  position: absolute;
 }
 
 /* slider wrapper */ 
@@ -116,7 +116,7 @@ height:100%;
 display:flex; 
 width:100%; /* 3 slides */ 
 	height:100%;
-transition: transform 0.15s ease-in-out;
+transition: slideMove 0.15s ease-in-out;
 } 
 
 /* each slide */ 
@@ -734,6 +734,7 @@ input, textarea, button{
 	
 </body> 
 </html>
+
 
 
 
