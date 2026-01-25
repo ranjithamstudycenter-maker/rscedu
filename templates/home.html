@@ -97,7 +97,8 @@ font-size:13px;
 }
 	
 .hero{ 
-width:100%; 
+width:100%;
+	height:100%;
 aspect-ratio: 4/ 3; /* 🔥 same as banner image */ 
 position:relative; 
 }
@@ -106,7 +107,7 @@ position:relative;
 .slider{ 
 	position:relative;
 width:100%; 
-max-height:380px;  /* ✅ REDUCED HEIGHT */
+height:900px;
 }
 
 
@@ -114,6 +115,7 @@ max-height:380px;  /* ✅ REDUCED HEIGHT */
 .slides{ 
 display:flex; 
 width:100%; /* 3 slides */ 
+	height:100%;
 animation: slideMove 12s infinite ease-in-out; 
 } 
 
@@ -121,14 +123,15 @@ animation: slideMove 12s infinite ease-in-out;
 /* each slide */ 
 .slide{ 
 width:100%; 
+	height:100%;
 flex-shrink:0; 
 } 
 
 /* image full fit */ 
 .slides img{ 
 width:100%; 
- height:380px;       /* ✅ CONTROL HEIGHT */
-	object-fit:cover;
+ height:800px;       /* ✅ CONTROL HEIGHT */
+	object-fit:contain;
 display:block; 
 
 }
@@ -750,6 +753,7 @@ input, textarea, button{
 	</script> 
 </body> 
 </html>
+
 
 
 
