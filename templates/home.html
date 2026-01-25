@@ -98,7 +98,7 @@ font-size:13px;
 	
 .hero{ 
 width:100%;
-	height:100vh;
+	height:100%;
 aspect-ratio: 4/ 3; /* 🔥 same as banner image */ 
 	overflow:hidden;
 position:relative; 
@@ -108,7 +108,7 @@ position:relative;
 .slider{ 
 	position:relative;
 width:100%; 
-height:900px;
+height:100%;
 }
 
 
@@ -119,7 +119,12 @@ width:100%; /* 3 slides */
 	height:100%;
 animation: slideMove 12s infinite ease-in-out; 
 } 
-
+@keyframes slideMove{
+    0%{transform:translateX(0);}
+    33%{transform:translateX(-100%);}
+    66%{transform:translateX(-200%);}
+    100%{transform:translateX(0);}
+}
 
 /* each slide */ 
 .slide{ 
@@ -131,18 +136,16 @@ flex-shrink:0;
 /* image full fit */ 
 .slides img{ 
 width:100%; 
- height:800px;       /* ✅ CONTROL HEIGHT */
+ height:100%;       /* ✅ CONTROL HEIGHT */
 	object-fit:cover;
-	position: absolute;
-  top: 0;
-  left: 0;
-display:block; 
+	position: relative;
+  display:block; 
 
 }
 
 /* dots */ 
 .dots{
-    position:absolute;
+    position:relative;
     bottom:15px;
     left:50%;
     transform:translateX(-50%);
@@ -167,13 +170,6 @@ display:block;
 .dot.active{
     background:#0b5394;
 }
-
-@keyframes slideMove{
-    0%{transform:translateX(0);}
-    33%{transform:translateX(-100%);}
-    66%{transform:translateX(-200%);}
-    100%{transform:translateX(0);}
-}
 <script> let index = 0; 
 		const slides = document.querySelector(".slides"); 
 		const dots = document.querySelectorAll(".dot"); 
@@ -189,6 +185,8 @@ display:block;
 		}, 	3000); // 3 seconds 
 	</script> 
 	
+
+
 .home-section{
     padding:70px 20px;
     background:#ffffff;
@@ -728,6 +726,7 @@ input, textarea, button{
 	
 </body> 
 </html>
+
 
 
 
