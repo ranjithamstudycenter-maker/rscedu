@@ -30,29 +30,8 @@ body{
 background:#ffffff; 
 color:#333; 
 }
-<!-- HOME – WELCOME SECTION -->
-<section class="Home-section">
-    <div class="Home-container">
-        <h2>Welcome to Ranjitham Study Center</h2>
 
-        <p style="text-align:center; max-width:800px; margin:auto; font-size:17px; line-height:1.8;">
-            Ranjitham Study Center is a trusted mathematics tuition center
-            dedicated to helping students from <strong>Class 6 to Class 12</strong>
-            build strong fundamentals, improve problem-solving skills,
-            and gain confidence in examinations.
-        </p>
-
-        <div style="text-align:center; margin-top:30px;">
-            <a href="{{ url_for('about') }}" class="cta-btn">
-                Know More About Us
-            </a>
-        </div>
-    </div>
-</section>
-
-
-
-/* NAVBAR */ 
+	/* NAVBAR */ 
 .navbar{
 	background:#ffffff; 
 	display:flex; 
@@ -279,7 +258,20 @@ background:#0b5ed7;
                     and exam-focused, ensuring every student progresses
                     with clarity and confidence.
                 </p>
+		<h2>Welcome to Ranjitham Study Center</h2>
 
+        <p style="text-align:center; max-width:800px; margin:auto; font-size:17px; line-height:1.8;">
+            Ranjitham Study Center is a trusted mathematics tuition center
+            dedicated to helping students from <strong>Class 6 to Class 12</strong>
+            build strong fundamentals, improve problem-solving skills,
+            and gain confidence in examinations.
+        </p>
+
+        <div style="text-align:center; margin-top:30px;">
+            <a href="{{ url_for('about') }}" class="cta-btn">
+                Know More About Us
+            </a>
+        </div>
                 <a href="{{ url_for('about') }}" class="home-btn">
                     Know More About Us
                 </a>
@@ -758,6 +750,7 @@ input, textarea, button{
 	</script> 
 </body> 
 </html>
+
 
 
 
