@@ -5,33 +5,81 @@
     <title>About Us | Ranjitham Study Center</title>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
+    <!-- GOOGLE FONT -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <!-- ==========================
+         GLOBAL STYLES
+    ========================== -->
     <style>
-        body{
-            font-family: 'Poppins', Arial, sans-serif;
+        *{
             margin:0;
+            padding:0;
+            box-sizing:border-box;
+            font-family:'Poppins', sans-serif;
+        }
+
+        body{
             background:#f5f7fb;
             color:#333;
             line-height:1.7;
         }
 
-        .container{
-            max-width:1000px;
-            margin:auto;
-            padding:40px 20px;
+        a{ text-decoration:none; }
+
+        img{ max-width:100%; display:block; }
+
+        h2,h3{ color:#004aad; }
+
+        /* ==========================
+           NAVBAR
+        ========================== */
+        .navbar{
             background:#fff;
-            border-radius:12px;
+            display:flex;
+            align-items:center;
+            justify-content:space-between;
+            padding:10px 20px;
+            box-shadow:0 4px 12px rgba(0,0,0,0.08);
         }
 
-        h2,h3{
-            color:#004aad;
+        .nav-left{
+            display:flex;
+            align-items:center;
+            gap:10px;
         }
 
-        h2{
-            text-align:center;
-            margin-bottom:30px;
+        .logo{ height:80px; }
+
+        .brand-text h1{
+            font-size:24px;
+            color:#0b5394;
         }
 
-        /* Language buttons */
+        .brand-text p{
+            font-size:13px;
+            color:#0b5394;
+        }
+
+        .nav-center a{
+            margin:0 15px;
+            font-weight:600;
+            color:#0b5394;
+        }
+
+        .demo-btn{
+            color:red;
+            font-weight:700;
+            animation:blink 1s infinite;
+        }
+
+        @keyframes blink{
+            50%{opacity:0;}
+        }
+
+        /* ==========================
+           LANGUAGE BUTTONS
+        ========================== */
         .lang-buttons{
             text-align:right;
             margin:20px;
@@ -39,26 +87,34 @@
 
         .lang-buttons button{
             padding:6px 14px;
-            margin-left:5px;
             border:none;
             background:#004aad;
-            color:white;
+            color:#fff;
             border-radius:5px;
             cursor:pointer;
+            margin-left:5px;
         }
 
-        .lang-buttons button:hover{
-            background:#003080;
+        /* ==========================
+           CONTENT CONTAINER
+        ========================== */
+        .container{
+            max-width:1000px;
+            margin:auto;
+            background:#fff;
+            padding:40px 20px;
+            border-radius:12px;
         }
 
-        /* Founder section */
+        /* ==========================
+           FOUNDER
+        ========================== */
         .founder{
             display:flex;
             gap:30px;
-            flex-wrap:wrap;
             align-items:center;
-            justify-content:center;
             margin-top:40px;
+            flex-wrap:wrap;
         }
 
         .founder img{
@@ -67,152 +123,111 @@
             box-shadow:0 6px 15px rgba(0,0,0,0.2);
         }
 
-        ul{
-            margin-left:20px;
-        }
+        ul{ margin-left:20px; }
 
-        @media(max-width:600px){
-            .container{
-                padding:25px 15px;
-            }
+        @media(max-width:768px){
+            .founder{ text-align:center; justify-content:center; }
         }
     </style>
 </head>
 
 <body>
 
-<!-- Language Toggle -->
+<!-- ==========================
+     NAVBAR
+========================== -->
+<nav class="navbar">
+    <div class="nav-left">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo">
+        <div class="brand-text">
+            <h1>RANJITHAM STUDY CENTER</h1>
+            <p>Learn • Practice • Excel in Mathematics</p>
+        </div>
+    </div>
+
+    <div class="nav-center">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('courses') }}">Class</a>
+        <a href="{{ url_for('downloads_page') }}">Download</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+    </div>
+
+    <a href="#contact" class="demo-btn">Free demo class</a>
+</nav>
+
+<!-- ==========================
+     LANGUAGE TOGGLE
+========================== -->
 <div class="lang-buttons">
     <button onclick="showEnglish()">English</button>
     <button onclick="showTamil()">தமிழ்</button>
 </div>
 
-<!-- ================= ENGLISH ================= -->
+<!-- ==========================
+     ENGLISH CONTENT
+========================== -->
 <div id="english">
     <div class="container">
-
         <h2>About Ranjitham Study Center</h2>
 
-        <p>
-            <strong>Ranjitham Study Center</strong> is a dedicated mathematics tuition center
-            providing structured coaching for <strong>Class 6 to Class 12 students</strong>.
-            Our mission is to build strong fundamentals and help students approach mathematics
-            with confidence.
-        </p>
-
-        <p>
-            We follow a <strong>concept-based teaching approach</strong>.
-            Each topic is explained step by step, ensuring students understand the basics
-            before moving to advanced problem-solving.
-        </p>
-
-        <p>
-            Regular <strong>homework, worksheets, and weekly tests</strong>
-            help students improve accuracy, speed, and exam readiness.
-        </p>
-
-        <p>
-            Individual attention is given to every student.
-            Slow learners receive special care, while high performers are encouraged
-            to achieve excellence.
-        </p>
+        <p><strong>Ranjitham Study Center</strong> provides quality mathematics coaching for <strong>Class 6 to 12</strong> students.</p>
+        <p>We focus on <strong>concept-based teaching</strong> and step-by-step explanations.</p>
 
         <h3>Our Teaching Style</h3>
         <ul>
-            <li>Concept clarity with simple explanations</li>
-            <li>Exam-oriented preparation</li>
-            <li>Regular tests and revision</li>
-            <li>Personal attention and doubt clearing</li>
+            <li>Concept clarity</li>
+            <li>Weekly tests</li>
+            <li>Daily worksheets</li>
+            <li>Personal doubt clearing</li>
         </ul>
 
-        <h3>Who Can Join?</h3>
-        <p>
-            Students from <strong>Class 5 to Class 12</strong><br>
-            State Board | CBSE | Matriculation
-        </p>
-
-        <!-- Founder -->
         <h2>About the Founder</h2>
         <div class="founder">
-            <img src="{{ url_for('static', filename='images/sir.jpg') }}" alt="Founder">
-            <div>
-                <p>
-                    <strong>Ranjitham</strong> is a passionate Mathematics teacher
-                    dedicated to concept clarity and confidence building.
-                </p>
-                <p>
-                    With years of teaching experience, he guides students using
-                    simple explanations, disciplined practice, and personal mentoring.
-                </p>
-            </div>
+            <img src="{{ url_for('static', filename='images/sir.jpg') }}">
+            <p>
+                <strong>Ranjitham</strong> is an experienced Mathematics teacher dedicated to building
+                confidence and exam excellence.
+            </p>
         </div>
-
     </div>
 </div>
 
-<!-- ================= TAMIL ================= -->
+<!-- ==========================
+     TAMIL CONTENT
+========================== -->
 <div id="tamil" style="display:none;">
     <div class="container">
-
         <h2>Ranjitham Study Center பற்றி</h2>
 
-        <p>
-            <strong>Ranjitham Study Center</strong> என்பது
-            <strong>6ஆம் வகுப்பு முதல் 12ஆம் வகுப்பு வரை</strong>
-            மாணவர்களுக்கு கணிதப் பயிற்சி வழங்கும் ஒரு சிறந்த கல்வி மையமாகும்.
-        </p>
-
-        <p>
-            எங்களின் கற்பித்தல் முறை
-            <strong>கருத்து அடிப்படையிலானது</strong>.
-            ஒவ்வொரு பாடமும் எளிய முறையில் விளக்கப்படுகின்றது.
-        </p>
-
-        <p>
-            மாணவர்களின் முன்னேற்றத்திற்காக
-            <strong>வாராந்திர தேர்வுகள், பயிற்சி பணிப்பத்திரங்கள்</strong>
-            வழங்கப்படுகின்றன.
-        </p>
-
-        <p>
-            ஒவ்வொரு மாணவருக்கும் தனிப்பட்ட கவனம் அளிக்கப்படுகிறது.
-            மெதுவாக கற்கும் மாணவர்களுக்கு சிறப்பு வழிகாட்டல் வழங்கப்படுகிறது.
-        </p>
+        <p><strong>6 முதல் 12 வகுப்பு</strong> மாணவர்களுக்கு கணிதத்தில் சிறந்த பயிற்சி வழங்கப்படுகிறது.</p>
 
         <h3>எங்களின் கற்பித்தல் முறை</h3>
         <ul>
             <li>கருத்து தெளிவு</li>
-            <li>தேர்வு மையமான பயிற்சி</li>
-            <li>தொடர்ச்சியான பயிற்சி</li>
-            <li>தனிப்பட்ட சந்தேக தீர்வு</li>
+            <li>வாராந்திர தேர்வுகள்</li>
+            <li>தனிப்பட்ட கவனம்</li>
         </ul>
-
-        <h3>யார் சேரலாம்?</h3>
-        <p>
-            <strong>5ஆம் வகுப்பு முதல் 12ஆம் வகுப்பு வரை</strong><br>
-            State Board | CBSE | Matriculation
-        </p>
 
         <h2>நிறுவனர் பற்றி</h2>
         <p>
             <strong>Ranjitham</strong> அவர்கள் அனுபவமிக்க கணித ஆசிரியர்.
-            மாணவர்களின் நம்பிக்கையை வளர்த்து,
-            எளிய முறையில் கணிதத்தை கற்பிப்பதில் தேர்ச்சி பெற்றவர்.
         </p>
-
     </div>
 </div>
 
+<!-- ==========================
+     SCRIPT
+========================== -->
 <script>
-    function showEnglish(){
-        document.getElementById("english").style.display = "block";
-        document.getElementById("tamil").style.display = "none";
-    }
-
-    function showTamil(){
-        document.getElementById("english").style.display = "none";
-        document.getElementById("tamil").style.display = "block";
-    }
+function showEnglish(){
+    document.getElementById("english").style.display="block";
+    document.getElementById("tamil").style.display="none";
+}
+function showTamil(){
+    document.getElementById("english").style.display="none";
+    document.getElementById("tamil").style.display="block";
+}
 </script>
 
 </body>
