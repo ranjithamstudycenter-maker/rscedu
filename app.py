@@ -196,6 +196,9 @@ def pay():
     mode = request.args.get("mode")
     board = request.args.get("board") or "cbse"
     cls = request.args.get("cls") or "12"
+
+    session["board"] = board
+    session["cls"]   = cls
     
     session["last_board"] = board
     session["last_cls"] = cls
@@ -232,6 +235,10 @@ def payment_success():
     mode = request.args.get("mode")
     board = request.args.get("board")
     cls = request.args.get("cls")
+
+    board=session.get("board")
+    cls=session.get("cls")
+
 
     if not product_id:
         return redirect(url_for("materials"))
