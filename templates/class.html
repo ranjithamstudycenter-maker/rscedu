@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Classes | Ranjitham Study Center</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<!-- Google Font -->
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins', sans-serif;
+}
+
+body{
+    background:#f5f7fb;
+    color:#333;
+    line-height:1.7;
+}
+
+a{text-decoration:none;}
+h1,h2,h3{color:#0b5394;}
+
+/* ================= NAVBAR ================= */
+.navbar{
+    background:#fff;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    padding:12px 25px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    flex-wrap:wrap;
+}
+
+.nav-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo{height:70px;}
+
+.brand-text h1{
+    font-size:22px;
+}
+
+.brand-text p{
+    font-size:13px;
+}
+
+.nav-center a{
+    margin:0 12px;
+    font-weight:600;
+    color:#0b5394;
+}
+
+/* ================= HERO ================= */
+.hero{
+    background:linear-gradient(135deg,#004aad,#0b5394);
+    color:white;
+    padding:70px 20px;
+    text-align:center;
+}
+
+.hero h1{
+    font-size:38px;
+    margin-bottom:10px;
+}
+
+.hero p{
+    font-size:17px;
+    max-width:700px;
+    margin:auto;
+}
+
+/* ================= COMMON ================= */
+.section{
+    padding:70px 20px;
+}
+
+.container{
+    max-width:1100px;
+    margin:auto;
+}
+
+.section-title{
+    text-align:center;
+    margin-bottom:45px;
+}
+
+/* ================= COURSE CARDS ================= */
+.course-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit, minmax(260px,1fr));
+    gap:25px;
+}
+
+.course-card{
+    background:white;
+    padding:28px;
+    border-radius:16px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+    transition:0.3s;
+}
+
+.course-card:hover{
+    transform:translateY(-8px);
+}
+
+.course-card h3{
+    margin-bottom:10px;
+}
+
+.course-card ul{
+    margin-left:18px;
+}
+
+.course-card li{
+    margin-bottom:6px;
+}
+
+/* ================= ENGINEERING ================= */
+.engineering{
+    background:#f5f7fa;
+}
+
+/* ================= FEATURES ================= */
+.features{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(220px,1fr));
+    gap:25px;
+}
+
+.feature-box{
+    background:white;
+    padding:25px;
+    border-radius:14px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+    text-align:center;
+}
+
+/* ================= CTA ================= */
+.cta{
+    background:linear-gradient(135deg,#b31217,#e52d27);
+    color:white;
+    text-align:center;
+    padding:70px 20px;
+}
+
+.cta h2{
+    color:white;
+    font-size:36px;
+    margin-bottom:15px;
+}
+
+.cta p{
+    max-width:600px;
+    margin:auto;
+    margin-bottom:25px;
+}
+
+.cta a{
+    background:white;
+    color:#b31217;
+    padding:14px 35px;
+    border-radius:30px;
+    font-weight:600;
+    display:inline-block;
+}
+
+/* ================= FOOTER ================= */
+.footer{
+    background:#0b0f17;
+    color:#ccc;
+    padding:60px 20px 20px;
+}
+
+.footer-container{
+    max-width:1100px;
+    margin:auto;
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:40px;
+}
+
+.footer-box h3{
+    color:white;
+    margin-bottom:12px;
+}
+
+.footer-box a{
+    display:block;
+    color:#ccc;
+    margin-bottom:8px;
+}
+
+.footer-bottom{
+    text-align:center;
+    margin-top:40px;
+    border-top:1px solid #333;
+    padding-top:15px;
+    font-size:14px;
+}
+
+/* ================= MOBILE ================= */
+@media(max-width:768px){
+    .nav-center{
+        width:100%;
+        text-align:center;
+        margin-top:10px;
+    }
+    .hero h1{
+        font-size:30px;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-left">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo">
+        <div class="brand-text">
+            <h1>RANJITHAM STUDY CENTER</h1>
+            <p>Learn • Practice • Excel in Mathematics</p>
+        </div>
+    </div>
+    <div class="nav-center">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('courses') }}">Class</a>
+        <a href="{{ url_for('materials') }}">Materials</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+    </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+    <h1>Our Classes & Courses</h1>
+    <p>CBSE Mathematics coaching for Class 6–12 and Engineering Arrear coaching with strong concept clarity and exam-focused preparation.</p>
+</section>
+
+<!-- CBSE COURSES -->
+<section class="section">
+<div class="container">
+<div class="section-title">
+<h2>CBSE Mathematics (Class 6 – 12)</h2>
+<p>Building strong fundamentals to achieve academic excellence</p>
+</div>
+
+<div class="course-grid">
+    <div class="course-card">
+        <h3>Class 6 – 8 (Foundation Level)</h3>
+        <ul>
+            <li>Strong basics in Mathematics</li>
+            <li>Concept clarity with examples</li>
+            <li>Daily practice worksheets</li>
+            <li>Fear-free learning approach</li>
+        </ul>
+    </div>
+
+    <div class="course-card">
+        <h3>Class 9 – 10 (Board Focus)</h3>
+        <ul>
+            <li>NCERT-based teaching</li>
+            <li>Step-by-step problem solving</li>
+            <li>Weekly tests & revision</li>
+            <li>Board exam oriented preparation</li>
+        </ul>
+    </div>
+
+    <div class="course-card">
+        <h3>Class 11 – 12 (Advanced Level)</h3>
+        <ul>
+            <li>Algebra, Calculus & Trigonometry</li>
+            <li>Detailed derivations & shortcuts</li>
+            <li>Intensive practice sessions</li>
+            <li>Exam confidence building</li>
+        </ul>
+    </div>
+</div>
+</div>
+</section>
+
+<!-- ENGINEERING -->
+<section class="section engineering">
+<div class="container">
+<div class="section-title">
+<h2>Engineering Arrear Coaching</h2>
+<p>Focused guidance to clear arrears with confidence</p>
+</div>
+
+<div class="course-grid">
+    <div class="course-card">
+        <h3>Engineering Mathematics</h3>
+        <ul>
+            <li>Maths I, II & III</li>
+            <li>Important & repeated questions</li>
+            <li>Exam-oriented problem solving</li>
+            <li>Special attention for weak students</li>
+        </ul>
+    </div>
+</div>
+</div>
+</section>
+
+<!-- FEATURES -->
+<section class="section">
+<div class="container">
+<div class="section-title">
+<h2>Why Choose Us?</h2>
+</div>
+
+<div class="features">
+    <div class="feature-box">Concept-based Teaching</div>
+    <div class="feature-box">Regular Tests & Assessment</div>
+    <div class="feature-box">Individual Doubt Clearing</div>
+    <div class="feature-box">Face-to-Face Interaction</div>
+    <div class="feature-box">Exam-Oriented Preparation</div>
+    <div class="feature-box">Personal Attention</div>
+</div>
+</div>
+</section>
+
+<!-- CTA -->
+<section class="cta">
+    <h2>Ready to Join?</h2>
+    <p>Choose the right class for your child and build a strong future in Mathematics.</p>
+    <a href="{{ url_for('contact') }}">Enroll Now / Free Demo</a>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer">
+<div class="footer-container">
+    <div class="footer-box">
+        <h3>Ranjitham Study Center</h3>
+        <p>Focused maths coaching for school and college students with individual attention.</p>
+    </div>
+    <div class="footer-box">
+        <h3>Quick Links</h3>
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/courses">Class</a>
+        <a href="/contact">Contact</a>
+    </div>
+    <div class="footer-box">
+        <h3>Contact</h3>
+        <p>📞 7702616245</p>
+        <p>📧 ranjithamstudycenter@gmail.com</p>
+    </div>
+</div>
+
+<div class="footer-bottom">
+© 2026 Ranjitham Study Center. All Rights Reserved.
+</div>
+</footer>
+
+</body>
+</html>
+

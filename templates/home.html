@@ -1,0 +1,667 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>RANJITHAM STUDY CENTER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Maths tuition with personalized coaching, worksheets, practice tests and exam preparation.">
+    <meta name="keywords" content="Maths Tuition, Maths Notes, Ranjitham Study Center">
+
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================
+           GLOBAL STYLES
+        ========================== */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+        body {
+            background: #ffffff;
+            color: #333;
+            overflow-x: hidden;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        img {
+            max-width: 100%;
+            display: block;
+        }
+
+        /* ==========================
+           NAVBAR
+        ========================== */
+        .navbar {
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .logo {
+            height: 90px;
+        }
+
+        .brand-text h1 {
+            color: #0b5394;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .brand-text p {
+            color: #0b5394;
+            font-size: 13px;
+        }
+
+        .nav-center {
+            position: absolute;
+            left: 60%;
+            transform: translateX(-60%);
+        }
+
+        .nav-center a {
+            margin: 0 15px;
+            color: #0b5394;
+            font-weight: 600;
+        }
+
+        .nav-center a:hover {
+            text-decoration: underline;
+        }
+
+        .demo-btn {
+            position: absolute;
+            right: 30px;
+            top: 20px;
+            color: red;
+            font-weight: 700;
+            animation: blink 1s infinite;
+        }
+
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+        @media (max-width: 900px) {
+            .nav-center {
+                display: none;
+            }
+        }
+
+        /* ==========================
+           HERO / SLIDER
+        ========================== */
+        .hero {
+            width: 100%;
+            height: 100%;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .slider {
+            width: 100%;
+            height: 100%;
+            position: relative;
+        }
+
+        .slides {
+            display: flex;
+            width: 100%; /* for 3 slides */
+            height: 100%;
+            transition: transform 0.5s ease-in-out;
+        }
+
+        .slide {
+            width: 100%;
+            height: 100%;
+            flex-shrink: 0;
+        }
+
+        .slider img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
+
+        /* Dots */
+        .dots {
+            position: absolute;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 8px;
+            z-index: 10;
+        }
+
+        .dot {
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            background: #ccc;
+            cursor: pointer;
+        }
+
+        .dot.active {
+            background: #0b5394;
+        }
+
+        /* Pause slider on hover */
+        .slider:hover .slides,
+        .slider:active .slides {
+            animation-play-state: paused;
+        }
+
+        /* ==========================
+           HOME SECTION
+        ========================== */
+        .home-section {
+            padding: 70px 20px;
+            background: #ffffff;
+        }
+
+        .home-container {
+            max-width: 1100px;
+            margin: auto;
+        }
+
+        .home-title {
+            text-align: center;
+            font-size: 32px;
+            color: #0b5394;
+            margin-bottom: 50px;
+        }
+
+        .home-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: center;
+        }
+
+        .home-image img {
+            border-radius: 18px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
+
+        .home-text p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 18px;
+        }
+
+        .home-btn {
+            display: inline-block;
+            margin-top: 20px;
+            background: #0b5394;
+            color: white;
+            padding: 14px 35px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .home-btn:hover {
+            background: #083b73;
+        }
+
+        @media(max-width: 768px) {
+            .slides img {
+                height: 240px;
+            }
+
+            .slider {
+                max-height: 240px;
+            }
+
+            .home-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 600px) {
+            h1 { font-size: 24px; }
+            h2 { font-size: 20px; }
+            p { font-size: 14px; }
+        }
+
+        /* ==========================
+           RESULTS / ACHIEVEMENTS
+        ========================== */
+        .results-section {
+            padding: 60px 20px;
+            background: #ffffff;
+        }
+
+        .results-container {
+            max-width: 1100px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .results-container h2 {
+            color: #0a3d62;
+            margin-bottom: 40px;
+            font-size: 32px;
+        }
+
+        .result-card img {
+            width: 120px;
+            height: 120px;
+            object-fit: cover;
+            border-radius: 50%;
+            margin-bottom: 15px;
+            border: 3px solid #0a3d62;
+        }
+
+        /* ==========================
+           FEATURES
+        ========================== */
+        .features-section {
+            padding: 70px 20px;
+            background: #f5f7fa;
+        }
+
+        .features-container {
+            max-width: 1100px;
+            margin: auto;
+            text-align: center;
+        }
+
+        .features-container h2 {
+            color: #0a3d62;
+            margin-bottom: 45px;
+        }
+
+        .cards {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+        }
+
+        .card {
+            background: #ffffff;
+            padding: 28px;
+            border-radius: 15px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.08);
+            text-align: center;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.12);
+        }
+
+        .card h3 {
+            color: #0b5394;
+            margin-bottom: 10px;
+        }
+
+        .card p {
+            color: #555;
+            font-size: 15px;
+            line-height: 1.6;
+        }
+
+        /* ==========================
+           CTA
+        ========================== */
+        .cta-section {
+            padding: 70px 20px;
+            background: linear-gradient(135deg, #b31217, #e52d27);
+        }
+
+        .cta-box {
+            max-width: 1100px;
+            margin: auto;
+            color: white;
+            border-radius: 18px;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .cta-small {
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .cta-box h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+        }
+
+        .cta-text {
+            font-size: 16px;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: white;
+            color: #b31217;
+            padding: 14px 35px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .cta-btn:hover {
+            background: #ffeaea;
+        }
+
+        /* ==========================
+           FOOTER
+        ========================== */
+        .footer {
+            background: #0b0f17;
+            color: #ccc;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-container {
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-box h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .footer-box p {
+            line-height: 1.6;
+        }
+
+        .footer-box a {
+            display: block;
+            color: #ccc;
+            margin-bottom: 8px;
+        }
+
+        .footer-box a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+
+        /* ==========================
+           WHATSAPP FLOAT BUTTON
+        ========================== */
+        .whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 56px;
+            height: 56px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            z-index: 1000;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .whatsapp:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+    </style>
+</head>
+<body>
+    <!-- ==========================
+         NAVBAR
+    ========================== -->
+    <nav class="navbar"> 
+        <div class="nav-left"> 
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo"> 
+            <div class="brand-text"> 
+                <h1>RANJITHAM STUDY CENTER</h1> 
+                <p>Learn • Practice • Excel in Mathematics</p> 
+            </div>
+        </div>
+        <div class="nav-center"> 
+            <a href="{{ url_for('home') }}">Home</a> 
+            <a href="{{ url_for('about') }}">About</a> 
+            <a href="{{ url_for('courses') }}">Class</a> 
+            <a href="{{ url_for('materials') }}">Materials</a>
+            <a href="{{ url_for('contact') }}">Contact</a> 
+        </div> 
+        <a href="#contact" class="demo-btn">Free demo class</a> 
+    </nav>
+
+    <!-- ==========================
+         HERO / SLIDER
+    ========================== -->
+    <section class="hero" id="home"> 
+        <div class="slider"> 
+            <div class="slides"> 
+                <div class="slide"> 
+                    <img src="{{ url_for('static', filename='images/banner1.jpg') }}" alt="Banner 1"> 
+                </div> 
+                <div class="slide"> 
+                    <img src="{{ url_for('static', filename='images/banner2.jpg') }}" alt="Banner 2"> 
+                </div> 
+                <div class="slide"> 
+                    <img src="{{ url_for('static', filename='images/banner3.jpg') }}" alt="Banner 3"> 
+                </div> 
+            </div> 
+        </div> 
+        <div class="dots"> 
+            <span class="dot active"></span> 
+            <span class="dot"></span> 
+            <span class="dot"></span> 
+        </div> 
+    </section>
+
+    <!-- ==========================
+         HOME SECTION
+    ========================== -->
+    <section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">Welcome to Ranjitham Study Center</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/classroom.jpg') }}" alt="Classroom">
+                </div>
+                <div class="home-text">
+                    <p style="text-align:center; max-width:800px; margin:auto; font-size:17px; line-height:1.8;">
+                        Ranjitham Study Center is a trusted mathematics tuition center
+                        dedicated to helping students from <strong>Class 6 to Class 12</strong>
+                        build strong fundamentals, improve problem-solving skills,
+                        and gain confidence in examinations.
+                    </p>
+                    <p>We focus on building strong fundamentals, improving problem-solving skills, and developing confidence for school and board examinations.</p>
+                    <p>Our teaching approach is concept-oriented, structured, and exam-focused, ensuring every student progresses with clarity and confidence.</p>
+                    <div style="text-align:center; margin-top:30px;">
+                        <a href="{{ url_for('about') }}" class="home-btn">Know More About Us</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================
+         STUDENT RESULTS / ACHIEVEMENTS
+    ========================== -->
+    <section class="results-section">
+        <div class="results-container">
+            <h2>Student Achievements</h2>
+            <div class="results-cards">
+                <div class="result-card">
+                    <img src="{{ url_for('static', filename='images/student1.jpg') }}" alt="Student Result">
+                    <h3>Class 10 – 95%</h3>
+                    <p>Board Exam 2025</p>
+                </div>
+                <div class="result-card">
+                    <img src="{{ url_for('static', filename='images/student2.jpg') }}" alt="Student Result">
+                    <h3>Class 12 – 94%</h3>
+                    <p>Board Exam 2025</p>
+                </div>
+                <div class="result-card">
+                    <img src="{{ url_for('static', filename='images/student3.jpg') }}" alt="Student Result">
+                    <h3>Class 9 – 92%</h3>
+                    <p>Annual Examination</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================
+         FEATURES
+    ========================== -->
+    <section class="features-section">
+        <div class="features-container">
+            <h2>Why Choose Ranjitham Study Center?</h2>
+            <div class="cards">
+                <div class="card">
+                    <h3>Concept Clarity</h3>
+                    <p>Strong focus on fundamentals with step-by-step explanations for every topic.</p>
+                </div>
+                <div class="card">
+                    <h3>Weekly Tests</h3>
+                    <p>Regular tests to evaluate student progress and improve exam confidence.</p>
+                </div>
+                <div class="card">
+                    <h3>Daily Worksheets</h3>
+                    <p>Practice-oriented worksheets to strengthen speed and accuracy.</p>
+                </div>
+                <div class="card">
+                    <h3>Doubt Clearing</h3>
+                    <p>Dedicated time for individual doubt clearing and personal attention.</p>
+                </div>
+                <div class="card">
+                    <h3>Face-to-Face Interaction</h3>
+                    <p>Direct interaction with faculty ensuring better understanding and comfort.</p>
+                </div>
+                <div class="card">
+                    <h3>Exam-Oriented Preparation</h3>
+                    <p>Smart preparation aligned with board exam and competitive exam patterns.</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ==========================
+         CTA SECTION
+    ========================== -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <p class="cta-small">Best Maths Tuition in Your Area</p>
+            <h2>Ready to improve your Maths?</h2>
+            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with expert guidance.</p>
+            <a href="/contact" class="cta-btn">Enroll Now</a>
+        </div>
+    </section>
+
+    <!-- ==========================
+         CONTACT & FOOTER
+    ========================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>Ranjitham Study Center</h3>
+                <p>Focused maths coaching for Class 6–12 students. Concept clarity, regular tests, and individual attention.</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/courses">Courses</a>
+                <a href="/materials">Materials</a>
+                <a href="/contact">Contact</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact Details</h3>
+                <p>📞 7702616245</p>
+                <p>📧 ranjithamstudycenter@gmail.com</p>
+                <p>📍 Your Location Here</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Ranjitham Study Center. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- ==========================
+         WHATSAPP FLOAT BUTTON
+    ========================== -->
+    <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
+
+    <!-- ==========================
+         SLIDER SCRIPT
+    ========================== -->
+    <script>
+        let index = 0;
+        const slides = document.querySelector(".slides");
+        const dots = document.querySelectorAll(".dot");
+        const totalSlides = dots.length;
+
+        function showSlide(i){
+            slides.style.transform = `translateX(-${i * 100}%)`;
+            dots.forEach(dot => dot.classList.remove("active"));
+            dots[i].classList.add("active");
+        }
+
+        setInterval(() => {
+            index = (index + 1) % totalSlides;
+            showSlide(index);
+        }, 3000);
+    </script>
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+

@@ -1,0 +1,1045 @@
+  <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Class 10 Maths Notes | Ranjitham Study Center</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:#f4f6fb;
+  color:#333;
+}
+
+/* NAVBAR */
+.navbar{
+    background:#ffffff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 25px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+.nav-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo{height:60px;}
+
+.brand-text h1{
+    font-size:20px;
+    color:#0b5394;
+    margin:0;
+}
+
+.brand-text p{
+    font-size:12px;
+    color:#0b5394;
+    margin:0;
+}
+
+.nav-center a{
+    margin:0 12px;
+    font-weight:600;
+    color:#0b5394;
+    text-decoration:none;
+}
+
+/* ================= MATERIALS ================= */
+    
+.materials-wrapper{
+  margin-top:40px;   /* navbar ku keela space */
+  padding:0 20px;
+}
+
+    
+.page-title{
+  text-align:center;
+  margin-bottom:20px;
+}
+
+
+.board-toggle{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  margin-bottom:30px;
+}
+
+.board-btn{
+  padding:10px 34px;
+  border-radius:30px;
+  border:2px solid #0b5394;
+  background:#fff;
+  color:#0b5394;
+  font-weight:600;
+  cursor:pointer;
+}
+.board-btn.active{
+  background:#0b5394;
+  color:#fff;
+}
+
+
+.class-selector{
+  display:flex;
+  justify-content:center;
+  gap:20px;
+  margin:30px 0;
+}
+
+.class-btn{
+  padding:12px 25px;
+  border-radius:6px;;
+  border:none; 
+  background:#ddd;
+  color:#0b5394;
+  margin:5px;
+  font-weight:600;
+  cursor:pointer;
+}
+
+
+.class-btn.active {
+  background:#1e73ff;
+  color: white;
+}
+/* CONTAINER */
+.container{
+  max-width:1100px;
+  margin:40px auto;
+  padding:0 20px;
+}
+
+/* INFO BOX */
+.info-box{
+  background:#f5f5f5;
+  padding:30px;
+  border-radius:14px;
+  text-align:center;
+   margin-top:20px;
+}
+
+/* PAGE TITLE */
+.page-title{
+  text-align:center;
+  margin-bottom:35px;
+}
+
+/* GRID */
+.notes-wrapper{
+  position: relative;
+  width:100%;
+  margin:40px auto;
+ 
+}
+
+.notes-container{
+  display:flex;
+  gap:28px;
+  overflow-x:auto;
+  scroll-behavior:smooth;
+  padding:20px 60px; 
+
+}
+
+/* Hide scrollbar */
+.notes-container::-webkit-scrollbar{
+    display:none;
+}
+.notes-container::-webkit-scrollbar-track{
+    background:transparent;
+}
+.notes-container::-webkit-scrollbar-thumb{
+    background:transparent;
+}
+/* CARD */
+.chapter-card{
+  min-width:240px;     /* important */
+  max-width:240px;
+  flex-shrink:0;
+}
+
+.chapter-card:hover{
+  transform:translateY(-6px);
+}
+
+.chapter-card img{
+  height:auto;          /* IMPORTANT */
+  max-height:260px;
+  object-fit:contain;
+  padding:10px;
+  min-width:240px;
+  max-width:240px;
+  flex-shrink:0;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+
+}
+/* Arrows */
+.arrow{
+     
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:26px;
+    border-radius:0;
+    width:40px;
+    height:40px;
+    border:none;
+   background:none;
+  box-shadow:none;     /* remove shadow */
+    cursor:pointer;
+    z-index:10;
+    font-size:34px;
+    color:#555;               /* arrow color */
+    
+}
+
+/* Exact edge positioning */
+.arrow.left{
+    left:0;
+}
+
+.arrow.right{
+    right:0;
+}
+/* Hover effect (professional feel) */
+.nav:hover{
+    color:#0b5fa5;
+    transform:translateY(-50%) scale(1.2);
+}
+
+
+.chapter-card h4{
+  color:#0b5394;
+  margin:15px 0 10px;
+}
+
+.status{
+  font-size:0.85rem;
+  margin-bottom:10px;
+}
+
+.status.coming{ color:#7f8c8d; }
+.status.free{ color:#27ae60; }
+.status.paid{ color:#c0392b; }
+
+/* BUTTON */
+.chapter-card button{
+  border:none;
+  padding:10px 18px;
+  border-radius:20px;
+  background:#0b5394;
+  color:white;
+  font-weight:600;
+  cursor:pointer;
+}
+
+.chapter-card button:disabled{
+  background:#bdc3c7;
+  cursor:not-allowed;
+}
+
+.hidden{
+  display:none;
+}
+
+.class-content{
+  margin-top:25px;
+}
+
+        .footer {
+            background: #0b0f17;
+            color: #ccc;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-container {
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-box h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .footer-box p {
+            line-height: 1.6;
+        }
+
+        .footer-box a {
+            display: block;
+            color: #ccc;
+            margin-bottom: 8px;
+        }
+
+        .footer-box a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+
+        /* ==========================
+           WHATSAPP FLOAT BUTTON
+        ========================== */
+        .whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 56px;
+            height: 56px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            z-index: 1000;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .whatsapp:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+/* ================= PROFESSIONAL ADDONS ================= */
+
+/* SEARCH BAR */
+.search-box{
+  max-width:500px;
+  margin:20px auto;
+  text-align:center;
+}
+.search-box input{
+  width:100%;
+  padding:12px 18px;
+  border-radius:30px;
+  border:2px solid #0b5394;
+  font-size:15px;
+}
+
+/* DOWNLOAD COUNT BADGE */
+.download-count{
+  font-size:12px;
+  margin-top:6px;
+  color:#555;
+}
+
+/* LAST UPDATED */
+.last-updated{
+  text-align:center;
+  font-size:13px;
+  color:#777;
+  margin-bottom:20px;
+}
+  
+/* ===== STATS UNDER BUTTON ===== */
+.stats {
+  margin-top:10px;
+  font-size:13px;
+  color:#777;
+  display:flex;
+  justify-content:center;
+  gap:18px;
+}
+
+.stats span{
+  display:flex;
+  align-items:center;
+  gap:4px;
+}
+
+.btn {
+    display: inline-block;
+    padding: 12px 25px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: none;
+    background-color: #007bff;
+    color: white;
+    text-decoration: none;
+    cursor: pointer;
+    transition: background 0.3s;
+}
+
+.btn:hover {
+    background-color: #0056b3;
+}
+/* ---------- PDF VIEW AREA ---------- */
+
+.pdf-viewer{
+    width: 98%;
+    max-width: 1100px;     /* Prevents ultra wide stretch */
+    margin: 25px auto;
+    padding: 18px;
+    border: 1px solid #e5e7eb;
+}
+
+
+/* iframe container */
+.pdf-viewer iframe{
+    width: 100%;
+    height: 82vh;      /* Uses screen height dynamically */
+    border: none;
+    border-radius: 8px;
+}
+
+
+/* ---------- PDF ACTION BUTTONS ---------- */
+
+.pdf-actions{
+    margin-top: 20px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+}
+
+
+
+/* Buttons style */
+.pdf-actions button{
+    padding: 12px 26px;
+    border-radius: 30px;
+    border: none;
+    cursor: pointer;
+
+    font-size: 15px;
+    font-weight: 600;
+
+    background: #0b5ed7;
+    color: white;
+
+    transition: 0.2s;
+}
+
+.pdf-actions button:hover{
+    transform: scale(1.05);
+    background: #084298;
+}
+
+#pdf-area{
+    user-select: none;
+    -webkit-user-select: none;
+    -ms-user-select: none;
+}
+.pdf-wrapper {
+    position: relative;
+}
+/* Allow scrolling */
+.pdf-wrapper iframe{
+    position:relative;
+    z-index:1;
+}
+
+.viewer-box{
+    overflow: auto;
+}
+#pdfViewer{
+    max-height: 85vh;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: 10px;
+    background:white;
+    border-radius:10px;
+}
+
+</style>
+  <script type="module">
+    import * as pdfjsLib from "{{ url_for('static', filename='pdfjs/build/pdf.mjs') }}";
+
+    pdfjsLib.GlobalWorkerOptions.workerSrc =
+        "{{ url_for('static', filename='pdfjs/build/pdf.worker.mjs') }}";
+
+    // make accessible globally
+    window.pdfjsLib = pdfjsLib;
+</script>
+
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-left">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo">
+        <div class="brand-text">
+            <h1>RANJITHAM STUDY CENTER</h1>
+            <p>Learn • Practice • Excel in Mathematics</p>
+        </div>
+    </div>
+
+    <div class="nav-center">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('courses') }}">Class</a>
+        <a href="{{ url_for('materials') }}">Materials</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+    </div>
+</nav>
+
+
+<!-- MATERIALS -->
+<section class="materials-wrapper">
+
+<h2 class="page-title">HAND WRITTEN NOTES</h2>
+
+<!-- BOARD -->
+<div class="board-toggle">
+                
+   <button id="board-cbse"
+class="board-btn {% if active_board=='cbse' %}active{% endif %}"
+onclick="selectBoard(this)">
+    CBSE
+</button>
+
+
+<button id="board-matric"
+class="board-btn {% if active_board=='matric' %}active{% endif %}"
+onclick="selectBoard(this)">
+    Matric
+</button>
+
+           
+ </div>
+
+<!-- CLASS BUTTONS -->
+  <div id="classSection" class="class-selector hidden">
+    <button id="classbtn-10"
+class="class-btn {% if active_class == '10' %}active{% endif %}"
+onclick="showClass('class10',this)">
+Class 10
+</button>
+
+<button id="classbtn-11"
+class="class-btn {% if active_class == '11' %}active{% endif %}"
+onclick="showClass('class11',this)">
+Class 11
+</button>
+
+<button id="classbtn-12"
+class="class-btn {% if active_class =='12' %}active{% endif %}"
+onclick="showClass('class12',this)">
+Class 12
+</button>
+
+</div>
+
+<div id="contentArea" class="container hidden">
+
+<!-- ================= CONTENT AREAS ================= -->
+
+<!-- CLASS 10 MESSAGE -->
+<div id="class10" class="class-content">
+    <div class="info-box">
+        <h2>📢 Notes Launching Soon</h2>
+        <p>
+        High-quality handwritten Mathematics notes for 
+        <strong>Class 10</strong> are under preparation.
+        Stay connected for updates.
+        </p>
+    </div>
+</div>
+
+<!-- CLASS 11 MESSAGE -->
+<div id="class11" class="class-content hidden">
+    <div class="info-box">
+        <h2>📢 Notes Launching Soon</h2>
+        <p>
+        High-quality handwritten Mathematics notes for 
+        <strong>Class 11</strong> are under preparation.
+        Stay connected for updates.
+        </p>
+    </div>
+
+</div>
+
+<!-- CLASS 12 PDFs -->
+<div id="class12" class="class-content hidden">
+    <!-- Vertical Info -->
+    <div class="info-box">
+        <h2>📘 Class 12 Notes</h2>
+        <p>Chapter-wise handwritten PDFs available below</p>
+    </div>
+
+    
+<!-- GRID -->
+  <div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔎 Search chapter..."
+         onkeyup="searchChapters()">
+
+        <div class="last-updated">
+        Last Updated: <span class="date"></span>
+        </div>
+  </div>
+
+    <!-- ================= CLASS 12 ================= -->
+       <!-- CHAPTER 1 -->
+       <div class="notes-wrapper">
+       <button class="arrow left" onclick="scrollNotes(-1)">❮</button>
+          <div class="notes-container" id="notesBox">
+           
+
+<div class="chapter-card" id="card-{{ pid }}">
+    <img src="{{ url_for('static', filename='images/Linear Programming.png') }}">
+    <h4>Linear Programming</h4>
+    <div class="status paid">🔒 Paid</div>
+ {% for pid, product in products.items() %}
+   
+{% if access.get(pid, {}).get("view") %}
+
+                          <button onclick="location.href='{{ url_for(
+                              'materials',
+                              board=active_board,
+                              cls=active_class,
+                              open=pid
+                          ) }}'">
+                              👁 View PDF
+                          </button>
+                          
+                          {% else %}
+                          
+                         <button onclick="window.location.href='{{ url_for('pay', product='Linear Programming', mode='view') }}'">
+                               🔐 Pay to View
+                                </button>
+                      
+
+
+{% endif %}
+
+  {% endfor %}
+
+    <div class="stats">
+        <span id="view-{{ pid }}">👁 Views</span>
+        <span id="down-{{ pid }}">⬇️ Downloads</span>
+    </div>
+</div>
+
+  
+        
+        <!-- CHAPTER 2 -->
+              <div class="chapter-card">
+                    <img src="{{ url_for('static', filename='images/Determinants.png') }}">
+                    <h4>Determinants</h4>
+                    <div class="status paid">🔒 Paid</div>
+                     <button onclick="window.location.href='{{ url_for('pay', product='Determinants', mode='view') }}'">
+                    🔐 Pay to View
+                    </button>
+
+              </div>
+
+       <!-- CHAPTER 3 (FREE SAMPLE) -->
+              <div class="chapter-card">
+                    <img src="{{ url_for('static', filename='images/Differential Equations.png') }}">
+                    <h4>Differential Equations</h4>
+                    <div class="status paid">🔒 Paid</div>
+                     <button onclick="window.location.href='{{ url_for('pay', product='Differential Equations', mode='view') }}'">
+                    🔐 Pay to View
+                    </button>
+
+              </div>
+
+        <!-- CHAPTER 4 (PAID) -->
+              <div class="chapter-card">
+                    <img src="{{ url_for('static', filename='images/Vector Algebra.png') }}">
+                    <h4>Vector Algebra</h4>
+                    <div class="status paid">🔒 Paid</div>
+                     <button onclick="window.location.href='{{ url_for('pay', product='Vector Algebra', mode='view') }}'">
+                    🔐 Pay to View
+                    </button>
+
+              </div>
+    
+        <!-- CHAPTER 5 (PAID) -->
+             <div class="chapter-card">
+                    <img src="{{ url_for('static', filename='images/Application of Integrals.png') }}">
+                    <h4>Application of Integrals</h4>
+                    <div class="status paid">🔒 Paid</div>
+                     <button onclick="window.location.href='{{ url_for('pay', product='Application of Integrals', mode='view') }}'">
+                    🔐 Pay to View
+                    </button>
+
+             </div>
+       
+        <!-- CHAPTER 6 (PAID) -->
+              <div class="chapter-card">
+                    <img src="{{ url_for('static', filename='images/Matrices.png') }}">
+                    <h4>Matrices</h4>
+                    <div class="status paid">🔒 Paid</div>
+                     <button onclick="window.location.href='{{ url_for('pay', product='Matrices', mode='view') }}'">
+                    🔐 Pay to View
+                    </button>
+
+              </div>
+    
+        <!-- CHAPTER 7 (PAID) -->
+                <div class="chapter-card">
+                    <img src="{{ url_for('static', filename='images/Continuity & Differentiability.png') }}">
+                    <h4>Continuity & Differentiability</h4>
+                    <div class="status paid">🔒 Paid</div>
+                    <button onclick="window.location.href='{{ url_for('pay', product='Continuity & Differentiability', mode='view') }}'">
+                    🔐 Pay to View
+                    </button>
+
+                </div>
+          </div>
+         <button class="arrow right" onclick="scrollNotes(1)">❯</button>
+       </div>
+ </div>
+
+</div>   
+
+</section>
+                  
+
+ {% if open and access.get(open, {}).get("view") %}          
+ 
+<div class="pdf-viewer" id="pdf-section">
+
+    <div id="pdfViewer"
+         data-pdf-url="{{ url_for('secure_view', product_id=open) }}">
+    </div>
+
+    <div class="pdf-actions">
+      
+        {% if access.get(pid, {}).get("download") %}
+            <button onclick="location.href='{{ url_for('download', product_id=open) }}'">
+                ⬇ Download PDF
+            </button>
+        {% else %}
+            <button onclick="location.href='{{ url_for('pay',
+                product=open,
+                mode='download',
+                board=active_board,
+                cls=active_class) }}'">
+                💰 Pay to Download
+            </button>
+        {% endif %}
+   
+    </div>
+
+</div>
+
+   {% endif %}
+  
+
+  
+
+
+
+ 
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>Ranjitham Study Center</h3>
+                <p>Focused maths coaching for Class 6–12 students. Concept clarity, regular tests, and individual attention.</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/courses">Courses</a>
+                <a href="/materials">materials</a>
+                <a href="/contact">Contact</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact Details</h3>
+                <p>📞 7702616245</p>
+                <p>📧 ranjithamstudycenter@gmail.com</p>
+                <p>📍 Your Location Here</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Ranjitham Study Center. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- ==========================
+         WHATSAPP FLOAT BUTTON
+    ========================== -->
+    <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
+<!-- ================= JS ================= -->
+
+
+
+</body>
+
+<script>
+
+/* ================= SEARCH ================= */
+function searchChapters(){
+  let input = document.getElementById("searchInput").value.toLowerCase();
+  let cards = document.querySelectorAll(".chapter-card");
+
+  cards.forEach(card=>{
+    let title = card.querySelector("h4").innerText.toLowerCase();
+    card.style.display = title.includes(input) ? "block" : "none";
+  });
+}
+
+
+/* ================= URL UPDATE ================= */
+function updateURL(board, cls){
+    const params = new URLSearchParams(window.location.search);
+
+    if(board) params.set("board", board);
+    if(cls) params.set("cls", cls);
+
+    history.replaceState(null,"","?"+params.toString());
+}
+
+
+/* ================= VIEW COUNT ================= */
+function increaseView(id){
+  let views = parseInt(localStorage.getItem("view_"+id) || 0);
+  views++;
+  localStorage.setItem("view_"+id, views);
+
+  let el = document.getElementById("view-"+id);
+  if(el) el.innerText = "👁 " + views + " views";
+}
+
+
+/* ================= DOWNLOAD COUNT ================= */
+function downloadNote(id){
+  let el = document.getElementById("down-"+id);
+  if(!el) return;
+
+  let count = parseInt(localStorage.getItem("down_"+id) || 0);
+  count++;
+  localStorage.setItem("down_"+id, count);
+
+  el.innerText = "⬇️ " + count + " downloads";
+  alert("Redirect to payment/download");
+}
+
+
+/* ================= CLASS SWITCH ================= */
+function showClass(id, btn){
+
+    document.getElementById("contentArea").classList.remove("hidden");
+
+    document.querySelectorAll(".class-content")
+        .forEach(c => c.classList.add("hidden"));
+
+    document.getElementById(id).classList.remove("hidden");
+
+    document.querySelectorAll(".class-btn")
+        .forEach(b => b.classList.remove("active"));
+
+    btn.classList.add("active");
+
+   }
+
+
+/* ================= BOARD SWITCH ================= */
+function selectBoard(btn){
+
+    // Remove old highlight
+    document.querySelectorAll(".board-btn")
+        .forEach(b => b.classList.remove("active"));
+
+    // Highlight selected
+    btn.classList.add("active");
+
+    // Show class section
+    document.getElementById("classSection")
+        .classList.remove("hidden");
+
+    // Reset class + content
+    document.querySelectorAll(".class-btn")
+        .forEach(c => c.classList.remove("active"));
+
+    document.getElementById("contentArea")
+        .classList.add("hidden");
+
+    document.querySelectorAll(".class-content")
+        .forEach(c => c.classList.add("hidden"));
+
+   }
+
+/* ================= HORIZONTAL SCROLL ================= */
+function scrollNotes(direction){
+    const box = document.getElementById("notesBox");
+    if(box){
+        box.scrollLeft += direction * 300;
+    }
+}
+
+
+/* ================= SECURITY CONTROLS ================= */
+
+const PDF_AREA = "#pdfViewer, #pdf-section, #pdfjs-frame";
+
+document.addEventListener("contextmenu", e=>{
+    if(e.target.closest(PDF_AREA)) e.preventDefault();
+});
+
+document.addEventListener("selectstart", e=>{
+    if(e.target.closest(PDF_AREA)) e.preventDefault();
+});
+
+document.addEventListener("dragstart", e=>{
+    if(e.target.closest(PDF_AREA)) e.preventDefault();
+});
+
+document.addEventListener("visibilitychange", ()=>{
+    document.body.style.filter =
+        document.hidden ? "blur(12px)" : "none";
+});
+
+document.addEventListener("keyup", e=>{
+    if(e.key === "PrintScreen"){
+        navigator.clipboard.writeText('');
+    }
+});
+
+
+/* ================= PDF RENDER ================= */
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const viewer = document.getElementById("pdfViewer");
+
+    if(!viewer) return;   // Viewer not present → do nothing
+
+    const url = viewer.dataset.pdfUrl;
+
+    pdfjsLib.getDocument(url).promise.then(function(pdf){
+
+        viewer.innerHTML = "";
+
+        for(let p=1; p<=pdf.numPages; p++){
+
+            pdf.getPage(p).then(function(page){
+
+                const canvas = document.createElement("canvas");
+                viewer.appendChild(canvas);
+
+                const ctx = canvas.getContext("2d");
+                const viewport = page.getViewport({scale:1.4});
+
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
+
+                page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                });
+
+            });
+
+        }
+
+    });
+
+});
+
+
+
+/* ================= PAGE LOAD INIT ================= */
+
+window.addEventListener("load", function(){
+
+    // Date
+    let d = new Date();
+    let formatted =
+        d.getDate() + " " +
+        d.toLocaleString('default',{month:'short'}) + " " +
+        d.getFullYear() + " | " +
+        d.toLocaleTimeString([], {hour:'2-digit', minute:'2-digit'});
+
+    document.querySelectorAll(".date")
+        .forEach(el=> el.textContent = formatted);
+
+    // View counts
+    document.querySelectorAll("[id^='view-']").forEach(el=>{
+        let id = el.id.replace("view-","");
+        let views = localStorage.getItem("view_"+id) || 0;
+        el.innerText = "👁 " + views + " views";
+    });
+
+    // Download counts
+    document.querySelectorAll("[id^='down-']").forEach(el=>{
+        let id = el.id.replace("down-","");
+        let downs = localStorage.getItem("down_"+id) || 0;
+        el.innerText = "⬇️ " + downs + " downloads";
+    });
+
+    /* ---------- URL PARAM HANDLING ---------- */
+
+const params = new URLSearchParams(window.location.search);
+
+const board = params.get("board");
+const cls   = params.get("cls");
+const open  = params.get("open");
+
+
+// ⭐ Activate board properly
+
+document.addEventListener("DOMContentLoaded", function(){
+
+    const board = "{{ active_board or '' }}";
+    const cls   = "{{ active_class or '' }}";
+
+    // Activate board
+    if(board !== ""){
+        const boardbtn = document.getElementById("board-" + board.toLowerCase());
+        if(boardbtn){
+            selectBoard(boardbtn);
+        }
+    }
+
+    // Activate class
+    if(cls !== ""){
+        const classbtn = document.getElementById("classbtn-" + cls);
+        if(classbtn){
+            showClass("class" + cls, classbtn);
+        }
+    }
+
+});
+
+
+
+});
+
+</script>
+
+
+</html>
+
+
+
+
+
+
+

@@ -1,0 +1,1023 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>About Us | Ranjitham Study Center</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+<style>
+*{
+    margin:0;
+    padding:0;
+    box-sizing:border-box;
+    font-family:'Poppins',sans-serif;
+
+}
+
+body{
+    background:#ffffff;
+    color:#333;
+    
+
+}
+
+/* NAVBAR */
+.navbar{
+    background:#ffffff;
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    padding:12px 25px;
+    box-shadow:0 4px 12px rgba(0,0,0,0.08);
+    flex-wrap:wrap;
+}
+
+.nav-left{
+    display:flex;
+    align-items:center;
+    gap:10px;
+}
+
+.logo{height:70px;}
+
+.brand-text h1{
+    font-size:22px;
+    color:#0b5394;
+}
+
+.brand-text p{
+    font-size:13px;
+    color:#0b5394;
+}
+
+.nav-center a{
+    margin:0 12px;
+    font-weight:600;
+    color:#0b5394;
+    text-decoration:none;
+}
+
+/* LANGUAGE SWITCH */
+.lang-switch{
+    display:flex;
+    gap:8px;
+}
+
+.lang-switch button{
+    padding:6px 14px;
+    border-radius:20px;
+    border:1px solid #0b5394;
+    background:white;
+    color:#0b5394;
+    cursor:pointer;
+    font-weight:600;
+}
+
+.lang-switch button.active{
+    background:#0b5394;
+    color:white;
+}
+
+/* COMMON */
+.section{
+    padding: 20px 0;
+
+}
+
+.container{
+    max-width:1500px;
+    margin:auto;
+    background:white;
+    padding:10px;
+    border-radius: 10px
+}
+
+h2{
+    color:#0b5394;
+    margin-bottom:10px;
+    text-align:center;
+}
+.about-points {
+    max-width: 2000px;
+    margin: 0 auto;
+    padding-left: 10px;
+    text-align:justify;
+}
+
+.about-points li {
+    margin-bottom: 20px;   /* space between points */
+    line-height: 1.7;
+    font-size: 16px;
+    text-align:justify;
+}
+
+/* FOUNDER SECTION */
+.FOUNDER {
+  width: 100%;
+  
+  margin: 0 auto;          /* reduce top & bottom gap */
+  padding: 0 40px;
+  display: grid;
+  grid-template-columns: 1.5fr 1.5fr;  /* better balance */
+  
+ 
+}
+
+/* IMAGE */
+.founder-img {
+  display: flex;
+
+    
+}
+
+.founder-img img {
+  width: 100%;
+  max-width: 600px;           /* ⭐ controls image size */
+  height: auto;
+  display: block;
+  border-radius: 10px;
+    
+}
+
+/* TEXT */
+.founder-content {
+    font-size: 16px;        /* 👈 px was missing */
+  line-height: 1.6;
+  color: #333;
+    align-items: right;
+  text-align: justify;    /* 👈 justify alignment */
+    
+    
+}
+
+/* MOBILE */
+@media (max-width: 768px) {
+  .FOUNDER {
+    flex-direction: column;
+    text-align: center;
+  }
+
+  .founder-content {
+    text-align: justify;
+  }
+
+  .founder-image img {
+    width: 100%;
+  }
+}
+
+
+
+
+/* VISION & MISSION */
+.vision-mission-section{
+        width: 100%;
+        padding: 80px 0;
+    }
+
+    /* TWO EQUAL COLUMNS */
+    .vision-mission-wrapper{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
+
+    /* CENTER CONTENT INSIDE EACH HALF */
+    .vm-box{
+        max-width: 1500px;
+        margin: 0 auto;   /* THIS IS THE KEY */
+        padding: 0 40px;
+    }
+
+    .vm-box h2{
+        font-size: 26px;
+        margin-bottom: 5px;
+        color: #111;
+    }
+
+    .vm-box p{
+        font-size: 16px;
+        line-height: 1.7;
+        color: #333;
+        text-align: justify;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px){
+        .vision-mission-wrapper{
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+    }
+
+/* FEATURES */
+.features-section {
+    padding: 80px 20px;
+    background: #ffffff;
+}
+
+.features-grid {
+    max-width: 1200px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 40px;   /* 🔥 space between cards */
+}
+
+.feature-card {
+    background: #f9fbff;
+    padding: 32px;
+    border-radius: 14px;
+    box-shadow: 0 10px 25px rgba(0,0,0,0.06);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.feature-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 18px 40px rgba(0,0,0,0.08);
+}
+
+.feature-card h3 {
+    font-size: 18px;
+    margin-bottom: 12px;
+    color: #0b3c91;
+}
+
+.feature-card p {
+    font-size: 15px;
+    line-height: 1.7;
+    color: #333;
+}
+@media (max-width: 900px) {
+    .features-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+@media (max-width: 600px) {
+    .features-grid {
+        grid-template-columns: 1fr;
+    }
+}
+.about-offerings {
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  padding: 60px 10%;
+}
+
+.offer-item {
+  flex: 1;
+  max-width: 32%;
+}
+
+/* CENTER THE HEADING */
+.offer-item h3 {
+  text-align: center;
+  font-size: 21px;
+  font-weight: 600;
+  color: #0a3d62;
+  margin-bottom: 8px;
+}
+
+/* LINE BELOW HEADING */
+.offer-item h3::after {
+  content: "";
+  display: block;
+  width: 45px;
+  height: 3px;
+  background-color: #0a3d62;
+  margin: 8px auto 12px auto;
+}
+
+/* ICON STYLE (BIGGER & CENTERED) */
+.offer-icon {
+  text-align: center;
+  font-size: 34px;   /* 🔥 icon size increased */
+  margin-bottom: 14px;
+}
+
+/* PARAGRAPH */
+.offer-item p {
+  font-size: 15.5px;
+  line-height: 1.8;
+  color: #444;
+  text-align: justify;
+}
+
+@media (max-width: 900px) {
+  .about-offerings {
+    flex-direction: column;
+    gap: 35px;
+  }
+
+  .offer-item {
+    max-width: 100%;
+  }
+}
+
+
+/* CTA */
+        .cta-section {
+            padding: 70px 20px;
+            background: linear-gradient(135deg, #b31217, #e52d27);
+        }
+
+        .cta-box {
+            max-width: 1100px;
+            margin: auto;
+            color: white;
+            border-radius: 18px;
+            padding: 50px;
+            text-align: center;
+        }
+
+        .cta-small {
+            font-size: 14px;
+            letter-spacing: 1px;
+            margin-bottom: 10px;
+            opacity: 0.9;
+        }
+
+        .cta-box h2 {
+            font-size: 36px;
+            margin-bottom: 15px;
+            color: #ffffff;
+        }
+
+        .cta-text {
+            font-size: 16px;
+            margin-bottom: 30px;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .cta-btn {
+            display: inline-block;
+            background: white;
+            color: #b31217;
+            padding: 14px 35px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .cta-btn:hover {
+            background: #ffeaea;
+        }
+
+        .footer {
+            background: #0b0f17;
+            color: #ccc;
+            padding: 60px 20px 20px;
+        }
+
+        .footer-container {
+            max-width: 1100px;
+            margin: auto;
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 40px;
+        }
+
+        .footer-box h3 {
+            color: white;
+            margin-bottom: 15px;
+        }
+
+        .footer-box p {
+            line-height: 1.6;
+        }
+
+        .footer-box a {
+            display: block;
+            color: #ccc;
+            margin-bottom: 8px;
+        }
+
+        .footer-box a:hover {
+            color: white;
+        }
+
+        .footer-bottom {
+            text-align: center;
+            margin-top: 40px;
+            font-size: 14px;
+            border-top: 1px solid #333;
+            padding-top: 15px;
+        }
+
+        /* ==========================
+           WHATSAPP FLOAT BUTTON
+        ========================== */
+        .whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 56px;
+            height: 56px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            z-index: 1000;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .whatsapp:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        }
+
+        input, textarea, button {
+            width: 100%;
+            padding: 12px;
+            font-size: 16px;
+        }
+
+</style>
+</head>
+
+<body>
+
+<!-- NAVBAR -->
+<nav class="navbar">
+    <div class="nav-left">
+        <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo">
+        <div class="brand-text">
+            <h1>RANJITHAM STUDY CENTER</h1>
+            <p>Learn • Practice • Excel in Mathematics</p>
+        </div>
+    </div>
+
+    <div class="nav-center">
+        <a href="{{ url_for('home') }}">Home</a>
+        <a href="{{ url_for('about') }}">About</a>
+        <a href="{{ url_for('courses') }}">Class</a>
+        <a href="{{ url_for('materials') }}">Materials</a>
+        <a href="{{ url_for('contact') }}">Contact</a>
+    </div>
+
+    <div class="lang-switch">
+        <button id="enBtn" class="active" onclick="showEnglish()">English</button>
+        <button id="taBtn" onclick="showTamil()">தமிழ்</button>
+    </div>
+</nav>
+
+<!-- ENGLISH -->
+<div id="english">
+<section class="section">
+  <div class="container">
+    <h2>About Ranjitham Study Center</h2>
+<ul class="about-points">
+  <li>
+      <strong>Ranjitham Study Center</strong> is a dedicated educational institute providing high-quality mathematics coaching for students from <strong>Class 6 to Class 12</strong>. 
+        Our teaching approach focuses on strong concept clarity, helping students understand mathematics in a simple, structured, and stress-free manner.
+   </li>
+    <li>
+      The teaching methodology is carefully designed to ensure that students gain a solid foundation in basic concepts while developing confidence, problem-solving skills, and accuracy.
+        Each topic is explained step by step, making mathematics easy to learn and enjoyable for students.
+   </li>
+
+<li>
+      Regular weekly tests and doubt-clearing sessions help track student progress and strengthen their understanding continuously. 
+        Along with the school syllabus, students are also prepared for <strong>board examinations and competitive exams</strong> with an exam-oriented approach.
+</li>
+
+<li>
+      Our primary goal is to improve students’ speed, accuracy, and analytical thinking, enabling them to perform confidently in examinations and beyond.
+
+</li>
+</ul>
+   <section class="features-section">
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <h3>Concept Clarity</h3>
+      <p>Strong emphasis on fundamental concepts, explained clearly in a step-by-step manner.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Weekly Tests</h3>
+      <p>Regular tests to assess progress and build confidence for examinations.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Daily Worksheets</h3>
+      <p>Practice-oriented worksheets to improve speed and accuracy.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Doubt Clearing</h3>
+      <p>Personal doubts addressed with special attention to each student.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Face-to-Face Interaction</h3>
+      <p>Direct interaction ensures better understanding and comfort.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>Exam-Oriented Preparation</h3>
+      <p>Preparation aligned with board and competitive exam patterns.</p>
+    </div>
+
+  </div>
+<p> At <strong>Ranjitham Study Center</strong>, every student receives personal attention to identify their strengths and areas for improvement. 
+        With continuous guidance and motivation, we help students achieve academic excellence.
+    
+   
+      👉 With the vision of <strong>“Learn – Practice – Excel”</strong>,  
+      <strong>Ranjitham Study Center</strong> is the right choice for your child’s academic success.</p>
+     
+   
+  </div>
+<section class="about-offerings">
+  <div class="offer-item">
+    <h3>Online & Offline Classes</h3>
+    <div class="offer-icon">🧑‍🏫</div>
+    <p>
+      Ranjitham Study Center offers both <strong>online</strong> and 
+      <strong>offline tuition classes</strong>, allowing students to learn 
+      in the mode that suits them best.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>CBSE Class 12 – Handwritten Notes</h3>
+    <div class="offer-icon">✍️</div>
+    <p>
+      High-quality <strong>handwritten Mathematics notes</strong> are prepared 
+      especially for <strong>CBSE Class 12</strong>, focusing on important 
+      concepts, formulas, and solved examples.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>Paid PDF Downloads</h3>
+    <div class="offer-icon">⬇️</div>
+    <p>
+      Students can <strong>download notes in PDF format</strong> at a nominal 
+      charge. These notes are highly useful for <strong>revision and exam preparation</strong>.
+    </p>
+  </div>
+</section>
+
+
+
+
+ 
+</section>    
+<section class="section">
+<div class="FOUNDER">
+  <div class="founder-img">
+    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="Founder Balakumar">
+  </div>
+
+  <div class="founder-content">
+    <p>
+      Our center offers high-quality educational services, with a strong focus on academic excellence and result-oriented teaching. 
+      Structured coaching for academic and various competitive examinations is provided under the guidance of our founder, 
+      Mr. Balakumar, through a concept-driven and student-focused teaching methodology. 
+      
+      Our founder is a mathematics educator with a strong emphasis on concept-based learning and student motivation. He completed his 
+      Bachelor of Engineering at PSNA College of Engineering and Technology, Dindigul, followed by a 
+      Master of Technology from Thiagarajar College of Engineering, and is currently pursuing a 
+      PhD at VIT Chennai. 
+      
+      With a deep passion for teaching, he is committed to strengthening students’ fundamentals in 
+      school-level and engineering mathematics through clear explanations, logical thinking, and systematic problem-solving. 
+      
+      In addition to regular coaching, focused academic support is also provided for students with 
+      backlogs or arrears in Electrical and Electronics Engineering subjects, helping them gain confidence, 
+      clear examinations successfully, and achieve consistent academic progress.
+    </p>
+  </div>
+</div>
+</section>
+
+<section class="section vision-mission">
+  <div class="vision-mission-wrapper">
+      <div class="vm-box">
+        <h3>Vision</h3>
+        <p>
+          Our vision is to create a strong academic environment where students develop a deep understanding and appreciation for mathematics.
+          We strive to transform mathematics from a subject of memorization into a subject of logical thinking and problem-solving.
+          By nurturing curiosity, discipline, and confidence, we aim to prepare students not only for examinations but also for lifelong learning and intellectual growth.
+        </p>
+      </div>
+
+      <div class="vm-box">
+        <h3>Mission</h3>
+        <p>
+          Our mission is to deliver concept-oriented and student-focused mathematics education through well-structured teaching methods.
+          We emphasize clarity of fundamentals, step-by-step explanations, and consistent practice to ensure strong conceptual foundations.
+          Through regular assessments, personalized doubt-clearing sessions, and exam-focused training,
+          we guide each student towards improved performance, accuracy, and confidence in both board and competitive examinations.
+        </p>
+      </div>
+    </div>
+  </section>
+  </div>   
+    
+<!-- TAMIL -->
+<div id="tamil" style="display:none">
+
+<section class="section">
+  <div class="container">
+
+    <h2>ரஞ்சிதம் கல்வி மையம் பற்றி</h2>
+<ul class="about-points">
+  
+    <li>
+      ரஞ்சிதம் கல்வி மையம் என்பது 6 முதல் 12ஆம் வகுப்பு மாணவர்களுக்கு
+      தரமான மற்றும் கருத்து தெளிவுடன் கூடிய கணிதப் பயிற்சியை வழங்கும்
+      ஒரு சிறந்த கல்வி மையமாகும்.
+    </li>
+    <li>
+      எங்களின் கற்பித்தல் முறை, மாணவர்கள் அடிப்படை கருத்துகளை முழுமையாக
+      புரிந்து கொண்டு, கணிதத்தில் தன்னம்பிக்கை மற்றும் திறன் பெறுவதற்காக
+      வடிவமைக்கப்பட்டுள்ளது.ஒவ்வொரு பாடமும் எளிய முறையில், படிப்படியாக விளக்கப்படுவதால்
+      மாணவர்கள் கணிதத்தை பயமின்றி, ஆர்வத்துடன் கற்றுக்கொள்ள முடிகிறது.
+         </li>
+        <li>
+      வாரந்தோறும் தேர்வுகள் மற்றும் சந்தேக நிவாரண வகுப்புகள் மூலம்
+      மாணவர்களின் திறன் தொடர்ந்து மேம்படுத்தப்படுகிறது.பள்ளி பாடத்திட்டத்துடன் இணைந்து, பலகைத் தேர்வு மற்றும்
+      போட்டித் தேர்வு அடிப்படையில் தயாரிப்பு அளிக்கப்படுகிறது.
+         </li>
+     <li>
+      மாணவர்களின் திறன், வேகம் மற்றும் துல்லியத்தை மேம்படுத்துவதே
+      எங்களின் முக்கிய நோக்கமாகும்.
+    </li>
+</ul>
+    <h3>எங்களின் சிறப்பம்சங்கள்</h3>
+
+   <section class="features-section">
+  <div class="features-grid">
+
+    <div class="feature-card">
+      <h3>கருத்துத் தெளிவு</h3>
+      <p>அடிப்படை கருத்துக்களுக்கு முக்கியத்துவம் அளித்து, ஒவ்வொரு தலைப்பும் படிப்படியாக தெளிவாக விளக்கப்படுகிறது.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>வாராந்திர தேர்வுகள்</h3>
+      <p>மாணவர்களின் முன்னேற்றத்தை மதிப்பீடு செய்து, தேர்வுகளுக்கான நம்பிக்கையை வளர்க்க নিয়মமான தேர்வுகள் நடத்தப்படுகின்றன.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>தினசரி பயிற்சி வேலைத்தாள்கள்</h3>
+      <p>வேகம் மற்றும் துல்லியத்தை மேம்படுத்த பயிற்சி மையமான வேலைத்தாள்கள் வழங்கப்படுகின்றன.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>சந்தேகத் தீர்வு</h3>
+      <p>ஒவ்வொரு மாணவருக்கும் தனிப்பட்ட கவனம் அளித்து, அவர்களின் சந்தேகங்கள் தெளிவாக தீர்க்கப்படுகின்றன.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>நேரடி ஆசிரியர் தொடர்பு</h3>
+      <p>ஆசிரியர்களுடன் நேரடி தொடர்பு மாணவர்களுக்கு சிறந்த புரிதல் மற்றும் நம்பிக்கையை வழங்குகிறது.</p>
+    </div>
+
+    <div class="feature-card">
+      <h3>தேர்வு மையமான பயிற்சி</h3>
+      <p>பள்ளி மற்றும் போட்டித் தேர்வுகளின் முறைகளுக்கு ஏற்ப திட்டமிட்ட பயிற்சி வழங்கப்படுகிறது.</p>
+    </div>
+
+  </div>
+</section>
+
+
+    <p>
+      ரஞ்சிதம் கல்வி மையம், ஒவ்வொரு மாணவரின் திறமையையும் கவனித்து,
+      அவர்களை கல்வியில் சிறந்த நிலைக்கு கொண்டு செல்ல
+      தனிப்பட்ட கவனம் வழங்குகிறது.
+      <strong>“கற்றல் – பயிற்சி – சிறந்த பெறுபேறு”</strong>
+      என்ற நோக்குடன், உங்கள் குழந்தையின்
+      கல்வி வெற்றிக்கான சரியான தேர்வாக
+      ரஞ்சிதம் கல்வி மையம் விளங்குகிறது.
+    </p>
+
+  </div>
+</section>
+
+ <section class="about-offerings">
+  <div class="offer-item">
+    <h3>ஆன்லைன் & ஆஃப்லைன் வகுப்புகள்</h3>
+    <div class="offer-icon">🧑‍🏫</div>
+    <p>
+      ரஞ்சிதம் ஸ்டடி சென்டர் மாணவர்களின் தேவைக்கேற்ப 
+      <strong>ஆன்லைன்</strong> மற்றும் <strong>ஆஃப்லைன் டியூஷன் வகுப்புகளை</strong> 
+      வழங்குகிறது. மாணவர்கள் தங்களுக்கு ஏற்ற முறையில் கற்றுக்கொள்ள முடியும்.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>CBSE 12ஆம் வகுப்பு – கைஎழுத்து குறிப்புகள்</h3>
+    <div class="offer-icon">✍️</div>
+    <p>
+      <strong>CBSE 12ஆம் வகுப்பு</strong> மாணவர்களுக்காக, தேர்வை மையமாகக் கொண்டு 
+      முக்கிய கருத்துகள், சூத்திரங்கள் மற்றும் தீர்வு எடுத்துக்காட்டுகளுடன் 
+      <strong>கைஎழுத்து கணித குறிப்புகள்</strong> தயார் செய்யப்படுகின்றன.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>கட்டண அடிப்படையிலான PDF பதிவிறக்கம்</h3>
+    <div class="offer-icon">⬇️</div>
+    <p>
+      மாணவர்கள் குறைந்த கட்டணத்தில் <strong>PDF வடிவில் குறிப்புகளை பதிவிறக்கம்</strong> 
+      செய்யலாம். இக்குறிப்புகள் <strong>மறுபதிப்பு (Revision)</strong> மற்றும் 
+      <strong>தேர்வு தயாரிப்பிற்கு</strong> மிகுந்த பயனுள்ளதாக இருக்கும்.
+    </p>
+  </div>
+</section>
+   
+
+<!-- FOUNDER SECTION -->
+<section class="section">
+<div class="FOUNDER">
+  <div class="founder-img">
+    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="Founder Balakumar">
+  </div>
+
+  <div class="founder-content">
+    <p>
+      எங்கள் மையம் உயர்தர கல்வி சேவைகளை வழங்கி வருகிறது.
+      கல்வித் திறனை மேம்படுத்தவும்,
+      தேர்வு முடிவுகளை மையமாகக் கொண்ட கற்றலை வழங்கவும்
+      சிறப்பு கவனம் செலுத்துகிறோம்.
+      கல்வி மற்றும் பல்வேறு போட்டித் தேர்வுகளுக்கான
+      முறையான பயிற்சி, எங்கள் நிறுவனர்
+      <strong>திரு. பாலகுமார்</strong> அவர்களின்
+      வழிகாட்டுதலின் கீழ்,
+      கருத்து அடிப்படையிலான மற்றும்
+      மாணவர் மையக் கற்றல் முறையில் வழங்கப்படுகிறது.
+    </p>
+
+    <p>
+      அவர் <strong>திண்டுக்கல் PSNA பொறியியல் கல்லூரியில்</strong>
+      இளங்கலைப் பொறியியல் பட்டமும்,
+      <strong>மதுரை தியாகராஜர் பொறியியல் கல்லூரியில்</strong>
+      முதுநிலைப் பொறியியல் பட்டமும் பெற்றுள்ளார்.
+      தற்போது <strong>VIT சென்னை</strong>யில்
+      முனைவர் பட்ட ஆய்வை மேற்கொண்டு வருகிறார்.
+    </p>
+
+    <p>
+      பள்ளி நிலை மற்றும் பொறியியல் கணிதத்தில்
+      மாணவர்களின் அடிப்படை அறிவை வலுப்படுத்துவதுடன்,
+      <strong>மின்சார மற்றும் மின்னணு பொறியியல் (EEE)</strong>
+      துறையில் நிலுவை பாடங்கள் கொண்ட மாணவர்களுக்கு
+      தனிப்பட்ட கல்வி வழிகாட்டலும் வழங்கப்படுகிறது.
+      இதன் மூலம் மாணவர்கள் நம்பிக்கையுடன்
+      தேர்வுகளைத் தாண்டி,
+      தொடர்ச்சியான கல்வி முன்னேற்றத்தை
+      அடைய முடிகிறது.
+    </p>
+  </div>
+</div>
+
+</section>
+    
+<!-- VISION & MISSION -->
+<section class="section vision-mission">
+ <div class="vision-mission-wrapper">
+      <div class="vm-box">
+        <h3>எங்கள் பார்வை</h3>
+        <p>
+          மாணவர்கள் கணிதத்தை ஆழமாகப் புரிந்து கொண்டு அதனை விரும்பக் கற்றுக்கொள்ளும் வலுவான கல்விச் சூழலை உருவாக்குவதே எங்கள் பார்வையாகும்.
+             மனப்பாடமாகக் கற்றுக் கொள்ளும் பாடமாக இல்லாமல், தர்க்க ரீதியான சிந்தனை மற்றும் பிரச்சினைத் தீர்வு திறனை வளர்க்கும் பாடமாக கணிதத்தை மாற்ற முயற்சிக்கிறோம்.
+             ஆர்வம், ஒழுக்கம் மற்றும் தன்னம்பிக்கையை வளர்த்து, மாணவர்களை தேர்வுகளுக்காக மட்டுமல்லாமல், வாழ்நாள் முழுவதும் கற்றல் மற்றும் அறிவாற்றல் 
+            வளர்ச்சிக்காகவும் தயார்படுத்துவதே எங்கள் இலக்காகும்.
+        </p>
+      </div>
+
+      <div class="vm-box">
+        <h3>எங்கள் நோக்கம்</h3>
+        <p>
+         நன்கு திட்டமிடப்பட்ட கற்பித்தல் முறைகளின் மூலம் கருத்து அடிப்படையிலும் மாணவர் மையமாகவும் அமைந்த கணிதக் கல்வியை வழங்குவதே எங்கள் நோக்கமாகும்.
+       அடிப்படை கருத்துகளின் தெளிவு, படிப்படையான விளக்கங்கள் மற்றும் தொடர்ச்சியான பயிற்சி ஆகியவற்றிற்கு முக்கியத்துவம் அளித்து, மாணவர்களுக்கு வலுவான கருத்து அடித்தளத்தை உருவாக்குகிறோம்.
+          வழக்கமான மதிப்பீடுகள், தனிப்பட்ட சந்தேகத் தீர்வு வகுப்புகள் மற்றும் தேர்வு மையமான பயிற்சிகள் மூலம், பள்ளி மற்றும் போட்டித் தேர்வுகளில் 
+            மாணவர்கள் சிறந்த செயல்திறன், துல்லியம் மற்றும் தன்னம்பிக்கையை பெற வழிகாட்டுகிறோம்.
+        </p>
+      </div>
+
+    </div>
+      
+</section>
+</div>
+
+
+<section class="cta-section">
+        <div class="cta-box">
+            <p class="cta-small">Best Maths Tuition in Your Area</p>
+            <h2>Ready to improve your Maths?</h2>
+            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with expert guidance.</p>
+            <a href="/contact" class="cta-btn">Enroll Now</a>
+        </div>
+    </section>
+
+
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>Ranjitham Study Center</h3>
+                <p>Focused maths coaching for Class 6–12 students. Concept clarity, regular tests, and individual attention.</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/courses">Courses</a>
+                <a href="/materials">materials</a>
+                <a href="/contact">Contact</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact Details</h3>
+                <p>📞 7702616245</p>
+                <p>📧 ranjithamstudycenter@gmail.com</p>
+                <p>📍 Your Location Here</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            © 2026 Ranjitham Study Center. All Rights Reserved.
+        </div>
+    </footer>
+
+    <!-- ==========================
+         WHATSAPP FLOAT BUTTON
+    ========================== -->
+    <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
+
+
+<script>
+function showEnglish(){
+    english.style.display="block";
+    tamil.style.display="none";
+    enBtn.classList.add("active");
+    taBtn.classList.remove("active");
+}
+function showTamil(){
+    english.style.display="none";
+    tamil.style.display="block";
+    taBtn.classList.add("active");
+    enBtn.classList.remove("active");
+}
+</script>
+
+</body>
+</html>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
