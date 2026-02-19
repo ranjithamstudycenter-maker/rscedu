@@ -42,6 +42,8 @@ button{
 <script>
 var product_id = "{{ product_id }}";
 var mode = "{{ mode }}";
+var board = "{{ board }}";
+var cls = "{{ cls }}";
 
 var options = {
     "key": "{{ razorpay_key }}",
@@ -54,11 +56,13 @@ var options = {
     "handler": function (response) {
 
         // Redirect to flask success route
-        window.location.href =
-            "/payment_success?product=" + product_id +
-            "&mode=" + mode;
-    },
+       const url =
+  "/materials?open=" + encodeURIComponent(product_id) +
+  "&board=" + encodeURIComponent(board) +
+  "&cls=" + encodeURIComponent(cls) +
+  "&paid=1";
 
+window.location.href = url;
     "prefill":{
         "email": document.getElementById("email").value,
         "contact": document.getElementById("phone").value
