@@ -627,10 +627,10 @@ Class 12
                           
                           {% else %}
                           
-                         <button onclick="window.location.href='{{ url_for('pay', product='Linear Programming', mode='view') }}'">
+                         <button onclick="window.location.href='{{ url_for('pay', product='Linear Programming', mode='view', board=active_board, cls=active_class) }}'">
                                🔐 Pay to View
                                 </button>
-                      
+
 
 
 {% endif %}
