@@ -257,7 +257,7 @@ def payment_success():
         board=board,
         cls=cls,
         product_id=product_id,
-        paid=1
+        paid=1 
     ))
 
 
