@@ -100,19 +100,18 @@ def courses():
 
 @app.route("/materials")
 def materials():
-
-    
-
+ 
     board = request.args.get("board")
     cls = request.args.get("cls")
-    open_id = request.args.get("open")
+    open_id = request.args.get("open") or request.args.get("product_id")
 
     access = {}
 
     for pid in PRODUCTS:
         access[pid] = {
-            "view": check_access("view_" + pid),
-            "download": check_access("download_" + pid)
+           
+            "view":  bool(session.get("view_" + pid.strip())),
+            "download": bool(session.get("download_" + pid))
         }
 
     return render_template(
@@ -123,6 +122,7 @@ def materials():
         products=PRODUCTS,
         access=access
     )
+
 
 
 
@@ -227,12 +227,12 @@ def pay():
 @app.route("/payment_success")
 def payment_success():
 
-    product_id = session.get("last_product")
-    board = session.get("last_board")
-    cls = session.get("last_cls")
-    mode = session.get("last_mode")
+    # ⭐ Get directly from URL (not session)
+    product_id = request.args.get("product")
+    mode = request.args.get("mode")
+    board = request.args.get("board")
+    cls = request.args.get("cls")
 
-    # Safety check
     if not product_id:
         return redirect(url_for("materials"))
 
@@ -246,14 +246,20 @@ def payment_success():
         session["download_" + product_id] = {
             "expiry": (datetime.now() + timedelta(minutes=1)).isoformat()
         }
+        
+    session["access"] = session.get("access", {})
+    session["access"][product_id] = {"view": True}
 
-    # ⭐ Correct redirect
+
+   # ⭐ FINAL redirect
     return redirect(url_for(
         "materials",
         board=board,
         cls=cls,
+        product_id=product_id,
         paid=1
     ))
+
 
 
 
