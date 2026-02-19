@@ -194,9 +194,9 @@ def pay():
 
     product_id = request.args.get("product")
     mode = request.args.get("mode")
-    board = request.args.get("board")
-    cls = request.args.get("cls")
-
+    board = request.args.get("board") or "cbse"
+    cls = request.args.get("cls") or "12"
+    
     session["last_board"] = board
     session["last_cls"] = cls
     session["last_product"] = product_id
