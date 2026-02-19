@@ -245,26 +245,26 @@ def payment_success():
 
     # Grant access
     if mode == "view":
-        session["view_" + product_id] = {
+        session["view_" + pid] = {
             "expiry": (datetime.now() + timedelta(minutes=1)).isoformat()
         }
 
     elif mode == "download":
-        session["download_" + product_id] = {
+        session["download_" + pid] = {
             "expiry": (datetime.now() + timedelta(minutes=1)).isoformat()
         }
         
     session["access"] = session.get("access", {})
-    session["access"][product_id] = {"view": True}
-
+    session["access"][pid] = {"view": True}
+    session.modified = True
 
    # ⭐ FINAL redirect
     return redirect(url_for(
         "materials",
         board=board,
         cls=cls,
-        product_id=product_id,
-        paid=1 
+        open=product_id
+       
     ))
 
 
