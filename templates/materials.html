@@ -94,7 +94,13 @@ body{
   gap:20px;
   margin:30px 0;
 }
+.hidden{
+  display:none;
+}
 
+.show{
+  display:flex;
+}
 .class-btn{
   padding:12px 25px;
   border-radius:6px;;
@@ -532,7 +538,9 @@ onclick="selectBoard(this)">
  </div>
 
 <!-- CLASS BUTTONS -->
-  <div id="classSection" class="class-selector hidden">
+  <div id="classSection"
+class="class-selector {% if active_board %}show{% else %}hidden{% endif %}">
+
     <button id="classbtn-10"
 class="class-btn {% if active_class == '10' %}active{% endif %}"
 onclick="showClass('class10',this)">
@@ -553,12 +561,15 @@ Class 12
 
 </div>
 
-<div id="contentArea" class="container hidden">
+<div id="contentArea"
+class="container {% if active_class %} {% else %}hidden{% endif %}">
 
 <!-- ================= CONTENT AREAS ================= -->
 
 <!-- CLASS 10 MESSAGE -->
-<div id="class10" class="class-content">
+<div id="class11"
+class="class-content {% if active_class == '11' %}{% else %}hidden{% endif %}">
+
     <div class="info-box">
         <h2>📢 Notes Launching Soon</h2>
         <p>
@@ -570,7 +581,9 @@ Class 12
 </div>
 
 <!-- CLASS 11 MESSAGE -->
-<div id="class11" class="class-content hidden">
+<div id="class11"
+class="class-content {% if active_class == '11' %}{% else %}hidden{% endif %}">
+
     <div class="info-box">
         <h2>📢 Notes Launching Soon</h2>
         <p>
@@ -583,7 +596,9 @@ Class 12
 </div>
 
 <!-- CLASS 12 PDFs -->
-<div id="class12" class="class-content hidden">
+<div id="class11"
+class="class-content {% if active_class == '11' %}{% else %}hidden{% endif %}">
+
     <!-- Vertical Info -->
     <div class="info-box">
         <h2>📘 Class 12 Notes</h2>
@@ -996,35 +1011,38 @@ window.addEventListener("load", function(){
 
     /* ---------- URL PARAM HANDLING ---------- */
 
-const params = new URLSearchParams(window.location.search);
-
-const board = params.get("board");
-const cls   = params.get("cls");
-const open  = params.get("open");
-
-
-// ⭐ Activate board properly
-
 document.addEventListener("DOMContentLoaded", function(){
 
-    const board = "{{ active_board or '' }}";
-    const cls   = "{{ active_class or '' }}";
+    const params = new URLSearchParams(window.location.search);
 
-    // Activate board
-    if(board !== ""){
-        const boardbtn = document.getElementById("board-" + board.toLowerCase());
-        if(boardbtn){
-            selectBoard(boardbtn);
+    let board = params.get("board") || sessionStorage.getItem("lastBoard");
+    let cls   = params.get("cls")   || sessionStorage.getItem("lastClass");
+
+    console.log("AUTO BOARD =", board);
+    console.log("AUTO CLASS =", cls);
+
+    // ---------- BOARD ----------
+    if(board){
+        const boardBtn = document.getElementById("board-" + board);
+
+        if(boardBtn){
+            selectBoard(boardBtn);
         }
     }
 
-    // Activate class
-    if(cls !== ""){
-        const classbtn = document.getElementById("classbtn-" + cls);
-        if(classbtn){
-            showClass("class" + cls, classbtn);
+    // ---------- CLASS ----------
+    setTimeout(function(){
+        if(cls){
+            const classBtn = document.getElementById("classbtn-" + cls);
+
+            if(classBtn){
+                showClass("class" + cls, classBtn);
+            }
         }
-    }
+    }, 300);
+
+});
+
 
 });
 
