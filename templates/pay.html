@@ -74,19 +74,24 @@ window.location.href = url;
     }
 };
 
-var rzp = new Razorpay(options);
+window.onload = function(){
 
-document.getElementById('rzp-button').onclick=function(e){
+    var rzp = new Razorpay(options);
 
-    if(!document.getElementById("email").value ||
-       !document.getElementById("phone").value){
-        alert("Enter Email & Phone");
-        return;
-    }
+    document.getElementById('rzp-button').onclick = function(e){
 
-    rzp.open();
-    e.preventDefault();
-}
+        if(!document.getElementById("email").value ||
+           !document.getElementById("phone").value){
+            alert("Enter Email & Phone");
+            return;
+        }
+
+        rzp.open();
+        e.preventDefault();
+    };
+
+};
+
 </script>
 
 </body>
