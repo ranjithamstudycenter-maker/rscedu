@@ -256,14 +256,15 @@ def payment_success():
         
     session["access"] = session.get("access", {})
     session["access"][product_id] = {"view": True}
-    session.modified = True
+    
 
    # ⭐ FINAL redirect
     return redirect(url_for(
         "materials",
         board=board,
         cls=cls,
-        open=product_id
+        open=product_id,
+        paid=1
        
     ))
 
