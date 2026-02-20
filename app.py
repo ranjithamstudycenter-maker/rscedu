@@ -7,16 +7,11 @@ import time
 
 from email.message import EmailMessage
 from datetime import datetime, timedelta
-from flask_session import Session
+
 
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
-app.secret_key = os.environ.get("SECRET_KEY", "fallback_secret_key_123")
-
-app.config["SESSION_TYPE"] = "filesystem"
-app.config["SESSION_PERMANENT"] = False
-
-Session(app)
+app.secret_key = os.environ.get("SECRET_KEY")
 
 # -------------------- FOLDERS --------------------
 PDF_FOLDER = "rsc_download"
