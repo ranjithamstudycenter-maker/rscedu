@@ -245,12 +245,12 @@ def payment_success():
 
     # Grant access
     if mode == "view":
-        session["view_" + pid] = {
+        session["view_" + product_id] = {
             "expiry": (datetime.now() + timedelta(minutes=1)).isoformat()
         }
 
     elif mode == "download":
-        session["download_" + pid] = {
+        session["download_" + product_id] = {
             "expiry": (datetime.now() + timedelta(minutes=1)).isoformat()
         }
         
