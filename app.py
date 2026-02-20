@@ -255,7 +255,7 @@ def payment_success():
         }
         
     session["access"] = session.get("access", {})
-    session["access"][pid] = {"view": True}
+    session["access"][product_id] = {"view": True}
     session.modified = True
 
    # ⭐ FINAL redirect
