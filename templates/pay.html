@@ -55,22 +55,22 @@ var options = {
 
     "handler": function (response) {
 
-        // Redirect to flask success route
-       const url =
-  "/payment_success?product=" + product_id +
-  "&mode=" + mode +
-  "&board=" + board +
-  "&cls=" + cls;
+        const url =
+          "/payment_success?product=" + product_id +
+          "&mode=" + mode +
+          "&board=" + board +
+          "&cls=" + cls;
 
-window.location.href = url;
- 
-    "prefill":{
-        "email": document.getElementById("email").value,
-        "contact": document.getElementById("phone").value
+        window.location.href = url;
+    },   // ✅ CLOSED HERE
+
+    "prefill": {
+        "email": "",
+        "contact": ""
     },
 
-    "theme":{
-        "color":"#0b5394"
+    "theme": {
+        "color": "#0b5394"
     }
 };
 
@@ -80,19 +80,23 @@ window.onload = function(){
 
     document.getElementById('rzp-button').onclick = function(e){
 
-        if(!document.getElementById("email").value ||
-           !document.getElementById("phone").value){
+        var email = document.getElementById("email").value;
+        var phone = document.getElementById("phone").value;
+
+        if(!email || !phone){
             alert("Enter Email & Phone");
             return;
         }
+
+        // update prefill before opening
+        options.prefill.email = email;
+        options.prefill.contact = phone;
 
         rzp.open();
         e.preventDefault();
     };
 
 };
-    };
-
 </script>
 
 </body>
