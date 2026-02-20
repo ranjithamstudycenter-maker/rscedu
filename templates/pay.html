@@ -57,12 +57,13 @@ var options = {
 
         // Redirect to flask success route
        const url =
-  "/materials?open=" + encodeURIComponent(product_id) +
+  "/payment_success?product=" + encodeURIComponent(product_id) +
+  "&mode=" + encodeURIComponent(mode) +
   "&board=" + encodeURIComponent(board) +
-  "&cls=" + encodeURIComponent(cls) +
-  "&paid=1";
+  "&cls=" + encodeURIComponent(cls);
 
 window.location.href = url;
+ 
     "prefill":{
         "email": document.getElementById("email").value,
         "contact": document.getElementById("phone").value
