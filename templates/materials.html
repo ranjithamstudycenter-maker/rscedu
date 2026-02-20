@@ -539,7 +539,7 @@ onclick="selectBoard(this)">
 
 <!-- CLASS BUTTONS -->
   <div id="classSection"
-class="class-selector {% if active_board %}show{% else %}hidden{% endif %}">
+class="class-selector {% if active_board %}{% else %}hidden{% endif %}">
 
     <button id="classbtn-10"
 class="class-btn {% if active_class == '10' %}active{% endif %}"
@@ -568,7 +568,7 @@ class="container {% if active_class %} {% else %}hidden{% endif %}">
 
 <!-- CLASS 10 MESSAGE -->
 <div id="class10"
-class="class-content {% if active_class == '10' %}{% else %}hidden{% endif %}">
+class="class-content {% if active_class != '10' %}hidden{% endif %}">
 
     <div class="info-box">
         <h2>📢 Notes Launching Soon</h2>
@@ -582,7 +582,7 @@ class="class-content {% if active_class == '10' %}{% else %}hidden{% endif %}">
 
 <!-- CLASS 11 MESSAGE -->
 <div id="class11"
-class="class-content {% if active_class == '11' %}{% else %}hidden{% endif %}">
+class="class-content {% if active_class != '11' %}hidden{% endif %}">
 
     <div class="info-box">
         <h2>📢 Notes Launching Soon</h2>
@@ -597,7 +597,7 @@ class="class-content {% if active_class == '11' %}{% else %}hidden{% endif %}">
 
 <!-- CLASS 12 PDFs -->
 <div id="class12"
-class="class-content {% if active_class == '12' %}{% else %}hidden{% endif %}">
+class="class-content {% if active_class != '12' %}hidden{% endif %}">
 
     <!-- Vertical Info -->
     <div class="info-box">
