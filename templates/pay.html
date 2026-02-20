@@ -57,10 +57,10 @@ var options = {
 
         // Redirect to flask success route
        const url =
-  "/payment_success?product=" + encodeURIComponent(product_id) +
-  "&mode=" + encodeURIComponent(mode) +
-  "&board=" + encodeURIComponent(board) +
-  "&cls=" + encodeURIComponent(cls);
+  "/payment_success?product=" + product_id +
+  "&mode=" + mode +
+  "&board=" + board +
+  "&cls=" + cls;
 
 window.location.href = url;
  
