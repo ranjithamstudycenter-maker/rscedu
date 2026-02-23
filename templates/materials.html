@@ -977,23 +977,54 @@ document.addEventListener("DOMContentLoaded", function(){
                 canvas.height = scaledViewport.height;
 
                 page.render({
-                      canvasContext: ctx,
-                      viewport: scaledViewport
-                  }).promise.then(function(){
-                  
-                      // ✅ WATERMARK START
-                      ctx.save();
-                      ctx.globalAlpha = 0.15;
-                      ctx.font = "30px Arial";
-                      ctx.fillStyle = "red";
-                      ctx.rotate(-0.4);
-                  
-                      ctx.fillText("Ranjitham Study Center", 150, 400);
-                  
-                      ctx.restore();
-                      // ✅ WATERMARK END
-                  
-                  });
+                          canvasContext: ctx,
+                          viewport: scaledViewport
+                      }).promise.then(function(){
+                      
+                          const pageWidth = canvas.width;
+                          const pageHeight = canvas.height;
+                      
+                          /* ================= TOP RIGHT TEXT ================= */
+                          ctx.save();
+                          ctx.globalAlpha = 0.12;
+                          ctx.font = "bold 26px Arial";
+                          ctx.fillStyle = "#000";
+                          ctx.textAlign = "right";
+                          ctx.fillText("RANJITHAM STUDY CENTER", pageWidth - 40, 60);
+                          ctx.restore();
+                      
+                      
+                          /* ================= CENTER IMAGE ================= */
+                          const logo = new Image();
+                          logo.src = "/static/images/logo.png";
+                      
+                          logo.onload = function(){
+                      
+                              ctx.save();
+                              ctx.globalAlpha = 0.12;
+                      
+                              const imgWidth = pageWidth * 0.35;
+                              const imgHeight = imgWidth * (logo.height / logo.width);
+                      
+                              ctx.drawImage(
+                                  logo,
+                                  (pageWidth - imgWidth) / 2,
+                                  (pageHeight - imgHeight) / 2,
+                                  imgWidth,
+                                  imgHeight
+                              );
+                      
+                              /* ================= FOOTER TEXT ================= */
+                              ctx.font = "22px 'Brush Script MT', cursive";
+                              ctx.textAlign = "center";
+                              ctx.fillText("MJS Handwritten Notes", pageWidth / 2, pageHeight - 40);
+                      
+                              ctx.restore();
+                          };
+                      
+                      });
+                      
+
 
 
             });
