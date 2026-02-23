@@ -470,6 +470,11 @@ body{
     background:white;
     border-radius:10px;
 }
+  canvas{
+    display:block;
+    width:100% !important;
+    height:auto !important;
+}
 
 </style>
   <script type="module">
@@ -972,9 +977,24 @@ document.addEventListener("DOMContentLoaded", function(){
                 canvas.height = scaledViewport.height;
 
                 page.render({
-                    canvasContext: ctx,
-                    viewport: scaledViewport
-                });
+                      canvasContext: ctx,
+                      viewport: scaledViewport
+                  }).promise.then(function(){
+                  
+                      // ✅ WATERMARK START
+                      ctx.save();
+                      ctx.globalAlpha = 0.15;
+                      ctx.font = "30px Arial";
+                      ctx.fillStyle = "red";
+                      ctx.rotate(-0.4);
+                  
+                      ctx.fillText("Ranjitham Study Center", 150, 400);
+                  
+                      ctx.restore();
+                      // ✅ WATERMARK END
+                  
+                  });
+
 
             });
 
