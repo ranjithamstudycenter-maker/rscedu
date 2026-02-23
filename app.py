@@ -95,23 +95,23 @@ def courses():
 
 @app.route("/materials")
 def materials():
- 
+
     board = request.args.get("board")
     cls = request.args.get("cls")
     open_id = request.args.get("open") or request.args.get("product_id")
-    
+
     access = {}
 
     for pid in PRODUCTS:
         access[pid] = {
-           
-            "view":  bool(session.get("view_" + pid.strip())),
+            "view": bool(session.get("view_" + pid)),
             "download": bool(session.get("download_" + pid))
         }
 
     filtered_products = {
         pid: p for pid, p in PRODUCTS.items()
-        if p["class"] == cls and p["board"] == board
+        if (not cls or p["class"] == cls) and
+           (not board or p["board"] == board)
     }
 
     return render_template(
@@ -122,6 +122,7 @@ def materials():
         products=filtered_products,
         access=access
     )
+
 
 
 
