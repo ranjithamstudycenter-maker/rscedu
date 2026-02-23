@@ -944,8 +944,7 @@ document.addEventListener("keyup", e => {
 document.addEventListener("DOMContentLoaded", function(){
 
     const viewer = document.getElementById("pdfViewer");
-
-    if(!viewer) return;   // Viewer not present → do nothing
+    if(!viewer) return;
 
     const url = viewer.dataset.pdfUrl;
 
@@ -953,7 +952,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
         viewer.innerHTML = "";
 
-        for(let p=1; p<=pdf.numPages; p++){
+        for(let p = 1; p <= pdf.numPages; p++){
 
             pdf.getPage(p).then(function(page){
 
@@ -961,14 +960,20 @@ document.addEventListener("DOMContentLoaded", function(){
                 viewer.appendChild(canvas);
 
                 const ctx = canvas.getContext("2d");
-                const viewport = page.getViewport({scale:1.4});
 
-                canvas.height = viewport.height;
-                canvas.width = viewport.width;
+                // Get original viewport
+                const viewport = page.getViewport({ scale: 1 });
+
+                // Calculate responsive scale
+                const scale = viewer.clientWidth / viewport.width;
+                const scaledViewport = page.getViewport({ scale: scale });
+
+                canvas.width = scaledViewport.width;
+                canvas.height = scaledViewport.height;
 
                 page.render({
                     canvasContext: ctx,
-                    viewport: viewport
+                    viewport: scaledViewport
                 });
 
             });
