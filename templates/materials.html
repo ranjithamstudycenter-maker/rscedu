@@ -417,13 +417,6 @@ body{
     padding: 0;
 }
 
-canvas {
-    display: block;
-}
-
-
-
-
 /* ---------- PDF ACTION BUTTONS ---------- */
 
 .pdf-actions{
@@ -741,8 +734,7 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
 
     <div id="pdfViewer"
        data-pdf-url="{{ url_for('secure_view', product_id=open) }}">
-       <canvas id="pdf-canvas"></canvas>
-    </div>
+           </div>
 
     <div class="pdf-actions">
       
@@ -911,34 +903,22 @@ function scrollNotes(direction){
 }
 
 
-/* ================= SECURITY CONTROLS ================= */
-
 /* ================= PDF PROTECTION ================= */
 
 const PDF_AREA = "#pdfViewer";
 
-/* Disable right click only inside PDF */
 document.addEventListener("contextmenu", e => {
-    if (e.target.closest(PDF_AREA)) {
-        e.preventDefault();
-    }
+    if (e.target.closest(PDF_AREA)) e.preventDefault();
 });
 
-/* Disable text selection */
 document.addEventListener("selectstart", e => {
-    if (e.target.closest(PDF_AREA)) {
-        e.preventDefault();
-    }
+    if (e.target.closest(PDF_AREA)) e.preventDefault();
 });
 
-/* Disable drag */
 document.addEventListener("dragstart", e => {
-    if (e.target.closest(PDF_AREA)) {
-        e.preventDefault();
-    }
+    if (e.target.closest(PDF_AREA)) e.preventDefault();
 });
 
-/* Block Print */
 window.addEventListener("keydown", function(e) {
     if ((e.ctrlKey && e.key === 'p') || e.key === 'PrintScreen') {
         alert("Printing not allowed");
@@ -946,13 +926,11 @@ window.addEventListener("keydown", function(e) {
     }
 });
 
-/* Blur when tab hidden */
 document.addEventListener("visibilitychange", () => {
     document.body.style.filter =
         document.hidden ? "blur(15px)" : "none";
 });
 
-/* Clear clipboard after PrintScreen */
 document.addEventListener("keyup", e => {
     if (e.key === "PrintScreen") {
         navigator.clipboard.writeText('');
@@ -960,55 +938,46 @@ document.addEventListener("keyup", e => {
 });
 
 
+
 /* ================= PDF RENDER ================= */
 
-var container = document.getElementById("pdfViewer");
-var pdfUrl = container.getAttribute("data-pdf-url");
-var canvas = document.getElementById("pdf-canvas");
-var context = canvas.getContext("2d");
+document.addEventListener("DOMContentLoaded", function(){
 
-var pdf = null;   // important
+    const viewer = document.getElementById("pdfViewer");
 
-/* ================= LOAD PDF ================= */
+    if(!viewer) return;   // Viewer not present → do nothing
 
-pdfjsLib.getDocument(pdfUrl).promise.then(function(pdfDoc) {
+    const url = viewer.dataset.pdfUrl;
 
-    pdf = pdfDoc;
+    pdfjsLib.getDocument(url).promise.then(function(pdf){
 
-    // Render only after PDF is ready
-    renderPage(1);
+        viewer.innerHTML = "";
 
-}).catch(function(error){
-    console.error("PDF load error:", error);
-});
+        for(let p=1; p<=pdf.numPages; p++){
 
+            pdf.getPage(p).then(function(page){
 
-/* ================= RENDER FUNCTION ================= */
+                const canvas = document.createElement("canvas");
+                viewer.appendChild(canvas);
 
-function renderPage(pageNum) {
+                const ctx = canvas.getContext("2d");
+                const viewport = page.getViewport({scale:1.4});
 
-    if (!pdf) return;   // safety check
+                canvas.height = viewport.height;
+                canvas.width = viewport.width;
 
-    pdf.getPage(pageNum).then(function(page) {
+                page.render({
+                    canvasContext: ctx,
+                    viewport: viewport
+                });
 
-        var viewport = page.getViewport({ scale: 1 });
+            });
 
-        /* Responsive scaling */
-        var scale = container.clientWidth / viewport.width;
-        var scaledViewport = page.getViewport({ scale: scale });
+        }
 
-        canvas.height = scaledViewport.height;
-        canvas.width = scaledViewport.width;
-
-        page.render({
-            canvasContext: context,
-            viewport: scaledViewport
-        });
-
-    }).catch(function(error){
-        console.error("Page render error:", error);
     });
-}
+
+});
 
 
 
