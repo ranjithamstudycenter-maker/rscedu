@@ -104,7 +104,8 @@ def materials():
 
     for pid in PRODUCTS:
         access[pid] = {
-            "view": bool(session.get("view_" + pid)),
+           
+            "view":  bool(session.get("view_" + pid.strip())),
             "download": bool(session.get("download_" + pid))
         }
 
@@ -116,7 +117,6 @@ def materials():
         products=PRODUCTS,
         access=access
     )
-
 
 
 
