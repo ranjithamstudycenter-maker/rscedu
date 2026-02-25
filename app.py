@@ -100,24 +100,24 @@ def materials():
     cls = request.args.get("cls")
     open_id = request.args.get("open")
 
-    # 🟢 STEP 1: Filter products safely
-    filtered_products = {}
-
-    for pid, p in PRODUCTS.items():
-        if str(p["class"]).strip() == str(cls).strip() and \
-           str(p["board"]).strip().lower() == str(board).strip().lower():
-            filtered_products[pid] = p
-
-    # 🟢 STEP 2: Build access ONLY for filtered products
     access = {}
 
-    for pid in filtered_products:
+    for pid in PRODUCTS:
         access[pid] = {
-            "view": bool(session.get("view_" + pid)),
-            "download": bool(session.get("download_" + pid))
+            "view": bool(session.get("view_" + pid.strip())),
+            "download": bool(session.get("download_" + pid.strip()))
         }
 
-    # 🟢 STEP 3: Prevent wrong open_id
+    if board and cls:
+        filtered_products = {
+            pid: p for pid, p in PRODUCTS.items()
+            if str(p.get("class")) == str(cls)
+            and str(p.get("board")) == str(board)
+        }
+    else:
+        filtered_products = PRODUCTS
+
+    # 🔥 Important fix
     if open_id not in filtered_products:
         open_id = None
 
@@ -129,6 +129,7 @@ def materials():
         products=filtered_products,
         access=access
     )
+
 
 
 
