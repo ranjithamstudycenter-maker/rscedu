@@ -92,41 +92,28 @@ def about():
 def courses():  
     return render_template("class.html")
 
-
 @app.route("/materials")
 def materials():
-
+ 
     board = request.args.get("board")
     cls = request.args.get("cls")
-    open_id = request.args.get("open")
+    open_id = request.args.get("open") or request.args.get("product_id")
 
     access = {}
 
     for pid in PRODUCTS:
         access[pid] = {
-            "view": bool(session.get("view_" + pid.strip())),
-            "download": bool(session.get("download_" + pid.strip()))
+           
+            "view":  bool(session.get("view_" + pid.strip())),
+            "download": bool(session.get("download_" + pid))
         }
-
-    if board and cls:
-        filtered_products = {
-            pid: p for pid, p in PRODUCTS.items()
-            if str(p.get("class")) == str(cls)
-            and str(p.get("board")) == str(board)
-        }
-    else:
-        filtered_products = PRODUCTS
-
-    # 🔥 Important fix
-    if open_id not in filtered_products:
-        open_id = None
 
     return render_template(
         "materials.html",
         active_board=board,
         active_class=cls,
         open=open_id,
-        products=filtered_products,
+        products=PRODUCTS,
         access=access
     )
 
