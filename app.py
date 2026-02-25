@@ -94,19 +94,29 @@ def courses():
 
 @app.route("/materials")
 def materials():
- 
+
     board = request.args.get("board")
     cls = request.args.get("cls")
-    open_id = request.args.get("open") or request.args.get("product_id")
+    open_id = request.args.get("open")
 
+    # ✅ Step 1: Filter products
+    filtered_products = {
+        pid: p for pid, p in PRODUCTS.items()
+        if str(p["class"]) == str(cls)
+        and str(p["board"]).lower() == str(board).lower()
+    }
+
+    # ✅ Step 2: Build access for ALL products (important)
     access = {}
-
     for pid in PRODUCTS:
         access[pid] = {
-           
-            "view":  bool(session.get("view_" + pid.strip())),
+            "view": bool(session.get("view_" + pid)),
             "download": bool(session.get("download_" + pid))
         }
+
+    # ✅ Step 3: Prevent wrong open
+    if open_id not in filtered_products:
+        open_id = None
 
     return render_template(
         "materials.html",
@@ -116,6 +126,7 @@ def materials():
         products=PRODUCTS,
         access=access
     )
+
 
 
 
