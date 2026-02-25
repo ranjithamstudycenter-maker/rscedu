@@ -99,7 +99,6 @@ def materials():
     cls = request.args.get("cls")
     open_id = request.args.get("open")
 
-    # If board/class not selected yet → just show empty page
     if not board or not cls:
         return render_template(
             "materials.html",
@@ -110,24 +109,20 @@ def materials():
             access={}
         )
 
-    # ✅ Filter products
-    filtered_products = {}
+    filtered_products = {
+        pid: p for pid, p in PRODUCTS.items()
+        if str(p["class"]) == str(cls)
+        and str(p["board"]).lower() == str(board).lower()
+    }
 
-    for pid, p in PRODUCTS.items():
-        if str(p.get("class")).strip() == str(cls).strip() and \
-           str(p.get("board")).strip().lower() == str(board).strip().lower():
-            filtered_products[pid] = p
-
-    # ✅ Build access dictionary
-    access = {}
-
-    for pid in PRODUCTS:
-        access[pid] = {
+    access = {
+        pid: {
             "view": bool(session.get(f"view_{pid}", False)),
             "download": bool(session.get(f"download_{pid}", False))
         }
+        for pid in filtered_products
+    }
 
-    # Prevent wrong open
     if open_id not in filtered_products:
         open_id = None
 
@@ -136,7 +131,7 @@ def materials():
         active_board=board,
         active_class=cls,
         open=open_id,
-        products=PRODUCTS,
+        products=filtered_products,
         access=access
     )
 
