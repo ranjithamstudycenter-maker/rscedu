@@ -961,24 +961,24 @@ document.addEventListener("DOMContentLoaded", function(){
 
         for(let p = 1; p <= pdf.numPages; p++){
 
-           pdf.getPage(p).then(function(page){
+            pdf.getPage(p).then(function(page){
 
-                            const canvas = document.createElement("canvas");
-                            canvas.style.display = "block";
-                            canvas.style.margin = "0 auto";
-                            viewer.appendChild(canvas);
-                        
-                            const ctx = canvas.getContext("2d");
-                        
-                            const viewport = page.getViewport({ scale: 1 });
-                        
-                            const containerWidth = viewer.getBoundingClientRect().width;
-                            const scale = containerWidth / viewport.width;
-                        
-                            const scaledViewport = page.getViewport({ scale: scale });
-                        
-                            canvas.width = scaledViewport.width;
-                            canvas.height = scaledViewport.height;
+                const canvas = document.createElement("canvas");
+                viewer.appendChild(canvas);
+
+                const ctx = canvas.getContext("2d");
+
+                // Get original viewport
+                const viewport = page.getViewport({ scale: 1 });
+
+                // Calculate responsive scale
+                const scale = viewer.clientWidth / viewport.width;
+                const scaledViewport = page.getViewport({ scale: scale });
+
+                canvas.width = scaledViewport.width;
+                canvas.height = scaledViewport.height;
+
+
                 page.render({
                           canvasContext: ctx,
                           viewport: scaledViewport
