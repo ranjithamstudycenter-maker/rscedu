@@ -254,10 +254,7 @@ def payment_success():
         
     session["access"] = session.get("access", {})
     session["access"][product_id] = {"view": True}
-    session[f"view_{product_id}"] = True
-    
-    # ✅ unlock only after success
-    session[f"view_{product_id}"] = True
+   
     
    # ⭐ FINAL redirect
     return redirect(url_for(
