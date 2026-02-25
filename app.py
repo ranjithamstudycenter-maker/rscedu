@@ -133,10 +133,10 @@ def materials():
         access=access
     )
 
-
-
-
-
+@app.route("/clear")
+def clear():
+    session.clear()
+    return "Session cleared"
 
 
 @app.route("/secure_view/<product_id>")
@@ -214,6 +214,8 @@ def pay():
 
     session["board"] = board
     session["cls"]   = cls
+   
+
     
     session["last_board"] = board
     session["last_cls"] = cls
@@ -271,8 +273,11 @@ def payment_success():
         
     session["access"] = session.get("access", {})
     session["access"][product_id] = {"view": True}
+    session[f"view_{product_id}"] = True
     
-
+    # ✅ unlock only after success
+    session[f"view_{product_id}"] = True
+    
    # ⭐ FINAL redirect
     return redirect(url_for(
         "materials",
