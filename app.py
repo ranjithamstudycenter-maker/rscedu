@@ -99,22 +99,28 @@ def materials():
     cls = request.args.get("cls")
     open_id = request.args.get("open")
 
-    # ✅ Step 1: Filter products
-    filtered_products = {
-        pid: p for pid, p in PRODUCTS.items()
-        if str(p["class"]) == str(cls)
-        and str(p["board"]).lower() == str(board).lower()
-    }
+    # ❗ Safety check
+    if not board or not cls:
+        return "Invalid request"
 
-    # ✅ Step 2: Build access for ALL products (important)
+    # ✅ Step 1: Filter products correctly
+    filtered_products = {}
+
+    for pid, p in PRODUCTS.items():
+        if str(p.get("class")).strip() == str(cls).strip() and \
+           str(p.get("board")).strip().lower() == str(board).strip().lower():
+            filtered_products[pid] = p
+
+    # ✅ Step 2: Build access for all products
     access = {}
+
     for pid in PRODUCTS:
         access[pid] = {
-            "view": bool(session.get("view_" + pid)),
-            "download": bool(session.get("download_" + pid))
+            "view": bool(session.get(f"view_{pid}", False)),
+            "download": bool(session.get(f"download_{pid}", False))
         }
 
-    # ✅ Step 3: Prevent wrong open
+    # ✅ Step 3: Prevent wrong class PDF opening
     if open_id not in filtered_products:
         open_id = None
 
@@ -123,10 +129,9 @@ def materials():
         active_board=board,
         active_class=cls,
         open=open_id,
-        products=PRODUCTS,
+        products=filtered_products,
         access=access
     )
-
 
 
 
