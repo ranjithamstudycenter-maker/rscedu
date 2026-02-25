@@ -626,35 +626,23 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
     <h4>Linear Programming</h4>
     <div class="status paid">🔒 Paid</div>
                             {% for pid, product in products.items() %}
+   
+                              {% if access.get(pid, {}).get("view") %}
 
-    {% if access.get(pid).view %}
-
-        <button
-            {% if open == pid %} disabled {% endif %}
-            onclick="location.href='{{ url_for(
-                'materials',
-                board=active_board,
-                cls=active_class,
-                open=pid
-            ) }}'">
-            👁 View PDF
-        </button>
-
-    {% else %}
-
-        <button onclick="window.location.href='{{ url_for(
-            'pay',
-            product=pid,
-            mode='view',
-            board=active_board,
-            cls=active_class
-        ) }}'">
-            🔐 Pay to View
-        </button>
-
-    {% endif %}
-
-{% endfor %}
+                          <button onclick="location.href='{{ url_for(
+                              'materials',
+                              board=active_board,
+                              cls=active_class,
+                              open=pid
+                          ) }}'">
+                              👁 View PDF
+                          </button>
+                          
+                          {% else %}
+                          
+                         <button onclick="window.location.href='{{ url_for('pay', product='Linear Programming', mode='view', board=active_board, cls=active_class) }}'">
+                               🔐 Pay to View
+                                </button>
 
 
 
