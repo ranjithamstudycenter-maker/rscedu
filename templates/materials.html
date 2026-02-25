@@ -628,7 +628,7 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
  {% for pid, product in products.items() %}
    
 {% if access.get(pid, {}).get("view") %}
-  {% if not access[pid].view %}
+ 
 
 
                           <button onclick="location.href='{{ url_for(
@@ -645,7 +645,7 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
                          <button onclick="window.location.href='{{ url_for('pay', product='Linear Programming', mode='view', board=active_board, cls=active_class) }}'">
                                🔐 Pay to View
                                 </button>
-{% endif %}
+
 
 
 {% endif %}
