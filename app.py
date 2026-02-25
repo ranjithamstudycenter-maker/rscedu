@@ -108,11 +108,11 @@ def materials():
     if not board or not cls:
         return render_template(
             "materials.html",
+            products={},
+            access={},
             active_board=None,
             active_class=None,
-            open=None,
-            products={},
-            access={}
+            open=None
         )
 
     filtered_products = {
@@ -121,24 +121,23 @@ def materials():
         and str(p["board"]).lower() == str(board).lower()
     }
 
-    access = {
-        pid: {
-            "view": bool(session.get(f"view_{pid}", False)),
-            "download": bool(session.get(f"download_{pid}", False))
+    access = {}
+    for pid in filtered_products:
+        access[pid] = {
+            "view": session.get(f"view_{pid}", False),
+            "download": session.get(f"download_{pid}", False)
         }
-        for pid in filtered_products
-    }
 
     if open_id not in filtered_products:
         open_id = None
 
     return render_template(
         "materials.html",
+        products=filtered_products,
+        access=access,
         active_board=board,
         active_class=cls,
-        open=open_id,
-        products=filtered_products,
-        access=access
+        open=open_id
     )
 
 
