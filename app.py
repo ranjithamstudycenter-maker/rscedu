@@ -98,22 +98,24 @@ def materials():
 
     board = request.args.get("board")
     cls = request.args.get("cls")
-    open_id = request.args.get("open")
+    open_id = request.args.get("open") or request.args.get("product_id")
+
+    access = {}
+
+    for pid in PRODUCTS:
+        access[pid] = {
+            "view": bool(session.get("view_" + pid.strip())),
+            "download": bool(session.get("download_" + pid.strip()))
+        }
 
     if board and cls:
         filtered_products = {
             pid: p for pid, p in PRODUCTS.items()
-            if p["class"] == cls and p["board"] == board
+            if str(p.get("class")) == str(cls)
+            and str(p.get("board")) == str(board)
         }
     else:
-        filtered_products = {}
-
-    access = {}
-    for pid in filtered_products:
-        access[pid] = {
-            "view": bool(session.get("view_" + pid)),
-            "download": bool(session.get("download_" + pid))
-        }
+        filtered_products = PRODUCTS   # fallback
 
     return render_template(
         "materials.html",
