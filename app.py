@@ -100,48 +100,28 @@ def courses():
 
 @app.route("/materials")
 def materials():
-
+ 
     board = request.args.get("board")
     cls = request.args.get("cls")
-    open_id = request.args.get("open")
-
-    if not board or not cls:
-        return render_template(
-            "materials.html",
-            products={},
-            access={},
-            active_board=None,
-            active_class=None,
-            open=None
-        )
-
-    filtered_products = {
-        pid: p for pid, p in PRODUCTS.items()
-        if str(p["class"]) == str(cls)
-        and str(p["board"]).lower() == str(board).lower()
-    }
+    open_id = request.args.get("open") or request.args.get("product_id")
 
     access = {}
-    for pid in filtered_products:
-        access[pid] = {
-            "view": session.get(f"view_{pid}", False),
-            "download": session.get(f"download_{pid}", False)
-        }
 
-    if open_id not in filtered_products:
-        open_id = None
+    for pid in PRODUCTS:
+        access[pid] = {
+           
+            "view":  bool(session.get("view_" + pid.strip())),
+            "download": bool(session.get("download_" + pid))
+        }
 
     return render_template(
         "materials.html",
-        products=filtered_products,
-        access=access,
         active_board=board,
         active_class=cls,
-        open=open_id
+        open=open_id,
+        products=PRODUCTS,
+        access=access
     )
-
-
-
 
 
 @app.route("/secure_view/<product_id>")
