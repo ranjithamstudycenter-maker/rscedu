@@ -627,8 +627,7 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
     <div class="status paid">🔒 Paid</div>
                              {% for pid, product in products.items() %}
         
-                                      {% if product.class == active_class and product.board == active_board %}
-                                  
+                                                                    
                                           {% if access.get(pid, {}).get("view") %}
                                   
                                               {% if open == pid %}
@@ -662,7 +661,7 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
                                                   🔐 Pay to View
                                               </button>
                                   
-                                          {% endif %}
+                                         
                                   
                                       {% endif %}
                                   
