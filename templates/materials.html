@@ -631,7 +631,7 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
 
         <button
             {% if open == pid %} disabled style="opacity:0.6;" {% endif %}
-            onclick="location.href='{{ url_for(
+            onclick="window.location.href='{{ url_for(
                 'materials',
                 board=active_board,
                 cls=active_class,
