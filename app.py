@@ -130,14 +130,16 @@ def materials():
 @app.route("/secure_view/<product_id>")
 def secure_view(product_id):
 
+    product = PRODUCTS.get(product_id)
+
+    if not product:
+        return "Invalid Product", 404
+
+    # Check view access
     if not check_access("view_" + product_id):
         return "Unauthorized", 403
 
-    product = PRODUCTS.get(product_id)
-    if not product:
-        return "Invalid"
-
-    file_path = os.path.join(PDF_FOLDER, product["file"])
+    file_path = product["pdf_path"]   # Make sure this exists in PRODUCTS
 
     return send_file(
         file_path,
