@@ -625,13 +625,13 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
     <img src="{{ url_for('static', filename='images/Linear Programming.png') }}">
     <h4>Linear Programming</h4>
     <div class="status paid">🔒 Paid</div>
-                             {% for pid, product in products.items() %}
+                            {% for pid, product in products.items() %}
 
-    {% if access.get(pid, {}).get("view") %}
+    {% if access.get(pid).view %}
 
         <button
-            {% if open == pid %} disabled style="opacity:0.6;" {% endif %}
-            onclick="window.location.href='{{ url_for(
+            {% if open == pid %} disabled {% endif %}
+            onclick="location.href='{{ url_for(
                 'materials',
                 board=active_board,
                 cls=active_class,
