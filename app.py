@@ -126,7 +126,7 @@ def materials():
         active_board=board,
         active_class=cls,
         open=open_id,
-        products=filtered_products,
+        products=PRODUCTS,
         access=access
     )
 
