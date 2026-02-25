@@ -79,10 +79,6 @@ razorpay_client = razorpay.Client(auth=(
 ))
 # -------------------- ROUTES --------------------
 
-@app.route("/reset")
-def reset():
-    session.clear()
-    return "Session Cleared"
 
 
 @app.route("/")
