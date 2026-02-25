@@ -104,8 +104,9 @@ def materials():
 
     for pid in PRODUCTS:
         access[pid] = {
-            "view": bool(session.get("view_" + pid.strip())),
-            "download": bool(session.get("download_" + pid.strip()))
+           "view":  bool(session.get("view_" + pid.strip())),
+            "download": bool(session.get("download_" + pid))
+
         }
 
     # ✅ FILTER PRODUCTS BY CLASS + BOARD
@@ -127,25 +128,25 @@ def materials():
 
 
 
+
 @app.route("/secure_view/<product_id>")
 def secure_view(product_id):
 
-    product = PRODUCTS.get(product_id)
-
-    if not product:
-        return "Invalid Product", 404
-
-    # Check view access
     if not check_access("view_" + product_id):
         return "Unauthorized", 403
 
-    file_path = product["pdf_path"]   # Make sure this exists in PRODUCTS
+    product = PRODUCTS.get(product_id)
+    if not product:
+        return "Invalid"
+
+    file_path = os.path.join(PDF_FOLDER, product["file"])
 
     return send_file(
         file_path,
         mimetype="application/pdf",
         as_attachment=False
     )
+
 
 
 
