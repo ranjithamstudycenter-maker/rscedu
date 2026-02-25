@@ -99,11 +99,18 @@ def materials():
     cls = request.args.get("cls")
     open_id = request.args.get("open")
 
-    # ❗ Safety check
+    # If board/class not selected yet → just show empty page
     if not board or not cls:
-        return "Invalid request"
+        return render_template(
+            "materials.html",
+            active_board=None,
+            active_class=None,
+            open=None,
+            products={},
+            access={}
+        )
 
-    # ✅ Step 1: Filter products correctly
+    # ✅ Filter products
     filtered_products = {}
 
     for pid, p in PRODUCTS.items():
@@ -111,7 +118,7 @@ def materials():
            str(p.get("board")).strip().lower() == str(board).strip().lower():
             filtered_products[pid] = p
 
-    # ✅ Step 2: Build access for all products
+    # ✅ Build access dictionary
     access = {}
 
     for pid in PRODUCTS:
@@ -120,7 +127,7 @@ def materials():
             "download": bool(session.get(f"download_{pid}", False))
         }
 
-    # ✅ Step 3: Prevent wrong class PDF opening
+    # Prevent wrong open
     if open_id not in filtered_products:
         open_id = None
 
@@ -132,6 +139,7 @@ def materials():
         products=filtered_products,
         access=access
     )
+
 
 @app.route("/clear")
 def clear():
