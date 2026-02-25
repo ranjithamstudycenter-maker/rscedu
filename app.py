@@ -79,6 +79,12 @@ razorpay_client = razorpay.Client(auth=(
 ))
 # -------------------- ROUTES --------------------
 
+@app.route("/reset")
+def reset():
+    session.clear()
+    return "Session Cleared"
+
+
 @app.route("/")
 def home():
     return render_template("home.html")
@@ -136,10 +142,7 @@ def materials():
     )
 
 
-@app.route("/clear")
-def clear():
-    session.clear()
-    return "Session cleared"
+
 
 
 @app.route("/secure_view/<product_id>")
