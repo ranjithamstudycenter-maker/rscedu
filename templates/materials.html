@@ -625,32 +625,48 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
     <img src="{{ url_for('static', filename='images/Linear Programming.png') }}">
     <h4>Linear Programming</h4>
     <div class="status paid">🔒 Paid</div>
- {% for pid, product in products.items() %}
-   
-{% if access.get(pid, {}).get("view") %}
- 
-
-
-                          <button onclick="location.href='{{ url_for(
-                              'materials',
-                              board=active_board,
-                              cls=active_class,
-                              open=pid
-                          ) }}'">
-                              👁 View PDF
-                          </button>
-                          
-                          {% else %}
-                          
-                         <button onclick="window.location.href='{{ url_for('pay', product=pid, mode='view', board=active_board, cls=active_class) }}'">
-                               🔐 Pay to View
+                     {% for pid, product in products.items() %}
+                    
+                        {% if access.get(pid, {}).get("view") %}
+                    
+                            {% if open == pid %}
+                                <!-- PDF is already open → show Close button -->
+                                <button onclick="location.href='{{ url_for(
+                                    'materials',
+                                    board=active_board,
+                                    cls=active_class
+                                ) }}'">
+                                    ❌ Close PDF
                                 </button>
+                            {% else %}
+                                <!-- PDF not open → show View button -->
+                                <button onclick="location.href='{{ url_for(
+                                    'materials',
+                                    board=active_board,
+                                    cls=active_class,
+                                    open=pid
+                                ) }}'">
+                                    👁 View PDF
+                                </button>
+                            {% endif %}
+                    
+                        {% else %}
+                    
+                            <!-- Not paid yet -->
+                            <button onclick="window.location.href='{{ url_for(
+                                'pay',
+                                product=pid,
+                                mode='view',
+                                board=active_board,
+                                cls=active_class
+                            ) }}'">
+                                🔐 Pay to View
+                            </button>
+                    
+                        {% endif %}
+                    
+                    {% endfor %}
 
-
-
-{% endif %}
-
-  {% endfor %}
 
     <div class="stats">
         <span id="view-{{ pid }}">👁 Views</span>
