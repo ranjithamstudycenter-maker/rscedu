@@ -920,35 +920,61 @@ function scrollNotes(direction){
 
 const PDF_AREA = "#pdfViewer";
 
-document.addEventListener("contextmenu", e => {
-    if (e.target.closest(PDF_AREA)) e.preventDefault();
-});
-
-document.addEventListener("selectstart", e => {
-    if (e.target.closest(PDF_AREA)) e.preventDefault();
-});
-
-document.addEventListener("dragstart", e => {
-    if (e.target.closest(PDF_AREA)) e.preventDefault();
-});
-
-window.addEventListener("keydown", function(e) {
-    if ((e.ctrlKey && e.key === 'p') || e.key === 'PrintScreen') {
-        alert("Printing not allowed");
+/* Disable right click inside PDF */
+document.addEventListener("contextmenu", function (e) {
+    if (e.target.closest(PDF_AREA)) {
         e.preventDefault();
     }
 });
 
-document.addEventListener("visibilitychange", () => {
-    document.body.style.filter =
-        document.hidden ? "blur(15px)" : "none";
-});
-
-document.addEventListener("keyup", e => {
-    if (e.key === "PrintScreen") {
-        navigator.clipboard.writeText('');
+/* Disable text selection */
+document.addEventListener("selectstart", function (e) {
+    if (e.target.closest(PDF_AREA)) {
+        e.preventDefault();
     }
 });
+
+/* Disable drag */
+document.addEventListener("dragstart", function (e) {
+    if (e.target.closest(PDF_AREA)) {
+        e.preventDefault();
+    }
+});
+
+/* Block Ctrl+P and try detecting PrintScreen */
+window.addEventListener("keydown", function (e) {
+
+    // Block Ctrl+P
+    if (e.ctrlKey && (e.key === "p" || e.key === "P")) {
+        e.preventDefault();
+        alert("Printing is not allowed");
+    }
+
+    // Try detecting PrintScreen (Windows)
+    if (e.key === "PrintScreen" || e.keyCode === 44) {
+        alert("Screenshot is not allowed");
+        navigator.clipboard.writeText(""); // clear clipboard
+    }
+});
+
+/* Blur page when tab hidden */
+document.addEventListener("visibilitychange", function () {
+    if (document.hidden) {
+        document.body.style.filter = "blur(15px)";
+    } else {
+        document.body.style.filter = "none";
+    }
+});
+
+/* Extra protection: detect focus loss (Alt+Tab) */
+window.addEventListener("blur", function () {
+    document.body.style.filter = "blur(15px)";
+});
+
+window.addEventListener("focus", function () {
+    document.body.style.filter = "none";
+});
+
 
 
 
