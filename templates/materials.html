@@ -950,11 +950,13 @@ window.addEventListener("keydown", function (e) {
         alert("Printing is not allowed");
     }
 
-    // Try detecting PrintScreen (Windows)
-    if (e.key === "PrintScreen" || e.keyCode === 44) {
-        alert("Screenshot is not allowed");
-        navigator.clipboard.writeText("").catch(() => {});
+    // Block PrintScreen (best-effort)
+    document.addEventListener("keyup", function(e){
+    if(e.key === "PrintScreen"){
+        navigator.clipboard.writeText('');
+        alert("Screenshot disabled");
     }
+
 
 });
 
