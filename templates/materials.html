@@ -953,8 +953,9 @@ window.addEventListener("keydown", function (e) {
     // Try detecting PrintScreen (Windows)
     if (e.key === "PrintScreen" || e.keyCode === 44) {
         alert("Screenshot is not allowed");
-        navigator.clipboard.writeText(""); // clear clipboard
+        navigator.clipboard.writeText("").catch(() => {});
     }
+
 });
 
 /* Blur page when tab hidden */
