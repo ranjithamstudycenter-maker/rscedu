@@ -255,7 +255,10 @@ def payment_success():
                 "expiry": (datetime.now() + timedelta(minutes=1)).isoformat()
             }
            
+    session["access"] = session.get("access", {})
+    session["access"][product_id] = {"view": True}
     
+
    # ⭐ FINAL redirect
     return redirect(url_for(
         "materials",
