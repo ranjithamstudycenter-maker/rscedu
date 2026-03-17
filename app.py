@@ -109,14 +109,15 @@ def materials():
             "view":  bool(session.get("view_" + pid.strip())),
             "download": bool(session.get("download_" + pid))
         }
-        if open_id:
-                product = PRODUCTS.get(open_id)
-
+       if open_id:
+            product = PRODUCTS.get(open_id)
+        
             if not product:
-            abort(403)
-   
+                abort(403)
+        
+            # cls இல்லனா skip பண்ணு (important)
             if cls and str(product["class"]) != str(cls):
-            abort(403)
+                abort(403)
     return render_template(
         "materials.html",
         active_board=board,
