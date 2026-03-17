@@ -113,7 +113,7 @@ def materials():
                 product = PRODUCTS.get(open_id)
         
                 # 🔐 SECURITY CHECK
-                if not product or str(product["class"]) != str(active_class):
+                if not product or str(product["class"]) != str(cls):
                     abort(403)
     return render_template(
         "materials.html",
