@@ -111,10 +111,12 @@ def materials():
         }
         if open_id:
                 product = PRODUCTS.get(open_id)
-        
-                # 🔐 SECURITY CHECK
-                if not product or str(product["class"]) != str(cls):
-                    abort(403)
+
+            if not product:
+            abort(403)
+   
+            if cls and str(product["class"]) != str(cls):
+            abort(403)
     return render_template(
         "materials.html",
         active_board=board,
