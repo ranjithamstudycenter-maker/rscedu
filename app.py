@@ -110,7 +110,7 @@ def materials():
             "download": bool(session.get("download_" + pid))
         }
         if open_id:
-                product = products.get(open_id)
+                product = product.get(open_id)
         
                 # 🔐 SECURITY CHECK
                 if not product or str(product["class"]) != str(active_class):
