@@ -103,21 +103,28 @@ def materials():
 
     access = {}
 
+    # 🔹 Build access dict
     for pid in PRODUCTS:
         access[pid] = {
-           
-            "view":  bool(session.get("view_" + pid.strip())),
+            "view": bool(session.get("view_" + pid.strip())),
             "download": bool(session.get("download_" + pid))
         }
-       if open_id:
-    product = PRODUCTS.get(open_id)
 
-    if not product:
-        abort(403)
+    # 🔐 SECURITY CHECK (OUTSIDE LOOP)
+    if open_id:
+        product = PRODUCTS.get(open_id)
 
-    # cls இல்லனா skip பண்ணு (important)
-    if cls and str(product["class"]) != str(cls):
-        abort(403)
+        if not product:
+            abort(403)
+
+        # cls இருந்தா மட்டும் check
+        if cls and str(product["class"]) != str(cls):
+            abort(403)
+
+        # 🔥 EXTRA: payment இல்லனா block
+        if not access.get(open_id, {}).get("view"):
+            abort(403)
+
     return render_template(
         "materials.html",
         active_board=board,
