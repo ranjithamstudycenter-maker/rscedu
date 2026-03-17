@@ -109,7 +109,12 @@ def materials():
             "view":  bool(session.get("view_" + pid.strip())),
             "download": bool(session.get("download_" + pid))
         }
-
+        if open_id:
+                product = products.get(open_id)
+        
+                # 🔐 SECURITY CHECK
+                if not product or str(product["class"]) != str(active_class):
+                    abort(403)
     return render_template(
         "materials.html",
         active_board=board,
