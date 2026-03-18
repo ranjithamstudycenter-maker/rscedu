@@ -495,8 +495,13 @@
 }
 
 .feedback-form{
-  margin-top:40px;
+  display: flex;
+  flex-direction: column;   /* 🔥 MAIN FIX */
+  gap: 10px;
+  max-width: 400px;
+  margin: auto;
 }
+
 
 .feedback-form input,
 .feedback-form select,
