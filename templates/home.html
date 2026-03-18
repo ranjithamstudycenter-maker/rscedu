@@ -450,61 +450,6 @@
             font-size: 16px;
         }
 
- #thread-container{
-  position:fixed;
-  top:50%;
-  left:50%;
-  transform:translate(-50%, -50%) rotate(-3deg);
-  width:100%;
-  z-index:9999;
-  pointer-events:none;
-}
-
-/* LEFT SIDE */
-.ribbon.left{
-  left:0;
-  transform-origin:left center;
-}
-
-/* RIGHT SIDE */
-.ribbon.right{
-  right:0;
-  transform-origin:right center;
-}
-
-/* SCISSOR */
-.scissor{
-  position:absolute;
-  left:50%;
-  top:-40px;
-  transform:translateX(-50%);
-  font-size:34px;
-  opacity:0;
-}
-
-
-
-/* 🔥 IMPORTANT: FALL WITH TRANSFORM RESET */
-
-/* LEFT hanging cloth */
-@keyframes hangLeft{
-  0%{
-    transform: rotate(0deg);
-  }
-  100%{
-    transform: rotate(80deg) translateY(120px);
-  }
-}
-
-/* RIGHT hanging cloth */
-@keyframes hangRight{
-  0%{
-    transform: rotate(0deg);
-  }
-  100%{
-    transform: rotate(-80deg) translateY(120px);
-  }
-}
 
 
 .feedback-section{
@@ -883,32 +828,7 @@ function loadFeedback(){
 window.onload = loadFeedback;
 
     
-/* ================= RIBBON CUT ================= */
 
-window.addEventListener("load", function(){
-
-  const left = document.querySelector(".ribbon.left");
-  const right = document.querySelector(".ribbon.right");
-  const scissor = document.querySelector(".scissor");
-
-  setTimeout(()=>{
-    scissor.style.opacity = "1";
-  },400);
-
-  setTimeout(()=>{
-    scissor.style.display = "none";
-
-    // create cut gap
-    left.style.width = "48%";
-    right.style.width = "48%";
-
-    // cloth hanging
-    left.style.animation = "hangLeft 1.2s cubic-bezier(0.2,0.8,0.3,1) forwards";
-    right.style.animation = "hangRight 1.2s cubic-bezier(0.2,0.8,0.3,1) forwards";
-
-  },1000);
-
-});
  
 });
 
