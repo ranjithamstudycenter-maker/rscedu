@@ -516,10 +516,8 @@
 }
 
 .star-rating span{
-  font-size:30px;
   cursor:pointer;
-  color:#ccc;
-  transition:0.3s;
+  pointer-events:auto;
 }
 
 .star-rating span.active{
@@ -856,15 +854,17 @@ window.onload = loadFeedback;
 
 
 
+
 document.addEventListener("click", function(e){
 
-  // check if clicked element is star
-  if(e.target.parentElement && e.target.parentElement.id === "starRating"){
+  const star = e.target.closest("#starRating span");
+
+  if(star){
 
     const stars = document.querySelectorAll("#starRating span");
     const ratingInput = document.getElementById("rating");
 
-    let value = e.target.getAttribute("data-value");
+    let value = star.getAttribute("data-value");
 
     // store rating
     ratingInput.value = "★".repeat(value);
@@ -873,14 +873,18 @@ document.addEventListener("click", function(e){
     stars.forEach(s => s.classList.remove("active"));
 
     // highlight
-    for(let i=0; i<value; i++){
-      stars[i].classList.add("active");
-    }
+    stars.forEach((s, index)=>{
+      if(index < value){
+        s.classList.add("active");
+      }
+    });
+
   }
 
 });
 
-});
+
+
  
 });
 
