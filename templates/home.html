@@ -712,54 +712,62 @@
          SLIDER SCRIPT
     ========================== -->
     <script>
-        let index = 0;
-        const slides = document.querySelector(".slides");
-        const dots = document.querySelectorAll(".dot");
-        const totalSlides = dots.length;
 
-        function showSlide(i){
-            slides.style.transform = `translateX(-${i * 100}%)`;
-            dots.forEach(dot => dot.classList.remove("active"));
-            dots[i].classList.add("active");
+let index = 0;
+const slides = document.querySelector(".slides");
+const dots = document.querySelectorAll(".dot");
+const totalSlides = dots.length;
+
+function showSlide(i){
+    slides.style.transform = `translateX(-${i * 100}%)`;
+    dots.forEach(dot => dot.classList.remove("active"));
+    dots[i].classList.add("active");
+}
+
+setInterval(() => {
+    index = (index + 1) % totalSlides;
+    showSlide(index);
+}, 3000);
+
+
+/* ================= RIBBON CUT ================= */
+
+window.addEventListener("load", function(){
+
+    const left = document.querySelector(".thread.left");
+    const right = document.querySelector(".thread.right");
+    const scissor = document.querySelector(".scissor");
+    const sound = document.getElementById("cutSound");
+
+    // Step 1: show scissor
+    setTimeout(()=>{
+        scissor.style.opacity = "1";
+    },300);
+
+    // Step 2: create cut gap
+    setTimeout(()=>{
+        left.style.width = "48%";
+        right.style.width = "48%";
+    },800);
+
+    // Step 3: cut + sound + fall
+    setTimeout(()=>{
+        scissor.style.transition = "0.2s";
+        scissor.style.opacity = "0";
+
+        if(sound){
+            sound.play().catch(()=>{}); // avoid error
         }
 
-        setInterval(() => {
-            index = (index + 1) % totalSlides;
-            showSlide(index);
-        }, 3000);
-                document.getElementById("cutSound").play();
-                   window.addEventListener("load", function(){
+        left.style.animation = "fallLeft 1.5s forwards";
+        right.style.animation = "fallRight 1.5s forwards";
 
-                          const left = document.querySelector(".thread.left");
-                          const right = document.querySelector(".thread.right");
-                          const scissor = document.querySelector(".scissor");
-                        
-                          // Step 1: show scissor
-                          setTimeout(()=>{
-                            scissor.style.opacity = "1";
-                          },300);
-                        
-                          // Step 2: CUT + SCISSOR HIDE
-                         setTimeout(()=>{
-                                        scissor.style.transition = "0.2s";
-                                        scissor.style.opacity = "0";   // smooth vanish
-                                    
-                                        left.style.animation = "fallLeft 1.5s forwards";
-                                        right.style.animation = "fallRight 1.5s forwards";
-                                    
-                                    },900);
-                                                            
-                        });
+    },900);
 
+});
 
-                            setTimeout(()=>{
-                                left.style.width = "48%";
-                                right.style.width = "48%";
-                            },850);
+</script>
 
-
-
-    </script>
 </body>
 </html>
 
