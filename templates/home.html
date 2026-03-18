@@ -453,106 +453,68 @@
 
 
 .feedback-section{
-  padding:60px 20px;
-  background:#f4f7fb;
+  padding:50px;
+  background:#f8f9fb;
   text-align:center;
 }
 
 .feedback-section h2{
   font-size:32px;
-  margin-bottom:10px;
-}
-
-.subtitle{
-  color:#777;
   margin-bottom:30px;
 }
 
 .feedback-container{
   display:flex;
+  gap:20px;
   justify-content:center;
   flex-wrap:wrap;
-  gap:20px;
-  margin-bottom:40px;
 }
 
 .feedback-card{
-  width:280px;
   background:#fff;
   padding:20px;
-  border-radius:15px;
+  width:280px;
+  border-radius:12px;
   box-shadow:0 5px 15px rgba(0,0,0,0.1);
   text-align:left;
 }
 
+.stars{
+  color:orange;
+  font-size:18px;
+  margin-bottom:10px;
+}
+
+.feedback-card p{
+  font-size:14px;
+  color:#444;
+}
+
+.feedback-card h4{
+  margin-top:10px;
+}
 
 .feedback-form{
-  max-width:400px;
-  margin:auto;
+  margin-top:40px;
 }
 
 .feedback-form input,
 .feedback-form select,
 .feedback-form textarea{
-  width:100%;
+  width:250px;
   padding:10px;
-  margin:8px 0;
+  margin:5px;
   border-radius:8px;
   border:1px solid #ccc;
 }
 
 .feedback-form button{
-  width:100%;
-  padding:12px;
+  padding:10px 20px;
   background:#007bff;
   color:white;
   border:none;
   border-radius:8px;
   cursor:pointer;
-}
-
-.star-rating{
-  display:flex;
-  justify-content:center;
-  gap:5px;
-}
-
-.star-rating span{
-  font-size:32px;
-  cursor:pointer;
-  color:#ccc;
-  user-select:none;
-}
-
-.star-rating span.active{
-  color:gold;
-}
-
-
-.feedback-slider{
-  overflow:hidden;
-  width:100%;
-}
-
-.feedback-track{
-  display:flex;
-  gap:20px;
-  width:max-content;
-  animation:scrollFeedback 20s linear infinite;
-}
-
-.feedback-card{
-  min-width:250px;
-  background:#fff;
-  padding:15px;
-  border-radius:12px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.1);
-}
-
-/* Animation */
-@keyframes scrollFeedback{
-  0%{ transform:translateX(0); }
-  100%{ transform:translateX(-50%); }
 }
 
 
@@ -717,16 +679,11 @@
       <option value="Parent">Parent</option>
     </select>
 
-    <div class="star-rating" id="starRating">
-  <span data-value="1">★</span>
-  <span data-value="2">★</span>
-  <span data-value="3">★</span>
-  <span data-value="4">★</span>
-  <span data-value="5">★</span>
-</div>
-
-<input type="hidden" id="rating" value="5">
-
+    <select id="rating">
+      <option value="★★★★★">5 Star</option>
+      <option value="★★★★">4 Star</option>
+      <option value="★★★">3 Star</option>
+    </select>
 
 
     <textarea id="message" placeholder="Write your feedback"></textarea>
@@ -825,10 +782,7 @@ function addFeedback(){
     alert("Feedback submitted!");
     loadFeedback(); // reload
   });
-}
-
-
-
+} 
 
 function loadFeedback(){
   fetch('/get_feedback')
@@ -838,16 +792,13 @@ function loadFeedback(){
     let container = document.getElementById("feedbackContainer");
     container.innerHTML = "";
 
-    // Duplicate for smooth infinite scroll
-    let allData = data.concat(data);
-
-    allData.forEach(f => {
+    data.forEach(f => {
       container.innerHTML += `
         <div class="feedback-card">
           <div class="stars">${f.rating}</div>
           <p>${f.message}</p>
           <h4>${f.name}</h4>
-          <small>${f.role}</small>
+          <span>${f.role}</span>
         </div>
       `;
     });
@@ -855,39 +806,7 @@ function loadFeedback(){
   });
 }
 
-
 window.onload = loadFeedback;
-
-document.addEventListener("DOMContentLoaded", function(){
-
-  const stars = document.querySelectorAll("#starRating span");
-  const ratingInput = document.getElementById("rating");
-
-  stars.forEach((star, index)=>{
-
-    star.addEventListener("click", function(){
-
-      let value = index + 1;
-
-      // store rating
-      ratingInput.value = "★".repeat(value);
-
-      // reset
-      stars.forEach(s => s.classList.remove("active"));
-
-      // highlight
-      for(let i=0; i<value; i++){
-        stars[i].classList.add("active");
-      }
-
-    });
-
-  });
-
-});
-
-
-
 
  
 });
