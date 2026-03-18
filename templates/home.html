@@ -48,6 +48,7 @@
             z-index: 1000;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
         }
+        
 
         .nav-left {
             display: flex;
@@ -506,6 +507,68 @@
 }
 
 
+.feedback-section{
+  padding:60px 20px;
+  background:#f4f7fb;
+  text-align:center;
+}
+
+.feedback-section h2{
+  font-size:32px;
+  margin-bottom:10px;
+}
+
+.subtitle{
+  color:#777;
+  margin-bottom:30px;
+}
+
+.feedback-container{
+  display:flex;
+  justify-content:center;
+  flex-wrap:wrap;
+  gap:20px;
+  margin-bottom:40px;
+}
+
+.feedback-card{
+  width:280px;
+  background:#fff;
+  padding:20px;
+  border-radius:15px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+  text-align:left;
+}
+
+.stars{
+  color:orange;
+  margin-bottom:10px;
+}
+
+.feedback-form{
+  max-width:400px;
+  margin:auto;
+}
+
+.feedback-form input,
+.feedback-form select,
+.feedback-form textarea{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+
+.feedback-form button{
+  width:100%;
+  padding:12px;
+  background:#007bff;
+  color:white;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+}
 
 
 
@@ -666,6 +729,43 @@
             </div>
         </div>
     </section>
+
+    <a href="#feedback">Feedback</a>
+
+<section id="feedback" class="feedback-section">
+
+  <h2>Student & Parent Feedback</h2>
+  <p class="subtitle">What our students and parents say about us</p>
+
+  <!-- Feedback Display -->
+  <div class="feedback-container" id="feedbackContainer"></div>
+
+  <!-- Feedback Form -->
+  <div class="feedback-form">
+
+    <h3>Give Your Feedback</h3>
+
+    <input type="text" id="name" placeholder="Your Name">
+
+    <select id="role">
+      <option value="Student">Student</option>
+      <option value="Parent">Parent</option>
+    </select>
+
+    <select id="rating">
+      <option value="★★★★★">5 Star</option>
+      <option value="★★★★">4 Star</option>
+      <option value="★★★">3 Star</option>
+    </select>
+
+    <textarea id="message" placeholder="Write your feedback"></textarea>
+
+    <button onclick="addFeedback()">Submit</button>
+
+  </div>
+
+</section>
+
 
     <!-- ==========================
          CTA SECTION
