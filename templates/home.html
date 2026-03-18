@@ -449,69 +449,70 @@
             font-size: 16px;
         }
 
-   #thread-container{
+ #thread-container{
   position:fixed;
   top:50%;
   left:50%;
   transform:translate(-50%, -50%) rotate(-3deg);
   width:100%;
-  height:20px;
   z-index:9999;
   pointer-events:none;
 }
 
-/* 🎀 Ribbon cloth */
-.thread{
+/* CLOTH STYLE */
+.ribbon{
   position:absolute;
-  top:0;
-  height:14px;
   width:50%;
-  background:linear-gradient(90deg,#FFD700 0%,
-    #FFA500 30%,
-    #FFD700 60%,
-    #FFA500 100%);
-  border-radius:20px;
-  box-shadow:0 0 20px gold;
-    animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1); /* ✅ HERE */
+  height:auto;
+  filter: drop-shadow(0 0 10px gold);
 }
 
-    
-/* LEFT SIDE (tie at left corner) */
-.thread.left{
+/* LEFT SIDE */
+.ribbon.left{
   left:0;
-  transform-origin:left center;  /* 🔥 tie point */
+  transform-origin:left center;
 }
 
-/* RIGHT SIDE (tie at right corner) */
-.thread.right{
+/* RIGHT SIDE */
+.ribbon.right{
   right:0;
-  transform-origin:right center; /* 🔥 tie point */
+  transform-origin:right center;
 }
+
+/* SCISSOR */
+.scissor{
+  position:absolute;
+  left:50%;
+  top:-40px;
+  transform:translateX(-50%);
+  font-size:34px;
+  opacity:0;
+}
+
 
 
 /* 🔥 IMPORTANT: FALL WITH TRANSFORM RESET */
 
-/* LEFT ribbon hanging */
+/* LEFT hanging cloth */
 @keyframes hangLeft{
   0%{
     transform: rotate(0deg);
   }
   100%{
-    transform: rotate(75deg) translateY(120px);
-    opacity:0.95;
+    transform: rotate(80deg) translateY(120px);
   }
 }
 
-/* RIGHT ribbon hanging */
+/* RIGHT hanging cloth */
 @keyframes hangRight{
   0%{
     transform: rotate(0deg);
   }
   100%{
-    transform: rotate(-75deg) translateY(120px);
-    opacity:0.95;
+    transform: rotate(-80deg) translateY(120px);
   }
 }
+
 
 
 
@@ -522,10 +523,21 @@
 <body>
 
     <div id="thread-container">
-  <div class="thread left"></div>
-  <div class="thread right"></div>
+  
+  <!-- LEFT CLOTH -->
+  <svg class="ribbon left" viewBox="0 0 500 60">
+    <path d="M0 30 Q250 10 500 30 L500 50 Q250 35 0 50 Z" fill="gold"/>
+  </svg>
+
+  <!-- RIGHT CLOTH -->
+  <svg class="ribbon right" viewBox="0 0 500 60">
+    <path d="M0 30 Q250 10 500 30 L500 50 Q250 35 0 50 Z" fill="gold"/>
+  </svg>
+
   <div class="scissor">✂️</div>
+
 </div>
+
 
 <audio id="cutSound" src="cut.mp3"></audio>
 
@@ -735,52 +747,29 @@ setInterval(() => {
 
 window.addEventListener("load", function(){
 
-    const left = document.querySelector(".thread.left");
-    const right = document.querySelector(".thread.right");
-    const scissor = document.querySelector(".scissor");
-    const sound = document.getElementById("cutSound");
+  const left = document.querySelector(".ribbon.left");
+  const right = document.querySelector(".ribbon.right");
+  const scissor = document.querySelector(".scissor");
 
-    if(!left || !right || !scissor) return;
+  setTimeout(()=>{
+    scissor.style.opacity = "1";
+  },400);
 
-    // Step 1: show scissor
-    setTimeout(()=>{
-        scissor.style.opacity = "1";
-    },400);
+  setTimeout(()=>{
+    scissor.style.display = "none";
 
-    // Step 2: small cut gap (IMPORTANT)
-    setTimeout(()=>{
-        left.style.width = "48%";
-        right.style.width = "48%";
-    },900);
+    // create cut gap
+    left.style.width = "48%";
+    right.style.width = "48%";
 
-    // Step 3: CUT + SOUND + FALL
-    setTimeout(()=>{
+    // cloth hanging
+    left.style.animation = "hangLeft 1.2s cubic-bezier(0.2,0.8,0.3,1) forwards";
+    right.style.animation = "hangRight 1.2s cubic-bezier(0.2,0.8,0.3,1) forwards";
 
-         scissor.style.display = "none";
-        left.style.marginRight = "5px";
-        right.style.marginLeft = "5px";
+  },1000);
 
-
-        // cut gap
-        left.style.width = "48%";
-        right.style.width = "48%";
-        
-        // hide scissor properly
-        scissor.style.opacity = "0";
-        scissor.style.display = "none";
-
-        // play sound safely
-        if(sound){
-            sound.play().catch(()=>{});
-        }
-
-               // 🎀 cloth hanging effect
-            left.style.animation = "hangLeft 1.2s cubic-bezier(0.2, 0.8, 0.3, 1) forwards";
-            right.style.animation = "hangRight 1.2s cubic-bezier(0.2, 0.8, 0.3, 1) forwards";
-       
-
-        },1000);
-
+});
+ 
 });
 
 </script>
