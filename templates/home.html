@@ -855,31 +855,31 @@ function loadFeedback(){
 window.onload = loadFeedback;
 
 
-document.addEventListener("DOMContentLoaded", function(){
+
+document.addEventListener("click", function(e){
+
+  // check if clicked element is star
+  if(e.target.parentElement && e.target.parentElement.id === "starRating"){
 
     const stars = document.querySelectorAll("#starRating span");
     const ratingInput = document.getElementById("rating");
 
-    stars.forEach((star, index)=>{
-      star.addEventListener("click", ()=>{
-        
-        let value = star.getAttribute("data-value");
+    let value = e.target.getAttribute("data-value");
 
-        // store rating
-        ratingInput.value = "★".repeat(value);
+    // store rating
+    ratingInput.value = "★".repeat(value);
 
-        // reset all
-        stars.forEach(s => s.classList.remove("active"));
+    // reset
+    stars.forEach(s => s.classList.remove("active"));
 
-        // highlight selected
-        for(let i=0;i<value;i++){
-          stars[i].classList.add("active");
-        }
+    // highlight
+    for(let i=0; i<value; i++){
+      stars[i].classList.add("active");
+    }
+  }
 
-      });
-    });
+});
 
-  });
 
  
 });
