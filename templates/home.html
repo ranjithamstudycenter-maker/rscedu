@@ -747,6 +747,54 @@ setInterval(() => {
 }, 3000);
 
 
+function addFeedback(){
+
+  let name = document.getElementById("name").value;
+  let role = document.getElementById("role").value;
+  let rating = document.getElementById("rating").value;
+  let message = document.getElementById("message").value;
+
+  fetch('/submit_feedback', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({name, role, rating, message})
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert("Feedback submitted!");
+    loadFeedback(); // reload
+  });
+}
+
+
+
+function loadFeedback(){
+  fetch('/get_feedback')
+  .then(res => res.json())
+  .then(data => {
+
+    let container = document.getElementById("feedbackContainer");
+    container.innerHTML = "";
+
+    data.forEach(f => {
+      container.innerHTML += `
+        <div class="feedback-card">
+          <div class="stars">${f.rating}</div>
+          <p>${f.message}</p>
+          <h4>${f.name}</h4>
+          <span>${f.role}</span>
+        </div>
+      `;
+    });
+
+  });
+}
+
+window.onload = loadFeedback;
+
+    
 /* ================= RIBBON CUT ================= */
 
 window.addEventListener("load", function(){
