@@ -472,11 +472,12 @@
 .feedback-container{
   display:flex;
   gap:20px;
-  justify-content:center;
-  flex-wrap:wrap;
+  justify-content: flex-start; 
+  flex-wrap: nowrap; 
   overflow-x: auto;
   scroll-behavior: smooth;
   padding: 20px;
+  padding-left: 0;
 }
 
 .feedback-card{
@@ -559,11 +560,6 @@ select:focus{
   outline: none;
   box-shadow: none;
 }
-
-.feedback-container:empty{
-  display: none;
-}
-
 
 
     </style>
@@ -878,6 +874,11 @@ function scrollRight(){
     left: 300,
     behavior: 'smooth'
   });
+}
+if(data.length === 0){
+  document.querySelector(".feedback-wrapper").style.display = "none";
+}else{
+  document.querySelector(".feedback-wrapper").style.display = "flex";
 }
 
 </script>
