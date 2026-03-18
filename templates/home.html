@@ -855,23 +855,31 @@ function loadFeedback(){
 window.onload = loadFeedback;
 
 
-const stars = document.querySelectorAll("#starRating span");
-const ratingInput = document.getElementById("rating");
+document.addEventListener("DOMContentLoaded", function(){
 
-stars.forEach(star=>{
-  star.addEventListener("click", ()=>{
-    let value = star.getAttribute("data-value");
-    ratingInput.value = "★".repeat(value);
+    const stars = document.querySelectorAll("#starRating span");
+    const ratingInput = document.getElementById("rating");
 
-    stars.forEach(s => s.classList.remove("active"));
+    stars.forEach((star, index)=>{
+      star.addEventListener("click", ()=>{
+        
+        let value = star.getAttribute("data-value");
 
-    for(let i=0;i<value;i++){
-      stars[i].classList.add("active");
-    }
+        // store rating
+        ratingInput.value = "★".repeat(value);
+
+        // reset all
+        stars.forEach(s => s.classList.remove("active"));
+
+        // highlight selected
+        for(let i=0;i<value;i++){
+          stars[i].classList.add("active");
+        }
+
+      });
+    });
+
   });
-});
-
-
 
  
 });
