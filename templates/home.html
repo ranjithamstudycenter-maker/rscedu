@@ -449,49 +449,55 @@
             font-size: 16px;
         }
 
-        #intro{
-  position:fixed;
-  width:100%;
-  height:100%;
-  background:#111;
-  color:white;
-  display:flex;
-  justify-content:center;
-  align-items:center;
-  flex-direction:column;
-  z-index:9999;
-}
-
-.ribbon{
-  width:300px;
-  height:10px;
-  background:red;
-  margin-bottom:20px;
+        #thread-container{
   position:relative;
+  width:100%;
+  height:6px;
+  margin-top:20px;
+  overflow:visible;
 }
 
-.scissor{
-  font-size:40px;
+/* Gold thread */
+.thread{
   position:absolute;
-  top:45%;
-  left:0;
-  animation:cut 2s forwards;
+  top:0;
+  height:6px;
+  width:50%;
+  background:linear-gradient(90deg, gold, orange, gold);
+  box-shadow:0 0 10px gold;
+  transition:all 1.2s ease;
 }
 
-@keyframes cut{
-  0%{ left:0; }
-  100%{ left:60%; }
+.thread.left{
+  left:0;
 }
+
+.thread.right{
+  right:0;
+}
+
+/* Scissor */
+.cut-point{
+  position:absolute;
+  left:50%;
+  top:-25px;
+  transform:translateX(-50%);
+  font-size:30px;
+  opacity:0;
+  transition:0.5s;
+}
+
 
     </style>
 </head>
 <body>
 
-    <div id="intro">
-  <div class="ribbon"></div>
-  <div class="scissor">✂️</div>
-  <h2>Welcome to Ranjitham Study Center</h2>
+    <div id="thread-container">
+  <div class="thread left"></div>
+  <div class="thread right"></div>
+  <div class="cut-point">✂️</div>
     </div>
+
     <!-- ==========================
          NAVBAR
     ========================== -->
@@ -691,18 +697,25 @@
             showSlide(index);
         }, 3000);
 
-                    window.onload = function(){
-            
-              setTimeout(()=>{
-                document.querySelector(".ribbon").style.background = "transparent";
-              },1500);
-            
-              setTimeout(()=>{
-                document.getElementById("intro").style.display="none";
-                document.getElementById("mainContent").style.display="block";
-              },2500);
-            
-            }
+                   window.addEventListener("load", function(){
+
+                      const left = document.querySelector(".thread.left");
+                      const right = document.querySelector(".thread.right");
+                      const scissor = document.querySelector(".cut-point");
+                    
+                      // Show scissor
+                      setTimeout(()=>{
+                        scissor.style.opacity = "1";
+                      },300);
+                    
+                      // Cut effect
+                      setTimeout(()=>{
+                        left.style.transform = "translateX(-100%)";
+                        right.style.transform = "translateX(100%)";
+                      },800);
+                    
+                    });
+
 
     </script>
 </body>
