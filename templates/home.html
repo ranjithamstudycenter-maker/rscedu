@@ -525,7 +525,16 @@
   padding: 20px;
   position: relative;   /* ✅ IMPORTANT */
 }
-
+/* Hide scrollbar */
+.feedback-container::-webkit-scrollbar{
+    display:none;
+}
+.feedback-container::-webkit-scrollbar-track{
+    background:transparent;
+}
+.feedback-container::-webkit-scrollbar-thumb{
+    background:transparent;
+}
 .feedback-card{
   background:#fff;
   padding:20px;
