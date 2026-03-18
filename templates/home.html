@@ -13,6 +13,32 @@
         /* ==========================
            GLOBAL STYLES
         ========================== */
+
+        /* Make everything flexible */
+            *{
+              box-sizing: border-box;
+            }
+            
+            body{
+              margin: 0;
+              padding: 0;
+              background: #ffffff;
+              color: #333;
+              overflow-x: hidden;
+            }
+            
+            /* Images responsive */
+            img{
+              max-width: 100%;
+              height: auto;
+            }
+            
+            /* Container width */
+            .container{
+              width: 90%;
+              margin: auto;
+            }
+
         * {
             margin: 0;
             padding: 0;
@@ -20,20 +46,12 @@
             font-family: 'Poppins', sans-serif;
         }
 
-        body {
-            background: #ffffff;
-            color: #333;
-            overflow-x: hidden;
-        }
 
         a {
             text-decoration: none;
         }
 
-        img {
-            max-width: 100%;
-            display: block;
-        }
+       
 
         /* ==========================
            NAVBAR
@@ -100,11 +118,21 @@
             50% { opacity: 0; }
         }
 
-        @media (max-width: 900px) {
-            .nav-center {
-                display: none;
-            }
+       @media(max-width:768px){
+      .navbar{
+        flex-direction: column;
+        align-items: center;
+          }
         }
+        /* Mobile */
+        @media(max-width:480px){}
+        
+        /* Tablet */
+        @media(max-width:768px){}
+        
+        /* Laptop */
+        @media(max-width:1024px){}
+
 
         /* ==========================
            HERO / SLIDER
@@ -321,6 +349,26 @@
             font-size: 15px;
             line-height: 1.6;
         }
+
+        @media(max-width:768px){
+          .cards{
+                flex-direction: column;
+                  }
+            }
+
+        @media(max-width:768px){
+          input, select, textarea, button{
+            width: 100%;
+            font-size: 16px;
+          }
+        }
+
+
+                    @media(max-width:768px){
+              h1{ font-size: 22px; }
+              h2{ font-size: 18px; }
+              p{ font-size: 14px; }
+            }
 
         /* ==========================
            CTA
