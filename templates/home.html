@@ -515,7 +515,42 @@
   cursor:pointer;
 }
 
+.star-rating span{
+  font-size:30px;
+  cursor:pointer;
+  color:#ccc;
+  transition:0.3s;
+}
 
+.star-rating span.active{
+  color:gold;
+}
+
+.feedback-slider{
+  overflow:hidden;
+  width:100%;
+}
+
+.feedback-track{
+  display:flex;
+  gap:20px;
+  width:max-content;
+  animation:scrollFeedback 20s linear infinite;
+}
+
+.feedback-card{
+  min-width:250px;
+  background:#fff;
+  padding:15px;
+  border-radius:12px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Animation */
+@keyframes scrollFeedback{
+  0%{ transform:translateX(0); }
+  100%{ transform:translateX(-50%); }
+}
 
 
     </style>
@@ -697,11 +732,16 @@
       <option value="Parent">Parent</option>
     </select>
 
-    <select id="rating">
-      <option value="★★★★★">5 Star</option>
-      <option value="★★★★">4 Star</option>
-      <option value="★★★">3 Star</option>
-    </select>
+    <div class="star-rating" id="starRating">
+  <span data-value="1">★</span>
+  <span data-value="2">★</span>
+  <span data-value="3">★</span>
+  <span data-value="4">★</span>
+  <span data-value="5">★</span>
+</div>
+
+<input type="hidden" id="rating" value="5">
+
 
     <textarea id="message" placeholder="Write your feedback"></textarea>
 
@@ -803,6 +843,7 @@ function addFeedback(){
 
 
 
+
 function loadFeedback(){
   fetch('/get_feedback')
   .then(res => res.json())
@@ -811,13 +852,16 @@ function loadFeedback(){
     let container = document.getElementById("feedbackContainer");
     container.innerHTML = "";
 
-    data.forEach(f => {
+    // Duplicate for smooth infinite scroll
+    let allData = data.concat(data);
+
+    allData.forEach(f => {
       container.innerHTML += `
         <div class="feedback-card">
           <div class="stars">${f.rating}</div>
           <p>${f.message}</p>
           <h4>${f.name}</h4>
-          <span>${f.role}</span>
+          <small>${f.role}</small>
         </div>
       `;
     });
@@ -825,9 +869,27 @@ function loadFeedback(){
   });
 }
 
+
 window.onload = loadFeedback;
 
-    
+
+const stars = document.querySelectorAll("#starRating span");
+const ratingInput = document.getElementById("rating");
+
+stars.forEach(star=>{
+  star.addEventListener("click", ()=>{
+    let value = star.getAttribute("data-value");
+    ratingInput.value = "★".repeat(value);
+
+    stars.forEach(s => s.classList.remove("active"));
+
+    for(let i=0;i<value;i++){
+      stars[i].classList.add("active");
+    }
+  });
+});
+
+
 
  
 });
