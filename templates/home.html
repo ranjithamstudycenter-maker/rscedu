@@ -449,27 +449,29 @@
             font-size: 16px;
         }
 
-      #thread-container{
+     #thread-container{
   position:fixed;
   top:50%;
   left:50%;
-  transform:translate(-50%, -50%) rotate(-3deg); /* slight tilt */
-  width:80%;
-  height:10px;
+  transform:translate(-50%, -50%) rotate(-5deg); /* better tilt */
+  width:90%;   /* full width feel */
+  height:12px;
   z-index:9999;
   pointer-events:none;
 }
+
 
 /* THREAD STYLE */
 .thread{
   position:absolute;
   top:0;
-  height:8px;
+  height:10px;
   width:50%;
-  background:linear-gradient(90deg, gold, orange, gold);
-  box-shadow:0 0 12px gold;
-  border-radius:5px;
+  background:linear-gradient(90deg,#FFD700,#FFA500,#FFD700);
+  box-shadow:0 0 15px gold;
+  border-radius:10px;
 }
+
 
 /* LEFT PART */
 .thread.left{
@@ -494,16 +496,26 @@
   transition:0.3s;
 }
 
-/* FALL ANIMATION */
 @keyframes fallLeft{
-  0%{ transform:rotate(0deg) translateY(0); }
-  100%{ transform:rotate(-40deg) translateY(300px); opacity:0; }
+  0%{
+    transform:rotate(0deg) translateY(0);
+  }
+  100%{
+    transform:rotate(-60deg) translateY(500px);
+    opacity:0;
+  }
 }
 
 @keyframes fallRight{
-  0%{ transform:rotate(0deg) translateY(0); }
-  100%{ transform:rotate(40deg) translateY(300px); opacity:0; }
+  0%{
+    transform:rotate(0deg) translateY(0);
+  }
+  100%{
+    transform:rotate(60deg) translateY(500px);
+    opacity:0;
+  }
 }
+
 
 <audio id="cutSound" src="cut.mp3"></audio>
 
@@ -728,17 +740,22 @@
                           },300);
                         
                           // Step 2: CUT + SCISSOR HIDE
-                          setTimeout(()=>{
-                            scissor.style.opacity = "0"; // hide scissor instantly
-                        
-                            // thread fall animation
-                            left.style.animation = "fallLeft 1.5s forwards";
-                            right.style.animation = "fallRight 1.5s forwards";
-                        
-                          },900);
-                        
+                         setTimeout(()=>{
+                                        scissor.style.transition = "0.2s";
+                                        scissor.style.opacity = "0";   // smooth vanish
+                                    
+                                        left.style.animation = "fallLeft 1.5s forwards";
+                                        right.style.animation = "fallRight 1.5s forwards";
+                                    
+                                    },900);
+                                                            
                         });
 
+
+                            setTimeout(()=>{
+                                left.style.width = "48%";
+                                right.style.width = "48%";
+                            },850);
 
 
 
