@@ -545,15 +545,21 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
+  
+  background: rgba(0,0,0,0.6);   /* visible always */
   color: white;
-  padding: 10px;
-  cursor: pointer;
-  z-index: 10;
-  font-size: 24px;
-  background: rgba(0,0,0,0.5);
+  
   border: none;
+  padding: 12px;
+  cursor: pointer;
+  z-index: 999;
+  font-size: 24px;
   border-radius: 50%;
+
+  opacity: 1;              /* 🔥 always visible */
+  visibility: visible;     /* 🔥 no hide */
 }
+
 
 .scroll-btn.left{
   left: 10px;
@@ -561,6 +567,11 @@
 
 .scroll-btn.right{
   right: 10px;
+}
+        
+.scroll-btn:hover{
+  background: rgba(0,0,0,0.8);
+  transform: translateY(-50%) scale(1.1);
 }
 
   
