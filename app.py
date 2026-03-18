@@ -97,6 +97,14 @@ razorpay_client = razorpay.Client(auth=(
 ))
 # -------------------- ROUTES --------------------
 
+@app.after_request
+def add_header(response):
+    response.cache_control.no_store = True
+    response.cache_control.no_cache = True
+    response.cache_control.must_revalidate = True
+    response.headers["Pragma"] = "no-cache"
+    response.headers["Expires"] = "0"
+    return response
 
 
 @app.route("/")
