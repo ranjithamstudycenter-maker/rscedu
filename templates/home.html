@@ -545,6 +545,32 @@
   min-width: 250px;
   flex-shrink: 0;
 }
+.arrow{
+    position:absolute;
+    top:50%;
+    transform:translateY(-50%);
+    font-size:26px;
+    border-radius:0;
+    width:40px;
+    height:40px;
+    border:none;
+   background:none;
+  box-shadow:none;     /* remove shadow */
+    cursor:pointer;
+    z-index:10;
+    font-size:34px;
+    color:#555;               /* arrow color */
+    
+}
+
+/* Exact edge positioning */
+.arrow.left{
+    left:0;
+}
+
+.arrow.right{
+    right:0;
+}
 
 
 .scroll-btn{
