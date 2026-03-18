@@ -518,6 +518,7 @@
 }
 
 
+
     </style>
 </head>
 <body>
@@ -657,23 +658,28 @@
         </div>
     </section>
 
-    <a href="#feedback">Feedback</a>
 
-<section id="feedback" class="feedback-section">
+<section class="feedback-section">
 
   <h2>Student & Parent Feedback</h2>
-  <p class="subtitle">What our students and parents say about us</p>
 
-  <!-- Feedback Display -->
-  <div class="feedback-container" id="feedbackContainer"></div>
+  <!-- Feedback Cards -->
+  <div class="feedback-container" id="feedbackContainer">
+    
+    <!-- Example Card -->
+    <div class="feedback-card">
+      <div class="stars">★★★★★</div>
+      <p>Best coaching centre. Very useful classes.</p>
+      <h4>Ravi Kumar</h4>
+      <span>Parent</span>
+    </div>
+
+  </div>
 
   <!-- Feedback Form -->
   <div class="feedback-form">
-
-    <h3>Give Your Feedback</h3>
-
-    <input type="text" id="name" placeholder="Your Name">
-
+    <input type="text" id="name" placeholder="Your Name" required>
+    
     <select id="role">
       <option value="Student">Student</option>
       <option value="Parent">Parent</option>
@@ -685,14 +691,13 @@
       <option value="★★★">3 Star</option>
     </select>
 
-
-    <textarea id="message" placeholder="Write your feedback"></textarea>
+    <textarea id="message" placeholder="Your Feedback"></textarea>
 
     <button onclick="addFeedback()">Submit</button>
-
   </div>
 
 </section>
+
 
 
     <!-- ==========================
@@ -770,45 +775,50 @@ function addFeedback(){
   let rating = document.getElementById("rating").value;
   let message = document.getElementById("message").value;
 
-  fetch('/submit_feedback', {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({name, role, rating, message})
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert("Feedback submitted!");
-    loadFeedback(); // reload
-  });
-} 
+  if(name === "" || message === ""){
+    alert("Please fill all fields");
+    return;
+  }
 
-function loadFeedback(){
-  fetch('/get_feedback')
-  .then(res => res.json())
-  .then(data => {
+  let container = document.getElementById("feedbackContainer");
 
-    let container = document.getElementById("feedbackContainer");
-    container.innerHTML = "";
+  let card = `
+    <div class="feedback-card">
+      <div class="stars">${rating}</div>
+      <p>${message}</p>
+      <h4>${name}</h4>
+      <span>${role}</span>
+    </div>
+  `;
 
-    data.forEach(f => {
-      container.innerHTML += `
-        <div class="feedback-card">
-          <div class="stars">${f.rating}</div>
-          <p>${f.message}</p>
-          <h4>${f.name}</h4>
-          <span>${f.role}</span>
-        </div>
-      `;
-    });
+  container.innerHTML += card;
 
-  });
+  // Save in browser (local storage)
+  let data = JSON.parse(localStorage.getItem("feedbacks")) || [];
+  data.push({name, role, rating, message});
+  localStorage.setItem("feedbacks", JSON.stringify(data));
+
+  document.getElementById("name").value="";
+  document.getElementById("message").value="";
 }
 
-window.onload = loadFeedback;
+// Load saved feedbacks
+window.onload = function(){
+  let data = JSON.parse(localStorage.getItem("feedbacks")) || [];
+  let container = document.getElementById("feedbackContainer");
 
- 
+  data.forEach(f => {
+    container.innerHTML += `
+      <div class="feedback-card">
+        <div class="stars">${f.rating}</div>
+        <p>${f.message}</p>
+        <h4>${f.name}</h4>
+        <span>${f.role}</span>
+      </div>
+    `;
+  });
+}
+ });
 
 </script>
 
