@@ -665,17 +665,8 @@
 
   <!-- Feedback Cards -->
   <div class="feedback-container" id="feedbackContainer">
-    
-    <!-- Example Card -->
-    <div class="feedback-card">
-      <div class="stars">★★★★★</div>
-      <p>Best coaching centre. Very useful classes.</p>
-      <h4>Ravi Kumar</h4>
-      <span>Parent</span>
-    </div>
-
   </div>
-
+    
   <!-- Feedback Form -->
   <div class="feedback-form">
     <input type="text" id="name" placeholder="Your Name" required>
@@ -751,23 +742,24 @@
     ========================== -->
     <script>
 
-let index = 0;
-const slides = document.querySelector(".slides");
-const dots = document.querySelectorAll(".dot");
-const totalSlides = dots.length;
+            let index = 0;
+            const slides = document.querySelector(".slides");
+            const dots = document.querySelectorAll(".dot");
+            const totalSlides = dots.length;
+            
+            function showSlide(i){
+                slides.style.transform = `translateX(-${i * 100}%)`;
+                dots.forEach(dot => dot.classList.remove("active"));
+                dots[i].classList.add("active");
+            }
+            
+            setInterval(() => {
+                index = (index + 1) % totalSlides;
+                showSlide(index);
+            }, 3000);
+    </script>
 
-function showSlide(i){
-    slides.style.transform = `translateX(-${i * 100}%)`;
-    dots.forEach(dot => dot.classList.remove("active"));
-    dots[i].classList.add("active");
-}
-
-setInterval(() => {
-    index = (index + 1) % totalSlides;
-    showSlide(index);
-}, 3000);
-
-
+<script>
 function addFeedback(){
 
   let name = document.getElementById("name").value;
@@ -775,52 +767,47 @@ function addFeedback(){
   let rating = document.getElementById("rating").value;
   let message = document.getElementById("message").value;
 
-  if(name === "" || message === ""){
-    alert("Please fill all fields");
-    return;
-  }
-
-  let container = document.getElementById("feedbackContainer");
-
-  let card = `
-    <div class="feedback-card">
-      <div class="stars">${rating}</div>
-      <p>${message}</p>
-      <h4>${name}</h4>
-      <span>${role}</span>
-    </div>
-  `;
-
-  container.innerHTML += card;
-
-  // Save in browser (local storage)
-  let data = JSON.parse(localStorage.getItem("feedbacks")) || [];
-  data.push({name, role, rating, message});
-  localStorage.setItem("feedbacks", JSON.stringify(data));
-
-  document.getElementById("name").value="";
-  document.getElementById("message").value="";
-}
-
-// Load saved feedbacks
-window.onload = function(){
-  let data = JSON.parse(localStorage.getItem("feedbacks")) || [];
-  let container = document.getElementById("feedbackContainer");
-
-  data.forEach(f => {
-    container.innerHTML += `
-      <div class="feedback-card">
-        <div class="stars">${f.rating}</div>
-        <p>${f.message}</p>
-        <h4>${f.name}</h4>
-        <span>${f.role}</span>
-      </div>
-    `;
+  fetch('/submit_feedback', {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({name, role, rating, message})
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert("Feedback submitted!");
+    loadFeedback(); // reload
   });
 }
- });
-
 </script>
+    
+<script>
+function loadFeedback(){
+  fetch('/get_feedback')
+  .then(res => res.json())
+  .then(data => {
+
+    let container = document.getElementById("feedbackContainer");
+    container.innerHTML = "";
+
+    data.forEach(f => {
+      container.innerHTML += `
+        <div class="feedback-card">
+          <div class="stars">${f.rating}</div>
+          <p>${f.message}</p>
+          <h4>${f.name}</h4>
+          <span>${f.role}</span>
+        </div>
+      `;
+    });
+
+  });
+}
+
+window.onload = loadFeedback;
+</script>
+
 
 </body>
 </html>
