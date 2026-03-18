@@ -448,9 +448,50 @@
             padding: 12px;
             font-size: 16px;
         }
+
+        #intro{
+  position:fixed;
+  width:100%;
+  height:100%;
+  background:#111;
+  color:white;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  flex-direction:column;
+  z-index:9999;
+}
+
+.ribbon{
+  width:300px;
+  height:10px;
+  background:red;
+  margin-bottom:20px;
+  position:relative;
+}
+
+.scissor{
+  font-size:40px;
+  position:absolute;
+  top:45%;
+  left:0;
+  animation:cut 2s forwards;
+}
+
+@keyframes cut{
+  0%{ left:0; }
+  100%{ left:60%; }
+}
+
     </style>
 </head>
 <body>
+
+    <div id="intro">
+  <div class="ribbon"></div>
+  <div class="scissor">✂️</div>
+  <h2>Welcome to Ranjitham Study Center</h2>
+    </div>
     <!-- ==========================
          NAVBAR
     ========================== -->
@@ -649,6 +690,20 @@
             index = (index + 1) % totalSlides;
             showSlide(index);
         }, 3000);
+
+                    window.onload = function(){
+            
+              setTimeout(()=>{
+                document.querySelector(".ribbon").style.background = "transparent";
+              },1500);
+            
+              setTimeout(()=>{
+                document.getElementById("intro").style.display="none";
+                document.getElementById("mainContent").style.display="block";
+              },2500);
+            
+            }
+
     </script>
 </body>
 </html>
