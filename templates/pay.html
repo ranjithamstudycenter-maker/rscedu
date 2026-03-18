@@ -61,8 +61,10 @@ var options = {
           "&board=" + board +
           "&cls=" + cls;
 
-        window.location.href = url;
-    },   // ✅ CLOSED HERE
+         // 🔥 ADD HERE
+    setTimeout(() => {
+        window.location.reload(true);
+    }, 500);
 
     "prefill": {
         "email": "",
