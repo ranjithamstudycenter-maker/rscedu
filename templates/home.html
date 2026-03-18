@@ -469,7 +469,10 @@
   background:linear-gradient(90deg,#FFD700,#FFA500,#FFD700);
   box-shadow:0 0 15px gold;
   border-radius:10px;
+
+  transform: translateY(0);   /* 🔥 VERY IMPORTANT */
 }
+
 
 /* FULL WIDTH FIX */
 .thread.left{
@@ -493,25 +496,29 @@
 }
 
 /* 🔥 IMPORTANT: FALL WITH TRANSFORM RESET */
+/* LEFT FALL */
 @keyframes fallLeft{
   0%{
-    transform:rotate(0deg) translateY(0);
+    transform: rotate(0deg) translateY(0);
   }
   100%{
-    transform:rotate(-70deg) translateY(600px);
+    transform: rotate(-80deg) translateY(800px);
     opacity:0;
   }
 }
 
+/* RIGHT FALL */
 @keyframes fallRight{
   0%{
-    transform:rotate(0deg) translateY(0);
+    transform: rotate(0deg) translateY(0);
   }
   100%{
-    transform:rotate(70deg) translateY(600px);
+    transform: rotate(80deg) translateY(800px);
     opacity:0;
   }
 }
+animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1);
+
 
     </style>
 </head>
