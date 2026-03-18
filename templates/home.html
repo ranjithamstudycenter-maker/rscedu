@@ -512,19 +512,43 @@
 }
  .feedback-wrapper{
   position: relative;
-  display: flex;
-  align-items: center;
+  
+ 
 }
        
+
+.feedback-container{
+  .feedback-wrapper{
+  position: relative;
+}
 
 .feedback-container{
   display: flex;
   gap: 20px;
   overflow-x: auto;
-  scroll-behavior: smooth;
   padding: 20px;
-  position: relative;   /* ✅ IMPORTANT */
 }
+
+/* 🔥 ARROW OUTSIDE LOOK */
+.scroll-btn{
+  position: absolute;
+  top: 0;              /* 🔥 TOP LINE */
+  font-size: 28px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  z-index: 999;
+}
+
+/* Move slightly outside */
+.scroll-btn.left{
+  left: -30px;   /* 🔥 OUTSIDE */
+}
+
+.scroll-btn.right{
+  right: -30px;  /* 🔥 OUTSIDE */
+}
+
 /* Hide scrollbar */
 .feedback-container::-webkit-scrollbar{
     display:none;
@@ -922,18 +946,23 @@ function loadFeedback(){
 window.onload = loadFeedback;
 
     function scrollLeft(){
-  document.getElementById("feedbackContainer").scrollBy({
-    left: -300,
+  const container = document.getElementById("feedbackContainer");
+
+  container.scrollBy({
+    left: -400,   // 🔥 increase value
     behavior: 'smooth'
   });
 }
 
 function scrollRight(){
-  document.getElementById("feedbackContainer").scrollBy({
-    left: 300,
+  const container = document.getElementById("feedbackContainer");
+
+  container.scrollBy({
+    left: 400,
     behavior: 'smooth'
   });
 }
+    
 if(data.length === 0){
   document.querySelector(".feedback-wrapper").style.display = "none";
 }else{
