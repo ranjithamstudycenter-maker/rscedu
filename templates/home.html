@@ -766,22 +766,24 @@ select:focus{
 
 
 <section class="feedback-section">
-<button onclick="scrollLeft()" class="scroll-btn">❮</button>
-
-<div id="feedbackContainer" class="feedback-container"></div>
-
-<button onclick="scrollRight()" class="scroll-btn">❯</button>
 
   <h2>Student & Parent Feedback</h2>
 
-  <!-- Feedback Cards -->
-  <div class="feedback-container" id="feedbackContainer">
+  <!-- Wrapper (IMPORTANT for arrows) -->
+  <div class="feedback-wrapper">
+
+    <button onclick="scrollLeft()" class="scroll-btn left">❮</button>
+
+    <div id="feedbackContainer" class="feedback-container"></div>
+
+    <button onclick="scrollRight()" class="scroll-btn right">❯</button>
+
   </div>
-    
+
   <!-- Feedback Form -->
   <div class="feedback-form">
     <input type="text" id="name" placeholder="Your Name" required>
-    
+
     <select id="role">
       <option value="Student">Student</option>
       <option value="Parent">Parent</option>
@@ -791,8 +793,8 @@ select:focus{
       <option value="★★★★★">5 Star</option>
       <option value="★★★★">4 Star</option>
       <option value="★★★">3 Star</option>
-        <option value="★★">2 Star</option>
-        <option value="★">1 Star</option>
+      <option value="★★">2 Star</option>
+      <option value="★">1 Star</option>
     </select>
 
     <textarea id="message" placeholder="Your Feedback"></textarea>
@@ -800,9 +802,7 @@ select:focus{
     <button onclick="addFeedback()">Submit</button>
   </div>
 
-
 </section>
-
 
 
     <!-- ==========================
