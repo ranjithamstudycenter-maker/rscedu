@@ -518,14 +518,12 @@
        
 
 .feedback-container{
-  display:flex;
-  gap:20px;
-  justify-content: flex-start; 
-  flex-wrap: nowrap; 
+  display: flex;
+  gap: 20px;
   overflow-x: auto;
   scroll-behavior: smooth;
   padding: 20px;
-  padding-left: 0;
+  position: relative;   /* ✅ IMPORTANT */
 }
 
 .feedback-card{
@@ -547,17 +545,22 @@
   position: absolute;
   top: 50%;
   transform: translateY(-50%);
-  background: #007bff;
   color: white;
-  border: none;
   padding: 10px;
   cursor: pointer;
   z-index: 10;
+  font-size: 24px;
+  background: none;
+  border: none;
 }
 
-.left{ left: 0; }
-.right{ right: 0; }
-        
+.scroll-btn.left{
+  left: 5px;
+}
+
+.scroll-btn.right{
+  right: 5px;
+}
 .stars{
   color:orange;
   font-size:18px;
@@ -751,15 +754,11 @@ select:focus{
 
 
 <section class="feedback-section">
-<div class="feedback-wrapper">
+<button onclick="scrollLeft()" class="scroll-btn">❮</button>
 
-  <button onclick="scrollLeft()" class="scroll-btn left">❮</button>
+<div id="feedbackContainer" class="feedback-container"></div>
 
-  <div id="feedbackContainer" class="feedback-container"></div>
-
-  <button onclick="scrollRight()" class="scroll-btn right">❯</button>
-
-</div>
+<button onclick="scrollRight()" class="scroll-btn">❯</button>
 
   <h2>Student & Parent Feedback</h2>
 
