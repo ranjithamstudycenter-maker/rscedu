@@ -496,27 +496,29 @@
 }
 
 /* 🔥 IMPORTANT: FALL WITH TRANSFORM RESET */
-/* LEFT FALL */
+
+/* LEFT SIDE FALL */
 @keyframes fallLeft{
   0%{
-    transform: rotate(0deg) translateY(0);
+    transform: translate(0,0) rotate(0deg);
   }
   100%{
-    transform: rotate(-80deg) translateY(800px);
+    transform: translate(-200px, 600px) rotate(-10deg);
     opacity:0;
   }
 }
 
-/* RIGHT FALL */
+/* RIGHT SIDE FALL */
 @keyframes fallRight{
   0%{
-    transform: rotate(0deg) translateY(0);
+    transform: translate(0,0) rotate(0deg);
   }
   100%{
-    transform: rotate(80deg) translateY(800px);
+    transform: translate(200px, 600px) rotate(10deg);
     opacity:0;
   }
 }
+
 animation-timing-function: cubic-bezier(0.2, 0.8, 0.3, 1);
 
 
