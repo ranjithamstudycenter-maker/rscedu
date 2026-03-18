@@ -449,19 +449,18 @@
             font-size: 16px;
         }
 
-     #thread-container{
+    #thread-container{
   position:fixed;
   top:50%;
   left:50%;
-  transform:translate(-50%, -50%) rotate(-5deg); /* better tilt */
-  width:90%;   /* full width feel */
+  transform:translate(-50%, -50%) rotate(-5deg);
+  width:100%;
   height:12px;
   z-index:9999;
   pointer-events:none;
 }
 
-
-/* THREAD STYLE */
+/* THREAD */
 .thread{
   position:absolute;
   top:0;
@@ -472,14 +471,12 @@
   border-radius:10px;
 }
 
-
-/* LEFT PART */
+/* FULL WIDTH FIX */
 .thread.left{
   left:0;
   transform-origin:right center;
 }
 
-/* RIGHT PART */
 .thread.right{
   right:0;
   transform-origin:left center;
@@ -489,19 +486,19 @@
 .scissor{
   position:absolute;
   left:50%;
-  top:-35px;
+  top:-40px;
   transform:translateX(-50%);
-  font-size:34px;
+  font-size:35px;
   opacity:0;
-  transition:0.3s;
 }
 
+/* 🔥 IMPORTANT: FALL WITH TRANSFORM RESET */
 @keyframes fallLeft{
   0%{
     transform:rotate(0deg) translateY(0);
   }
   100%{
-    transform:rotate(-60deg) translateY(500px);
+    transform:rotate(-70deg) translateY(600px);
     opacity:0;
   }
 }
@@ -511,13 +508,10 @@
     transform:rotate(0deg) translateY(0);
   }
   100%{
-    transform:rotate(60deg) translateY(500px);
+    transform:rotate(70deg) translateY(600px);
     opacity:0;
   }
 }
-
-
-<audio id="cutSound" src="cut.mp3"></audio>
 
     </style>
 </head>
@@ -526,8 +520,11 @@
     <div id="thread-container">
   <div class="thread left"></div>
   <div class="thread right"></div>
-  <div class="cut-point">✂️</div>
-    </div>
+  <div class="scissor">✂️</div>
+</div>
+
+<audio id="cutSound" src="cut.mp3"></audio>
+
 
     <!-- ==========================
          NAVBAR
@@ -739,30 +736,38 @@ window.addEventListener("load", function(){
     const scissor = document.querySelector(".scissor");
     const sound = document.getElementById("cutSound");
 
+    if(!left || !right || !scissor) return;
+
     // Step 1: show scissor
     setTimeout(()=>{
         scissor.style.opacity = "1";
-    },300);
+    },400);
 
-    // Step 2: create cut gap
+    // Step 2: small cut gap (IMPORTANT)
     setTimeout(()=>{
         left.style.width = "48%";
         right.style.width = "48%";
-    },800);
+    },900);
 
-    // Step 3: cut + sound + fall
+    // Step 3: CUT + SOUND + FALL
     setTimeout(()=>{
-        scissor.style.transition = "0.2s";
-        scissor.style.opacity = "0";
 
+        // hide scissor properly
+        scissor.style.opacity = "0";
+        scissor.style.display = "none";
+
+        // play sound safely
         if(sound){
-            sound.play().catch(()=>{}); // avoid error
+            sound.play().catch(()=>{});
         }
 
-        left.style.animation = "fallLeft 1.5s forwards";
-        right.style.animation = "fallRight 1.5s forwards";
+        // 🔥 FORCE animation trigger
+        left.style.animation = "fallLeft 1.5s ease forwards";
+        right.style.animation = "fallRight 1.5s ease forwards";
 
-    },900);
+    },1100);
+
+});
 
 });
 
