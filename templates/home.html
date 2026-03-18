@@ -515,14 +515,23 @@
   cursor:pointer;
 }
 
+.star-rating{
+  display:flex;
+  justify-content:center;
+  gap:5px;
+}
+
 .star-rating span{
+  font-size:32px;
   cursor:pointer;
-  pointer-events:auto;
+  color:#ccc;
+  user-select:none;
 }
 
 .star-rating span.active{
   color:gold;
 }
+
 
 .feedback-slider{
   overflow:hidden;
@@ -720,7 +729,8 @@
   <span data-value="5">★</span>
 </div>
 
-<input type="hidden" id="rating" value="5">
+<input type="hidden" id="rating" value="0">
+
 
 
     <textarea id="message" placeholder="Write your feedback"></textarea>
@@ -852,36 +862,34 @@ function loadFeedback(){
 
 window.onload = loadFeedback;
 
+document.addEventListener("DOMContentLoaded", function(){
 
+  const stars = document.querySelectorAll("#starRating span");
+  const ratingInput = document.getElementById("rating");
 
+  stars.forEach((star, index)=>{
 
-document.addEventListener("click", function(e){
+    star.addEventListener("click", function(){
 
-  const star = e.target.closest("#starRating span");
+      let value = index + 1;
 
-  if(star){
+      // store rating
+      ratingInput.value = "★".repeat(value);
 
-    const stars = document.querySelectorAll("#starRating span");
-    const ratingInput = document.getElementById("rating");
+      // reset
+      stars.forEach(s => s.classList.remove("active"));
 
-    let value = star.getAttribute("data-value");
-
-    // store rating
-    ratingInput.value = "★".repeat(value);
-
-    // reset
-    stars.forEach(s => s.classList.remove("active"));
-
-    // highlight
-    stars.forEach((s, index)=>{
-      if(index < value){
-        s.classList.add("active");
+      // highlight
+      for(let i=0; i<value; i++){
+        stars[i].classList.add("active");
       }
+
     });
 
-  }
+  });
 
 });
+
 
 
 
