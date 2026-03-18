@@ -449,44 +449,63 @@
             font-size: 16px;
         }
 
-        #thread-container{
-  position:relative;
-  width:100%;
-  height:6px;
-  margin-top:20px;
-  overflow:visible;
+      #thread-container{
+  position:fixed;
+  top:50%;
+  left:50%;
+  transform:translate(-50%, -50%) rotate(-3deg); /* slight tilt */
+  width:80%;
+  height:10px;
+  z-index:9999;
+  pointer-events:none;
 }
 
-/* Gold thread */
+/* THREAD STYLE */
 .thread{
   position:absolute;
   top:0;
-  height:6px;
+  height:8px;
   width:50%;
   background:linear-gradient(90deg, gold, orange, gold);
-  box-shadow:0 0 10px gold;
-  transition:all 1.2s ease;
+  box-shadow:0 0 12px gold;
+  border-radius:5px;
 }
 
+/* LEFT PART */
 .thread.left{
   left:0;
+  transform-origin:right center;
 }
 
+/* RIGHT PART */
 .thread.right{
   right:0;
+  transform-origin:left center;
 }
 
-/* Scissor */
-.cut-point{
+/* SCISSOR */
+.scissor{
   position:absolute;
   left:50%;
-  top:-25px;
+  top:-35px;
   transform:translateX(-50%);
-  font-size:30px;
+  font-size:34px;
   opacity:0;
-  transition:0.5s;
+  transition:0.3s;
 }
 
+/* FALL ANIMATION */
+@keyframes fallLeft{
+  0%{ transform:rotate(0deg) translateY(0); }
+  100%{ transform:rotate(-40deg) translateY(300px); opacity:0; }
+}
+
+@keyframes fallRight{
+  0%{ transform:rotate(0deg) translateY(0); }
+  100%{ transform:rotate(40deg) translateY(300px); opacity:0; }
+}
+
+<audio id="cutSound" src="cut.mp3"></audio>
 
     </style>
 </head>
@@ -696,25 +715,31 @@
             index = (index + 1) % totalSlides;
             showSlide(index);
         }, 3000);
-
+                document.getElementById("cutSound").play();
                    window.addEventListener("load", function(){
 
-                      const left = document.querySelector(".thread.left");
-                      const right = document.querySelector(".thread.right");
-                      const scissor = document.querySelector(".cut-point");
-                    
-                      // Show scissor
-                      setTimeout(()=>{
-                        scissor.style.opacity = "1";
-                      },300);
-                    
-                      // Cut effect
-                      setTimeout(()=>{
-                        left.style.transform = "translateX(-100%)";
-                        right.style.transform = "translateX(100%)";
-                      },800);
-                    
-                    });
+                          const left = document.querySelector(".thread.left");
+                          const right = document.querySelector(".thread.right");
+                          const scissor = document.querySelector(".scissor");
+                        
+                          // Step 1: show scissor
+                          setTimeout(()=>{
+                            scissor.style.opacity = "1";
+                          },300);
+                        
+                          // Step 2: CUT + SCISSOR HIDE
+                          setTimeout(()=>{
+                            scissor.style.opacity = "0"; // hide scissor instantly
+                        
+                            // thread fall animation
+                            left.style.animation = "fallLeft 1.5s forwards";
+                            right.style.animation = "fallRight 1.5s forwards";
+                        
+                          },900);
+                        
+                        });
+
+
 
 
     </script>
