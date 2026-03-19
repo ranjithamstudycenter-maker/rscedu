@@ -758,6 +758,34 @@ select:focus{
         </div>
     </section>
 
+<div id="feedbackPopup" class="popup">
+
+  <div class="popup-content">
+    <span class="close" onclick="closePopup()">×</span>
+
+    <h3>Give Your Feedback</h3>
+
+    <input type="text" id="name" placeholder="Your Name">
+
+    <select id="role">
+      <option value="Student">Student</option>
+      <option value="Parent">Parent</option>
+    </select>
+
+    <select id="rating">
+      <option value="★★★★★">5 Star</option>
+      <option value="★★★★">4 Star</option>
+      <option value="★★★">3 Star</option>
+      <option value="★★">2 Star</option>
+      <option value="★">1 Star</option>
+    </select>
+
+    <textarea id="message" placeholder="Your Feedback"></textarea>
+
+    <button onclick="addFeedback()">Submit</button>
+  </div>
+
+</div>
 <button onclick="openPopup()">Give Feedback</button>
     
     <!-- ==========================
