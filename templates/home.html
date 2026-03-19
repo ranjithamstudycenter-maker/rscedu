@@ -607,12 +607,18 @@ select:focus{
   outline: none;
   box-shadow: none;
 }
-.feedback-header{
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
+.feedback-btn{
+  background: #007bff;
+  color: white;
+  padding: 10px 20px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
 }
 
+.feedback-btn:hover{
+  background: #0056b3;
+}
     </style>
 </head>
 <body>
@@ -752,12 +758,12 @@ select:focus{
         </div>
     </section>
 
-<div class="feedback-header">
-  <h2>Student & Parent Feedback</h2>
-  <button onclick="openPopup()" class="feedback-btn">Give Feedback</button>
+<div style="text-align:center; margin-top:20px;">
+  <button onclick="openPopup()" class="feedback-btn">
+    Share Your Feedback
+  </button>
 </div>
-
-
+    
     <!-- ==========================
          CTA SECTION
     ========================== -->
