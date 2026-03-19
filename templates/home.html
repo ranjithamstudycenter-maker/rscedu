@@ -597,12 +597,14 @@
   margin-top:10px;
 }
 
-.feedback-form{
+.feedback-display{
   display: flex;
   flex-direction: column;   /* 🔥 MAIN FIX */
   gap: 10px;
   max-width: 400px;
   margin: auto;
+  padding: 40px 20px;
+  text-align: center;
 }
 
 
@@ -623,6 +625,12 @@
   border:none;
   border-radius:8px;
   cursor:pointer;
+}
+        
+.feedback-form-section{
+  padding: 50px 20px;
+  background: #f9f9f9;
+  text-align: center;
 }
         
 button:focus,
@@ -783,28 +791,30 @@ select:focus{
         </div>
     </section>
 
-<section class="feedback-section">
+<section class="feedback-display">
 
-  <!-- Wrapper (IMPORTANT for arrows) -->
+  <h2>Student & Parent Feedback</h2>
+
   <div class="feedback-wrapper">
-
     <span onclick="scrollLeft()" class="scroll-btn left">❮</span>
 
     <div id="feedbackContainer" class="feedback-container"></div>
 
     <span onclick="scrollRight()" class="scroll-btn right">❯</span>
-
   </div>
-    
 
-  <!-- Feedback Form -->
+</section>
+    
+<section class="feedback-form-section">
+
+  <h2>Share Your Feedback</h2>
+
   <div class="feedback-form">
-      <h2>Student & Parent Feedback</h2>
-    <input type="text" id="name" placeholder="Your Name" required>
+    <input type="text" id="name" placeholder="Your Name">
 
     <select id="role">
-      <option value="Student">Student</option>
-      <option value="Parent">Parent</option>
+      <option>Student</option>
+      <option>Parent</option>
     </select>
 
     <select id="rating">
