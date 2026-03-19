@@ -626,14 +626,19 @@
   padding: 50px 20px;
   background: #f9f9f9;
   text-align: center;
-  flex-direction: column; /* 🔥 MAIN FIX */
+  
   
 }
 .feedback-form{
-  padding: 50px 20px;
-  background: #f9f9f9;
-  text-align: center;
-  flex-direction: column; /* 🔥 MAIN FIX */
+  display: flex;              /* 🔥 THIS WAS MISSING */
+  flex-direction: column;     /* vertical */
+
+  gap: 15px;                  /* spacing between inputs */
+
+  max-width: 400px;
+  margin: auto;
+
+  padding: 20px;
 }
         
     button:focus,
