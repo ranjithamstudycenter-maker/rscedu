@@ -512,6 +512,7 @@
 }
  .feedback-wrapper{
   position: relative;
+  overflow: hidden;
  
 }
        
@@ -531,6 +532,7 @@
   top: 0;              /* 🔥 TOP LINE */
   font-size: 28px;
   background: none;
+  pointer-events: auto;
   border: none;
   cursor: pointer;
   z-index: 9999;
@@ -539,7 +541,7 @@
 
 /* Move slightly outside */
 .scroll-btn.left{
-  left: 0;   /* 🔥 OUTSIDE */
+  left: 10;   /* 🔥 OUTSIDE */
 }
 
 .scroll-btn.right{
@@ -867,6 +869,8 @@ select:focus{
     </script>
 
 <script>
+
+// ================= ADD FEEDBACK =================
 function addFeedback(){
 
   let name = document.getElementById("name").value;
@@ -876,27 +880,34 @@ function addFeedback(){
 
   fetch('/submit_feedback', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({name, role, rating, message})
   })
   .then(res => res.json())
-  .then(data => {
+  .then(() => {
     alert("Feedback submitted!");
-    loadFeedback(); // reload
+    loadFeedback();
   });
 }
-</script>
-    
-<script>
+
+
+// ================= LOAD FEEDBACK =================
 function loadFeedback(){
   fetch('/get_feedback')
   .then(res => res.json())
   .then(data => {
 
     let container = document.getElementById("feedbackContainer");
+    let wrapper = document.querySelector(".feedback-wrapper");
+
     container.innerHTML = "";
+
+    if(data.length === 0){
+      wrapper.style.display = "none";
+      return;
+    }else{
+      wrapper.style.display = "flex";
+    }
 
     data.forEach(f => {
       container.innerHTML += `
@@ -909,99 +920,58 @@ function loadFeedback(){
       `;
     });
 
+    checkScroll();
+    updateArrowState();
+
+    // add scroll event AFTER load
+    container.addEventListener("scroll", updateArrowState);
   });
 }
 
-window.onload = loadFeedback;
-</script>
-    <script>
+
+// ================= SCROLL =================
 function scrollLeft(){
   const c = document.getElementById("feedbackContainer");
-
-  c.scrollBy({
-    left:-300,
-    behavior: "smooth"
-  });
+  c.scrollBy({ left: -300, behavior: "smooth" });
 }
 
 function scrollRight(){
   const c = document.getElementById("feedbackContainer");
-
-  c.scrollBy({
-    left: 300,
-    behavior: "smooth"
-  });
-}
-     
-if(data.length === 0){
-  document.querySelector(".feedback-wrapper").style.display = "none";
-}else{
-  document.querySelector(".feedback-wrapper").style.display = "flex";
+  c.scrollBy({ left: 300, behavior: "smooth" });
 }
 
-    </script>
-    
-<script>
+
+// ================= CHECK OVERFLOW =================
 function checkScroll(){
   const c = document.getElementById("feedbackContainer");
-
   const leftBtn = document.querySelector(".scroll-btn.left");
   const rightBtn = document.querySelector(".scroll-btn.right");
 
-  if(!c) return;
-
-  // if content not overflow
   if(c.scrollWidth <= c.clientWidth){
     leftBtn.style.display = "none";
     rightBtn.style.display = "none";
-  }
-  else{
-    leftBtn.style.display = "block";
+  } else {
     rightBtn.style.display = "block";
   }
 }
 
-// run on load
-window.addEventListener("load", checkScroll);
 
-// run after feedback load
-function loadFeedback(){
-  fetch('/get_feedback')
-  .then(res => res.json())
-  .then(data => {
-
-    let container = document.getElementById("feedbackContainer");
-    container.innerHTML = "";
-
-    data.forEach(f => {
-      container.innerHTML += `
-        <div class="feedback-card">
-          <div class="stars">${f.rating}</div>
-          <p>${f.message}</p>
-          <h4>${f.name}</h4>
-          <span>${f.role}</span>
-        </div>
-      `;
-    });
-
-    checkScroll();   // 🔥 IMPORTANT
-  });
-}
-
- function updateArrowState(){
+// ================= ARROW STATE =================
+function updateArrowState(){
   const c = document.getElementById("feedbackContainer");
   const leftBtn = document.querySelector(".scroll-btn.left");
   const rightBtn = document.querySelector(".scroll-btn.right");
 
   leftBtn.style.display = c.scrollLeft > 0 ? "block" : "none";
-  rightBtn.style.display = 
+  rightBtn.style.display =
     c.scrollLeft + c.clientWidth < c.scrollWidth ? "block" : "none";
 }
 
-document.getElementById("feedbackContainer")
-  .addEventListener("scroll", updateArrowState);
-</script>
 
+// ================= INIT =================
+window.addEventListener("load", loadFeedback);
+
+</script>
 </body>
 </html>
 
