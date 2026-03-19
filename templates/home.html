@@ -913,7 +913,25 @@ function loadFeedback(){
 }
 
 window.onload = loadFeedback;
+</script>
+    <script>
+function scrollLeft(){
+  const c = document.getElementById("feedbackContainer");
 
+  c.scrollBy({
+    left:-300,
+    behavior: "smooth"
+  });
+}
+
+function scrollRight(){
+  const c = document.getElementById("feedbackContainer");
+
+  c.scrollBy({
+    left: 300,
+    behavior: "smooth"
+  });
+}
      
 if(data.length === 0){
   document.querySelector(".feedback-wrapper").style.display = "none";
@@ -921,7 +939,7 @@ if(data.length === 0){
   document.querySelector(".feedback-wrapper").style.display = "flex";
 }
 
-</script>
+    </script>
     
 <script>
 function checkScroll(){
