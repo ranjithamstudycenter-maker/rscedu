@@ -952,6 +952,52 @@ function checkScroll(){
   }
 }
 
+function checkScroll(){
+  const c = document.getElementById("feedbackContainer");
+
+  const leftBtn = document.querySelector(".scroll-btn.left");
+  const rightBtn = document.querySelector(".scroll-btn.right");
+
+  if(!c) return;
+
+  // if content not overflow
+  if(c.scrollWidth <= c.clientWidth){
+    leftBtn.style.display = "none";
+    rightBtn.style.display = "none";
+  }
+  else{
+    leftBtn.style.display = "block";
+    rightBtn.style.display = "block";
+  }
+}
+
+// run on load
+window.addEventListener("load", checkScroll);
+
+// run after feedback load
+function loadFeedback(){
+  fetch('/get_feedback')
+  .then(res => res.json())
+  .then(data => {
+
+    let container = document.getElementById("feedbackContainer");
+    container.innerHTML = "";
+
+    data.forEach(f => {
+      container.innerHTML += `
+        <div class="feedback-card">
+          <div class="stars">${f.rating}</div>
+          <p>${f.message}</p>
+          <h4>${f.name}</h4>
+          <span>${f.role}</span>
+        </div>
+      `;
+    });
+
+    checkScroll();   // 🔥 IMPORTANT
+  });
+}
+
 
 // ================= ARROW STATE =================
 function updateArrowState(){
@@ -960,13 +1006,12 @@ function updateArrowState(){
   const rightBtn = document.querySelector(".scroll-btn.right");
 
   leftBtn.style.display = c.scrollLeft > 0 ? "block" : "none";
-  rightBtn.style.display =
+  rightBtn.style.display = 
     c.scrollLeft + c.clientWidth < c.scrollWidth ? "block" : "none";
 }
-        
 
-// ================= INIT =================
-window.addEventListener("load", loadFeedback);
+document.getElementById("feedbackContainer")
+  .addEventListener("scroll", updateArrowState);
 )};
 </script>
 </body>
