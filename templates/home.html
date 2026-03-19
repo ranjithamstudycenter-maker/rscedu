@@ -594,6 +594,10 @@
   text-align:left;
   min-width: 250px;
   flex-shrink: 0;
+  max-width: 250px;
+  padding: 15px;
+  border-radius: 10px;
+  overflow: hidden;
 }
         
 .stars{
@@ -605,6 +609,11 @@
 .feedback-card p{
   font-size:14px;
   color:#444;
+  word-wrap: break-word;
+  overflow-wrap: break-word;
+  white-space: normal;
+  max-height: 120px;
+  overflow-y: auto;
 }
 
 .feedback-card h4{
@@ -847,7 +856,7 @@
       <option value="★">1 Star</option>
     </select>
 
-    <textarea id="message" placeholder="Your Feedback"></textarea>
+    <textarea id="message" maxlength="1000" placeholder="Your Feedback"></textarea>
 
     <button onclick="addFeedback()">Share Your Feedback</button>
   </div>
