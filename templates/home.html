@@ -512,20 +512,15 @@
 }
  .feedback-wrapper{
   position: relative;
-  
  
 }
        
-
 .feedback-container{
-  .feedback-wrapper{
   position: relative;
-}
-
-.feedback-container{
   display: flex;
   gap: 20px;
   overflow-x: auto;
+  scroll-behavior: smooth;
   padding: 20px;
 }
 
@@ -538,15 +533,16 @@
   border: none;
   cursor: pointer;
   z-index: 999;
+  user-select: none;
 }
 
 /* Move slightly outside */
 .scroll-btn.left{
-  left: -30px;   /* 🔥 OUTSIDE */
+  left: -10px;   /* 🔥 OUTSIDE */
 }
 
 .scroll-btn.right{
-  right: -30px;  /* 🔥 OUTSIDE */
+  right: -10px;  /* 🔥 OUTSIDE */
 }
 
 /* Hide scrollbar */
@@ -796,11 +792,11 @@ select:focus{
   <!-- Wrapper (IMPORTANT for arrows) -->
   <div class="feedback-wrapper">
 
-    <button onclick="scrollLeft()" class="scroll-btn left">❮</button>
+    <span onclick="scrollLeft()" class="scroll-btn left">❮</span>
 
     <div id="feedbackContainer" class="feedback-container"></div>
 
-    <button onclick="scrollRight()" class="scroll-btn right">❯</button>
+    <span onclick="scrollRight()" class="scroll-btn right">❯</span>
 
   </div>
 
@@ -945,22 +941,14 @@ function loadFeedback(){
 
 window.onload = loadFeedback;
 
-    function scrollLeft(){
+   function scrollLeft(){
   const container = document.getElementById("feedbackContainer");
-
-  container.scrollBy({
-    left: -400,   // 🔥 increase value
-    behavior: 'smooth'
-  });
+  container.scrollLeft -= 400;   // 🔥 direct scroll
 }
 
 function scrollRight(){
   const container = document.getElementById("feedbackContainer");
-
-  container.scrollBy({
-    left: 400,
-    behavior: 'smooth'
-  });
+  container.scrollLeft += 400;
 }
     
 if(data.length === 0){
