@@ -613,11 +613,7 @@
   word-wrap: break-word;
   overflow-wrap: break-word;
   white-space: normal;
-  display: -webkit-box;
-  -webkit-line-clamp: 4;   /* 🔥 max 4 lines */
-  -webkit-box-orient: vertical;
-  line-height: 1.5;
-}
+ }
 
 .feedback-card h4{
   margin-top:10px;
@@ -980,13 +976,25 @@ function loadFeedback(){
 
     data.forEach(f => {
       container.innerHTML += `
-        <div class="feedback-card">
-          <div class="stars">${f.rating}</div>
-          <p>${f.message}</p>
-          <h4>${f.name}</h4>
-          <span>${f.role}</span>
-        </div>
-      `;
+      <div class="feedback-card">
+        <div class="stars">${f.rating}</div>
+
+            <p class="msg">${f.message}</p>
+            <button class="read-more" onclick="expandText(this)">Read More</button>
+        
+            <h4>${f.name}</h4>
+            <span>${f.role}</span>
+          </div>
+        `;
+        
+        function expandText(btn){
+          const text = btn.previousElementSibling;
+
+          text.style.webkitLineClamp = "unset";   // remove limit
+          text.style.maxHeight = "none";
+        
+          btn.style.display = "none";  // hide button after click
+        }
     });
 
     updateArrowState();
