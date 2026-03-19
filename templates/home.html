@@ -626,6 +626,7 @@
   padding: 50px 20px;
   background: #f9f9f9;
   text-align: center;
+  flex-direction: column; /* 🔥 MAIN FIX */
   
 }
 .feedback-form{
@@ -809,9 +810,7 @@
     
 <section class="feedback-form-section">
 
-  <h2>Share Your Feedback</h2>
-
-  <div class="feedback-form">
+   <div class="feedback-form">
     <input type="text" id="name" placeholder="Your Name">
 
     <select id="role">
@@ -829,7 +828,7 @@
 
     <textarea id="message" placeholder="Your Feedback"></textarea>
 
-    <button onclick="addFeedback()">Submit</button>
+    <button onclick="addFeedback()">Share Your Feedback</button>
   </div>
 
 </section>
