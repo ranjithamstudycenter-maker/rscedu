@@ -867,10 +867,11 @@ select:focus{
                 showSlide(index);
             }, 3000);
   
+    </script>
 
 
 
-// ================= ADD FEEDBACK =================
+<script>
 function addFeedback(){
 
   let name = document.getElementById("name").value;
@@ -880,34 +881,26 @@ function addFeedback(){
 
   fetch('/submit_feedback', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
+    headers: {
+      'Content-Type': 'application/json'
+    },
     body: JSON.stringify({name, role, rating, message})
   })
   .then(res => res.json())
-  .then(() => {
+  .then(data => {
     alert("Feedback submitted!");
-    loadFeedback();
+    loadFeedback(); // reload
   });
 }
-
-
-// ================= LOAD FEEDBACK =================
+</script>
+<script>
 function loadFeedback(){
   fetch('/get_feedback')
   .then(res => res.json())
   .then(data => {
 
     let container = document.getElementById("feedbackContainer");
-    let wrapper = document.querySelector(".feedback-wrapper");
-
     container.innerHTML = "";
-
-    if(data.length === 0){
-      wrapper.style.display = "none";
-      return;
-    }else{
-      wrapper.style.display = "flex";
-    }
 
     data.forEach(f => {
       container.innerHTML += `
@@ -920,26 +913,30 @@ function loadFeedback(){
       `;
     });
 
-    checkScroll();
-    updateArrowState();
-
-    // add scroll event AFTER load
-    container.addEventListener("scroll", updateArrowState);
   });
 }
+
+window.onload = loadFeedback;
 
 
 // ================= SCROLL =================
 function scrollLeft(){
-  const c = document.getElementById("feedbackContainer");
-  c.scrollBy({ left: -300, behavior: "smooth" });
+  const container = document.getElementById("feedbackContainer");
+
+  container.scrollBy({
+    left: -400,   // 🔥 increase value
+    behavior: 'smooth'
+  });
 }
 
 function scrollRight(){
-  const c = document.getElementById("feedbackContainer");
-  c.scrollBy({ left: 300, behavior: "smooth" });
-}
+  const container = document.getElementById("feedbackContainer");
 
+  container.scrollBy({
+    left: 400,
+    behavior: 'smooth'
+  });
+}
 
 // ================= CHECK OVERFLOW =================
 function checkScroll(){
@@ -966,7 +963,7 @@ function updateArrowState(){
   rightBtn.style.display =
     c.scrollLeft + c.clientWidth < c.scrollWidth ? "block" : "none";
 }
-        }
+        
 
 // ================= INIT =================
 window.addEventListener("load", loadFeedback);
