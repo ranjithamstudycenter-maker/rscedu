@@ -607,7 +607,11 @@ select:focus{
   outline: none;
   box-shadow: none;
 }
-
+.feedback-header{
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
 
     </style>
 </head>
@@ -748,45 +752,10 @@ select:focus{
         </div>
     </section>
 
-
-<section class="feedback-section">
-
+<div class="feedback-header">
   <h2>Student & Parent Feedback</h2>
-
-  <!-- Wrapper (IMPORTANT for arrows) -->
-  <div class="feedback-wrapper">
-
-    <span onclick="scrollLeft()" class="scroll-btn left">❮</span>
-
-    <div id="feedbackContainer" class="feedback-container"></div>
-
-    <span onclick="scrollRight()" class="scroll-btn right">❯</span>
-
-  </div>
-
-  <!-- Feedback Form -->
-  <div class="feedback-form">
-    <input type="text" id="name" placeholder="Your Name" required>
-
-    <select id="role">
-      <option value="Student">Student</option>
-      <option value="Parent">Parent</option>
-    </select>
-
-    <select id="rating">
-      <option value="★★★★★">5 Star</option>
-      <option value="★★★★">4 Star</option>
-      <option value="★★★">3 Star</option>
-      <option value="★★">2 Star</option>
-      <option value="★">1 Star</option>
-    </select>
-
-    <textarea id="message" placeholder="Your Feedback"></textarea>
-
-    <button onclick="addFeedback()">Submit</button>
-  </div>
-
-</section>
+  <button onclick="openPopup()" class="feedback-btn">Give Feedback</button>
+</div>
 
 
     <!-- ==========================
