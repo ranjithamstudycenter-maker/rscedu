@@ -526,26 +526,48 @@
   scrollbar-width: none; 
 }
 
-/* 🔥 ARROW OUTSIDE LOOK */
+
+
+/* COMMON ARROW STYLE */
 .scroll-btn{
   position: absolute;
-  top: 0;              /* 🔥 TOP LINE */
-  font-size: 28px;
-  background: none;
-  pointer-events: auto;
-  border: none;
+  top: 50%;                          /* 🔥 vertical center */
+  transform: translateY(-50%);
+  
+  font-size: 22px;
   cursor: pointer;
-  z-index: 9999;
-  user-select: none;
+
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;               /* 🔥 round shape */
+  
+  background: white;                /* 🔥 white background */
+  color: #333;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  box-shadow: 0 4px 10px rgba(0,0,0,0.15);  /* 🔥 soft shadow */
+  
+  z-index: 999;
+  transition: 0.3s;
 }
 
-/* Move slightly outside */
+/* LEFT SIDE */
 .scroll-btn.left{
-  left: 10;   /* 🔥 OUTSIDE */
+  left: 10px;                      /* 🔥 inside container */
 }
 
+/* RIGHT SIDE */
 .scroll-btn.right{
-  right: -10px;  /* 🔥 OUTSIDE */
+  right: 10px;
+}
+
+/* HOVER EFFECT (optional but nice) */
+.scroll-btn:hover{
+  transform: translateY(-50%) scale(1.1);
+  background: #f1f1f1;
 }
 
 
