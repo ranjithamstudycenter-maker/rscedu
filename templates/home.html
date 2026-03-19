@@ -758,14 +758,24 @@ select:focus{
         </div>
     </section>
 
-<div id="feedbackPopup" class="popup">
+<section class="feedback-section">
 
-  <div class="popup-content">
-    <span class="close" onclick="closePopup()">×</span>
+  <h2>Student & Parent Feedback</h2>
 
-    <h3>Give Your Feedback</h3>
+  <!-- Wrapper (IMPORTANT for arrows) -->
+  <div class="feedback-wrapper">
 
-    <input type="text" id="name" placeholder="Your Name">
+    <span onclick="scrollLeft()" class="scroll-btn left">❮</span>
+
+    <div id="feedbackContainer" class="feedback-container"></div>
+
+    <span onclick="scrollRight()" class="scroll-btn right">❯</span>
+
+  </div>
+
+  <!-- Feedback Form -->
+  <div class="feedback-form">
+    <input type="text" id="name" placeholder="Your Name" required>
 
     <select id="role">
       <option value="Student">Student</option>
@@ -785,8 +795,8 @@ select:focus{
     <button onclick="addFeedback()">Submit</button>
   </div>
 
-</div>
-<button onclick="openPopup()">Give Feedback</button>
+</section>
+
     
     <!-- ==========================
          CTA SECTION
