@@ -513,6 +513,9 @@
  .feedback-wrapper{
   position: relative;
   overflow: hidden;
+  width:100%;
+  margin:40px auto;
+
  
 }
        
@@ -522,8 +525,19 @@
   gap: 20px;
   overflow-x: auto;
   scroll-behavior: smooth;
-  padding: 20px;
+  padding:20px 60px;
   scrollbar-width: none; 
+}
+
+/* Hide scrollbar */
+.feedback-container::-webkit-scrollbar{
+    display:none;
+}
+.feedback-container::-webkit-scrollbar-track{
+    background:transparent;
+}
+.feedback-container::-webkit-scrollbar-thumb{
+    background:transparent;
 }
 
 /* COMMON ARROW STYLE */
@@ -546,26 +560,28 @@
   align-items: center;
   justify-content: center;
 
-  box-shadow: 0 4px 10px rgba(0,0,0,0.15);  /* 🔥 soft shadow */
+  box-shadow: none;
   
-  z-index: 999;
+  z-index: 10;
   transition: 0.3s;
 }
 
 /* LEFT SIDE */
 .scroll-btn.left{
-  left: 10px;                      /* 🔥 inside container */
+  left: 0;                      /* 🔥 inside container */
 }
 
 /* RIGHT SIDE */
 .scroll-btn.right{
-  right: 10px;
+  right: 0;
 }
 
 /* HOVER EFFECT (optional but nice) */
 .scroll-btn:hover{
   transform: translateY(-50%) scale(1.1);
   background: #f1f1f1;
+  color:#0b5fa5;
+
 }
 
 
@@ -804,11 +820,11 @@
   <h2>Student & Parent Feedback</h2>
 
   <div class="feedback-wrapper">
-    <span onclick="scrollLeft()" class="scroll-btn left">❮</span>
-
+   <span onclick="scrollFeedback(-1)" class="scroll-btn left">❮</span>
+      
     <div id="feedbackContainer" class="feedback-container"></div>
 
-    <span onclick="scrollRight()" class="scroll-btn right">❯</span>
+    <span onclick="scrollFeedback(1)" class="scroll-btn right">❯</span>
   </div>
 
 </section>
@@ -1005,6 +1021,19 @@ function updateArrowState(){
 // ================= INIT =================
 window.addEventListener("load", loadFeedback);
 
+
+function scrollFeedback(direction){
+    const box = document.getElementById("feedbackContainer");
+
+    if(!box) return;
+
+    const scrollAmount = box.clientWidth * 0.8;  // responsive
+
+    box.scrollBy({
+        left: direction * scrollAmount,
+        behavior: "smooth"
+    });
+}    
 </script>
 
 
