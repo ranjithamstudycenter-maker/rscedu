@@ -869,11 +869,10 @@ select:focus{
   
     </script>
 
-
-
 <script>
-function addFeedback(){
 
+// ================= ADD FEEDBACK =================
+function addFeedback(){
   let name = document.getElementById("name").value;
   let role = document.getElementById("role").value;
   let rating = document.getElementById("rating").value;
@@ -881,26 +880,36 @@ function addFeedback(){
 
   fetch('/submit_feedback', {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
+    headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({name, role, rating, message})
   })
   .then(res => res.json())
-  .then(data => {
+  .then(() => {
     alert("Feedback submitted!");
-    loadFeedback(); // reload
+    loadFeedback();
   });
 }
 
 
+// ================= LOAD FEEDBACK =================
 function loadFeedback(){
   fetch('/get_feedback')
   .then(res => res.json())
   .then(data => {
 
-    let container = document.getElementById("feedbackContainer");
+    const container = document.getElementById("feedbackContainer");
+    const leftBtn = document.querySelector(".scroll-btn.left");
+    const rightBtn = document.querySelector(".scroll-btn.right");
+
+    if(!container) return;
+
     container.innerHTML = "";
+
+    if(data.length === 0){
+      leftBtn.style.display = "none";
+      rightBtn.style.display = "none";
+      return;
+    }
 
     data.forEach(f => {
       container.innerHTML += `
@@ -913,109 +922,54 @@ function loadFeedback(){
       `;
     });
 
+    updateArrowState();
+
+    container.addEventListener("scroll", updateArrowState);
   });
 }
-
-window.onload = loadFeedback;
 
 
 // ================= SCROLL =================
 function scrollLeft(){
-  const container = document.getElementById("feedbackContainer");
-
-  container.scrollBy({
-    left: -400,   // 🔥 increase value
-    behavior: 'smooth'
-  });
+  const c = document.getElementById("feedbackContainer");
+  if(c) c.scrollBy({ left: -400, behavior: "smooth" });
 }
 
 function scrollRight(){
-  const container = document.getElementById("feedbackContainer");
-
-  container.scrollBy({
-    left: 400,
-    behavior: 'smooth'
-  });
-}
-
-// ================= CHECK OVERFLOW =================
-function checkScroll(){
   const c = document.getElementById("feedbackContainer");
-  const leftBtn = document.querySelector(".scroll-btn.left");
-  const rightBtn = document.querySelector(".scroll-btn.right");
-
-  if(c.scrollWidth <= c.clientWidth){
-    leftBtn.style.display = "none";
-    rightBtn.style.display = "none";
-  } else {
-    rightBtn.style.display = "block";
-  }
-}
-
-function checkScroll(){
-  const c = document.getElementById("feedbackContainer");
-
-  const leftBtn = document.querySelector(".scroll-btn.left");
-  const rightBtn = document.querySelector(".scroll-btn.right");
-
-  if(!c) return;
-
-  // if content not overflow
-  if(c.scrollWidth <= c.clientWidth){
-    leftBtn.style.display = "none";
-    rightBtn.style.display = "none";
-  }
-  else{
-    leftBtn.style.display = "block";
-    rightBtn.style.display = "block";
-  }
-}
-
-// run on load
-window.addEventListener("load", checkScroll);
-
-// run after feedback load
-function loadFeedback(){
-  fetch('/get_feedback')
-  .then(res => res.json())
-  .then(data => {
-
-    let container = document.getElementById("feedbackContainer");
-    container.innerHTML = "";
-
-    data.forEach(f => {
-      container.innerHTML += `
-        <div class="feedback-card">
-          <div class="stars">${f.rating}</div>
-          <p>${f.message}</p>
-          <h4>${f.name}</h4>
-          <span>${f.role}</span>
-        </div>
-      `;
-    });
-
-    checkScroll();   // 🔥 IMPORTANT
-  });
+  if(c) c.scrollBy({ left: 400, behavior: "smooth" });
 }
 
 
-// ================= ARROW STATE =================
+// ================= ARROW CONTROL =================
 function updateArrowState(){
   const c = document.getElementById("feedbackContainer");
   const leftBtn = document.querySelector(".scroll-btn.left");
   const rightBtn = document.querySelector(".scroll-btn.right");
 
+  if(!c) return;
+
+  // no overflow
+  if(c.scrollWidth <= c.clientWidth){
+    leftBtn.style.display = "none";
+    rightBtn.style.display = "none";
+    return;
+  }
+
+  // dynamic control
   leftBtn.style.display = c.scrollLeft > 0 ? "block" : "none";
-  rightBtn.style.display = 
+  rightBtn.style.display =
     c.scrollLeft + c.clientWidth < c.scrollWidth ? "block" : "none";
 }
 
-document.getElementById("feedbackContainer")
-  .addEventListener("scroll", updateArrowState);
-)};
 
-    )};
+// ================= INIT =================
+window.addEventListener("load", loadFeedback);
+
 </script>
+
+
+
 </body>
 </html>
 
