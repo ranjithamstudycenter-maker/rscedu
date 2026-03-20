@@ -1013,39 +1013,38 @@ function loadFeedback(){
     }
 
     data.forEach(f => {
-          const div = document.createElement("div");
-            div.className = "feedback-card";
-            
-            div.innerHTML = `
-              <div class="stars">${f.rating}</div>
-              <p class="msg">
-                ${f.message}
-                <span class="read-more" onclick="toggleText(this)">... Read more</span>
-              </p>
-              <h4>${f.name}</h4>
-              <span>${f.role}</span>
-            `;
-            
-            container.appendChild(div);
+      const div = document.createElement("div");
+      div.className = "feedback-card";
+
+      div.innerHTML = `
+        <div class="stars">${f.rating}</div>
+        <p class="msg">
+          ${f.message}
+          <span class="read-more" onclick="toggleText(this)">... Read more</span>
+        </p>
+        <h4>${f.name}</h4>
+        <span>${f.role}</span>
+      `;
+
+      container.appendChild(div);
     });
-  }
+
+    // ✅ Read more logic (INSIDE .then)
+    setTimeout(() => {
+      document.querySelectorAll(".feedback-card").forEach(card => {
+        const msg = card.querySelector(".msg");
+        const readMore = card.querySelector(".read-more");
+
+        const textLength = msg.innerText.trim().length;
+
+        if (textLength > 120) {
+          readMore.style.display = "inline";
+        } else {
+          readMore.style.display = "none";
         }
-   setTimeout(() => {
-  document.querySelectorAll(".feedback-card").forEach(card => {
-    const msg = card.querySelector(".msg");
-    const readMore = card.querySelector(".read-more");
+      });
 
-    const textLength = msg.innerText.trim().length;
-
-    if (textLength > 120) {
-      readMore.style.display = "inline";   // show inline text
-    } else {
-      readMore.style.display = "none";     // hide for small msg
-    }
-  });
-}, 100);
-
-       // Arrow visibility fix
+      // ✅ Arrow visibility fix
       const isScrollable = container.scrollWidth > container.clientWidth;
 
       if (!isScrollable) {
@@ -1056,27 +1055,25 @@ function loadFeedback(){
         rightBtn.style.display = "flex";
       }
 
-  
+    }, 100);
 
     updateArrowState();
     container.addEventListener("scroll", updateArrowState);
-  });
+
+  }); // ✅ correct closing
 }
-    
-function toggleText(el) {
+
+    function toggleText(el) {
   const msg = el.parentElement;
 
   if (msg.classList.contains("expanded")) {
-    // 🔽 collapse
     msg.classList.remove("expanded");
     el.innerText = "... Read more";
   } else {
-    // 🔼 expand
     msg.classList.add("expanded");
     el.innerText = " Read less";
   }
 }
-    )};
 // ================= SCROLL =================
 function scrollLeft(){
   const c = document.getElementById("feedbackContainer");
