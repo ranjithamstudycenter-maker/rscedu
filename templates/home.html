@@ -698,7 +698,7 @@
   display: -webkit-box;
   -webkit-line-clamp: 3;
   -webkit-box-orient: vertical;
- 
+    
 }
 
 .msg.expanded {
@@ -717,8 +717,12 @@
   display: none;
   margin-top: 5px;
   cursor: pointer;
+  color: #007bff;
+  font-weight: 500;
 }
-
+.read-more:hover {
+  text-decoration: underline;
+}
         
 </style>
 </head>
@@ -1010,33 +1014,37 @@ function loadFeedback(){
     }
 
     data.forEach(f => {
-      container.innerHTML += `
-        <div class="feedback-card">
-          <div class="stars">${f.rating}</div>
-          <p class="msg">${f.message}</p>
-          <button class="read-more" onclick="expandText(this)">Read More</button>
-          <h4>${f.name}</h4>
-          <span>${f.role}</span>
-        </div>
-      `;
+          container.innerHTML += `
+      <div class="feedback-card">
+        <div class="stars">${f.rating}</div>
+    
+        <p class="msg">
+          ${f.message}
+          <span class="read-more" onclick="expandText(this)"> Read more</span>
+        </p>
+    
+        <h4>${f.name}</h4>
+        <span>${f.role}</span>
+      </div>
+    `;
     });
 
-    // Read more logic
-           setTimeout(() => {
+   setTimeout(() => {
   document.querySelectorAll(".feedback-card").forEach(card => {
     const msg = card.querySelector(".msg");
-    const btn = card.querySelector(".read-more");
+    const readMore = card.querySelector(".read-more");
 
     const textLength = msg.innerText.trim().length;
 
-    if (textLength > 120) {   // 🔥 adjust (100–150 range)
-      btn.style.display = "inline-block";
+    if (textLength > 120) {
+      readMore.style.display = "inline";   // show inline text
     } else {
-      btn.style.display = "none";
+      readMore.style.display = "none";     // hide for small msg
     }
   });
 }, 100);
-      // Arrow visibility fix
+
+       // Arrow visibility fix
       const isScrollable = container.scrollWidth > container.clientWidth;
 
       if (!isScrollable) {
@@ -1053,7 +1061,15 @@ function loadFeedback(){
     container.addEventListener("scroll", updateArrowState);
   });
 }
+    
+function expandText(el) {
+  const msg = el.parentElement;
 
+  msg.style.webkitLineClamp = "unset";
+  msg.style.overflow = "visible";
+
+  el.style.display = "none"; // hide "Read more"
+}
 // ================= SCROLL =================
 function scrollLeft(){
   const c = document.getElementById("feedbackContainer");
