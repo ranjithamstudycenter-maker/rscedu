@@ -1050,6 +1050,19 @@ function loadFeedback(){
     el.innerText = " Read less";
   }
 }
+    setTimeout(() => {
+  document.querySelectorAll(".feedback-card").forEach(card => {
+    const msg = card.querySelector(".msg");
+    const readMore = card.querySelector(".read-more");
+
+    // check real overflow
+    if (msg.scrollHeight > msg.clientHeight + 5) {
+      readMore.style.display = "inline";
+    } else {
+      readMore.style.display = "none";
+    }
+  });
+}, 100);
 // ================= SCROLL =================
 function scrollLeft(){
   const c = document.getElementById("feedbackContainer");
