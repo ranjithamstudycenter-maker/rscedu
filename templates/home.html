@@ -702,7 +702,9 @@
 }
 
 .msg.expanded {
-  max-height: 500px;      /* expand ஆகும் போது */
+  display: block;              /* 🔥 முக்கியம் */
+  -webkit-line-clamp: unset;
+  overflow: visible;
 }
 .msg::after {
   content: "";
@@ -1020,9 +1022,10 @@ function loadFeedback(){
     
         <p class="msg">
           ${f.message}
-          <span class="read-more" onclick="expandText(this)">.... Read more</span>
+          <span class="read-more" onclick="toggleText(this)">.... Read more</span>
         </p>
-    
+        <p class="msg">
+      
         <h4>${f.name}</h4>
         <span>${f.role}</span>
       </div>
@@ -1064,13 +1067,18 @@ function loadFeedback(){
   });
 }
     
-function expandText(el) {
+function toggleText(el) {
   const msg = el.parentElement;
 
-  msg.style.webkitLineClamp = "unset";
-  msg.style.overflow = "visible";
-
-  el.style.display = "none"; // hide "Read more"
+  if (msg.classList.contains("expanded")) {
+    // 🔽 collapse
+    msg.classList.remove("expanded");
+    el.innerText = "... Read more";
+  } else {
+    // 🔼 expand
+    msg.classList.add("expanded");
+    el.innerText = " Read less";
+  }
 }
 // ================= SCROLL =================
 function scrollLeft(){
