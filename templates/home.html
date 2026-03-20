@@ -694,7 +694,11 @@
   max-height: 60px;       /* 2–3 lines only */
   overflow: hidden;
   transition: 0.3s ease;
-    position: relative;
+  position: relative;
+  display: -webkit-box;
+  -webkit-line-clamp: 3;
+  -webkit-box-orient: vertical;
+ 
 }
 
 .msg.expanded {
@@ -1018,20 +1022,20 @@ function loadFeedback(){
     });
 
     // Read more logic
-            setTimeout(() => {
-          document.querySelectorAll(".feedback-card").forEach(card => {
-            const msg = card.querySelector(".msg");
-            const btn = card.querySelector(".read-more");
-        
-            // முக்கிய trick 🔥
-            if (msg.scrollHeight > msg.clientHeight) {
-              btn.style.display = "inline-block";   // overflow → show button
-            } else {
-              btn.style.display = "none";           // no overflow → hide
-            }
-          });
-        }, 100);
+           setTimeout(() => {
+  document.querySelectorAll(".feedback-card").forEach(card => {
+    const msg = card.querySelector(".msg");
+    const btn = card.querySelector(".read-more");
 
+    const textLength = msg.innerText.trim().length;
+
+    if (textLength > 120) {   // 🔥 adjust (100–150 range)
+      btn.style.display = "inline-block";
+    } else {
+      btn.style.display = "none";
+    }
+  });
+}, 100);
       // Arrow visibility fix
       const isScrollable = container.scrollWidth > container.clientWidth;
 
