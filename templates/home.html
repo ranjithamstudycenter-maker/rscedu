@@ -986,7 +986,6 @@ function addFeedback(){
 }
 
 
-// ================= LOAD FEEDBACK =================
 function loadFeedback(){
   fetch('/get_feedback')
   .then(res => res.json())
@@ -1007,49 +1006,47 @@ function loadFeedback(){
     }
 
     data.forEach(f => {
-                 container.innerHTML += `
-              <div class="feedback-card">
-                <div class="stars">${f.rating}</div>
-            
-                <p class="msg">${f.message}</p>
-                <button class="read-more" onclick="expandText(this)">Read More</button>
-            
-                <h4>${f.name}</h4>
-                <span>${f.role}</span>
-              </div>
-            `;
-)};
-setTimeout(() => {
-  document.querySelectorAll(".feedback-card").forEach(card => {
-    const msg = card.querySelector(".msg");
-    const btn = card.querySelector(".read-more");
+      container.innerHTML += `
+        <div class="feedback-card">
+          <div class="stars">${f.rating}</div>
+          <p class="msg">${f.message}</p>
+          <button class="read-more" onclick="expandText(this)">Read More</button>
+          <h4>${f.name}</h4>
+          <span>${f.role}</span>
+        </div>
+      `;
+    });
 
-    if (msg.scrollHeight > 60) {
-      btn.style.display = "inline-block";  // show only if long text
-    } else {
-      btn.style.display = "none";          // hide if small text
-    }
-  });
-}, 100);
+    // Read more logic
+    setTimeout(() => {
+      document.querySelectorAll(".feedback-card").forEach(card => {
+        const msg = card.querySelector(".msg");
+        const btn = card.querySelector(".read-more");
 
-       function expandText(button) {
-  const msg = button.previousElementSibling;
+        if (msg.scrollHeight > 60) {
+          btn.style.display = "inline-block";
+        } else {
+          btn.style.display = "none";
+        }
+      });
 
-  // expand text
-  msg.style.webkitLineClamp = "unset";
-  msg.style.maxHeight = "none";
-  msg.style.overflow = "visible";
+      // Arrow visibility fix
+      const isScrollable = container.scrollWidth > container.clientWidth;
 
-  // hide button after click
-  button.style.display = "none";
-}
+      if (!isScrollable) {
+        leftBtn.style.display = "none";
+        rightBtn.style.display = "none";
+      } else {
+        leftBtn.style.display = "flex";
+        rightBtn.style.display = "flex";
+      }
+
+    }, 100);
 
     updateArrowState();
-
     container.addEventListener("scroll", updateArrowState);
   });
 }
-
 
 // ================= SCROLL =================
 function scrollLeft(){
