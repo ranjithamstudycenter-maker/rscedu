@@ -703,13 +703,8 @@
   -webkit-line-clamp: unset;
   overflow: visible;
 }
-.msg::after {
-  content: "";
-  position: absolute;
-  bottom: 0;
-  width: 100%;
-  height: 20px;
-  background: linear-gradient(transparent, white);
+.msg.expanded::after {
+  display: none;
 }
         
 .read-more {
