@@ -713,11 +713,9 @@
 }
         
 .read-more {
-  display: none;
-  margin-top: 5px;
   cursor: pointer;
   color: #007bff;
-  font-weight: 500;
+  
 }
 .read-more:hover {
   text-decoration: underline;
@@ -1029,22 +1027,7 @@ function loadFeedback(){
       container.appendChild(div);
     });
 
-    // ✅ Read more logic (INSIDE .then)
-    setTimeout(() => {
-      document.querySelectorAll(".feedback-card").forEach(card => {
-        const msg = card.querySelector(".msg");
-        const readMore = card.querySelector(".read-more");
-
-        const textLength = msg.innerText.trim().length;
-
-        if (textLength > 20) {
-          readMore.style.display = "inline";
-        } else {
-          readMore.style.display = "none";
-        }
-      });
-
-      // ✅ Arrow visibility fix
+          // ✅ Arrow visibility fix
       const isScrollable = container.scrollWidth > container.clientWidth;
 
       if (!isScrollable) {
