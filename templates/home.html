@@ -1018,17 +1018,19 @@ function loadFeedback(){
     });
 
     // Read more logic
-    setTimeout(() => {
-      document.querySelectorAll(".feedback-card").forEach(card => {
-        const msg = card.querySelector(".msg");
-        const btn = card.querySelector(".read-more");
-
-        if (msg.scrollHeight > 60) {
-          btn.style.display = "inline-block";
-        } else {
-          btn.style.display = "none";
-        }
-      });
+            setTimeout(() => {
+          document.querySelectorAll(".feedback-card").forEach(card => {
+            const msg = card.querySelector(".msg");
+            const btn = card.querySelector(".read-more");
+        
+            // முக்கிய trick 🔥
+            if (msg.scrollHeight > msg.clientHeight) {
+              btn.style.display = "inline-block";   // overflow → show button
+            } else {
+              btn.style.display = "none";           // no overflow → hide
+            }
+          });
+        }, 100);
 
       // Arrow visibility fix
       const isScrollable = container.scrollWidth > container.clientWidth;
