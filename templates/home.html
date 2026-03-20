@@ -1055,12 +1055,26 @@ function loadFeedback(){
     const msg = card.querySelector(".msg");
     const readMore = card.querySelector(".read-more");
 
-    const textLength = msg.innerText.trim().length;
+    // 🔥 clone element
+    const clone = msg.cloneNode(true);
 
-    if (textLength > 100) {   // 🔥 adjust 80–120
-      readMore.style.display = "inline";
+    clone.style.display = "block";
+    clone.style.webkitLineClamp = "unset";
+    clone.style.position = "absolute";
+    clone.style.visibility = "hidden";
+    clone.style.height = "auto";
+
+    document.body.appendChild(clone);
+
+    const fullHeight = clone.scrollHeight;
+    const limitedHeight = msg.clientHeight;
+
+    document.body.removeChild(clone);
+
+    if (fullHeight > limitedHeight + 5) {
+      readMore.style.display = "inline";   // ✅ only long text
     } else {
-      readMore.style.display = "none";
+      readMore.style.display = "none";     // ❌ small text
     }
   });
 }, 100);
