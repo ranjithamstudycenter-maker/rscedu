@@ -1027,25 +1027,22 @@ function loadFeedback(){
       container.appendChild(div);
     });
 
-          // ✅ Arrow visibility fix
-      const isScrollable = container.scrollWidth > container.clientWidth;
+    // ✅ Arrow visibility fix
+    const isScrollable = container.scrollWidth > container.clientWidth;
 
-      if (!isScrollable) {
-        leftBtn.style.display = "none";
-        rightBtn.style.display = "none";
-      } else {
-        leftBtn.style.display = "flex";
-        rightBtn.style.display = "flex";
-      }
-
-    }, 100);
+    if (!isScrollable) {
+      leftBtn.style.display = "none";
+      rightBtn.style.display = "none";
+    } else {
+      leftBtn.style.display = "flex";
+      rightBtn.style.display = "flex";
+    }
 
     updateArrowState();
     container.addEventListener("scroll", updateArrowState);
 
-  }); // ✅ correct closing
-
-
+  }); // ✅ proper close
+}
     function toggleText(el) {
   const msg = el.parentElement;
 
