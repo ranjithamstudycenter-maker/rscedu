@@ -1006,16 +1006,16 @@ function loadFeedback(){
       return;
     }
 
-   data.forEach(f => {
+  data.forEach(f => {
   const div = document.createElement("div");
   div.className = "feedback-card";
 
   const cleanText = f.message.replace(/\s+/g, ' ').trim();
-  const wordCount = cleanText.split(' ').length;
-
+  const wordCount = cleanText === "" ? 0 : cleanText.split(' ').length;
+      
   let readMoreHTML = "";
 
-  if (wordCount > 10) {   // 🔥 keep low for testing
+  if (wordCount > 5) {   // 🔥 test first
     readMoreHTML = `<span class="read-more" onclick="toggleText(this)">... Read more</span>`;
   }
 
