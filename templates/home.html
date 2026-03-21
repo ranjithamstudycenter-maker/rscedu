@@ -691,11 +691,10 @@
 }
 
 .msg {
-   display: -webkit-box;
-  -webkit-line-clamp: 3;
-  -webkit-box-orient: vertical;
-    overflow: hidden;
-    
+   max-height: 60px;     /* 3 lines approx */
+  overflow: hidden;
+  line-height: 20px;
+      
     
 }
 
@@ -1030,11 +1029,21 @@ function loadFeedback(){
     const msg = card.querySelector(".msg");
     const readMore = card.querySelector(".read-more");
 
-    if (msg.scrollHeight > msg.clientHeight + 2) {
+    // clone element to measure full height
+    const clone = msg.cloneNode(true);
+    clone.style.maxHeight = "none";
+    clone.style.visibility = "hidden";
+    clone.style.position = "absolute";
+
+    document.body.appendChild(clone);
+
+    if (clone.offsetHeight > msg.offsetHeight) {
       readMore.style.display = "inline";
     } else {
       readMore.style.display = "none";
     }
+
+    document.body.removeChild(clone);
   });
 });
     // ✅ Arrow visibility fix
