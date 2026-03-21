@@ -884,7 +884,7 @@
 
     <textarea id="message" maxlength="1000" placeholder="Your Feedback"></textarea>
 
-    <button onclick="addFeedback()">Share Your Feedback</button>
+    <button onclick="submitFeedback()">Share Your Feedback</button>
   </div>
 
 </section>
@@ -1017,6 +1017,8 @@ function loadFeedback(){
   container.appendChild(div);
 });
 
+      window.onload = loadFeedback;
+
 // 🔥 CHECK AFTER RENDER
 setTimeout(() => {
   document.querySelectorAll(".feedback-card").forEach(card => {
@@ -1059,7 +1061,28 @@ setTimeout(() => {
     el.innerText = " Read less";
   }
 }
-   
+ function submitFeedback() {
+    const name = document.getElementById("name").value;
+    const message = document.getElementById("message").value;
+
+    fetch('/submit_feedback', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        message: message,
+        rating: "⭐⭐⭐⭐⭐",
+        role: "Student"
+      })
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert("Feedback submitted!");
+      loadFeedback();
+    });
+  }  
 // ================= SCROLL =================
 function scrollLeft(){
   const c = document.getElementById("feedbackContainer");
@@ -1110,6 +1133,7 @@ function scrollFeedback(direction){
         behavior: "smooth"
     });
 }    
+    
 </script>
 
 
