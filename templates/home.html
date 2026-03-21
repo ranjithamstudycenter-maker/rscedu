@@ -711,7 +711,9 @@
 .read-more {
   cursor: pointer;
   color: #007bff;
-  
+    margin-left: 5px;
+  white-space: nowrap;
+      
 }
 .read-more:hover {
   text-decoration: underline;
@@ -1023,14 +1025,19 @@ function loadFeedback(){
   container.appendChild(div);
 });
 
-      requestAnimationFrame(() => {
+     requestAnimationFrame(() => {
   document.querySelectorAll(".feedback-card").forEach(card => {
     const msg = card.querySelector(".msg");
     const readMore = card.querySelector(".read-more");
 
-    // only if text actually cut
-    if (msg.scrollHeight > msg.clientHeight + 1) {
+    const text = msg.innerText.trim();
+    const wordCount = text.split(/\s+/).length;
+
+    // 🔥 DOUBLE CHECK
+    if (msg.scrollHeight > msg.clientHeight + 5 && wordCount > 10) {
       readMore.style.display = "inline";
+    } else {
+      readMore.style.display = "none";
     }
   });
 });
