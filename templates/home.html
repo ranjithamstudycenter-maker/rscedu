@@ -1006,16 +1006,16 @@ function loadFeedback(){
       return;
     }
 
-    data.forEach(f => {
+   data.forEach(f => {
   const div = document.createElement("div");
   div.className = "feedback-card";
 
-  // 🔥 word count
-  const wordCount = f.message.trim().split(/\s+/).length;
+  const cleanText = f.message.replace(/\s+/g, ' ').trim();
+  const wordCount = cleanText.split(' ').length;
 
   let readMoreHTML = "";
 
-  if (wordCount > 50) {
+  if (wordCount > 10) {   // 🔥 keep low for testing
     readMoreHTML = `<span class="read-more" onclick="toggleText(this)">... Read more</span>`;
   }
 
@@ -1031,7 +1031,6 @@ function loadFeedback(){
 
   container.appendChild(div);
 });
-
     // ✅ Arrow visibility fix
     const isScrollable = container.scrollWidth > container.clientWidth;
 
@@ -1061,22 +1060,7 @@ function loadFeedback(){
     el.innerText = " Read less";
   }
 }
-   setTimeout(() => {
-  document.querySelectorAll(".feedback-card").forEach(card => {
-    const msg = card.querySelector(".msg");
-    const readMore = card.querySelector(".read-more");
-
-    // 🔥 word count (not character)
-    const wordCount = msg.innerText.trim().split(/\s+/).length;
-
-    if (wordCount > 10) {
-      readMore.style.display = "inline";
-    } else {
-      readMore.style.display = "none";
-    }
-  });
-}, 100);
-    
+   
 // ================= SCROLL =================
 function scrollLeft(){
   const c = document.getElementById("feedbackContainer");
