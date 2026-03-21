@@ -1007,21 +1007,30 @@ function loadFeedback(){
     }
 
     data.forEach(f => {
-      const div = document.createElement("div");
-      div.className = "feedback-card";
+  const div = document.createElement("div");
+  div.className = "feedback-card";
 
-      div.innerHTML = `
-        <div class="stars">${f.rating}</div>
-        <p class="msg">
-          ${f.message}
-          <span class="read-more" onclick="toggleText(this)">... Read more</span>
-        </p>
-        <h4>${f.name}</h4>
-        <span>${f.role}</span>
-      `;
+  // 🔥 word count
+  const wordCount = f.message.trim().split(/\s+/).length;
 
-      container.appendChild(div);
-    });
+  let readMoreHTML = "";
+
+  if (wordCount > 50) {
+    readMoreHTML = `<span class="read-more" onclick="toggleText(this)">... Read more</span>`;
+  }
+
+  div.innerHTML = `
+    <div class="stars">${f.rating}</div>
+    <p class="msg">
+      ${f.message}
+      ${readMoreHTML}
+    </p>
+    <h4>${f.name}</h4>
+    <span>${f.role}</span>
+  `;
+
+  container.appendChild(div);
+});
 
     // ✅ Arrow visibility fix
     const isScrollable = container.scrollWidth > container.clientWidth;
@@ -1043,9 +1052,11 @@ function loadFeedback(){
   const msg = el.parentElement;
 
   if (msg.classList.contains("expanded")) {
+    // 🔽 collapse
     msg.classList.remove("expanded");
     el.innerText = "... Read more";
   } else {
+    // 🔼 expand
     msg.classList.add("expanded");
     el.innerText = " Read less";
   }
@@ -1055,30 +1066,16 @@ function loadFeedback(){
     const msg = card.querySelector(".msg");
     const readMore = card.querySelector(".read-more");
 
-    // 🔥 clone element
-    const clone = msg.cloneNode(true);
+    // 🔥 word count (not character)
+    const wordCount = msg.innerText.trim().split(/\s+/).length;
 
-    clone.style.display = "block";
-    clone.style.webkitLineClamp = "unset";
-    clone.style.position = "absolute";
-    clone.style.visibility = "hidden";
-    clone.style.height = "auto";
-
-    document.body.appendChild(clone);
-
-    const fullHeight = clone.scrollHeight;
-    const limitedHeight = msg.clientHeight;
-
-    document.body.removeChild(clone);
-
-    if (fullHeight > limitedHeight + 5) {
-      readMore.style.display = "inline";   // ✅ only long text
+    if (wordCount > 50) {
+      readMore.style.display = "inline";
     } else {
-      readMore.style.display = "none";     // ❌ small text
+      readMore.style.display = "none";
     }
   });
 }, 100);
-
     
 // ================= SCROLL =================
 function scrollLeft(){
