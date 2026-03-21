@@ -691,20 +691,18 @@
 }
 
 .msg {
-   max-height: 60px;     /* 3 lines approx */
+   max-height: 60px;     /* 🔥 fixed height (approx 3 lines) */
   overflow: hidden;
   line-height: 20px;
-    position: relative;
-      
-    
+  position: relative;
 }
 
 .msg.expanded {
-  max-height: none;
+    max-height: none;     /* 🔥 full show */
 }
         
 .read-more {
-  display: none;           /* default hide */
+  display: none;
   color: blue;
   cursor: pointer;
   margin-left: 5px;
@@ -1025,14 +1023,14 @@ setTimeout(() => {
     const msg = card.querySelector(".msg");
     const readMore = card.querySelector(".read-more");
 
-    if (msg.scrollHeight > msg.clientHeight) {
+    // 🔥 check hidden content exists or not
+    if (msg.scrollHeight > msg.clientHeight + 2) {
       readMore.style.display = "inline";
     } else {
       readMore.style.display = "none";
     }
   });
 }, 200);
-
       
     // ✅ Arrow visibility fix
     const isScrollable = container.scrollWidth > container.clientWidth;
