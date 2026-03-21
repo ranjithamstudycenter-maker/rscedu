@@ -288,13 +288,19 @@ def payment_success():
 @app.route('/submit_feedback', methods=['POST'])
 def submit_feedback():
     data = request.json
+    print("Received:", data)
 
-    with open('feedback.json', 'r') as f:
+    file_path = os.path.join(os.getcwd(), 'feedback.json')
+
+    try:
+    with open(file_path, 'r') as f:
         feedbacks = json.load(f)
+    except:
+        feedbacks = []
 
     feedbacks.append(data)
 
-    with open('feedback.json', 'w') as f:
+    with open(file_path, 'w') as f:
         json.dump(feedbacks, f, indent=4)
 
     return jsonify({"status": "success"})
