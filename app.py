@@ -14,23 +14,6 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 
-# Create DB
-def init_db():
-    conn = sqlite3.connect('feedback.db')
-    conn.execute('''
-        CREATE TABLE IF NOT EXISTS feedback (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            name TEXT,
-            role TEXT,
-            rating TEXT,
-            message TEXT
-        )
-    ''')
-    conn.close()
-
-init_db()
-
-
 # -------------------- FOLDERS --------------------
 PDF_FOLDER = "rsc_download"
 os.makedirs(PDF_FOLDER, exist_ok=True)
@@ -179,10 +162,6 @@ def secure_view(product_id):
         as_attachment=False
     )
 
-
-
-
-
 def check_access(key):
 
     data = session.get(key)
@@ -224,8 +203,6 @@ def download(product_id):
         as_attachment=True
     )
 
-
-
 @app.route("/pay")
 def pay():
 
@@ -237,8 +214,7 @@ def pay():
     session["board"] = board
     session["cls"]   = cls
    
-
-    
+  
     session["last_board"] = board
     session["last_cls"] = cls
     session["last_product"] = product_id
@@ -297,8 +273,6 @@ def payment_success():
     session["access"] = session.get("access", {})
     session["access"][product_id] = {"view": True}
 
-           
-   
     
 
    # ⭐ FINAL redirect
@@ -310,39 +284,29 @@ def payment_success():
        
     ))
 
+# 🔹 Save feedback
 @app.route('/submit_feedback', methods=['POST'])
 def submit_feedback():
     data = request.json
 
-    conn = sqlite3.connect('feedback.db')
-    conn.execute(
-        "INSERT INTO feedback (name, role, rating, message) VALUES (?, ?, ?, ?)",
-        (data['name'], data['role'], data['rating'], data['message'])
-    )
-    conn.commit()
-    conn.close()
+    with open('feedback.json', 'r') as f:
+        feedbacks = json.load(f)
+
+    feedbacks.append(data)
+
+    with open('feedback.json', 'w') as f:
+        json.dump(feedbacks, f, indent=4)
 
     return jsonify({"status": "success"})
-    
-@app.route('/get_feedback')
+
+
+# 🔹 Get feedback
+@app.route('/get_feedback', methods=['GET'])
 def get_feedback():
-    conn = sqlite3.connect('feedback.db')
-    cursor = conn.cursor()
-    cursor.execute("SELECT name, role, rating, message FROM feedback ORDER BY id DESC")
-    data = cursor.fetchall()
-    conn.close()
+    with open('feedback.json', 'r') as f:
+        feedbacks = json.load(f)
 
-    feedback_list = []
-    for row in data:
-        feedback_list.append({
-            "name": row[0],
-            "role": row[1],
-            "rating": row[2],
-            "message": row[3]
-        })
-
-    return jsonify(feedback_list)
-
+    return jsonify(feedbacks)
 
 
 view_counts = {}
