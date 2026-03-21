@@ -1010,26 +1010,29 @@ function loadFeedback(){
   const div = document.createElement("div");
   div.className = "feedback-card";
 
-  const cleanText = f.message.replace(/\s+/g, ' ').trim();
-  const wordCount = cleanText === "" ? 0 : cleanText.split(' ').length;
-      
-  let readMoreHTML = "";
-
-  if (wordCount > 5) {   // 🔥 test first
-    readMoreHTML = `<span class="read-more" onclick="toggleText(this)">... Read more</span>`;
-  }
-
   div.innerHTML = `
     <div class="stars">${f.rating}</div>
     <p class="msg">
       ${f.message}
-      ${readMoreHTML}
+      <span class="read-more" onclick="toggleText(this)">... Read more</span>
     </p>
     <h4>${f.name}</h4>
     <span>${f.role}</span>
   `;
 
   container.appendChild(div);
+});
+
+      requestAnimationFrame(() => {
+  document.querySelectorAll(".feedback-card").forEach(card => {
+    const msg = card.querySelector(".msg");
+    const readMore = card.querySelector(".read-more");
+
+    // only if text actually cut
+    if (msg.scrollHeight > msg.clientHeight + 1) {
+      readMore.style.display = "inline";
+    }
+  });
 });
     // ✅ Arrow visibility fix
     const isScrollable = container.scrollWidth > container.clientWidth;
