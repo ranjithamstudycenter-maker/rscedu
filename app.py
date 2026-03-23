@@ -315,6 +315,9 @@ def get_feedback():
     with open('feedback.json', 'r') as f:
         feedbacks = json.load(f)
 
+    # 🔥 only approved feedback
+    approved_feedbacks = [f for f in feedbacks if f.get("approved") == True]
+    
     return jsonify(feedbacks)
 
 
