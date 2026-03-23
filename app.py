@@ -291,7 +291,7 @@ def payment_success():
 
 @app.route('/submit_feedback', methods=['POST'])
 def submit_feedback():
-    data = request.json
+    data = request.get_json()
     print("Received:", data)
 
     file_path = os.path.join(os.getcwd(), 'feedback.json')
