@@ -958,8 +958,7 @@
             }, 3000);
     </script>
     <script>
-  
-// ================= ADD FEEDBACK =================
+  // ================= ADD FEEDBACK =================
 function addFeedback(){
   console.log("clicked 🔥");
 
@@ -980,6 +979,8 @@ function addFeedback(){
   .catch(err => console.error(err));
 }
 
+
+// ================= LOAD FEEDBACK =================
 function loadFeedback(){
   fetch('https://rscedu.onrender.com/get_feedback')
   .then(res => res.json())
@@ -998,10 +999,33 @@ function loadFeedback(){
       rightBtn.style.display = "none";
       return;
     }
-function toggleText(el) {
+
+    data.forEach(f => {
+      const div = document.createElement("div");
+      div.className = "feedback-card";
+
+      div.innerHTML = `
+        <div class="stars">${f.rating}</div>
+        <p class="msg">
+          ${f.message}
+          <span class="read-more" onclick="toggleText(this)">... Read more</span>
+        </p>
+        <h4>${f.name}</h4>
+        <span>${f.role}</span>
+      `;
+
+      container.appendChild(div);
+    });
+
+  });
+}
+
+
+// ================= TOGGLE =================
+function toggleText(el){
   const msg = el.parentElement;
 
-  if (msg.classList.contains("expanded")) {
+  if(msg.classList.contains("expanded")){
     msg.classList.remove("expanded");
     el.innerText = "... Read more";
   } else {
@@ -1009,26 +1033,8 @@ function toggleText(el) {
     el.innerText = " Read less";
   }
 }
-          window.onload = loadFeedback;
-      
-  data.forEach(f => {
-  const div = document.createElement("div");
-  div.className = "feedback-card";
-
-  div.innerHTML = `
-    <div class="stars">${f.rating}</div>
-    <p class="msg">
-      ${f.message}
-      <span class="read-more" onclick="toggleText(this)">... Read more</span>
-    </p>
-    <h4>${f.name}</h4>
-    <span>${f.role}</span>
-  `;
-
-  container.appendChild(div);
-});
-
-    
+ // ================= INIT =================
+window.onload = loadFeedback;
 
 // 🔥 CHECK AFTER RENDER
 setTimeout(() => {
@@ -1096,8 +1102,6 @@ function updateArrowState(){
 }
 
 
-// ================= INIT =================
-
 
 
 function scrollFeedback(direction){
@@ -1112,6 +1116,7 @@ function scrollFeedback(direction){
         behavior: "smooth"
     });
 }    
+   
     
 </script>
 
