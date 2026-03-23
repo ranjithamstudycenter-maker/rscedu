@@ -939,26 +939,32 @@
     <!-- ==========================
          SLIDER SCRIPT
     ========================== -->
-    <script>
+   <script>
 
-            let index = 0;
-            const slides = document.querySelector(".slides");
-            const dots = document.querySelectorAll(".dot");
-            const totalSlides = dots.length;
-            
-            function showSlide(i){
-                slides.style.transform = `translateX(-${i * 100}%)`;
-                dots.forEach(dot => dot.classList.remove("active"));
-                dots[i].classList.add("active");
-            }
-            
-            setInterval(() => {
-                index = (index + 1) % totalSlides;
-                showSlide(index);
-            }, 3000);
-    </script>
-    <script>
-  // ================= ADD FEEDBACK =================
+// ================= SLIDER SAFE =================
+let index = 0;
+const slides = document.querySelector(".slides");
+const dots = document.querySelectorAll(".dot");
+const totalSlides = dots.length;
+
+function showSlide(i){
+  if(!slides) return;  // 🔥 FIX
+
+  slides.style.transform = `translateX(-${i * 100}%)`;
+
+  dots.forEach(dot => dot.classList.remove("active"));
+  if(dots[i]) dots[i].classList.add("active");
+}
+
+if(slides && totalSlides > 0){
+  setInterval(() => {
+    index = (index + 1) % totalSlides;
+    showSlide(index);
+  }, 3000);
+}
+
+
+// ================= ADD FEEDBACK =================
 function addFeedback(){
   console.log("clicked 🔥");
 
@@ -975,6 +981,7 @@ function addFeedback(){
   .then(res => res.json())
   .then(() => {
     alert("Feedback submitted!");
+    loadFeedback(); // 🔥 reload after submit
   })
   .catch(err => console.error(err));
 }
@@ -1017,6 +1024,34 @@ function loadFeedback(){
       container.appendChild(div);
     });
 
+    // 🔥 READ MORE CHECK (INSIDE FUNCTION)
+    setTimeout(() => {
+      document.querySelectorAll(".feedback-card").forEach(card => {
+        const msg = card.querySelector(".msg");
+        const readMore = card.querySelector(".read-more");
+
+        if (msg.scrollHeight > msg.clientHeight + 2) {
+          readMore.style.display = "inline";
+        } else {
+          readMore.style.display = "none";
+        }
+      });
+    }, 100);
+
+    // 🔥 ARROW FIX (INSIDE FUNCTION)
+    const isScrollable = container.scrollWidth > container.clientWidth;
+
+    if (!isScrollable) {
+      leftBtn.style.display = "none";
+      rightBtn.style.display = "none";
+    } else {
+      leftBtn.style.display = "flex";
+      rightBtn.style.display = "flex";
+    }
+
+    updateArrowState();
+    container.addEventListener("scroll", updateArrowState);
+
   });
 }
 
@@ -1033,41 +1068,8 @@ function toggleText(el){
     el.innerText = " Read less";
   }
 }
- // ================= INIT =================
-window.onload = loadFeedback;
 
-// 🔥 CHECK AFTER RENDER
-setTimeout(() => {
-  document.querySelectorAll(".feedback-card").forEach(card => {
-    const msg = card.querySelector(".msg");
-    const readMore = card.querySelector(".read-more");
 
-    // 🔥 check hidden content exists or not
-    if (msg.scrollHeight > msg.clientHeight + 2) {
-      readMore.style.display = "inline";
-    } else {
-      readMore.style.display = "none";
-    }
-  });
-}, 200);
-      
-    // ✅ Arrow visibility fix
-    const isScrollable = container.scrollWidth > container.clientWidth;
-
-    if (!isScrollable) {
-      leftBtn.style.display = "none";
-      rightBtn.style.display = "none";
-    } else {
-      leftBtn.style.display = "flex";
-      rightBtn.style.display = "flex";
-    }
-
-    updateArrowState();
-    container.addEventListener("scroll", updateArrowState);
-
-  }); // ✅ proper close
-}
-   
 // ================= SCROLL =================
 function scrollLeft(){
   const c = document.getElementById("feedbackContainer");
@@ -1088,38 +1090,22 @@ function updateArrowState(){
 
   if(!c) return;
 
-  // no overflow
   if(c.scrollWidth <= c.clientWidth){
     leftBtn.style.display = "none";
     rightBtn.style.display = "none";
     return;
   }
 
-  // dynamic control
   leftBtn.style.display = c.scrollLeft > 0 ? "block" : "none";
   rightBtn.style.display =
     c.scrollLeft + c.clientWidth < c.scrollWidth ? "block" : "none";
 }
 
 
+// ================= INIT =================
+window.onload = loadFeedback;
 
-
-function scrollFeedback(direction){
-    const box = document.getElementById("feedbackContainer");
-
-    if(!box) return;
-
-    const scrollAmount = box.clientWidth * 0.8;  // responsive
-
-    box.scrollBy({
-        left: direction * scrollAmount,
-        behavior: "smooth"
-    });
-}    
-   
-    
 </script>
-
 
 
 </body>
