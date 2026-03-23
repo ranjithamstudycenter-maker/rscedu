@@ -973,7 +973,7 @@ function addFeedback(){
   let rating = document.getElementById("rating").value;
   let message = document.getElementById("message").value;
 
-  fetch('https://rscedu.onrender.com/submit_feedback', {
+  fetch('https://rscedu.in/submit_feedback', {
     method: 'POST',
     headers: {'Content-Type': 'application/json'},
     body: JSON.stringify({name, role, rating, message})
@@ -989,7 +989,7 @@ function addFeedback(){
 
 // ================= LOAD FEEDBACK =================
 function loadFeedback(){
-  fetch('https://rscedu.onrender.com/get_feedback')
+  fetch('https://rscedu.in/get_feedback')
   .then(res => res.json())
   .then(data => {
 
@@ -1103,7 +1103,7 @@ function updateArrowState(){
 
 
 // ================= INIT =================
-window.onload = loadFeedback;
+document.addEventListener("DOMContentLoaded", loadFeedback);
 
 </script>
 
