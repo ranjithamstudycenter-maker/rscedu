@@ -979,6 +979,7 @@ function addFeedback(){
         rating: "⭐⭐⭐⭐⭐",
         role: "Student"
       })
+          )}
   .then(res => res.json())
   .then(() => {
     alert("Feedback submitted!");
@@ -1067,7 +1068,7 @@ setTimeout(() => {
     el.innerText = " Read less";
   }
 }
-        };
+        
 // ================= SCROLL =================
 function scrollLeft(){
   const c = document.getElementById("feedbackContainer");
