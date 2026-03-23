@@ -981,7 +981,7 @@ function addFeedback(){
   .then(res => res.json())
   .then(() => {
     alert("Feedback submitted!");
-    loadFeedback(); // 🔥 reload after submit
+   
   })
   .catch(err => console.error(err));
 }
