@@ -956,7 +956,8 @@
                 index = (index + 1) % totalSlides;
                 showSlide(index);
             }, 3000);
-  
+    </script>
+    <script>
   
 // ================= ADD FEEDBACK =================
 function addFeedback(){
@@ -997,7 +998,19 @@ function loadFeedback(){
       rightBtn.style.display = "none";
       return;
     }
+function toggleText(el) {
+  const msg = el.parentElement;
 
+  if (msg.classList.contains("expanded")) {
+    msg.classList.remove("expanded");
+    el.innerText = "... Read more";
+  } else {
+    msg.classList.add("expanded");
+    el.innerText = " Read less";
+  }
+}
+          window.onload = loadFeedback;
+      
   data.forEach(f => {
   const div = document.createElement("div");
   div.className = "feedback-card";
@@ -1048,18 +1061,7 @@ setTimeout(() => {
 
   }); // ✅ proper close
 }
-   function toggleText(el) {
-  const msg = el.parentElement;
-
-  if (msg.classList.contains("expanded")) {
-    msg.classList.remove("expanded");
-    el.innerText = "... Read more";
-  } else {
-    msg.classList.add("expanded");
-    el.innerText = " Read less";
-  }
-}
-          window.onload = loadFeedback;
+   
 // ================= SCROLL =================
 function scrollLeft(){
   const c = document.getElementById("feedbackContainer");
