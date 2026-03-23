@@ -964,50 +964,65 @@ if(slides && totalSlides > 0){
 }
 
 
-// ================= ADD FEEDBACK =================
-function addFeedback(){
-  console.log("clicked 🔥");
+<script type="module">
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+  import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-  let name = document.getElementById("name").value;
-  let role = document.getElementById("role").value;
-  let rating = document.getElementById("rating").value;
-  let message = document.getElementById("message").value;
+  const firebaseConfig = {
+    apiKey: "AIzaSyDLR3ThMxYNFMqLhYYTH_d7i6LvMkGTMZ0",
+    authDomain: "rscedu-c1d9a.firebaseapp.com",
+    projectId: "rscedu-c1d9a",
+    storageBucket: "rscedu-c1d9a.firebasestorage.app",
+    messagingSenderId: "880175431213",
+    appId: "1:880175431213:web:feab33944a5790d18e42a4"
+  };
 
-  fetch('https://rscedu.in/submit_feedback', {
-    method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({name, role, rating, message})
-  })
-  .then(res => res.json())
-  .then(() => {
-    alert("Feedback submitted!");
-   
-  })
-  .catch(err => console.error(err));
-}
+  const app = initializeApp(firebaseConfig);
+  const db = getFirestore(app);
 
+  // ================= ADD FEEDBACK =================
+  window.addFeedback = async function () {
+    const name = document.getElementById("name").value;
+    const role = document.getElementById("role").value;
+    const rating = document.getElementById("rating").value;
+    const message = document.getElementById("message").value;
 
-// ================= LOAD FEEDBACK =================
-function loadFeedback(){
-  fetch('https://rscedu.in/get_feedback')
-  .then(res => res.json())
-  .then(data => {
-
-    const container = document.getElementById("feedbackContainer");
-    const leftBtn = document.querySelector(".scroll-btn.left");
-    const rightBtn = document.querySelector(".scroll-btn.right");
-
-    if(!container) return;
-
-    container.innerHTML = "";
-
-    if(data.length === 0){
-      leftBtn.style.display = "none";
-      rightBtn.style.display = "none";
+    if (!name || !message) {
+      alert("Please fill all fields");
       return;
     }
 
-    data.forEach(f => {
+    try {
+      await addDoc(collection(db, "feedback"), {
+        name,
+        role,
+        rating,
+        message,
+        approved: false,
+        timestamp: new Date()
+      });
+
+      alert("Feedback submitted!");
+    } catch (e) {
+      console.error(e);
+    }
+  };
+
+  // ================= LOAD FEEDBACK =================
+  async function loadFeedback() {
+    const container = document.getElementById("feedbackContainer");
+    if (!container) return;
+
+    container.innerHTML = "";
+
+    const querySnapshot = await getDocs(collection(db, "feedback"));
+
+    querySnapshot.forEach(doc => {
+      const f = doc.data();
+
+      // 🔥 ONLY APPROVED FEEDBACK
+      if (!f.approved) return;
+
       const div = document.createElement("div");
       div.className = "feedback-card";
 
@@ -1024,7 +1039,7 @@ function loadFeedback(){
       container.appendChild(div);
     });
 
-    // 🔥 READ MORE CHECK (INSIDE FUNCTION)
+    // 🔥 READ MORE LOGIC
     setTimeout(() => {
       document.querySelectorAll(".feedback-card").forEach(card => {
         const msg = card.querySelector(".msg");
@@ -1036,51 +1051,39 @@ function loadFeedback(){
           readMore.style.display = "none";
         }
       });
-    }, 100);
-
-    // 🔥 ARROW FIX (INSIDE FUNCTION)
-    const isScrollable = container.scrollWidth > container.clientWidth;
-
-    if (!isScrollable) {
-      leftBtn.style.display = "none";
-      rightBtn.style.display = "none";
-    } else {
-      leftBtn.style.display = "flex";
-      rightBtn.style.display = "flex";
-    }
-
-    updateArrowState();
-    container.addEventListener("scroll", updateArrowState);
-
-  });
-}
-
-
-// ================= TOGGLE =================
-function toggleText(el){
-  const msg = el.parentElement;
-
-  if(msg.classList.contains("expanded")){
-    msg.classList.remove("expanded");
-    el.innerText = "... Read more";
-  } else {
-    msg.classList.add("expanded");
-    el.innerText = " Read less";
+    }, 200);
   }
-}
 
+  // ================= INIT =================
+  window.onload = loadFeedback;
+</script>
 
-// ================= SCROLL =================
-function scrollLeft(){
-  const c = document.getElementById("feedbackContainer");
-  if(c) c.scrollBy({ left: -400, behavior: "smooth" });
-}
+<script>
+  // ================= TOGGLE =================
+  function toggleText(el){
+    const msg = el.parentElement;
 
-function scrollRight(){
-  const c = document.getElementById("feedbackContainer");
-  if(c) c.scrollBy({ left: 400, behavior: "smooth" });
-}
+    if(msg.classList.contains("expanded")){
+      msg.classList.remove("expanded");
+      el.innerText = "... Read more";
+    } else {
+      msg.classList.add("expanded");
+      el.innerText = " Read less";
+    }
+  }
 
+  // ================= SCROLL =================
+  function scrollLeft(){
+    const c = document.getElementById("feedbackContainer");
+    if(c) c.scrollBy({ left: -400, behavior: "smooth" });
+  }
+
+  function scrollRight(){
+    const c = document.getElementById("feedbackContainer");
+    if(c) c.scrollBy({ left: 400, behavior: "smooth" });
+  }
+</script>
+<script>
 
 // ================= ARROW CONTROL =================
 function updateArrowState(){
