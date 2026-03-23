@@ -960,6 +960,8 @@
   
 // ================= ADD FEEDBACK =================
 function addFeedback(){
+  console.log("clicked 🔥");
+
   let name = document.getElementById("name").value;
   let role = document.getElementById("role").value;
   let rating = document.getElementById("rating").value;
@@ -967,23 +969,15 @@ function addFeedback(){
 
   fetch('https://rscedu.onrender.com/submit_feedback', {
     method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: name,
-        message: message,
-        rating: "⭐⭐⭐⭐⭐",
-        role: "Student"
-      })
-    })
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify({name, role, rating, message})
+  })
   .then(res => res.json())
   .then(() => {
     alert("Feedback submitted!");
-    
-  });
+  })
+  .catch(err => console.error(err));
 }
-
 
 function loadFeedback(){
   fetch('https://rscedu.onrender.com/get_feedback')
