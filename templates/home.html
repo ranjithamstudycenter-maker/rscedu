@@ -968,11 +968,17 @@ function addFeedback(){
   let rating = document.getElementById("rating").value;
   let message = document.getElementById("message").value;
 
-  fetch('/submit_feedback', {
+  fetch('https://rscedu.onrender.com/submit_feedback', {
     method: 'POST',
-    headers: {'Content-Type': 'application/json'},
-    body: JSON.stringify({name, role, rating, message})
-  })
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        name: name,
+        message: message,
+        rating: "⭐⭐⭐⭐⭐",
+        role: "Student"
+      })
   .then(res => res.json())
   .then(() => {
     alert("Feedback submitted!");
@@ -982,7 +988,7 @@ function addFeedback(){
 
 
 function loadFeedback(){
-  fetch('/get_feedback')
+  fetch('https://rscedu.onrender.com/get_feedback')
   .then(res => res.json())
   .then(data => {
 
@@ -1061,28 +1067,7 @@ setTimeout(() => {
     el.innerText = " Read less";
   }
 }
- function submitFeedback() {
-    const name = document.getElementById("name").value;
-    const message = document.getElementById("message").value;
-
-    fetch('/submit_feedback', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        name: name,
-        message: message,
-        rating: "⭐⭐⭐⭐⭐",
-        role: "Student"
-      })
-    })
-    .then(res => res.json())
-    .then(data => {
-      alert("Feedback submitted!");
-      
-    });
-  }  
+ 
 // ================= SCROLL =================
 function scrollLeft(){
   const c = document.getElementById("feedbackContainer");
