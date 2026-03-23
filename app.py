@@ -89,6 +89,11 @@ def add_header(response):
     response.headers["Expires"] = "0"
     return response
 
+@app.route('/check_file')
+def check_file():
+    with open('feedback.json', 'r') as f:
+        return f.read()
+
 
 @app.route("/")
 def home():
