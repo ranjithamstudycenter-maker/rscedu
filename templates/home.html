@@ -1075,7 +1075,11 @@ document.addEventListener("DOMContentLoaded", () => {
   } else {
     console.log("Button NOT found ❌");
   }
-
+// ✅ ADD THIS HERE
+  const c = document.getElementById("feedbackContainer");
+  if(c){
+    c.addEventListener("scroll", updateArrowState);
+  
   loadFeedback();
 });
 </script>
