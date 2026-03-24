@@ -727,7 +727,7 @@
   display: none;
   color: blue;
   cursor: pointer;
-  margin-left: 5px;
+  margin-left: 13px;
 }
 .read-more:hover {
   text-decoration: underline;
@@ -1057,10 +1057,8 @@ if(slides && totalSlides > 0){
          <div class="stars">
           ${f.rating} <span class="star-count">(${starCount} ${starCount > 1 ? "stars" : "star"})</span>
         </div>
-         <p class="msg">
-          ${f.message}
+         <p class="msg">${f.message}</p>
           <span class="read-more" onclick="toggleText(this)">... Read more</span>
-        </p>
         <h4>${f.name}</h4>
         <span>${f.role}</span>
       `;
@@ -1107,17 +1105,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
 <script>
   // ================= TOGGLE =================
-  function toggleText(el){
-    const msg = el.parentElement;
+ function toggleText(el){
+  const msg = el.previousElementSibling;
 
-    if(msg.classList.contains("expanded")){
-      msg.classList.remove("expanded");
-      el.innerText = "... Read more";
-    } else {
-      msg.classList.add("expanded");
-      el.innerText = " Read less";
-    }
+  if(msg.classList.contains("expanded")){
+    msg.classList.remove("expanded");
+    el.innerText = "... Read more";
+  } else {
+    msg.classList.add("expanded");
+    el.innerText = " Read less";
   }
+}
 
 
   // ================= SCROLL =================
