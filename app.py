@@ -360,14 +360,95 @@ def upload():
         if file:
             file.save(os.path.join(PDF_FOLDER, file.filename))
 
+            # ✅ success response
+            return """
+            <h3>Uploaded Successfully ✅</h3>
+            <a href='/upload'>⬅ Back</a>
+            """
+
     return """
     <h2>Upload Maths PDF</h2>
     <form method="post" enctype="multipart/form-data">
         <input type="file" name="pdf" accept=".pdf" required>
-        <button>Upload</button>
+        <button type="submit">Upload</button>
     </form>
+    <br>
+    <a href="/manage-feedback">Manage Feedback</a>
+    <br><br>
+    <a href="/logout">Logout</a>
     """
+    
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/admin')
 
+@app.route('/manage-feedback')
+def manage_feedback():
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    return render_template("manage_feedback.html")
+
+@app.route('/admin_feedback')
+def admin_feedback():
+    if not session.get("admin"):
+        return jsonify({"error": "unauthorized"}), 403
+
+    with open('feedback.json', 'r') as f:
+        feedbacks = json.load(f)
+
+    return jsonify(feedbacks)
+
+@app.route('/approve_feedback', methods=['POST'])
+def approve_feedback():
+    if not session.get("admin"):
+        return jsonify({"error": "unauthorized"}), 403
+
+    data = request.get_json()
+    index = data.get("index")
+
+    try:
+        with open('feedback.json', 'r') as f:
+            feedbacks = json.load(f)
+    except:
+        feedbacks = []
+
+    # ✅ 👉 ADD HERE
+    if index is None or index >= len(feedbacks):
+        return jsonify({"error": "invalid index"}), 400
+
+    feedbacks[index]["approved"] = True
+
+    with open('feedback.json', 'w') as f:
+        json.dump(feedbacks, f, indent=4)
+
+    return jsonify({"status": "approved"})
+
+@app.route('/delete_feedback', methods=['POST'])
+def delete_feedback():
+    if not session.get("admin"):
+        return jsonify({"error": "unauthorized"}), 403
+
+    data = request.get_json()
+    index = data.get("index")
+
+    try:
+        with open('feedback.json', 'r') as f:
+            feedbacks = json.load(f)
+    except:
+        feedbacks = []
+
+    # ✅ 👉 ADD HERE
+    if index is None or index >= len(feedbacks):
+        return jsonify({"error": "invalid index"}), 400
+
+    feedbacks.pop(index)
+
+    with open('feedback.json', 'w') as f:
+        json.dump(feedbacks, f, indent=4)
+
+    return jsonify({"status": "deleted"})
 
 # ---------------- CONTACT ----------------
 @app.route("/contact", methods=["GET", "POST"])
