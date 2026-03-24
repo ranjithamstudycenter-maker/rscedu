@@ -1093,22 +1093,7 @@ document.addEventListener("DOMContentLoaded", () => {
       el.innerText = " Read less";
     }
   }
-// ✅ Arrow visibility fix
-    const isScrollable = container.scrollWidth > container.clientWidth;
 
-    if (!isScrollable) {
-      leftBtn.style.display = "none";
-      rightBtn.style.display = "none";
-    } else {
-      leftBtn.style.display = "flex";
-      rightBtn.style.display = "flex";
-    }
-
-    updateArrowState();
-    container.addEventListener("scroll", updateArrowState);
-
-  }); // ✅ proper close
-}
 
   // ================= SCROLL =================
   function scrollLeft(){
@@ -1142,8 +1127,6 @@ function updateArrowState(){
   rightBtn.style.display =
     c.scrollLeft + c.clientWidth < c.scrollWidth ? "block" : "none";
 }
-
-
 
 
 function scrollFeedback(direction){
