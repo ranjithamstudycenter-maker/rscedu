@@ -1,0 +1,49 @@
+<h2>Manage Feedback</h2>
+
+<div id="container"></div>
+
+<script>
+async function loadFeedback(){
+  const res = await fetch('/admin_feedback');
+  const data = await res.json();
+
+  const c = document.getElementById("container");
+  c.innerHTML = "";
+
+  data.forEach((f, i) => {
+    const div = document.createElement("div");
+
+    div.innerHTML = `
+      <p><b>${f.name}</b> (${f.role})</p>
+      <p>${f.message}</p>
+      <p>Status: ${f.approved ? "✅ Approved" : "❌ Pending"}</p>
+
+      <button onclick="approve(${i})">Approve</button>
+      <button onclick="del(${i})">Delete</button>
+      <hr>
+    `;
+
+    c.appendChild(div);
+  });
+}
+
+async function approve(i){
+  await fetch('/approve_feedback', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({index:i})
+  });
+  loadFeedback();
+}
+
+async function del(i){
+  await fetch('/delete_feedback', {
+    method:'POST',
+    headers:{'Content-Type':'application/json'},
+    body: JSON.stringify({index:i})
+  });
+  loadFeedback();
+}
+
+loadFeedback();
+</script>
