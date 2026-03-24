@@ -1,67 +1,172 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <title>Contact Us | Ranjitham Study Center</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+<meta charset="UTF-8">
+<title>Contact Us | Ranjitham Study Center</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+
+html {
+  scroll-behavior: smooth;
+}
+
+body{
+  margin:0;
+  font-family:'Poppins', sans-serif;
+  background: #f5f7fa;
+}
+
+/* CONTAINER */
+.container{
+  max-width: 1000px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+/* TITLE */
+h1{
+  text-align:center;
+  color:#0b5394;
+  margin-bottom:10px;
+}
+
+.subtitle{
+  text-align:center;
+  color:#555;
+  margin-bottom:40px;
+}
+
+/* CARD STYLE */
+.card{
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  margin-bottom:30px;
+}
+
+/* CONTACT DETAILS */
+.contact-info p{
+  margin:10px 0;
+  font-size:15px;
+}
+
+/* MAP */
+iframe{
+  border-radius:10px;
+}
+
+/* FORM */
+form{
+  display:flex;
+  flex-direction:column;
+  gap:12px;
+}
+
+input, textarea{
+  padding:12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:15px;
+}
+
+input:focus, textarea:focus{
+  border-color:#0b5394;
+  outline:none;
+}
+
+/* BUTTON */
+button{
+  background: linear-gradient(45deg, #ff2d55, #7b2cbf);
+  color:white;
+  padding:12px;
+  border:none;
+  border-radius:8px;
+  font-size:16px;
+  cursor:pointer;
+  transition:0.3s;
+}
+
+button:hover{
+  transform:scale(1.03);
+}
+
+/* RESPONSIVE */
+@media(max-width:768px){
+  .container{
+    padding:20px;
+  }
+}
+
+</style>
 </head>
 
-<body style="font-family: Arial, sans-serif;">
+<body>
 
-  <section style="padding: 40px;">
-    <h1>📞 Contact Us</h1>
-    <p>Feel free to contact us for admissions, demo classes, or any queries.</p>
+<div class="container">
 
-    <!-- Contact Details -->
-    <div style="margin-top: 20px;">
-      <p><b>📍 Address:</b><br>
-        Ranjitham Study Center,<br>
-        Chennai, Tamil Nadu
-      </p>
+  <h1>📞 Contact Us</h1>
+  <p class="subtitle">Get in touch for demo classes and enquiries</p>
 
-      <p><b>📱 Phone:</b> <a href="tel:91XXXXXXXXXX">+91 XXXXXXXXXX</a></p>
-      <p><b>📧 Email:</b> <a href="mailto:ranjithamstudycenter@gmail.com">
-        ranjithamstudycenter@gmail.com</a></p>
-    </div>
+  <!-- CONTACT INFO -->
+  <div class="card contact-info">
+   <p style="line-height:1.8;">
+      <b>📍 Address:</b><br>
+      Ranjitham Study Center,<br>
+      11/128, Munusamy Nagar,<br>
+      3rd Cross Street,<br>
+      Opposite to Lissome Gents Stay,<br>
+      Medavakkam,<br>
+      Chennai – 600100
+    </p>
 
-    <!-- Google Map -->
-    <div style="margin-top: 30px;">
-      <h3>📍 Location Map</h3>
-      <iframe
-        src="https://www.google.com/maps?q=Chennai,Tamil%20Nadu&output=embed"
-        width="100%"
-        height="300"
-        style="border:0;"
-        allowfullscreen=""
-        loading="lazy">
-      </iframe>
-    </div>
+    <p><b>📱 Phone:</b> <a href="tel:917702616245">+91 7702616245</a></p>
 
-    <!-- Contact Form -->
-    <div style="margin-top: 40px;">
-      <h3>📝 Send Us a Message</h3>
+    <p><b>📧 Email:</b>
+      <a href="mailto:ranjithamstudycenter@gmail.com">
+        ranjithamstudycenter@gmail.com
+      </a>
+    </p>
+  </div>
 
-      <form method="post">
-        <input type="text" name="name" placeholder="Your Name" required
-               style="width:100%; padding:10px; margin:5px 0;"><br>
+  <!-- MAP -->
+  <div class="card" style="overflow:hidden; border-radius:12px;">
+  <h3 style="padding:15px;">📍 Location Map</h3>
 
-        <input type="email" name="email" placeholder="Your Email" required
-               style="width:100%; padding:10px; margin:5px 0;"><br>
+  <div style="width:100%; height:300px;">
+    <iframe 
+      src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d1156.1686593957372!2d80.18963458533977!3d12.915926529771198!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x3a525c1ef400ed2d%3A0xc54b821ac409a6b8!2sAnnai%20Illam%2C%2011%2F128%2C%20Munusamy%20Nagar%2C%20Vimala%20Nagar%2C%20Medavakkam%2C%20Chennai%2C%20Tamil%20Nadu%20600100!5e0!3m2!1sen!2sin!4v1774353561246!5m2!1sen!2sin"
+      
+      width="100%" 
+      height="100%" 
+      style="border:0;"
+      allowfullscreen=""
+      loading="lazy">
+    </iframe>
+  </div>
+</div>
 
-        <input type="text" name="phone" placeholder="Your Phone Number"
-               style="width:100%; padding:10px; margin:5px 0;"><br>
+  <!-- FORM -->
+  <div class="card">
+    <h3>📝 Send Us a Message</h3>
 
-        <textarea name="message" placeholder="Your Message" rows="4" required
-                  style="width:100%; padding:10px; margin:5px 0;"></textarea><br>
+    <form method="post">
 
-        <button type="submit"
-                style="padding:10px 20px; background:#007bff; color:#fff; border:none;">
-          Send Message
-        </button>
-      </form>
-    </div>
+      <input type="text" name="name" placeholder="Your Name" required>
 
-  </section>
+      <input type="email" name="email" placeholder="Your Email" required>
+
+      <input type="text" name="phone" placeholder="Your Phone Number">
+
+      <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+
+      <button type="submit">Submit</button>
+
+    </form>
+  </div>
+
+</div>
 
 </body>
 </html>
