@@ -981,7 +981,8 @@ if(slides && totalSlides > 0){
   const db = getFirestore(app);
 
   // ================= ADD FEEDBACK =================
-  window.addFeedback = async function () {
+ async function addFeedback() {
+  console.log("clicked 🔥");   // debug
     const name = document.getElementById("name").value;
     const role = document.getElementById("role").value;
     const rating = document.getElementById("rating").value;
@@ -1007,7 +1008,7 @@ if(slides && totalSlides > 0){
       console.error(e);
     }
   };
-
+            
   // ================= LOAD FEEDBACK =================
   async function loadFeedback() {
     const container = document.getElementById("feedbackContainer");
