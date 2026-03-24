@@ -1,7 +1,6 @@
-<h2>Manage Feedback</h2>
+<h2 style="text-align:center;">Manage Feedback</h2>
 
-<div id="container"></div>
-
+<div id="container" style="max-width:700px; margin:auto;"></div>
 <script>
 async function loadFeedback(){
   const res = await fetch('/admin_feedback');
@@ -14,15 +13,16 @@ async function loadFeedback(){
     const div = document.createElement("div");
 
     div.innerHTML = `
-      <p><b>${f.name}</b> (${f.role})</p>
-      <p>${f.message}</p>
-      <p>Status: ${f.approved ? "✅ Approved" : "❌ Pending"}</p>
-
-      <button onclick="approve(${i})">Approve</button>
-      <button onclick="del(${i})">Delete</button>
-      <hr>
-    `;
-
+      <div style="border:1px solid #ddd; padding:15px; margin:10px; border-radius:8px;">
+        <p><b>${f.name}</b> (${f.role})</p>
+        <p>${f.message}</p>
+        <p>Status: ${f.approved ? "✅ Approved" : "❌ Pending"}</p>
+      
+        <button onclick="approve(${i})">Approve</button>
+        <button onclick="del(${i})">Delete</button>
+      </div>
+      `;
+    
     c.appendChild(div);
   });
 }
