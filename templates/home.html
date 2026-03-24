@@ -1062,24 +1062,21 @@ if(slides && totalSlides > 0){
     }, 300);
   // ================= INIT =================
 document.addEventListener("DOMContentLoaded", () => {
-  console.log("DOM ready ✅");
 
   const btn = document.getElementById("feedbackBtn");
-
   if (btn) {
-    btn.addEventListener("click", () => {
-      console.log("BUTTON CLICKED 🔥");
-      addFeedback();
-    });
+    btn.addEventListener("click", addFeedback);
   }
 
-  // ✅ ADD THIS HERE
   const c = document.getElementById("feedbackContainer");
   if(c){
     c.addEventListener("scroll", updateArrowState);
   }
 
-  loadFeedback();
+  loadFeedback().then(() => {
+    updateArrowState();
+  });
+
 });
 </script>
 
