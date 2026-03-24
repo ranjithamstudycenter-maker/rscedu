@@ -963,7 +963,9 @@ if(slides && totalSlides > 0){
   }, 3000);
 }
 
-
+<script>
+  console.log("HTML loaded ✅");
+</script>
 <script type="module">
   import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
   import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
@@ -1056,17 +1058,22 @@ if(slides && totalSlides > 0){
   }
 
   // ================= INIT =================
-window.addEventListener("DOMContentLoaded", () => {
-  loadFeedback();
+document.addEventListener("DOMContentLoaded", () => {
+  console.log("DOM ready ✅");
 
   const btn = document.getElementById("feedbackBtn");
+  console.log("Button found:", btn);
+
   if (btn) {
-    btn.addEventListener("click", addFeedback);
+    btn.addEventListener("click", () => {
+      console.log("BUTTON CLICKED 🔥");
+      addFeedback();
+    });
+  } else {
+    console.log("Button NOT found ❌");
   }
 
-  setTimeout(() => {
-    updateArrowState();
-  }, 300);
+  loadFeedback();
 });
 </script>
 
