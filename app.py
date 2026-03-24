@@ -342,12 +342,88 @@ def admin():
         return redirect("/upload")
 
     return """
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Login</title>
+<style>
+body{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#f4f6f9;
+    font-family:Arial;
+}
+
+.login-box{
+    background:white;
+    padding:40px;
+    border-radius:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.1);
+    text-align:center;
+    width:300px;
+}
+
+.login-box h2{
+    margin-bottom:20px;
+    color:#0b5394;
+}
+
+.input-group{
+    text-align:left;
+    margin-bottom:20px;
+}
+
+.input-group label{
+    display:block;
+    margin-bottom:5px;
+    font-size:14px;
+}
+
+.input-group input{
+    width:100%;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#0b5394;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+    font-weight:bold;
+}
+
+button:hover{
+    background:#083b73;
+}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
     <h2>Admin Login</h2>
+
     <form method="post">
-        <input type="password" name="password" required>
-        <button>Login</button>
+        <div class="input-group">
+            <label>Password</label>
+            <input type="password" name="password" required>
+        </div>
+
+        <button type="submit">Login</button>
     </form>
-    """
+</div>
+
+</body>
+</html>
+"""
 
 
 @app.route("/upload", methods=["GET", "POST"])
