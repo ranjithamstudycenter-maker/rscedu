@@ -884,7 +884,7 @@
 
     <textarea id="message" maxlength="1000" placeholder="Your Feedback"></textarea>
 
-   <button type="button" onclick="addFeedback()">Share your feedback</button>
+   <button id="feedbackBtn">Share your feedback</button>
   </div>
 
 </section>
@@ -1055,7 +1055,12 @@ if(slides && totalSlides > 0){
   }
 
   // ================= INIT =================
- window.onload = loadFeedback;
+window.onload = () => {
+  loadFeedback();
+
+  document.getElementById("feedbackBtn")
+    .addEventListener("click", addFeedback);
+};
 </script>
 
 <script>
