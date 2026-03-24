@@ -1055,12 +1055,18 @@ if(slides && totalSlides > 0){
   }
 
   // ================= INIT =================
-window.onload = () => {
+window.addEventListener("DOMContentLoaded", () => {
   loadFeedback();
 
-  document.getElementById("feedbackBtn")
-    .addEventListener("click", addFeedback);
-};
+  const btn = document.getElementById("feedbackBtn");
+  if (btn) {
+    btn.addEventListener("click", addFeedback);
+  }
+
+  setTimeout(() => {
+    updateArrowState();
+  }, 300);
+});
 </script>
 
 <script>
