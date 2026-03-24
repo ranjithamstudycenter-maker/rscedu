@@ -616,6 +616,11 @@
   font-size:14px;
   margin-left:5px;
 }
+  .star-count{
+  color: red;      /* 🔥 only bracket text red */
+  font-size: 14px;
+  margin-left: 5px;
+}
 
 /* TEXT LIMIT */
 .feedback-card p{
@@ -642,11 +647,20 @@
 .feedback-form input,
 .feedback-form select,
 .feedback-form textarea{
-  width:250px;
-  padding:10px;
-  margin:5px;
-  border-radius:8px;
-  border:1px solid #ccc;
+  width: 100%;
+  max-width: 500px;
+
+  height: 220px;          /* 🔥 bigger */
+  
+  padding: 14px;
+  font-size: 16px;
+
+  line-height: 1.6;       /* 🔥 easy reading */
+
+  border-radius: 10px;
+  border: 1px solid #ccc;
+
+  resize: vertical;
 }
 
 .feedback-form button{
@@ -1039,9 +1053,9 @@ if(slides && totalSlides > 0){
 
       const starCount = f.rating.length;
         div.innerHTML = `
-          <div class="stars">
-            ${f.rating} (${starCount} ${starCount > 1 ? "stars" : "star"})
-          </div>
+         <div class="stars">
+          ${f.rating} <span class="star-count">(${starCount} ${starCount > 1 ? "stars" : "star"})</span>
+        </div>
          <p class="msg">
           ${f.message}
           <span class="read-more" onclick="toggleText(this)">... Read more</span>
