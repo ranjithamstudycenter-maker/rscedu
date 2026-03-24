@@ -73,6 +73,11 @@
             align-items: center;
             gap: 8px;
         }
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
         .logo {
             height: 90px;
@@ -759,7 +764,9 @@
             <a href="{{ url_for('materials') }}">Materials</a>
             <a href="{{ url_for('contact') }}">Contact</a> 
         </div> 
-        <a href="#contact" class="demo-btn">Free demo class</a> 
+        <div class="nav-right">
+        <a href="#contact" class="demo-btn">Free demo class</a>
+        </div>
     </nav>
 
     <!-- ==========================
