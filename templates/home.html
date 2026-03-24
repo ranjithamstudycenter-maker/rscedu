@@ -1065,21 +1065,20 @@ document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM ready ✅");
 
   const btn = document.getElementById("feedbackBtn");
-  console.log("Button found:", btn);
 
   if (btn) {
     btn.addEventListener("click", () => {
       console.log("BUTTON CLICKED 🔥");
       addFeedback();
     });
-  } else {
-    console.log("Button NOT found ❌");
   }
-// ✅ ADD THIS HERE
+
+  // ✅ ADD THIS HERE
   const c = document.getElementById("feedbackContainer");
   if(c){
     c.addEventListener("scroll", updateArrowState);
-  
+  }
+
   loadFeedback();
 });
 </script>
