@@ -1032,8 +1032,12 @@ if(slides && totalSlides > 0){
       const div = document.createElement("div");
       div.className = "feedback-card";
 
-      div.innerHTML = `
-        <div class="stars">${f.rating}</div>
+      const starCount = f.rating.length;
+        div.innerHTML = `
+          <div class="stars">
+            ${f.rating} (${starCount} ${starCount > 1 ? "stars" : "star"})
+          </div>
+        `;
         <p class="msg">
           ${f.message}
           <span class="read-more" onclick="toggleText(this)">... Read more</span>
