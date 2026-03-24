@@ -1,15 +1,39 @@
 <h2 style="text-align:center;">Manage Feedback</h2>
 
 <div id="container" style="max-width:700px; margin:auto;"></div>
-<script>
+
+<script type="module">
+
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-app.js";
+import {
+  getFirestore,
+  collection,
+  getDocs,
+  updateDoc,
+  deleteDoc,
+  doc
+} from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
+
+// 🔥 same config use pannunga
+const firebaseConfig = {
+  apiKey: "YOUR KEY",
+  authDomain: "YOUR DOMAIN",
+  projectId: "rscedu-c1d9a",
+};
+
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+
+// ================= LOAD =================
 async function loadFeedback(){
-  const res = await fetch('/admin_feedback');
-  const data = await res.json();
+  const container = document.getElementById("container");
+  container.innerHTML = "";
 
-  const c = document.getElementById("container");
-  c.innerHTML = "";
+  const querySnapshot = await getDocs(collection(db, "feedback"));
 
-  data.forEach((f, i) => {
+  querySnapshot.forEach((d) => {
+    const f = d.data();
+
     const div = document.createElement("div");
 
     div.innerHTML = `
@@ -17,33 +41,39 @@ async function loadFeedback(){
         <p><b>${f.name}</b> (${f.role})</p>
         <p>${f.message}</p>
         <p>Status: ${f.approved ? "✅ Approved" : "❌ Pending"}</p>
-      
-        <button onclick="approve(${i})">Approve</button>
-        <button onclick="del(${i})">Delete</button>
+
+        <button onclick="approve('${d.id}')">Approve</button>
+        <button onclick="del('${d.id}')">Delete</button>
       </div>
-      `;
-    
-    c.appendChild(div);
+    `;
+
+    container.appendChild(div);
   });
 }
 
-async function approve(i){
-  await fetch('/approve_feedback', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({index:i})
+// ================= APPROVE =================
+window.approve = async function(id){
+  const ref = doc(db, "feedback", id);
+
+  await updateDoc(ref, {
+    approved: true
   });
+
+  alert("Approved ✅");
   loadFeedback();
 }
 
-async function del(i){
-  await fetch('/delete_feedback', {
-    method:'POST',
-    headers:{'Content-Type':'application/json'},
-    body: JSON.stringify({index:i})
-  });
+// ================= DELETE =================
+window.del = async function(id){
+  const ref = doc(db, "feedback", id);
+
+  await deleteDoc(ref);
+
+  alert("Deleted ❌");
   loadFeedback();
 }
 
+// INIT
 loadFeedback();
+
 </script>
