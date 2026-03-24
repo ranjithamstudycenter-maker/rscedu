@@ -646,22 +646,24 @@
 .feedback-form input,
 .feedback-form select,
 .feedback-form textarea{
-  width: 100%;
-  max-width: 500px;
+  width:250px;
+  padding:10px;
+}
+.feedback-form textarea{
+  width: 100%;          /* full width */
+  max-width: 500px;     /* limit width */
 
-  height: 220px;          /* 🔥 bigger */
+  height: 220px;        /* 🔥 BIG box */
   
   padding: 14px;
   font-size: 16px;
+  line-height: 1.6;
 
-  line-height: 1.6;       /* 🔥 easy reading */
-
-  border-radius: 10px;
+  border-radius: 8px;
   border: 1px solid #ccc;
 
-  resize: vertical;
+  resize: vertical;     /* user resize panna mudiyum */
 }
-
 .feedback-form button{
   padding:10px 20px;
   background:#007bff;
