@@ -111,13 +111,11 @@
 
        .demo-btn {
     background: linear-gradient(45deg, #ff2d55, #7b2cbf);
-    color: white;
-    padding: 8px 18px;
-    border-radius: 25px;
-    font-weight: 600;
-    animation: blink 1s infinite;
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    font-weight: 700;
+    animation: blink 2s infinite;
 }
-
         @keyframes blink {
             50% { opacity: 0; }
         }
