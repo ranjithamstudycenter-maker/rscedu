@@ -1114,17 +1114,17 @@ function updateArrowState(){
 
   if(!c) return;
 
+  // 🔥 No overflow → hide both
   if(c.scrollWidth <= c.clientWidth){
     leftBtn.style.display = "none";
     rightBtn.style.display = "none";
     return;
   }
 
-  leftBtn.style.display = c.scrollLeft > 0 ? "block" : "none";
-  rightBtn.style.display =
-    c.scrollLeft + c.clientWidth < c.scrollWidth ? "block" : "none";
+  // ✅ Overflow irundha → BOTH visible
+  leftBtn.style.display = "flex";
+  rightBtn.style.display = "flex";
 }
-
 
 
 
