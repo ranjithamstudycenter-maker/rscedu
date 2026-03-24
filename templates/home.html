@@ -1147,19 +1147,17 @@ function updateArrowState(){
 
 
 function scrollFeedback(direction){
-    const box = document.getElementById("feedbackContainer");
+  const box = document.getElementById("feedbackContainer");
 
-    if(!box) return;
+  if(!box) return;
 
-    const scrollAmount = box.clientWidth * 0.8;  // responsive
+  const scrollAmount = box.clientWidth * 0.8;
 
-    box.scrollBy({
-        left: direction * scrollAmount,
-        behavior: "smooth"
-    });
-}    
-
-
+  box.scrollBy({
+    left: direction * scrollAmount,
+    behavior: "smooth"
+  });
+}
 
 </script>
 
