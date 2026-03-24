@@ -337,17 +337,22 @@ def check_permission(product_id):
 # ---------------- ADMIN ----------------
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    if request.method == "POST" and request.form.get("password") == "admin123":
-        session["admin"] = True
-        return redirect("/upload")
+    error = ""
 
-    return """
+    if request.method == "POST":
+        if request.form.get("password") == "admin123":
+            session["admin"] = True
+            return redirect("/upload")
+        else:
+            error = "Wrong Password ❌"
+
+    return f"""
 <!DOCTYPE html>
 <html>
 <head>
 <title>Admin Login</title>
 <style>
-body{
+body {{
     margin:0;
     height:100vh;
     display:flex;
@@ -355,41 +360,57 @@ body{
     align-items:center;
     background:#f4f6f9;
     font-family:Arial;
-}
+}}
 
-.login-box{
+.login-box {{
     background:white;
     padding:40px;
     border-radius:12px;
     box-shadow:0 8px 20px rgba(0,0,0,0.1);
     text-align:center;
-    width:300px;
-}
+    width:320px;
+}}
 
-.login-box h2{
-    margin-bottom:20px;
+.logo {{
+    width:70px;
+    margin-bottom:10px;
+}}
+
+h2 {{
+    margin-bottom:15px;
     color:#0b5394;
-}
+}}
 
-.input-group{
+.error {{
+    color:red;
+    font-size:14px;
+    margin-bottom:10px;
+}}
+
+.input-group {{
     text-align:left;
     margin-bottom:20px;
-}
+}}
 
-.input-group label{
-    display:block;
-    margin-bottom:5px;
-    font-size:14px;
-}
-
-.input-group input{
+.input-group input {{
     width:100%;
     padding:10px;
     border-radius:6px;
     border:1px solid #ccc;
-}
+}}
 
-button{
+.password-box {{
+    position:relative;
+}}
+
+.eye {{
+    position:absolute;
+    right:10px;
+    top:10px;
+    cursor:pointer;
+}}
+
+button {{
     width:100%;
     padding:10px;
     background:#0b5394;
@@ -397,34 +418,44 @@ button{
     border:none;
     border-radius:6px;
     cursor:pointer;
-    font-weight:bold;
-}
+}}
 
-button:hover{
+button:hover {{
     background:#083b73;
-}
+}}
 </style>
 </head>
 
 <body>
 
 <div class="login-box">
+
+    <img src="/static/images/logo.jpg" class="logo">
+
     <h2>Admin Login</h2>
 
+    <div class="error">{error}</div>
+
     <form method="post">
-        <div class="input-group">
-            <label>Password</label>
-            <input type="password" name="password" required>
+        <div class="input-group password-box">
+            <input type="password" id="pwd" name="password" placeholder="Enter Password" required>
+            <span class="eye" onclick="toggle()">👁️</span>
         </div>
 
         <button type="submit">Login</button>
     </form>
 </div>
 
+<script>
+function toggle(){{
+    const p = document.getElementById("pwd");
+    p.type = p.type === "password" ? "text" : "password";
+}}
+</script>
+
 </body>
 </html>
 """
-
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
@@ -443,16 +474,29 @@ def upload():
             """
 
     return """
-    <h2>Upload Maths PDF</h2>
-    <form method="post" enctype="multipart/form-data">
-        <input type="file" name="pdf" accept=".pdf" required>
-        <button type="submit">Upload</button>
-    </form>
-    <br>
-    <a href="/manage-feedback">Manage Feedback</a>
-    <br><br>
-    <a href="/logout">Logout</a>
-    """
+<h2>Admin Dashboard</h2>
+
+<div style="max-width:400px; margin:auto; text-align:center;">
+
+<h3>Upload Maths PDF</h3>
+
+<form method="post" enctype="multipart/form-data">
+    <input type="file" name="pdf" accept=".pdf" required><br><br>
+    <button type="submit">Upload</button>
+</form>
+
+<br><br>
+
+<a href="/manage-feedback">
+    <button>Manage Feedback</button>
+</a>
+
+<br><br>
+
+<a href="/logout">Logout</a>
+
+</div>
+"""
     
 @app.route('/logout')
 def logout():
