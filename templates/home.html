@@ -855,11 +855,12 @@
   <h2>Student & Parent Feedback</h2>
 
   <div class="feedback-wrapper">
-   <span onclick="scrollFeedback(-1)" class="scroll-btn left">❮</span>
+  <span onclick="scrollLeft()" class="scroll-btn left">❮</span>
+
       
     <div id="feedbackContainer" class="feedback-container"></div>
 
-    <span onclick="scrollFeedback(1)" class="scroll-btn right">❯</span>
+    <span onclick="scrollRight()" class="scroll-btn right">❯</span>
   </div>
 
 </section>
@@ -962,7 +963,7 @@ if(slides && totalSlides > 0){
     showSlide(index);
   }, 3000);
 }
-
+   </script>
 <script>
   console.log("HTML loaded ✅");
 </script>
@@ -1056,7 +1057,9 @@ if(slides && totalSlides > 0){
       });
     }, 200);
   }
-
+    setTimeout(() => {
+      updateArrowState();
+    }, 300);
   // ================= INIT =================
 document.addEventListener("DOMContentLoaded", () => {
   console.log("DOM ready ✅");
