@@ -98,24 +98,16 @@ button:hover{
     padding:20px;
   }
 }
-.direction-btn {
-  display: inline-block;
-  margin-top: 10px;
-  padding: 10px 20px;
-
-  background: red;          /* 🔴 red button */
-  color: white;             /* white text */
-
-  border-radius: 6px;
+.direction-link {
+  color: red;
   font-weight: 600;
-
-  text-decoration: none;    /* ❌ underline remove */
-  transition: 0.3s;
-   box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+  text-decoration: none;
+  font-size: 16px;
 }
 
-.direction-btn:hover {
-  background: darkred;      /* hover effect */
+.direction-link:hover {
+  text-decoration: underline;
+  color: darkred;
 }
 </style>
 </head>
@@ -179,10 +171,13 @@ button:hover{
    "
    onmouseover="this.style.transform='scale(1.05)'"
    onmouseout="this.style.transform='scale(1)'">
+  <div style="text-align:center; margin:20px 0;">
   <a href="https://www.google.com/maps/dir/?api=1&destination=Annai+Illam+11%2F128+Munusamy+Nagar+Vimala+Nagar+Medavakkam+Chennai+Tamil+Nadu+600100"
-   target="_blank" class="direction-btn">
-  📍 Get Directions
+     target="_blank"
+     class="direction-link">
+     📍 Get Directions
   </a>
+</div>
 </a>
   <!-- FORM -->
   <div class="card">
