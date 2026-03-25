@@ -26,41 +26,58 @@ a{text-decoration:none;}
 h1,h2,h3{color:#0b5394;}
 
 /* ================= NAVBAR ================= */
-.navbar{
-    background:#fff;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    padding:12px 25px;
-    box-shadow:0 4px 12px rgba(0,0,0,0.08);
-    flex-wrap:wrap;
-}
+.navbar {
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+        }
+        
 
-.nav-left{
-    display:flex;
-    align-items:center;
-    gap:10px;
-}
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
 
-.logo{height:70px;}
+        .logo {
+            height: 90px;
+        }
 
-.brand-text h1{
-    font-size:22px;
-    color:#0b5394;
-}
+        .brand-text h1 {
+            color: #0b5394;
+            font-size: 26px;
+            font-weight: 700;
+        }
 
-.brand-text p{
-    font-size:13px;
-    color:#0b5394;
-}
+        .brand-text p {
+            color: #0b5394;
+            font-size: 13px;
+        }
 
-.nav-center a{
-    margin:0 12px;
-    font-weight:600;
-    color:#0b5394;
-    text-decoration:none;
-}
+        .nav-center {
+            position: absolute;
+            left: 60%;
+            transform: translateX(-60%);
+        }
 
+        .nav-center a {
+            margin: 0 15px;
+            color: #0b5394;
+            font-weight: 600;
+        }
+
+        .nav-center a:hover {
+            text-decoration: underline;
+        }
 /* ================= HERO ================= */
 .hero{
     background:linear-gradient(135deg,#004aad,#0b5394);
