@@ -37,6 +37,14 @@ button{
 <input type="email" id="email" placeholder="Enter Email" required><br>
 <input type="text" id="phone" placeholder="WhatsApp Number" required><br>
 
+<select id="state" onchange="updateCities()" required>
+  <option value="">Select State / UT</option>
+</select><br>
+
+<select id="city" required>
+  <option value="">Select Place</option>
+</select>
+
 <button id="rzp-button">Pay Now</button>
 
 <script>
@@ -100,6 +108,85 @@ window.onload = function(){
 
 };
 </script>
+<script id="n2b7qa">
+const data = {
+  "Tamil Nadu": "Tamil Nadu": [
+    "Ariyalur","Chengalpattu","Chennai","Coimbatore","Cuddalore",
+    "Dharmapuri","Dindigul","Erode","Kallakurichi","Kanchipuram",
+    "Kanyakumari","Karur","Krishnagiri","Madurai","Mayiladuthurai",
+    "Nagapattinam","Namakkal","Nilgiris","Perambalur","Pudukkottai",
+    "Ramanathapuram","Ranipet","Salem","Sivaganga","Tenkasi",
+    "Thanjavur","Theni","Thoothukudi","Tiruchirappalli","Tirunelveli",
+    "Tirupathur","Tiruppur","Tiruvallur","Tiruvannamalai","Tiruvarur",
+    "Vellore","Viluppuram","Virudhunagar"
+  ],
+  "Karnataka": ["Bangalore","Mysore","Mangalore","Hubli"],
+  "Kerala": ["Kochi","Trivandrum","Kozhikode"],
+  "Andhra Pradesh": ["Vijayawada","Visakhapatnam","Guntur"],
+  "Telangana": ["Hyderabad","Warangal","Nizamabad"],
+  "Maharashtra": ["Mumbai","Pune","Nagpur"],
+  "Delhi": ["New Delhi"],
+  "Uttar Pradesh": ["Lucknow","Kanpur","Varanasi"],
+  "West Bengal": ["Kolkata","Howrah"],
+  "Gujarat": ["Ahmedabad","Surat","Vadodara"],
+  "Rajasthan": ["Jaipur","Udaipur"],
+  "Madhya Pradesh": ["Bhopal","Indore"],
+  "Punjab": ["Amritsar","Ludhiana"],
+  "Haryana": ["Gurgaon","Faridabad"],
+  "Bihar": ["Patna","Gaya"],
+  "Odisha": ["Bhubaneswar","Cuttack"],
+  "Assam": ["Guwahati"],
+  "Jharkhand": ["Ranchi"],
+  "Chhattisgarh": ["Raipur"],
+  "Himachal Pradesh": ["Shimla"],
+  "Uttarakhand": ["Dehradun"],
+  "Goa": ["Panaji"],
+  "Tripura": ["Agartala"],
+  "Manipur": ["Imphal"],
+  "Meghalaya": ["Shillong"],
+  "Nagaland": ["Kohima"],
+  "Arunachal Pradesh": ["Itanagar"],
+  "Mizoram": ["Aizawl"],
+  "Sikkim": ["Gangtok"],
+  
+  // UTs
+  "Puducherry": ["Puducherry","Karaikal"],
+  "Chandigarh": ["Chandigarh"],
+  "Jammu and Kashmir": ["Srinagar","Jammu"],
+  "Ladakh": ["Leh"],
+  "Andaman and Nicobar Islands": ["Port Blair"],
+  "Lakshadweep": ["Kavaratti"],
+  "Dadra and Nagar Haveli and Daman and Diu": ["Daman","Diu"]
+};
 
+// Populate states
+const stateDropdown = document.getElementById("state");
+for (let state in data) {
+  let option = document.createElement("option");
+  option.value = state;
+  option.text = state;
+  stateDropdown.appendChild(option);
+}
+
+// Update cities
+function updateCities() {
+  const state = document.getElementById("state").value;
+  const cityDropdown = document.getElementById("city");
+
+  cityDropdown.innerHTML = "<option value=''>Select Place</option>";
+
+  if (data[state]) {
+    data[state].forEach(city => {
+      let option = document.createElement("option");
+      option.value = city;
+      option.text = city;
+      cityDropdown.appendChild(option);
+    });
+  }
+}
+    document.getElementById("state").value
+    document.getElementById("city").value
+</script>
+    
 </body>
 </html>
