@@ -576,6 +576,7 @@ def contact():
     if request.method == "POST":
         print(request.form)
     return render_template("contact.html")
+   
 
 
 # ---------------- SITEMAP ----------------
