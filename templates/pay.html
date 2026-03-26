@@ -178,31 +178,30 @@ document.getElementById('rzp-button').onclick = function(e){
     
 </script>
 <script>
-window.onload = function(){
+document.addEventListener("DOMContentLoaded", function(){
 
-    // get phone from URL
     const params = new URLSearchParams(window.location.search);
     const phone = params.get("phone");
+
+    console.log("PHONE =", phone);  // 🔥 debug check
 
     if(phone){
 
         let message = "Hi 👋%0A" +
         "Your payment is successful.%0A" +
-        "Your notes are ready here:%0A" +
-        window.location.origin + "/materials";
+        "📘 " + product_id + " notes ready%0A" +
+        "Ranjitham Study Center ku nandri 🙏%0A" +
+        "👉 Open here: " + window.location.origin + "/materials";
 
-        // open WhatsApp
-        window.location.href =
-        "https://wa.me/91" + phone + "?text=" + message;
+        // small delay (important)
+        setTimeout(() => {
+            window.location.href =
+            "https://wa.me/91" + phone + "?text=" + message;
+        }, 800);
     }
 
-};
-
-let message = "Hi 👋%0A" +
-"Ranjitham Study Center ku nandri 🙏%0A" +
-"📘 " + product_id + " notes ready%0A" +
-"👉 Open here: " + window.location.origin + "/materials";
-    
+});
 </script>
+    
 </body>
 </html>
