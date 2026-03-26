@@ -90,109 +90,18 @@ button{
     Your information is kept safe and will not be shared with any third parties.
   </p>
 <script>
-var product_id = "{{ product_id }}";
-var mode = "{{ mode }}";
-var board = "{{ board }}";
-var cls = "{{ cls }}";
+document.addEventListener("DOMContentLoaded", function(){
 
-var options = {
-    "key": "{{ razorpay_key }}",
-    "amount": "{{ product.price * 100 }}",
-    "currency": "INR",
-    "name": "Ranjitham Study Center",
-    "description": "Maths Notes",
-    "order_id": "{{ order_id }}",
-
-
-"handler": function (response) {
-
-    const url =
-      "/payment_success?product=" + product_id +
-      "&mode=" + mode +
-      "&board=" + board +
-      "&cls=" + cls;
-
-    window.location.href = url;   // redirect first
-
-    setTimeout(() => {
-        window.location.reload(true);
-    }, 500);
-},
-
-        
-    "prefill": {
-        "email": "",
-        "contact": ""
-    },
-
-    "theme": {
-        "color": "#0b5394"
-    }
-};
-
-window.onload = function(){
-
-    var rzp = new Razorpay(options);
-
-    document.getElementById('rzp-button').onclick = function(e){
-
-        var email = document.getElementById("email").value;
-        var phone = document.getElementById("phone").value;
-
-        if(!email || !phone){
-            alert("Enter Email & Phone");
-            return;
-        }
-
-        // update prefill before opening
-        options.prefill.email = email;
-        options.prefill.contact = phone;
-
-        rzp.open();
-        e.preventDefault();
-    };
-
-};
-</script>
-<script>
+/* ---------- STATES ---------- */
 const states = [
-  "Tamil Nadu",
-  "Karnataka",
-  "Kerala",
-  "Andhra Pradesh",
-  "Telangana",
-  "Maharashtra",
-  "Delhi",
-  "Uttar Pradesh",
-  "West Bengal",
-  "Gujarat",
-  "Rajasthan",
-  "Madhya Pradesh",
-  "Punjab",
-  "Haryana",
-  "Bihar",
-  "Odisha",
-  "Assam",
-  "Jharkhand",
-  "Chhattisgarh",
-  "Himachal Pradesh",
-  "Uttarakhand",
-  "Goa",
-  "Tripura",
-  "Manipur",
-  "Meghalaya",
-  "Nagaland",
-  "Arunachal Pradesh",
-  "Mizoram",
-  "Sikkim",
-
-  // UTs
-  "Puducherry",
-  "Chandigarh",
-  "Jammu and Kashmir",
-  "Ladakh",
-  "Andaman and Nicobar Islands",
-  "Lakshadweep",
+  "Tamil Nadu","Karnataka","Kerala","Andhra Pradesh","Telangana",
+  "Maharashtra","Delhi","Uttar Pradesh","West Bengal","Gujarat",
+  "Rajasthan","Madhya Pradesh","Punjab","Haryana","Bihar",
+  "Odisha","Assam","Jharkhand","Chhattisgarh","Himachal Pradesh",
+  "Uttarakhand","Goa","Tripura","Manipur","Meghalaya","Nagaland",
+  "Arunachal Pradesh","Mizoram","Sikkim",
+  "Puducherry","Chandigarh","Jammu and Kashmir","Ladakh",
+  "Andaman and Nicobar Islands","Lakshadweep",
   "Dadra and Nagar Haveli and Daman and Diu"
 ];
 
@@ -205,11 +114,97 @@ states.forEach(state => {
   stateDropdown.appendChild(option);
 });
 
+
+/* ---------- RAZORPAY ---------- */
+
+var options = {
+    "key": "{{ razorpay_key }}",
+    "amount": "{{ product.price * 100 }}",
+    "currency": "INR",
+    "name": "Ranjitham Study Center",
+    "description": "Maths Notes",
+    "order_id": "{{ order_id }}",
+
+    "handler": function (response) {
+
+        var phone = document.getElementById("phone").value;
+
+        const url =
+          "/payment_success?product={{ product_id }}" +
+          "&mode={{ mode }}" +
+          "&board={{ board }}" +
+          "&cls={{ cls }}" +
+          "&phone=" + phone;
+
+        window.location.href = url;
+    },
+
+    "prefill": {
+        "email": "",
+        "contact": ""
+    },
+
+    "theme": {
+        "color": "#0b5394"
+    }
+};
+
+var rzp = new Razorpay(options);
+
+
+/* ---------- BUTTON CLICK ---------- */
+
+document.getElementById('rzp-button').onclick = function(e){
+
+    var email = document.getElementById("email").value;
+    var phone = document.getElementById("phone").value;
+    var state = document.getElementById("state").value;
+
     if(!phone){
-    alert("Phone number is required");
-    return;
-}
+        alert("Phone number is required");
+        return;
+    }
+
+    if(!state){
+        alert("Please select state");
+        return;
+    }
+
+    options.prefill.email = email;
+    options.prefill.contact = phone;
+
+    rzp.open();
+    e.preventDefault();
+};
+
+});
 </script>
+<script>
+window.onload = function(){
+
+    // get phone from URL
+    const params = new URLSearchParams(window.location.search);
+    const phone = params.get("phone");
+
+    if(phone){
+
+        let message = "Hi 👋%0A" +
+        "Your payment is successful.%0A" +
+        "Your notes are ready here:%0A" +
+        window.location.origin + "/materials";
+
+        // open WhatsApp
+        window.location.href =
+        "https://wa.me/91" + phone + "?text=" + message;
+    }
+
+};
+
+let message = "Hi 👋%0A" +
+"Ranjitham Study Center ku nandri 🙏%0A" +
+"📘 " + product_id + " notes ready%0A" +
+"👉 Open here: " + window.location.origin + "/materials";
     
+</script>
 </body>
 </html>
