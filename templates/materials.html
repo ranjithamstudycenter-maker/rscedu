@@ -502,45 +502,71 @@ body{
     height:auto !important;
 }
 <style>
-.info-box {
-  max-width: 900px;
-  margin: 25px auto;   /* spacing top & bottom */
-  padding: 18px 20px;
-  background: #f9fbff;
-  border-radius: 12px;
-  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+.info-section {
+  max-width: 800px;
+  margin: 40px auto 30px auto;  /* TOP SPACE + CENTER */
+  padding: 20px;
   text-align: center;
 }
 
-.policy {
+.info-text {
   font-size: 14px;
-  color: #444;
+  color: #555;
   margin-bottom: 10px;
 }
 
-.feedback {
+.info-sub {
   font-size: 15px;
   color: #222;
+  margin-bottom: 18px;
   font-weight: 500;
-  margin-bottom: 15px;
 }
 
-.feedback-btn {
+.info-btn {
   display: inline-block;
-  padding: 8px 16px;
+  padding: 10px 20px;
   background: #25D366;
-  color: white;
-  border-radius: 20px;
+  color: #fff;
+  border-radius: 25px;
   text-decoration: none;
   font-size: 14px;
   transition: 0.3s;
 }
 
-.feedback-btn:hover {
+.info-btn:hover {
   background: #20b358;
 }
+  <style>
+.privacy-section {
+  background: #ffffff;
+  text-align: center;
+  padding: 20px 15px;
+  border-top: 1px solid #eee;
+}
+
+.privacy-title {
+  font-size: 16px;
+  font-weight: 600;
+  color: #007bff;
+  margin-bottom: 8px;
+}
+
+.privacy-text {
+  font-size: 14px;
+  color: #555;
+  max-width: 700px;
+  margin: auto;
+  line-height: 1.6;
+}
+
+/* small hover effect (optional) */
+.privacy-section:hover {
+  background: #f9fbff;
+  transition: 0.3s;
+}
 </style>
-</style>
+
+
   <script type="module">
     import * as pdfjsLib from "{{ url_for('static', filename='pdfjs/build/pdf.mjs') }}";
 
@@ -579,14 +605,25 @@ body{
 <section class="materials-wrapper">
 
 <h2 class="page-title">HAND WRITTEN NOTES</h2>
-  
-<div class="info-box">
-  <p class="policy">
-  © Ranjitham Study Center.<strong>All study materials are provided for educational purposes only. 
-Unauthorized redistribution, sharing, or reproduction in any form is strictly prohibited.</strong> 
- </p>
-</div>
 
+  <div class="info-section">
+  
+  <p class="info-text">
+    📘<strong>All study materials are provided for educational purposes only.Unauthorized redistribution, sharing, or reproduction in any form is strictly prohibited.</strong> 
+  </p>
+
+  <p class="info-sub">
+   💬 We value your feedback! If you find any errors or have suggestions in the notes, please feel free to contact us via WhatsApp. 
+ The materials will be reviewed and updated regularly.
+  </p>
+
+  <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20I%20would%20like%20to%20share%20feedback%20regarding%20the%20notes" 
+     target="_blank" class="info-btn">
+     Report / Send Feedback
+  </a>
+
+</div>
+  
 
 
 <!-- BOARD -->
@@ -632,14 +669,7 @@ onclick="showClass('class12',this)">
 Class 12
 </button>
 
-</div>
-  
- <p class="feedback">
-    💬 We value your feedback! If you find any errors or have suggestions in the notes, please feel free to contact us via WhatsApp. 
- The materials will be reviewed and updated regularly.
-  </p>
- 
-</div>
+
   
 <div id="contentArea"
 class="container {% if active_class %} {% else %}hidden{% endif %}">
@@ -854,14 +884,7 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
 
 </section>
             
-  <div class="info-box">
-  <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20I%20would%20like%20to%20share%20feedback%20regarding%20the%20notes" 
-     target="_blank" class="feedback-btn">
-     Report / Send Feedback
-  </a>
-</div>
-
- 
+   
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-box">
@@ -883,16 +906,22 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
                 <p>📍 Your Location Here</p>
             </div>
         </div>
-        <div class="footer-bottom">
-            © <script>document.write(new Date().getFullYear())</script> Ranjitham Study Center. All Rights Reserved.
-            <p style="margin-top:8px; font-size:14px; color:#ccc;">
-                🔒 <strong>Your Privacy:</strong><br>
-                We collect your name, email, and feedback only for communication purposes.
-                Your information is kept safe and will not be shared with any third parties.
-              </p>
-        </div>
+        
     </footer>
+      <div class="footer-bottom">
+  © <script>document.write(new Date().getFullYear())</script> Ranjitham Study Center. All Rights Reserved.
+      </div>
 
+<!-- ✅ NEW PRIVACY SECTION -->
+<div class="privacy-section">
+  <p class="privacy-title">🔐 Your Privacy Matters</p>
+  
+  <p class="privacy-text">
+    We collect your name, contact number, email, and feedback solely for communication purposes. 
+    This information is used to provide you with relevant educational updates and materials. 
+    Your data is securely stored and will not be shared with any third parties.
+  </p>
+</div>
     <!-- ==========================
          WHATSAPP FLOAT BUTTON
     ========================== -->
