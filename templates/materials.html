@@ -501,46 +501,45 @@ body{
     width:100% !important;
     height:auto !important;
 }
-<style>
-.info-section {
-  max-width: 800px;
-  margin: 40px auto 30px auto;  /* TOP SPACE + CENTER */
-  padding: 20px;
-  text-align: center;
-}
 
 .info-text {
+  text-align: center;
   font-size: 14px;
-  color: #555;
-  margin-bottom: 10px;
+  color: #333;
+  max-width: 900px;
+  margin: 20px auto;   /* center + spacing */
+  line-height: 1.6;
+}
+
+.feedback-section {
+  text-align: center;
+  margin: 40px auto;
 }
 
 .info-sub {
   font-size: 15px;
   color: #222;
-  margin-bottom: 18px;
-  font-weight: 500;
+  margin-bottom: 15px;
 }
 
 .info-btn {
   display: inline-block;
   padding: 10px 20px;
   background: #25D366;
-  color: #fff;
+  color: white;
   border-radius: 25px;
   text-decoration: none;
   font-size: 14px;
-  transition: 0.3s;
 }
 
 .info-btn:hover {
   background: #20b358;
 }
-  <style>
+
 .privacy-section {
   background: #ffffff;
   text-align: center;
-  padding: 20px 15px;
+  padding: 25px 15px;
   border-top: 1px solid #eee;
 }
 
@@ -549,6 +548,7 @@ body{
   font-weight: 600;
   color: #007bff;
   margin-bottom: 8px;
+  text-align: center;
 }
 
 .privacy-text {
@@ -557,13 +557,36 @@ body{
   max-width: 700px;
   margin: auto;
   line-height: 1.6;
+  text-align: center;
 }
-
-/* small hover effect (optional) */
-.privacy-section:hover {
-  background: #f9fbff;
+ 
+.whatsapp-btn {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #25D366;
+  color: #fff;
+  padding: 10px 15px;
+  border-radius: 30px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 14px;
+  text-decoration: none;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.2);
+  z-index: 1000;
   transition: 0.3s;
 }
+
+.whatsapp-btn .icon {
+  font-size: 18px;
+}
+
+.whatsapp-btn:hover {
+  background: #20b358;
+  transform: scale(1.05);
+}
+
 </style>
 
 
@@ -606,23 +629,9 @@ body{
 
 <h2 class="page-title">HAND WRITTEN NOTES</h2>
 
-  <div class="info-section">
-  
   <p class="info-text">
-    📘<strong>All study materials are provided for educational purposes only.Unauthorized redistribution, sharing, or reproduction in any form is strictly prohibited.</strong> 
+  📘 <strong>All study materials are prepared by Ranjitham Study Center for educational purposes only. Unauthorized redistribution, sharing, or reproduction in any form is strictly prohibited.</strong>
   </p>
-
-  <p class="info-sub">
-   💬 We value your feedback! If you find any errors or have suggestions in the notes, please feel free to contact us via WhatsApp. 
- The materials will be reviewed and updated regularly.
-  </p>
-
-  <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20I%20would%20like%20to%20share%20feedback%20regarding%20the%20notes" 
-     target="_blank" class="info-btn">
-     Report / Send Feedback
-  </a>
-
-</div>
   
 
 
@@ -764,12 +773,6 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
   {% endfor %}
 
 
-
-
-
-
-
-
     <div class="stats">
         <span id="view-{{ pid }}">👁 Views</span>
         <span id="down-{{ pid }}">⬇️ Downloads</span>
@@ -884,7 +887,18 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
 
 </section>
             
-   
+<div class="feedback-section">
+  <p class="info-sub">
+    💬 We value your feedback! If you find any errors or have suggestions in the notes, please feel free to contact us via WhatsApp. 
+    The materials will be reviewed and updated regularly.
+  </p>
+
+  <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20I%20would%20like%20to%20share%20feedback%20regarding%20the%20notes" 
+     target="_blank" class="info-btn">
+     Report / Send Feedback
+  </a>
+</div> 
+  
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-box">
@@ -903,16 +917,19 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
                 <h3>Contact Details</h3>
                 <p>📞 7702616245</p>
                 <p>📧 ranjithamstudycenter@gmail.com</p>
-                <p>📍 Your Location Here</p>
+               
             </div>
         </div>
         
     </footer>
       <div class="footer-bottom">
-  © <script>document.write(new Date().getFullYear())</script> Ranjitham Study Center. All Rights Reserved.
+          <p>© <span id="year"></span> Ranjitham Study Center. All Rights Reserved.</p>
+
+          <script>
+          document.getElementById("year").innerText = new Date().getFullYear();
+          </script>
       </div>
 
-<!-- ✅ NEW PRIVACY SECTION -->
 <div class="privacy-section">
   <p class="privacy-title">🔐 Your Privacy Matters</p>
   
@@ -925,16 +942,12 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
     <!-- ==========================
          WHATSAPP FLOAT BUTTON
     ========================== -->
-    <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
-  <p style="font-size:14px; color:#555;">
-  💬 For feedback, suggestions, or corrections, please contact us via WhatsApp.
-</p>
-  <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20Ranjitham%20Study%20Center,%20I%20would%20like%20to%20share%20my%20feedback%20regarding%20the%20notes.%20%20Subject:%20%20Topic:%20%20Message:" 
-   class="whatsapp-float" target="_blank">
-    <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20I%20want%20to%20report%20a%20correction" 
-   class="whatsapp-float" target="_blank">
-   <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" width="28">
-</a>
+   <a class="whatsapp-btn" 
+   href="https://wa.me/917702616245?text=Hi%20Ranjitham%20Study%20Center,%20I%20would%20like%20to%20share%20feedback" 
+   target="_blank">
+   <span class="icon">💬</span>
+   <span class="text">Chat with Us</span>
+  </a>
 <!-- ================= JS ================= -->
 
 
