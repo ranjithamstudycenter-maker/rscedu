@@ -175,15 +175,7 @@ document.getElementById('rzp-button').onclick = function(e){
         return;
     }
 
-    // set Razorpay prefill
-    options.prefill.email = email;
-    options.prefill.contact = phone;
-
-    var rzp = new Razorpay(options);
-    rzp.open();
-
-    e.preventDefault();
-};
+    });
     
 </script>
 <script>
