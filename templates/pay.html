@@ -183,20 +183,21 @@ document.addEventListener("DOMContentLoaded", function(){
     const params = new URLSearchParams(window.location.search);
     const phone = params.get("phone");
 
-    console.log("PHONE =", phone);  // 🔥 debug check
+    console.log("PHONE =", phone);
 
     if(phone){
 
         let message = "Hi 👋%0A" +
         "Your payment is successful.%0A" +
-        "📘 " + product_id + " notes ready%0A" +
+        "📘 Notes ready%0A" +
         "Ranjitham Study Center ku nandri 🙏%0A" +
         "👉 Open here: " + window.location.origin + "/materials";
 
-        // small delay (important)
         setTimeout(() => {
-            window.location.href =
-            "https://wa.me/91" + phone + "?text=" + message;
+            window.open(
+                "https://wa.me/91" + phone + "?text=" + message,
+                "_blank"
+            );
         }, 800);
     }
 
