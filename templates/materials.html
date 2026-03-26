@@ -586,7 +586,28 @@ body{
   background: #20b358;
   transform: scale(1.05);
 }
+<style>
+.whatsapp-float {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 55px;
+  height: 55px;
+  background-color: #25D366;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.25);
+  z-index: 1000;
+  transition: 0.3s;
+}
 
+.whatsapp-float:hover {
+  background-color: #20b358;
+  transform: scale(1.1);
+}
+</style>
 </style>
 
 
@@ -948,6 +969,14 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
    <span class="icon">💬</span>
    <span class="text">Chat with Us</span>
   </a>
+
+  
+  <a href="https://wa.me/917702616245?text=Hi%20Ranjitham%20Study%20Center,%20I%20would%20like%20to%20share%20my%20feedback%20regarding%20the%20notes." 
+   class="whatsapp-float" target="_blank">
+   <img src="https://img.icons8.com/ios-filled/50/ffffff/whatsapp.png" width="26">
+  </a>
+  <a href="https://wa.me/917702616245?text=Hi%20Ranjitham%20Study%20Center,%20I%20would%20like%20to%20share%20my%20feedback" 
+   class="whatsapp-float" target="_blank" title="Chat with us">
 <!-- ================= JS ================= -->
 
 
