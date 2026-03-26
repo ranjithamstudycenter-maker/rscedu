@@ -129,7 +129,7 @@ var options = {
           "&mode={{ mode }}" +
           "&board={{ board }}" +
           "&cls={{ cls }}" +
-          "&phone=" + phone;
+          "&phone=" + userPhone;
 
         window.location.href = url;
     },
@@ -158,7 +158,16 @@ document.getElementById('rzp-button').onclick = function(e){
     if(!/^[0-9]{10}$/.test(phone)){
         alert("Enter valid 10-digit WhatsApp number");
         return;
+    
     }
+     // ✅ STORE HERE
+    userPhone = phone;
+
+    options.prefill.email = email;
+    options.prefill.contact = phone;
+
+    rzp.open();
+    e.preventDefault();
 
     // EMAIL VALIDATION (only if entered)
     if(email !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
