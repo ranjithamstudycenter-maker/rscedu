@@ -1109,14 +1109,7 @@ window.addEventListener("keydown", function (e) {
     }
 });
 
-// Block PrintScreen (best effort)
-window.addEventListener("keyup", function(e){
-    if(e.key === "PrintScreen"){
-        navigator.clipboard.writeText('');
-        alert("Screenshot disabled");
-    }
-});
- 
+
 
 /* Blur page when tab hidden */
 document.addEventListener("visibilitychange", function () {
