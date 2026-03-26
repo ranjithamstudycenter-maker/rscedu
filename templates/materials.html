@@ -501,7 +501,45 @@ body{
     width:100% !important;
     height:auto !important;
 }
+<style>
+.info-box {
+  max-width: 900px;
+  margin: 25px auto;   /* spacing top & bottom */
+  padding: 18px 20px;
+  background: #f9fbff;
+  border-radius: 12px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+  text-align: center;
+}
 
+.policy {
+  font-size: 14px;
+  color: #444;
+  margin-bottom: 10px;
+}
+
+.feedback {
+  font-size: 15px;
+  color: #222;
+  font-weight: 500;
+  margin-bottom: 15px;
+}
+
+.feedback-btn {
+  display: inline-block;
+  padding: 8px 16px;
+  background: #25D366;
+  color: white;
+  border-radius: 20px;
+  text-decoration: none;
+  font-size: 14px;
+  transition: 0.3s;
+}
+
+.feedback-btn:hover {
+  background: #20b358;
+}
+</style>
 </style>
   <script type="module">
     import * as pdfjsLib from "{{ url_for('static', filename='pdfjs/build/pdf.mjs') }}";
@@ -542,11 +580,11 @@ body{
 
 <h2 class="page-title">HAND WRITTEN NOTES</h2>
   
-<div style="background:#111; color:#fff; padding:10px; font-size:14px; border-radius:6px;">
-<p style="font-size:13px; color:#aaa; margin-top:10px;">
+<div class="info-box">
+  <p class="policy">
   © Ranjitham Study Center.<strong>All study materials are provided for educational purposes only. 
 Unauthorized redistribution, sharing, or reproduction in any form is strictly prohibited.</strong> 
-</p>
+ </p>
 </div>
 
 
@@ -596,9 +634,11 @@ Class 12
 
 </div>
   
-<div style="background:#f5f5f5; padding:10px; border-left:4px solid #007bff; font-size:14px;">
-  💡 We value your feedback. If you find any errors or have suggestions in the notes, 
-  please feel free to contact us. The materials will be reviewed and updated regularly.
+ <p class="feedback">
+    💬 We value your feedback! If you find any errors or have suggestions in the notes, please feel free to contact us via WhatsApp. 
+ The materials will be reviewed and updated regularly.
+  </p>
+ 
 </div>
   
 <div id="contentArea"
@@ -814,11 +854,12 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
 
 </section>
             
-  
-<a href="https://wa.me/917702616245?text=Hi%20Ranjitham%20Study%20Center,%20I%20found%20a%20correction%20in%20[Subject]%20-%20[Topic]" target="_blank">
-  📲 Report Correction
-</a>
-
+  <div class="info-box">
+  <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20I%20would%20like%20to%20share%20feedback%20regarding%20the%20notes" 
+     target="_blank" class="feedback-btn">
+     Report / Send Feedback
+  </a>
+</div>
 
  
     <footer class="footer">
