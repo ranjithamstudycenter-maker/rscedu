@@ -885,18 +885,7 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
           <div id="pdfViewer"
        data-pdf-url="{{ url_for('secure_view', product_id=open) }}">
            </div>
-                            <div class="feedback-section">
-                              <p class="info-sub">
-                                💬 We value your feedback! If you find any errors or have suggestions in the notes, please feel free to contact us via WhatsApp. 
-                                The materials will be reviewed and updated regularly.
-                              </p>
                             
-                              <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20I%20would%20like%20to%20share%20feedback%20regarding%20the%20notes" 
-                                 target="_blank" class="info-btn">
-                                 Report / Send Feedback
-                              </a>
-                            </div> 
-
     <div class="pdf-actions">
       
         {% if access.get(pid, {}).get("download") %}
@@ -911,6 +900,18 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
                 cls=active_class) }}'">
                 💰 Pay to Download
             </button>
+
+                          <div class="feedback-section">
+                              <p class="info-sub">
+                                💬 We value your feedback! If you find any errors or have suggestions in the notes, please feel free to contact us via WhatsApp. 
+                                The materials will be reviewed and updated regularly.
+                              </p>
+                            
+                              <a href="https://wa.me/91XXXXXXXXXX?text=Hi%20I%20would%20like%20to%20share%20feedback%20regarding%20the%20notes" 
+                                 target="_blank" class="info-btn">
+                                 Report / Send Feedback
+                              </a>
+                            </div> 
         {% endif %}
    
     </div>
