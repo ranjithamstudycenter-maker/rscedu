@@ -26,24 +26,62 @@ button{
     cursor:pointer;
     border-radius:5px;
 }
+    .payment-box{
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 25px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+}
+
+.payment-box h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.payment-box input,
+.payment-box select{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.payment-box button{
+    width:100%;
+    padding:12px;
+    border-radius:25px;
+    border:none;
+    background:#0b5394;
+    color:white;
+    font-weight:600;
+}
 </style>
 </head>
 
 <body>
 
-<h2>Pay ₹{{ product.price }} to Continue</h2>
+<div class="payment-box">
+
+<h2>Pay ₹{{ product.price }}</h2>
 <p><b>{{ product.name }}</b></p>
 
-<input type="email" id="email" placeholder="Enter Email" required><br>
-<input type="text" id="phone" placeholder="WhatsApp Number" required><br>
+<input type="text" id="phone" placeholder="📱 WhatsApp Number (Required)" required>
 
-<select id="state" onchange="updateCities()" required>
-  <option value="">Select State / UT</option>
-</select><br>
-
-<select id="city" required>
-  <option value="">Select Place</option>
+<input type="email" id="email" placeholder="📧 Email (Optional)">
+            
+<select id="state" required>
+  <option value="">📍 Select State / UT</option>
 </select>
+
+<button id="rzp-button">Pay Now</button>
+
+            <p style="font-size:12px; color:#777;">
+           <strong>📌 We are collecting your whatsapp number only for notes share/access in future. No spam calls.</strong> 
+            </p>
+</div>
 
 <button id="rzp-button">Pay Now</button>
 <p style="margin-top:8px; font-size:14px; color:#ccc;">
@@ -65,19 +103,23 @@ var options = {
     "description": "Maths Notes",
     "order_id": "{{ order_id }}",
 
-    "handler": function (response) {
 
-        const url =
-          "/payment_success?product=" + product_id +
-          "&mode=" + mode +
-          "&board=" + board +
-          "&cls=" + cls;
+"handler": function (response) {
 
-         // 🔥 ADD HERE
+    const url =
+      "/payment_success?product=" + product_id +
+      "&mode=" + mode +
+      "&board=" + board +
+      "&cls=" + cls;
+
+    window.location.href = url;   // redirect first
+
     setTimeout(() => {
         window.location.reload(true);
     }, 500);
+},
 
+        
     "prefill": {
         "email": "",
         "contact": ""
@@ -112,84 +154,61 @@ window.onload = function(){
 
 };
 </script>
-<script id="n2b7qa">
-const data = {
-  "Tamil Nadu": "Tamil Nadu": [
-    "Ariyalur","Chengalpattu","Chennai","Coimbatore","Cuddalore",
-    "Dharmapuri","Dindigul","Erode","Kallakurichi","Kanchipuram",
-    "Kanyakumari","Karur","Krishnagiri","Madurai","Mayiladuthurai",
-    "Nagapattinam","Namakkal","Nilgiris","Perambalur","Pudukkottai",
-    "Ramanathapuram","Ranipet","Salem","Sivaganga","Tenkasi",
-    "Thanjavur","Theni","Thoothukudi","Tiruchirappalli","Tirunelveli",
-    "Tirupathur","Tiruppur","Tiruvallur","Tiruvannamalai","Tiruvarur",
-    "Vellore","Viluppuram","Virudhunagar"
-  ],
-  "Karnataka": ["Bangalore","Mysore","Mangalore","Hubli"],
-  "Kerala": ["Kochi","Trivandrum","Kozhikode"],
-  "Andhra Pradesh": ["Vijayawada","Visakhapatnam","Guntur"],
-  "Telangana": ["Hyderabad","Warangal","Nizamabad"],
-  "Maharashtra": ["Mumbai","Pune","Nagpur"],
-  "Delhi": ["New Delhi"],
-  "Uttar Pradesh": ["Lucknow","Kanpur","Varanasi"],
-  "West Bengal": ["Kolkata","Howrah"],
-  "Gujarat": ["Ahmedabad","Surat","Vadodara"],
-  "Rajasthan": ["Jaipur","Udaipur"],
-  "Madhya Pradesh": ["Bhopal","Indore"],
-  "Punjab": ["Amritsar","Ludhiana"],
-  "Haryana": ["Gurgaon","Faridabad"],
-  "Bihar": ["Patna","Gaya"],
-  "Odisha": ["Bhubaneswar","Cuttack"],
-  "Assam": ["Guwahati"],
-  "Jharkhand": ["Ranchi"],
-  "Chhattisgarh": ["Raipur"],
-  "Himachal Pradesh": ["Shimla"],
-  "Uttarakhand": ["Dehradun"],
-  "Goa": ["Panaji"],
-  "Tripura": ["Agartala"],
-  "Manipur": ["Imphal"],
-  "Meghalaya": ["Shillong"],
-  "Nagaland": ["Kohima"],
-  "Arunachal Pradesh": ["Itanagar"],
-  "Mizoram": ["Aizawl"],
-  "Sikkim": ["Gangtok"],
-  
-  // UTs
-  "Puducherry": ["Puducherry","Karaikal"],
-  "Chandigarh": ["Chandigarh"],
-  "Jammu and Kashmir": ["Srinagar","Jammu"],
-  "Ladakh": ["Leh"],
-  "Andaman and Nicobar Islands": ["Port Blair"],
-  "Lakshadweep": ["Kavaratti"],
-  "Dadra and Nagar Haveli and Daman and Diu": ["Daman","Diu"]
-};
+<script>
+const states = [
+  "Tamil Nadu",
+  "Karnataka",
+  "Kerala",
+  "Andhra Pradesh",
+  "Telangana",
+  "Maharashtra",
+  "Delhi",
+  "Uttar Pradesh",
+  "West Bengal",
+  "Gujarat",
+  "Rajasthan",
+  "Madhya Pradesh",
+  "Punjab",
+  "Haryana",
+  "Bihar",
+  "Odisha",
+  "Assam",
+  "Jharkhand",
+  "Chhattisgarh",
+  "Himachal Pradesh",
+  "Uttarakhand",
+  "Goa",
+  "Tripura",
+  "Manipur",
+  "Meghalaya",
+  "Nagaland",
+  "Arunachal Pradesh",
+  "Mizoram",
+  "Sikkim",
 
-// Populate states
+  // UTs
+  "Puducherry",
+  "Chandigarh",
+  "Jammu and Kashmir",
+  "Ladakh",
+  "Andaman and Nicobar Islands",
+  "Lakshadweep",
+  "Dadra and Nagar Haveli and Daman and Diu"
+];
+
 const stateDropdown = document.getElementById("state");
-for (let state in data) {
+
+states.forEach(state => {
   let option = document.createElement("option");
   option.value = state;
   option.text = state;
   stateDropdown.appendChild(option);
+});
+
+    if(!phone){
+    alert("Phone number is required");
+    return;
 }
-
-// Update cities
-function updateCities() {
-  const state = document.getElementById("state").value;
-  const cityDropdown = document.getElementById("city");
-
-  cityDropdown.innerHTML = "<option value=''>Select Place</option>";
-
-  if (data[state]) {
-    data[state].forEach(city => {
-      let option = document.createElement("option");
-      option.value = city;
-      option.text = city;
-      cityDropdown.appendChild(option);
-    });
-  }
-}
-    document.getElementById("state").value
-    document.getElementById("city").value
 </script>
     
 </body>
