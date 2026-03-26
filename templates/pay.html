@@ -16,7 +16,7 @@ body{
 input{
     padding:10px;
     margin:8px;
-    width:250px;
+    width:100%;
 }
 button{
     padding:12px 25px;
@@ -68,7 +68,8 @@ button{
 <h2>Pay ₹{{ product.price }}</h2>
 <p><b>{{ product.name }}</b></p>
 
-<input type="text" id="phone" placeholder="📱 WhatsApp Number (Required)" required>
+<input type="text" id="phone" placeholder="📱 WhatsApp Number (Required)" 
+pattern="[0-9]{10}" maxlength="10" required>
 
 <input type="email" id="email" placeholder="📧 Email (Optional)">
             
@@ -156,28 +157,30 @@ var rzp = new Razorpay(options);
 
 document.getElementById('rzp-button').onclick = function(e){
 
-    var email = document.getElementById("email").value;
-    var phone = document.getElementById("phone").value;
-    var state = document.getElementById("state").value;
+    var email = document.getElementById("email").value.trim();
+    var phone = document.getElementById("phone").value.trim();
 
-    if(!phone){
-        alert("Phone number is required");
+    // PHONE VALIDATION (10 digits only)
+    if(!/^[0-9]{10}$/.test(phone)){
+        alert("Enter valid 10-digit WhatsApp number");
         return;
     }
 
-    if(!state){
-        alert("Please select state");
+    // EMAIL VALIDATION (only if entered)
+    if(email !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        alert("Enter valid Email ID");
         return;
     }
 
+    // set Razorpay prefill
     options.prefill.email = email;
     options.prefill.contact = phone;
 
+    var rzp = new Razorpay(options);
     rzp.open();
+
     e.preventDefault();
 };
-
-});
 </script>
 <script>
 window.onload = function(){
