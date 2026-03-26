@@ -13,11 +13,7 @@ body{
     font-family:Poppins,Arial,sans-serif;
     padding:50px;
 }
-input{
-    padding:10px;
-    margin:8px;
-    width:100%;
-}
+
 button{
     padding:12px 25px;
     background:#0b5394;
@@ -33,6 +29,7 @@ button{
     border-radius: 12px;
     background: #fff;
     box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: left;   /* 🔥 ADD THIS */
 }
 
 .payment-box h2{
@@ -58,6 +55,9 @@ button{
     color:white;
     font-weight:600;
 }
+    .payment-box input::placeholder {
+    color:#999;
+}
 </style>
 </head>
 
@@ -79,17 +79,11 @@ pattern="[0-9]{10}" maxlength="10" required>
 
 <button id="rzp-button">Pay Now</button>
 
-            <p style="font-size:12px; color:#777;">
-           <strong>📌 We are collecting your whatsapp number only for notes share/access in future. No spam calls.</strong> 
+            <p style="font-size:12.5px; color:#777;">
+           <strong>📌 We are collecting your email, whatsapp number etc.. for only notes share/access in future. No spam calls.</strong> 
             </p>
 </div>
 
-<button id="rzp-button">Pay Now</button>
-<p style="margin-top:8px; font-size:14px; color:#ccc;">
-    🔒 <strong>Your Privacy:</strong><br>
-    We collect your name, email, place and feedback only for communication purposes.
-    Your information is kept safe and will not be shared with any third parties.
-  </p>
 <script>
 document.addEventListener("DOMContentLoaded", function(){
 
