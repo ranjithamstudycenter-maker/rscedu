@@ -5,7 +5,8 @@ import json
 import smtplib
 import time
 import sqlite3
-
+import csv
+from datetime import datetime
 from email.message import EmailMessage
 from datetime import datetime, timedelta
 
@@ -250,21 +251,20 @@ def pay():
 @app.route("/payment_success")
 def payment_success():
 
-    # ⭐ Get directly from URL (not session)
+    # ---------- GET DATA ----------
     product_id = request.args.get("product")
     mode = request.args.get("mode")
     board = request.args.get("board")
     cls = request.args.get("cls")
 
-    board=session.get("board")
-    cls=session.get("cls")
-
+    phone = request.args.get("phone")
+    email = request.args.get("email")
+    state = request.args.get("state")
 
     if not product_id:
         return redirect(url_for("materials"))
 
-    # Grant access
-        # Grant access
+    # ---------- ACCESS CONTROL ----------
     if mode == "view":
         session["view_" + product_id] = {
             "expiry": (datetime.now() + timedelta(minutes=1)).isoformat()
@@ -274,19 +274,34 @@ def payment_success():
         session["download_" + product_id] = {
             "expiry": (datetime.now() + timedelta(minutes=1)).isoformat()
         }
-        
+
     session["access"] = session.get("access", {})
     session["access"][product_id] = {"view": True}
 
-    
+    # ---------- SAVE TO CSV ----------
+    file = "payments.csv"
 
-   # ⭐ FINAL redirect
+    with open(file, "a", newline="") as f:
+        writer = csv.writer(f)
+
+        if f.tell() == 0:
+            writer.writerow(["Date", "Phone", "Email", "State", "Product"])
+
+        writer.writerow([
+            datetime.now().strftime("%d-%m-%Y %H:%M"),
+            phone,
+            email,
+            state,
+            product_id
+        ])
+
+    # ---------- REDIRECT ----------
     return redirect(url_for(
         "materials",
         board=board,
         cls=cls,
-        paid=1
-       
+        paid=1,
+        phone=phone   # 👉 for WhatsApp
     ))
 
 @app.route('/submit_feedback', methods=['POST'])
