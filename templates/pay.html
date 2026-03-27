@@ -182,11 +182,12 @@ document.addEventListener("DOMContentLoaded", function(){
     const params = new URLSearchParams(window.location.search);
     const phone = params.get("phone");
 
-    console.log("PHONE =", phone);
+    console.log("PHONE RECEIVED =", phone);
 
-    if(phone){
+    if(phone && phone !== "null" && phone !== ""){
 
-        let message = "Hi 👋%0A" +
+        let message =
+        "Hi 👋%0A" +
         "Your payment is successful.%0A" +
         "📘 Notes ready%0A" +
         "Ranjitham Study Center ku nandri 🙏%0A" +
@@ -199,7 +200,6 @@ document.addEventListener("DOMContentLoaded", function(){
             );
         }, 800);
     }
-
 });
 </script>
     
