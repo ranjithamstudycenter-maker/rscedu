@@ -71,7 +71,7 @@
         .nav-left {
             display: flex;
             align-items: center;
-            gap: 8px;
+            gap: 15px;
         }
         .nav-right {
             display: flex;
@@ -105,41 +105,65 @@
         }
 
        .demo-btn {
-    background: linear-gradient(45deg, #ff2d55, #7b2cbf);
-    color: white;
-    padding: 8px 18px;
-    border-radius: 25px;
-    font-weight: 600;
-    animation: blink 2s infinite;
-}
+            background: linear-gradient(45deg, #ff2d55, #7b2cbf);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 600;
+            animation: blink 2s infinite;
+        }
         @keyframes blink {
             50% { opacity: 0; }
         }
 
-      @media(max-width:768px){
+     @media(max-width:768px){
 
   .navbar{
-    flex-direction: column;
+    flex-direction: row;          /* 🔥 row maintain */
+    justify-content: space-between;
     align-items: center;
-    text-align: center;
   }
 
-  .nav-center{
-    margin-top: 10px;
-    flex-wrap: wrap;
-    justify-content: center;
-  }
-
-  .nav-right{
-    margin-top: 10px;
+  /* LEFT SIDE */
+  .nav-left{
+    display: flex;
+    align-items: center;
+    gap: 6px;
   }
 
   .logo{
-    height: 60px;   /* reduce size */
+    height: 55px;   /* small for mobile */
   }
 
   .brand-text h1{
-    font-size: 20px;
+    font-size: 16px;
+  }
+
+  .brand-text p{
+    font-size: 10px;
+  }
+
+  /* CENTER MENU */
+  .nav-center{
+    display: flex;
+    gap: 10px;
+    flex-wrap: nowrap;        /* ❌ no wrap */
+    overflow-x: auto;         /* 🔥 scroll if needed */
+  }
+
+  .nav-center a{
+    font-size: 13px;
+    white-space: nowrap;      /* 🔥 keep in one line */
+  }
+
+  /* RIGHT SIDE */
+  .nav-right{
+    display: flex;
+    align-items: center;
+  }
+
+  .demo-btn{
+    font-size: 12px;
   }
 
 }
