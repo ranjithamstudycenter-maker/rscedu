@@ -105,50 +105,36 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/class")
-def courses():  
-    return render_template("class.html")
-
 @app.route("/materials")
 def materials():
- 
-    board = request.args.get("board")
-    cls = request.args.get("cls")
-    open_id = request.args.get("open") or request.args.get("product_id")
 
     access = {}
 
-    # 🔹 Build access dict
-    for pid in PRODUCTS:
-        access[pid] = {
-            "view": bool(session.get("view_" + pid.strip())),
-            "download": bool(session.get("download_" + pid))
-        }
+    # 🔥 CHECK ALL SESSION KEYS
+    for key in list(session.keys()):
 
-    # 🔐 SECURITY CHECK (OUTSIDE LOOP)
-    if open_id:
-        product = PRODUCTS.get(open_id)
+        if key.startswith("view_") or key.startswith("download_"):
 
-        if not product:
-            abort(403)
+            data = session.get(key, {})
+            expiry = data.get("expiry")
 
-        # cls இருந்தா மட்டும் check
-        if cls and str(product["class"]) != str(cls):
-            abort(403)
+            # ✅ VALID ACCESS
+            if expiry and datetime.fromisoformat(expiry) > datetime.now():
 
-        # 🔥 EXTRA: payment இல்லனா block
-        if not access.get(open_id, {}).get("view"):
-            abort(403)
+                pid = key.replace("view_", "").replace("download_", "")
+                access[pid] = {"view": True}
+
+            else:
+                # ❌ REMOVE EXPIRED
+                session.pop(key, None)
+
+    # ✅ UPDATE CLEAN ACCESS
+    session["access"] = access
 
     return render_template(
         "materials.html",
-        active_board=board,
-        active_class=cls,
-        open=open_id,
-        products=PRODUCTS,
         access=access
     )
-
 
 @app.route("/secure_view/<product_id>")
 def secure_view(product_id):
