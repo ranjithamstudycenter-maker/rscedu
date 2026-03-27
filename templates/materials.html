@@ -1330,7 +1330,45 @@ window.addEventListener("scroll", function() {
 });
 </script>
 
+<script>
+const expiry = "{{ expiry_time }}";
 
+if(expiry){
+    const expiryTime = new Date(expiry).getTime();
+    const now = new Date().getTime();
+
+    const remaining = expiryTime - now;
+
+    if(remaining > 0){
+        setTimeout(() => {
+            location.reload();
+        }, remaining);   // 🔥 exact expiry time la refresh
+    }
+}
+</script>
+  <div id="timer" style="text-align:center; color:red;"></div>
+
+<script>
+const expiry = "{{ expiry_time }}";
+
+if(expiry){
+    const expiryTime = new Date(expiry).getTime();
+
+    setInterval(() => {
+        const now = new Date().getTime();
+        const diff = expiryTime - now;
+
+        if(diff <= 0){
+            document.getElementById("timer").innerHTML = "Session expired";
+            location.reload();
+        } else {
+            const sec = Math.floor(diff / 1000);
+            document.getElementById("timer").innerHTML =
+                "Time left: " + sec + " sec";
+        }
+    }, 1000);
+}
+</script>
 </html>
 
 
