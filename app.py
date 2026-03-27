@@ -116,44 +116,46 @@ def is_valid(expiry):
 
 @app.route("/materials")
 def materials():
- 
+    
     board = request.args.get("board")
     cls = request.args.get("cls")
     open_id = request.args.get("open") or request.args.get("product_id")
 
-    access = {}
 
-    # 🔹 Build access dict
+    access = session.get("access", {})
+
+     # 🔹 Build access dict
     for pid in PRODUCTS:
         access[pid] = {
             "view": bool(session.get("view_" + pid.strip())),
             "download": bool(session.get("download_" + pid))
         }
 
-    # 🔐 SECURITY CHECK (OUTSIDE LOOP)
-    if open_id:
-        product = PRODUCTS.get(open_id)
+    # 🔥 CLEAN EXPIRED ACCESS
+    for key in list(session.keys()):
+        if key.startswith("view_") or key.startswith("download_"):
 
-        if not product:
-            abort(403)
+            expiry = session[key].get("expiry")
 
-        # cls இருந்தா மட்டும் check
-        if cls and str(product["class"]) != str(cls):
-            abort(403)
+            if not expiry or datetime.fromisoformat(expiry) < datetime.now():
+                session.pop(key)  # remove expired
 
-        # 🔥 EXTRA: payment இல்லனா block
-        if not access.get(open_id, {}).get("view"):
-            abort(403)
+                # also remove from access
+                pid = key.replace("view_", "").replace("download_", "")
+                if pid in access:
+                    access.pop(pid)
+
+    session["access"] = access
 
     return render_template(
-        "materials.html",
+         "materials.html",
         active_board=board,
         active_class=cls,
         open=open_id,
         products=PRODUCTS,
         access=access
-    )
 
+    )
 @app.route("/secure_view/<product_id>")
 def secure_view(product_id):
 
@@ -264,6 +266,9 @@ def payment_success():
     phone = request.args.get("phone")
     email = request.args.get("email")
     state = request.args.get("state")
+
+    board=session.get("board")
+    cls=session.get("cls")
 
     if not product_id:
         return redirect(url_for("materials"))
