@@ -116,52 +116,32 @@ def is_valid(expiry):
 
 @app.route("/materials")
 def materials():
-
+ 
     board = request.args.get("board")
     cls = request.args.get("cls")
     open_id = request.args.get("open") or request.args.get("product_id")
 
     access = {}
 
+    # 🔹 Build access dict
     for pid in PRODUCTS:
-
-        view_key = "view_" + pid
-        download_key = "download_" + pid
-
-        view_data = session.get(view_key)
-        download_data = session.get(download_key)
-
-        # ✅ check expiry safely
-        def is_valid(data):
-            if not data:
-                return False
-            expiry = data.get("expiry")
-            if not expiry:
-                return False
-            return datetime.fromisoformat(expiry) > datetime.now()
-
         access[pid] = {
-            "view": is_valid(view_data),
-            "download": is_valid(download_data)
+            "view": bool(session.get("view_" + pid.strip())),
+            "download": bool(session.get("download_" + pid))
         }
 
-        # ❌ remove expired
-        if view_data and not is_valid(view_data):
-            session.pop(view_key, None)
-
-        if download_data and not is_valid(download_data):
-            session.pop(download_key, None)
-
-    # 🔐 SECURITY
+    # 🔐 SECURITY CHECK (OUTSIDE LOOP)
     if open_id:
         product = PRODUCTS.get(open_id)
 
         if not product:
             abort(403)
 
+        # cls இருந்தா மட்டும் check
         if cls and str(product["class"]) != str(cls):
             abort(403)
 
+        # 🔥 EXTRA: payment இல்லனா block
         if not access.get(open_id, {}).get("view"):
             abort(403)
 
@@ -173,6 +153,7 @@ def materials():
         products=PRODUCTS,
         access=access
     )
+
 @app.route("/secure_view/<product_id>")
 def secure_view(product_id):
 
