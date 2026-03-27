@@ -108,10 +108,11 @@ states.forEach(state => {
   option.text = state;
   stateDropdown.appendChild(option);
 });
-});   // THIS IS MISSING
+
+/* ---------- GLOBAL PHONE ---------- */
+let userPhone = "";
 
 /* ---------- RAZORPAY ---------- */
-let userPhone = "";
 var options = {
     "key": "{{ razorpay_key }}",
     "amount": "{{ product.price * 100 }}",
@@ -121,8 +122,6 @@ var options = {
     "order_id": "{{ order_id }}",
 
     "handler": function (response) {
-
-        var phone = document.getElementById("phone").value;
 
         const url =
           "/payment_success?product={{ product_id }}" +
@@ -146,37 +145,36 @@ var options = {
 
 var rzp = new Razorpay(options);
 
-
 /* ---------- BUTTON CLICK ---------- */
-
 document.getElementById('rzp-button').onclick = function(e){
 
     var email = document.getElementById("email").value.trim();
     var phone = document.getElementById("phone").value.trim();
 
-    // PHONE VALIDATION (10 digits only)
+    // PHONE VALIDATION
     if(!/^[0-9]{10}$/.test(phone)){
         alert("Enter valid 10-digit WhatsApp number");
         return;
-    
     }
-     // ✅ STORE HERE
-    userPhone = phone;
 
-    options.prefill.email = email;
-    options.prefill.contact = phone;
-
-    rzp.open();
-    e.preventDefault();
-
-    // EMAIL VALIDATION (only if entered)
+    // EMAIL VALIDATION
     if(email !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
         alert("Enter valid Email ID");
         return;
     }
 
-    });
-    
+    // STORE PHONE
+    userPhone = phone;
+
+    // PREFILL
+    options.prefill.email = email;
+    options.prefill.contact = phone;
+
+    rzp.open();
+    e.preventDefault();
+};
+
+});
 </script>
 <script>
 document.addEventListener("DOMContentLoaded", function(){
