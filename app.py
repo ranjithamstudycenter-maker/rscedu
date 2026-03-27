@@ -108,6 +108,8 @@ def about():
 def courses():
     return render_template("class.html")
 
+def is_valid(expiry): if not expiry: return False return datetime.fromisoformat(expiry) > datetime.now()
+
 
 @app.route("/materials")
 def materials():
@@ -117,6 +119,8 @@ def materials():
     open_id = request.args.get("open") or request.args.get("product_id")
 
     access = {}
+      # ✅ UPDATE CLEAN ACCESS
+    session["access"] = access
 
     # 🔹 Build access dict
     for pid in PRODUCTS:
@@ -143,8 +147,6 @@ def materials():
                 # ❌ REMOVE EXPIRED
                 session.pop(key, None)
 
-    # ✅ UPDATE CLEAN ACCESS
-    session["access"] = access
     
     # 🔐 SECURITY CHECK (OUTSIDE LOOP)
     if open_id:
