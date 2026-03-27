@@ -127,8 +127,9 @@ var options = {
           "/payment_success?product={{ product_id }}" +
           "&mode={{ mode }}" +
           "&board={{ board }}" +
-          "&cls={{ cls }}" +
-          "&phone=" + userPhone;
+           "&phone=" + userPhone +
+            "&email=" + email +
+           "&state=" + document.getElementById("state").value;
 
         window.location.href = url;
     },
