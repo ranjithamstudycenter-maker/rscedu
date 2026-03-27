@@ -65,9 +65,9 @@
             position: relative;
             z-index: 1000;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;   /* 🔥 allows wrapping */
         }
-        
-
+       
         .nav-left {
             display: flex;
             align-items: center;
@@ -93,12 +93,7 @@
             font-size: 13px;
         }
 
-        .nav-center {
-            position: absolute;
-            left: 60%;
-            transform: translateX(-60%);
-        }
-
+        
         .nav-center a {
             margin: 0 15px;
             color: #0b5394;
@@ -121,20 +116,33 @@
             50% { opacity: 0; }
         }
 
-       @media(max-width:768px){
-      .navbar{
-        flex-direction: column;
-        align-items: center;
-          }
-        }
-        /* Mobile */
-        @media(max-width:480px){}
-        
-        /* Tablet */
-        @media(max-width:768px){}
-        
-        /* Laptop */
-        @media(max-width:1024px){}
+      @media(max-width:768px){
+
+  .navbar{
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+  }
+
+  .nav-center{
+    margin-top: 10px;
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .nav-right{
+    margin-top: 10px;
+  }
+
+  .logo{
+    height: 60px;   /* reduce size */
+  }
+
+  .brand-text h1{
+    font-size: 20px;
+  }
+
+}
 
 
         /* ==========================
@@ -145,6 +153,7 @@
             height: 100%;
             position: relative;
             overflow: hidden;
+            background: linear-gradient(135deg, #0b5394, #00c6ff);
         }
 
         .slider {
@@ -435,6 +444,8 @@
 
         .footer-container {
             max-width: 1100px;
+            background: #0f172a;   /* Dark navy */
+            color: #e5e7eb;
             margin: auto;
             display: grid;
             grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
@@ -736,7 +747,16 @@
 .read-more:hover {
   text-decoration: underline;
 }
-        
+      .privacy-box{
+    margin-top:20px;
+    text-align:center;   /* 🔥 center */
+    font-size:13px;
+    color:#aaa;
+    max-width:600px;
+    margin-left:auto;
+    margin-right:auto;
+    line-height:1.6;
+}  
 </style>
 </head>
 <body>
@@ -906,9 +926,9 @@
     ========================== -->
     <section class="cta-section">
         <div class="cta-box">
-            <p class="cta-small">Best Maths Tuition in Your Area</p>
+            <p class="cta-small">Best Maths Tuition in Medavakkam </p>
             <h2>Ready to improve your Maths?</h2>
-            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with expert guidance.</p>
+            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with good guidance.</p>
             <a href="/contact" class="cta-btn">Enroll Now</a>
         </div>
     </section>
@@ -919,8 +939,8 @@
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-box">
-                <h3>Ranjitham Study Center</h3>
-                <p>Focused maths coaching for Class 6–12 students. Concept clarity, regular tests, and individual attention.</p>
+                <h3>RANJITHAM STUDY CENTER</h3>
+                <p>Focused maths coaching for Class 6–12 students</p>
             </div>
             <div class="footer-box">
                 <h3>Quick Links</h3>
@@ -938,15 +958,15 @@
            </div>
         </div>
         </footer>
-<div class="privacy-section">
-  <p class="privacy-title">🔐 Your Privacy Matters</p>
-  
-  <p class="privacy-text">
+  <div class="privacy-box">
+  🔒 <strong>Your Privacy Matters</strong><br>
     We collect your name, contact number, email, and feedback solely for communication purposes. 
     This information is used to provide you with relevant educational updates and materials. 
     Your data is securely stored and will not be shared with any third parties.
-  </p>
-</div>
+  </div>
+
+  
+ 
     <!-- ==========================
          WHATSAPP FLOAT BUTTON
     ========================== -->
