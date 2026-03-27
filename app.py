@@ -137,6 +137,10 @@ def materials():
 
     return render_template(
         "materials.html",
+        active_board=board,
+        active_class=cls,
+        open=open_id,
+        products=PRODUCTS,
         access=access
     )
 
