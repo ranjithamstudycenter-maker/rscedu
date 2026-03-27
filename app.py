@@ -122,9 +122,7 @@ def materials():
     open_id = request.args.get("open") or request.args.get("product_id")
 
     access = {}
-      # ✅ UPDATE CLEAN ACCESS
-    session["access"] = access
-
+   
     # 🔹 Build access dict
     for pid in PRODUCTS:
         access[pid] = {
