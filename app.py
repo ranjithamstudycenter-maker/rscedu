@@ -108,7 +108,10 @@ def about():
 def courses():
     return render_template("class.html")
 
-def is_valid(expiry): if not expiry: return False return datetime.fromisoformat(expiry) > datetime.now()
+def is_valid(expiry): 
+  if not expiry: 
+      return False 
+  return datetime.fromisoformat(expiry) > datetime.now()
 
 
 @app.route("/materials")
