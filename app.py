@@ -122,48 +122,69 @@ def materials():
     cls = request.args.get("cls")
     open_id = request.args.get("open") or request.args.get("product_id")
 
+    access = {}
 
-    access = session.get("access", {})
-
-     # 🔹 Build access dict
+    # 🔹 BUILD ACCESS + HANDLE EXPIRY
     for pid in PRODUCTS:
+
+        view_key = "view_" + pid
+        download_key = "download_" + pid
+
+        view_data = session.get(view_key)
+        download_data = session.get(download_key)
+
+        def is_valid(data):
+            if not data:
+                return False
+            expiry = data.get("expiry")
+            if not expiry:
+                return False
+            return datetime.fromisoformat(expiry) > datetime.now()
+
+        # ✅ valid check
         access[pid] = {
-            "view": bool(session.get("view_" + pid.strip())),
-            "download": bool(session.get("download_" + pid))
+            "view": is_valid(view_data),
+            "download": is_valid(download_data)
         }
 
-    # 🔥 CLEAN EXPIRED ACCESS
-    for key in list(session.keys()):
-        if key.startswith("view_") or key.startswith("download_"):
+        # ❌ remove expired
+        if view_data and not is_valid(view_data):
+            session.pop(view_key, None)
 
-            expiry = session[key].get("expiry")
+        if download_data and not is_valid(download_data):
+            session.pop(download_key, None)
 
-            if not expiry or datetime.fromisoformat(expiry) < datetime.now():
-                session.pop(key)  # remove expired
-
-                # also remove from access
-                pid = key.replace("view_", "").replace("download_", "")
-                if pid in access:
-                    access.pop(pid)
-
+    # 🔥 EXPIRY TIME FOR FRONTEND
     expiry_time = None
+    if open_id:
+        data = session.get("view_" + open_id)
+        if data:
+            expiry_time = data.get("expiry")
 
-if open_id:
-    data = session.get("view_" + open_id)
-    if data:
-        expiry_time = data.get("expiry")
+    # 🔐 SECURITY CHECK
+    if open_id:
+        product = PRODUCTS.get(open_id)
 
+        if not product:
+            abort(403)
+
+        if cls and str(product["class"]) != str(cls):
+            abort(403)
+
+        if not access.get(open_id, {}).get("view"):
+            abort(403)
+
+    # ✅ SAVE ACCESS
     session["access"] = access
 
     return render_template(
-         "materials.html",
-          active_board=board,
-          active_class=cls,
-          open=open_id,
-          products=PRODUCTS,
-          access=access,
-          expiry_time=expiry_time   # 🔥 ADD THIS
-
+        "materials.html",
+        active_board=board,
+        active_class=cls,
+        open=open_id,
+        products=PRODUCTS,
+        access=access,
+        expiry_time=expiry_time
     )
 @app.route("/secure_view/<product_id>")
 def secure_view(product_id):
