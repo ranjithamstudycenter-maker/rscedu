@@ -116,54 +116,57 @@
             50% { opacity: 0; }
         }
 
-     @media(max-width:768px){
+   @media(max-width:768px){
 
   .navbar{
-    flex-direction: row;          /* 🔥 row maintain */
-    justify-content: space-between;
+    flex-direction: column;
     align-items: center;
   }
 
-  /* LEFT SIDE */
+  /* LEFT → logo + title */
   .nav-left{
+    width: 100%;
     display: flex;
     align-items: center;
-    gap: 6px;
+    justify-content: flex-start;  /* 🔥 LEFT align */
   }
 
   .logo{
-    height: 55px;   /* small for mobile */
+    height: 55px;
   }
 
   .brand-text h1{
-    font-size: 16px;
+    font-size: 18px;
   }
 
   .brand-text p{
-    font-size: 10px;
+    font-size: 11px;
   }
 
-  /* CENTER MENU */
+  /* CENTER → MENU */
   .nav-center{
+    width: 100%;
     display: flex;
+    flex-wrap: wrap;              /* 🔥 allow 2 lines */
+    justify-content: center;
     gap: 10px;
-    flex-wrap: nowrap;        /* ❌ no wrap */
-    overflow-x: auto;         /* 🔥 scroll if needed */
+    margin-top: 8px;
   }
 
   .nav-center a{
     font-size: 13px;
-    white-space: nowrap;      /* 🔥 keep in one line */
   }
 
-  /* RIGHT SIDE */
+  /* DEMO → CENTER */
   .nav-right{
+    width: 100%;
     display: flex;
-    align-items: center;
+    justify-content: center;   /* 🔥 CENTER */
+    margin-top: 8px;
   }
 
   .demo-btn{
-    font-size: 12px;
+    font-size: 13px;
   }
 
 }
