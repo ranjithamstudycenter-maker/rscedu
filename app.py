@@ -112,7 +112,18 @@ def courses():
 @app.route("/materials")
 def materials():
 
+    board = request.args.get("board")
+    cls = request.args.get("cls")
+    open_id = request.args.get("open") or request.args.get("product_id")
+
     access = {}
+
+    # 🔹 Build access dict
+    for pid in PRODUCTS:
+        access[pid] = {
+            "view": bool(session.get("view_" + pid.strip())),
+            "download": bool(session.get("download_" + pid))
+        }
 
     # 🔥 CHECK ALL SESSION KEYS
     for key in list(session.keys()):
