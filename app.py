@@ -145,6 +145,21 @@ def materials():
 
     # ✅ UPDATE CLEAN ACCESS
     session["access"] = access
+    
+    # 🔐 SECURITY CHECK (OUTSIDE LOOP)
+    if open_id:
+        product = PRODUCTS.get(open_id)
+
+        if not product:
+            abort(403)
+
+        # cls இருந்தா மட்டும் check
+        if cls and str(product["class"]) != str(cls):
+            abort(403)
+
+        # 🔥 EXTRA: payment இல்லனா block
+        if not access.get(open_id, {}).get("view"):
+            abort(403)
 
     return render_template(
         "materials.html",
