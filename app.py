@@ -108,6 +108,7 @@ def about():
 def courses():
     return render_template("class.html")
 
+
 def is_valid(expiry): 
   if not expiry: 
       return False 
@@ -145,15 +146,23 @@ def materials():
                 if pid in access:
                     access.pop(pid)
 
+    expiry_time = None
+
+if open_id:
+    data = session.get("view_" + open_id)
+    if data:
+        expiry_time = data.get("expiry")
+
     session["access"] = access
 
     return render_template(
          "materials.html",
-        active_board=board,
-        active_class=cls,
-        open=open_id,
-        products=PRODUCTS,
-        access=access
+          active_board=board,
+          active_class=cls,
+          open=open_id,
+          products=PRODUCTS,
+          access=access,
+          expiry_time=expiry_time   # 🔥 ADD THIS
 
     )
 @app.route("/secure_view/<product_id>")
