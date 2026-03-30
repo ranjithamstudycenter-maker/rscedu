@@ -226,11 +226,6 @@ def live_room():
     </body></html>
     """
 
-
-# ================= RUN =================
-if __name__ == "__main__":
-    app.run(debug=True)
-
 # -------------------- FOLDERS --------------------
 PDF_FOLDER = "rsc_download"
 os.makedirs(PDF_FOLDER, exist_ok=True)
