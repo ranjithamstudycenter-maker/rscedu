@@ -31,13 +31,70 @@ def register():
         return redirect("/enroll")   # direct enroll
 
     return """
-    <h2>Register</h2>
-    <form method="post">
-        <input name="email" placeholder="Email" required><br><br>
-        <input name="password" type="password" required><br><br>
-        <button>Register</button>
-    </form>
-    """
+<!DOCTYPE html>
+<html>
+<head>
+<title>Register</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<style>
+body{
+    margin:0;
+    font-family:Poppins;
+    background:linear-gradient(135deg,#004aad,#0b5394);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    background:white;
+    padding:40px;
+    border-radius:15px;
+    width:300px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h2{color:#0b5394;}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#28a745;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Register</h2>
+
+<form method="post">
+<input name="name" placeholder="Name" required>
+<input name="email" placeholder="Email" required>
+<input name="password" type="password" placeholder="Password" required>
+<button>Register</button>
+</form>
+</div>
+
+</body>
+</html>
+"""
 
 # ================= LOGIN =================
 @app.route("/login", methods=["GET", "POST"])
@@ -52,16 +109,77 @@ def login():
 
         return "<h3>Invalid Login ❌</h3>"
 
-    return """
-    <h2>Login</h2>
-    <form method="post">
-        <input name="email" placeholder="Email" required><br><br>
-        <input name="password" type="password" required><br><br>
-        <button>Login</button>
-    </form>
+   return """
+<!DOCTYPE html>
+<html>
+<head>
+<title>Login</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-    <p>New user? <a href="/register">Register here</a></p>
-    """
+<style>
+body{
+    margin:0;
+    font-family:Poppins;
+    background:linear-gradient(135deg,#004aad,#0b5394);
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    background:white;
+    padding:40px;
+    border-radius:15px;
+    width:300px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.2);
+}
+
+h2{color:#0b5394;}
+
+input{
+    width:100%;
+    padding:10px;
+    margin:10px 0;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+button{
+    width:100%;
+    padding:10px;
+    background:#0b5394;
+    color:white;
+    border:none;
+    border-radius:8px;
+    font-weight:bold;
+}
+
+a{
+    color:#0b5394;
+    font-weight:600;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Login</h2>
+
+<form method="post">
+<input name="email" placeholder="Email" required>
+<input name="password" type="password" placeholder="Password" required>
+<button>Login</button>
+</form>
+
+<p>New user? <a href="/register">Register</a></p>
+</div>
+
+</body>
+</html>
+"""
 
 # ================= LOGOUT =================
 @app.route("/logout")
@@ -72,27 +190,131 @@ def logout():
 # ================= DEMO CLASS =================
 @app.route("/demo-class")
 def demo_class():
-    return render_template("live_room.html")  
-    # 👈 demo also inside website
+
+    if not session.get("user"):
+        return redirect("/login")
+
+    user = users[session["user"]]
+
+    # ❌ already attended check
+    if user["demo_attended"]:
+        return "<h3>Demo already completed ✅<br>Please enroll now</h3>"
+
+    # ✅ mark waiting
+    user["demo_waiting"] = True
+
+    # collect waiting users
+    indian = []
+    international = []
+
+    for u in users.values():
+        if u["demo_waiting"]:
+            if u["batch"] == "indian":
+                indian.append(u["name"])
+            elif u["batch"] == "international":
+                international.append(u["name"])
+
+    # ✅ ONLY ONE RETURN
+    return render_template(
+        "live_room.html",
+        indian=indian,
+        international=international
+    )
 
 # ================= ENROLL =================
-@app.route("/enroll")
+@app.route("/enroll", methods=["GET","POST"])
 def enroll():
+
     if not session.get("user"):
         return redirect("/login")
 
-    return """
-    <h2>Payment Page</h2>
-    <p>After payment, you will get full class access</p>
-    """
+    user = users.get(session["user"])
+
+    if request.method == "POST":
+        user["enrolled"] = True
+        return "<h3>Registered Successfully ✅<br>You can now attend classes</h3>"
+
+    if user["enrolled"]:
+        return redirect("/live-room")
+
+   return """
+<!DOCTYPE html>
+<html>
+<head>
+<title>Enroll</title>
+
+<style>
+body{
+    font-family:Poppins;
+    background:#f5f7fa;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    height:100vh;
+}
+
+.box{
+    background:white;
+    padding:40px;
+    border-radius:15px;
+    text-align:center;
+    box-shadow:0 10px 25px rgba(0,0,0,0.1);
+}
+
+button{
+    padding:12px 30px;
+    background:#0b5394;
+    color:white;
+    border:none;
+    border-radius:10px;
+    font-weight:bold;
+}
+</style>
+</head>
+
+<body>
+
+<div class="box">
+<h2>Confirm Enrollment</h2>
+<form method="post">
+<button>Confirm Registration</button>
+</form>
+</div>
+
+</body>
+</html>
+"""
 
 # ================= LIVE ROOM (PAID STUDENTS) =================
+
 @app.route("/live-room")
 def live_room():
-    if not session.get("user"):
-        return redirect("/login")
+
+    now = datetime.now().hour
+
+    if now != 19:   # 7 PM மட்டும்
+        return "<h3>Class starts at 7 PM</h3>"
 
     return render_template("live_room.html")
+
+<h3>Indian Batch</h3>
+<a href="/demo-class">Join Demo</a>
+<a href="/enroll">Enroll Now</a>
+<h3>International Batch</h3>
+<a href="/demo-class">Join Demo</a>
+<a href="/enroll">Enroll Now</a>
+
+{% if not user.demo_attended %}
+    <a href="/demo-class">Join Demo</a>
+{% else %}
+    <p style="color:red;">Demo Completed ✅</p>
+{% endif %}
+
+{% if user.enrolled %}
+    <a href="/live-room">Join Class</a>
+{% else %}
+    <a href="/enroll">Enroll Now</a>
+{% endif %}
 
 
 # -------------------- FOLDERS --------------------
