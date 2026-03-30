@@ -15,6 +15,87 @@ from datetime import datetime, timedelta
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 
+# TEMP USER STORAGE
+users = {}
+
+# ================= REGISTER =================
+@app.route("/register", methods=["GET", "POST"])
+def register():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+
+        users[email] = password
+        return redirect("/login")
+
+    return """
+    <h2>Register</h2>
+    <form method="post">
+        <input name="email" placeholder="Email" required><br><br>
+        <input name="password" type="password" placeholder="Password" required><br><br>
+        <button>Register</button>
+    </form>
+    """
+
+# ================= LOGIN =================
+@app.route("/login", methods=["GET", "POST"])
+def login():
+    if request.method == "POST":
+        email = request.form["email"]
+        password = request.form["password"]
+
+        if users.get(email) == password:
+            session["user"] = email
+            return redirect("/class")   # 👈 correct redirect
+
+        return "<h3>Invalid Login ❌</h3>"
+
+    return """
+    <h2>Login</h2>
+    <form method="post">
+        <input name="email" placeholder="Email" required><br><br>
+        <input name="password" type="password" required><br><br>
+        <button>Login</button>
+    </form>
+    """
+
+# ================= LOGOUT =================
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/login")
+
+# ================= CLASS PAGE =================
+@app.route("/class")
+def courses():
+    return render_template("class.html")
+
+# ================= DEMO CLASS =================
+@app.route("/demo-class")
+def demo_class():
+    return render_template("live_room.html")  
+    # 👈 demo also inside website
+
+# ================= ENROLL =================
+@app.route("/enroll")
+def enroll():
+    if not session.get("user"):
+        return redirect("/login")
+
+    return """
+    <h2>Payment Page</h2>
+    <p>After payment, you will get full class access</p>
+    """
+
+# ================= LIVE ROOM (PAID STUDENTS) =================
+@app.route("/live-room")
+def live_room():
+    if not session.get("user"):
+        return redirect("/login")
+
+    return render_template("live_room.html")
+
+
 # -------------------- FOLDERS --------------------
 PDF_FOLDER = "rsc_download"
 os.makedirs(PDF_FOLDER, exist_ok=True)
@@ -552,11 +633,6 @@ def upload():
 </div>
 """
     
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/admin')
-
 @app.route('/manage-feedback')
 def manage_feedback():
     if not session.get("admin"):
