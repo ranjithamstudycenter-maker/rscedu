@@ -26,13 +26,15 @@ def register():
         password = request.form["password"]
 
         users[email] = password
-        return redirect("/login")
+        session["user"] = email   # ✅ AUTO LOGIN
+
+        return redirect("/enroll")   # direct enroll
 
     return """
     <h2>Register</h2>
     <form method="post">
         <input name="email" placeholder="Email" required><br><br>
-        <input name="password" type="password" placeholder="Password" required><br><br>
+        <input name="password" type="password" required><br><br>
         <button>Register</button>
     </form>
     """
@@ -46,7 +48,7 @@ def login():
 
         if users.get(email) == password:
             session["user"] = email
-            return redirect("/class")   # 👈 correct redirect
+            return redirect("/enroll")   # ✅ FIXED
 
         return "<h3>Invalid Login ❌</h3>"
 
@@ -57,6 +59,8 @@ def login():
         <input name="password" type="password" required><br><br>
         <button>Login</button>
     </form>
+
+    <p>New user? <a href="/register">Register here</a></p>
     """
 
 # ================= LOGOUT =================
