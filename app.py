@@ -22,79 +22,49 @@ users = {}
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if request.method == "POST":
+        name = request.form["name"]
         email = request.form["email"]
         password = request.form["password"]
+        batch = request.form["batch"]
 
-        users[email] = password
-        session["user"] = email   # ✅ AUTO LOGIN
+        users[email] = {
+            "name": name,
+            "password": password,
+            "batch": batch,
+            "demo_attended": False,
+            "demo_waiting": False,
+            "enrolled": False
+        }
 
-        return redirect("/enroll")   # direct enroll
+        session["user"] = email
+        return redirect("/enroll")
 
     return """
-<!DOCTYPE html>
-<html>
-<head>
-<title>Register</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <html><head><title>Register</title>
+    <style>
+    body{font-family:Poppins;background:linear-gradient(135deg,#004aad,#0b5394);
+    display:flex;justify-content:center;align-items:center;height:100vh;}
+    .box{background:white;padding:40px;border-radius:15px;width:300px;text-align:center;}
+    input,select{width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid #ccc;}
+    button{width:100%;padding:10px;background:#28a745;color:white;border:none;border-radius:8px;}
+    </style></head>
+    <body>
+    <div class="box">
+    <h2>Register</h2>
+    <form method="post">
+    <input name="name" placeholder="Name" required>
+    <input name="email" placeholder="Email" required>
+    <input name="password" type="password" placeholder="Password" required>
+    <select name="batch">
+        <option value="indian">Indian</option>
+        <option value="international">International</option>
+    </select>
+    <button>Register</button>
+    </form>
+    </div>
+    </body></html>
+    """
 
-<style>
-body{
-    margin:0;
-    font-family:Poppins;
-    background:linear-gradient(135deg,#004aad,#0b5394);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
-
-.box{
-    background:white;
-    padding:40px;
-    border-radius:15px;
-    width:300px;
-    text-align:center;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-}
-
-h2{color:#0b5394;}
-
-input{
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border-radius:8px;
-    border:1px solid #ccc;
-}
-
-button{
-    width:100%;
-    padding:10px;
-    background:#28a745;
-    color:white;
-    border:none;
-    border-radius:8px;
-    font-weight:bold;
-}
-</style>
-</head>
-
-<body>
-
-<div class="box">
-<h2>Register</h2>
-
-<form method="post">
-<input name="name" placeholder="Name" required>
-<input name="email" placeholder="Email" required>
-<input name="password" type="password" placeholder="Password" required>
-<button>Register</button>
-</form>
-</div>
-
-</body>
-</html>
-"""
 
 # ================= LOGIN =================
 @app.route("/login", methods=["GET", "POST"])
@@ -103,83 +73,37 @@ def login():
         email = request.form["email"]
         password = request.form["password"]
 
-        if users.get(email) == password:
+        user = users.get(email)
+
+        if user and user["password"] == password:
             session["user"] = email
-            return redirect("/enroll")   # ✅ FIXED
+            return redirect("/class")
 
-        return "<h3>Invalid Login ❌</h3>"
+        return "<h3 style='text-align:center;color:red;'>Invalid Login ❌</h3>"
 
-   return """
-<!DOCTYPE html>
-<html>
-<head>
-<title>Login</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+    return """
+    <html><head><title>Login</title>
+    <style>
+    body{font-family:Poppins;background:linear-gradient(135deg,#004aad,#0b5394);
+    display:flex;justify-content:center;align-items:center;height:100vh;}
+    .box{background:white;padding:40px;border-radius:15px;width:300px;text-align:center;}
+    input{width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid #ccc;}
+    button{width:100%;padding:10px;background:#0b5394;color:white;border:none;border-radius:8px;}
+    a{color:#0b5394;}
+    </style></head>
+    <body>
+    <div class="box">
+    <h2>Login</h2>
+    <form method="post">
+    <input name="email" placeholder="Email" required>
+    <input name="password" type="password" required>
+    <button>Login</button>
+    </form>
+    <p><a href="/register">New user? Register</a></p>
+    </div>
+    </body></html>
+    """
 
-<style>
-body{
-    margin:0;
-    font-family:Poppins;
-    background:linear-gradient(135deg,#004aad,#0b5394);
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
-
-.box{
-    background:white;
-    padding:40px;
-    border-radius:15px;
-    width:300px;
-    text-align:center;
-    box-shadow:0 10px 25px rgba(0,0,0,0.2);
-}
-
-h2{color:#0b5394;}
-
-input{
-    width:100%;
-    padding:10px;
-    margin:10px 0;
-    border-radius:8px;
-    border:1px solid #ccc;
-}
-
-button{
-    width:100%;
-    padding:10px;
-    background:#0b5394;
-    color:white;
-    border:none;
-    border-radius:8px;
-    font-weight:bold;
-}
-
-a{
-    color:#0b5394;
-    font-weight:600;
-}
-</style>
-</head>
-
-<body>
-
-<div class="box">
-<h2>Login</h2>
-
-<form method="post">
-<input name="email" placeholder="Email" required>
-<input name="password" type="password" placeholder="Password" required>
-<button>Login</button>
-</form>
-
-<p>New user? <a href="/register">Register</a></p>
-</div>
-
-</body>
-</html>
-"""
 
 # ================= LOGOUT =================
 @app.route("/logout")
@@ -196,14 +120,11 @@ def demo_class():
 
     user = users[session["user"]]
 
-    # ❌ already attended check
     if user["demo_attended"]:
-        return "<h3>Demo already completed ✅<br>Please enroll now</h3>"
+        return "<h3 style='text-align:center;'>Demo already completed ✅<br>Enroll now</h3>"
 
-    # ✅ mark waiting
     user["demo_waiting"] = True
 
-    # collect waiting users
     indian = []
     international = []
 
@@ -211,111 +132,104 @@ def demo_class():
         if u["demo_waiting"]:
             if u["batch"] == "indian":
                 indian.append(u["name"])
-            elif u["batch"] == "international":
+            else:
                 international.append(u["name"])
 
-    # ✅ ONLY ONE RETURN
-    return render_template(
-        "live_room.html",
-        indian=indian,
-        international=international
-    )
+    return f"""
+    <html><head><title>Demo Waiting</title>
+    <style>
+    body{{font-family:Poppins;background:#f5f7fa;text-align:center;padding:40px;}}
+    .box{{background:white;padding:20px;margin:20px auto;width:300px;border-radius:12px;}}
+    </style></head>
+
+    <body>
+
+    <h2>🔴 Demo Waiting Room</h2>
+
+    <div class="box">
+    <h3>🇮🇳 Indian ({len(indian)})</h3>
+    {"<br>".join(indian)}
+    </div>
+
+    <div class="box">
+    <h3>🌍 International ({len(international)})</h3>
+    {"<br>".join(international)}
+    </div>
+
+    <br><br>
+
+    <a href="/live-room" style="padding:10px 20px;background:red;color:white;border-radius:8px;">Start Demo</a>
+
+    </body></html>
+    """
+
 
 # ================= ENROLL =================
-@app.route("/enroll", methods=["GET","POST"])
+@app.route("/enroll", methods=["GET", "POST"])
 def enroll():
 
     if not session.get("user"):
         return redirect("/login")
 
-    user = users.get(session["user"])
+    user = users[session["user"]]
 
     if request.method == "POST":
         user["enrolled"] = True
-        return "<h3>Registered Successfully ✅<br>You can now attend classes</h3>"
+        user["demo_attended"] = True
+        user["demo_waiting"] = False
 
-    if user["enrolled"]:
-        return redirect("/live-room")
+        return "<h3 style='text-align:center;'>Registered Successfully ✅</h3>"
 
-   return """
-<!DOCTYPE html>
-<html>
-<head>
-<title>Enroll</title>
-
-<style>
-body{
-    font-family:Poppins;
-    background:#f5f7fa;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    height:100vh;
-}
-
-.box{
-    background:white;
-    padding:40px;
-    border-radius:15px;
-    text-align:center;
-    box-shadow:0 10px 25px rgba(0,0,0,0.1);
-}
-
-button{
-    padding:12px 30px;
-    background:#0b5394;
-    color:white;
-    border:none;
-    border-radius:10px;
-    font-weight:bold;
-}
-</style>
-</head>
-
-<body>
-
-<div class="box">
-<h2>Confirm Enrollment</h2>
-<form method="post">
-<button>Confirm Registration</button>
-</form>
-</div>
-
-</body>
-</html>
-"""
+    return """
+    <html><head><title>Enroll</title>
+    <style>
+    body{font-family:Poppins;background:#f5f7fa;display:flex;justify-content:center;align-items:center;height:100vh;}
+    .box{background:white;padding:40px;border-radius:15px;text-align:center;}
+    button{padding:12px 30px;background:#0b5394;color:white;border:none;border-radius:10px;}
+    </style></head>
+    <body>
+    <div class="box">
+    <h2>Confirm Enrollment</h2>
+    <form method="post">
+    <button>Confirm</button>
+    </form>
+    </div>
+    </body></html>
+    """
 
 # ================= LIVE ROOM (PAID STUDENTS) =================
 
 @app.route("/live-room")
 def live_room():
 
-    now = datetime.now().hour
+    if not session.get("user"):
+        return redirect("/login")
 
-    if now != 19:   # 7 PM மட்டும்
-        return "<h3>Class starts at 7 PM</h3>"
+    user = users[session["user"]]
 
-    return render_template("live_room.html")
+    if not user["enrolled"]:
+        return "<h3 style='text-align:center;'>Please enroll first</h3>"
 
-<h3>Indian Batch</h3>
-<a href="/demo-class">Join Demo</a>
-<a href="/enroll">Enroll Now</a>
-<h3>International Batch</h3>
-<a href="/demo-class">Join Demo</a>
-<a href="/enroll">Enroll Now</a>
+    return """
+    <html><head><title>Live Class</title></head>
+    <body style="font-family:Poppins;text-align:center;padding:40px;">
 
-{% if not user.demo_attended %}
-    <a href="/demo-class">Join Demo</a>
-{% else %}
-    <p style="color:red;">Demo Completed ✅</p>
-{% endif %}
+    <h2 style="color:red;">🔴 Live Class</h2>
 
-{% if user.enrolled %}
-    <a href="/live-room">Join Class</a>
-{% else %}
-    <a href="/enroll">Enroll Now</a>
-{% endif %}
+    <a href="https://zoom.us/j/your-meeting-id" target="_blank"
+    style="padding:12px 25px;background:#0b5394;color:white;border-radius:10px;text-decoration:none;">
+    Join Zoom Class
+    </a>
 
+    <p style="margin-top:20px;">No app needed (browser works)</p>
+
+    </body></html>
+    """
+
+
+# ================= RUN =================
+if __name__ == "__main__":
+    app.run(debug=True)
 
 # -------------------- FOLDERS --------------------
 PDF_FOLDER = "rsc_download"
@@ -408,7 +322,31 @@ def about():
 
 @app.route("/class")
 def courses():
-    return render_template("class.html")
+    return """
+    <html><head><title>Classes</title>
+    <style>
+    body{font-family:Poppins;background:#f5f7fa;text-align:center;padding:40px;}
+    .box{background:white;padding:30px;margin:20px auto;width:300px;border-radius:12px;}
+    a{display:block;margin:10px;padding:10px;background:#0b5394;color:white;border-radius:8px;text-decoration:none;}
+    </style></head>
+    <body>
+
+    <h1>🌍 Live Classes</h1>
+
+    <div class="box">
+    <h3>🇮🇳 Indian Batch</h3>
+    <a href="/demo-class">Join Demo</a>
+    <a href="/enroll">Enroll Now</a>
+    </div>
+
+    <div class="box">
+    <h3>🌍 International Batch</h3>
+    <a href="/demo-class">Join Demo</a>
+    <a href="/enroll">Enroll Now</a>
+    </div>
+
+    </body></html>
+    """
 
 
 def is_valid(expiry): 
