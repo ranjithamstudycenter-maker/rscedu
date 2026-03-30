@@ -65,11 +65,6 @@ def logout():
     session.clear()
     return redirect("/login")
 
-# ================= CLASS PAGE =================
-@app.route("/class")
-def courses():
-    return render_template("class.html")
-
 # ================= DEMO CLASS =================
 @app.route("/demo-class")
 def demo_class():
