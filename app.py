@@ -317,33 +317,8 @@ def about():
 
 @app.route("/class")
 def courses():
-    return """
-    <html><head><title>Classes</title>
-    <style>
-    body{font-family:Poppins;background:#f5f7fa;text-align:center;padding:40px;}
-    .box{background:white;padding:30px;margin:20px auto;width:300px;border-radius:12px;}
-    a{display:block;margin:10px;padding:10px;background:#0b5394;color:white;border-radius:8px;text-decoration:none;}
-    </style></head>
-    <body>
-
-    <h1>🌍 Live Classes</h1>
-
-    <div class="box">
-    <h3>🇮🇳 Indian Batch</h3>
-    <a href="/demo-class">Join Demo</a>
-    <a href="/enroll">Enroll Now</a>
-    </div>
-
-    <div class="box">
-    <h3>🌍 International Batch</h3>
-    <a href="/demo-class">Join Demo</a>
-    <a href="/enroll">Enroll Now</a>
-    </div>
-
-    </body></html>
-    """
-
-
+    return render_template("class.html")
+   
 def is_valid(expiry): 
   if not expiry: 
       return False 
