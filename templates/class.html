@@ -753,6 +753,23 @@ function joinClass(){
     showMessage("🎉 Registered Successfully!");
   });
 }
+ function setTimezone(){
+
+  let country = document.getElementById("country").value;
+  let timezoneField = document.getElementById("timezone");
+
+  let map = {
+    "India": "Asia/Kolkata",
+    "UAE": "Asia/Dubai",
+    "Singapore": "Asia/Singapore",
+    "Malaysia": "Asia/Kuala_Lumpur",
+    "UK": "Europe/London",
+    "Canada": "America/Toronto",
+    "Australia": "Australia/Sydney"
+  };
+
+  timezoneField.value = map[country] || "";
+}
 </script>
 </body>
 </html>
