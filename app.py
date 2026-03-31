@@ -163,6 +163,27 @@ def demo_class():
     </body></html>
     """
 
+from apscheduler.schedulers.background import BackgroundScheduler
+from datetime import datetime
+
+last_reset_day = None
+
+def reset_all_students():
+    global last_reset_day
+    
+    today = datetime.now().day
+    
+    if last_reset_day == today:
+        return   # prevent multiple runs
+    
+    print("Monthly reset done")
+    
+    last_reset_day = today
+
+
+scheduler = BackgroundScheduler()
+scheduler.add_job(reset_all_students, 'cron', day=30)
+scheduler.start()
 
 # ================= ENROLL =================
 @app.route("/enroll", methods=["GET", "POST"])
