@@ -432,7 +432,7 @@ body{
 
 <!-- CBSE -->
 <div class="card">
- <span class="badge" id="liveBadge" style="display:none;">🔴 LIVE</span>
+<span class="badge liveBadge" style="display:none;">🔴 LIVE</span>
 <h2>CBSE Mathematics</h2>
 <p><b>Online:</b> Class 10 & 12</p>
 <p><b>Offline:</b> Class 6 – 9</p>
@@ -446,12 +446,11 @@ body{
 <!-- 🔘 BUTTONS -->
 <div class="actions">
 
- <button class="btn outline">Free Demo</button>
+<button class="btn outline" onclick="bookDemo('cbse')">Free Demo</button>
 
-  <a href="/enroll" class="btn secondary">Enroll</a>
+<button class="btn secondary" onclick="enroll('cbse')">Enroll</button>
 
-  <button class="btn primary" id="joinBtn" onclick="joinClass()">Join Now</button>
-
+<button class="btn primary joinBtn" data-course="cbse" onclick="joinClass('cbse')">Join Now</button>
 </div>
  
 <p style="margin-top:10px;color:red;">⚠ Only limited Seats Available</p>
@@ -472,11 +471,11 @@ body{
 
 <div class="actions">
 
- <button class="btn outline">Free Demo</button>
+ <button class="btn outline" onclick="bookDemo('engg')">Free Demo</button>
 
-  <a href="/enroll" class="btn secondary">Enroll</a>
+<button class="btn secondary" onclick="enroll('engg')">Enroll</button>
 
-  <button class="btn primary" id="joinBtn" onclick="joinClass()">Join Now</button>
+<button class="btn primary joinBtn" data-course="engg" onclick="joinClass('engg')">Join Now</button>
 
 </div>
 
@@ -541,57 +540,51 @@ body{
 
 <script>
 /* =========================
-   INITIAL STATE
+   COURSE STATE (GLOBAL)
 ========================= */
-let demoDone = false;
-let enrolled = false;
-let students_count = 20; // change dynamically later
+let courseState = {
+  cbse: {
+    demoDone: false,
+    enrolled: false
+  },
+  engg: {
+    demoDone: false,
+    enrolled: false
+  }
+};
+
+let students_count = 20;
 
 /* =========================
    DOM READY
 ========================= */
 document.addEventListener("DOMContentLoaded", function(){
 
-  const joinBtn = document.getElementById("joinBtn");
-  const demoBtns = document.querySelectorAll(".outline");
+  const joinBtns = document.querySelectorAll(".joinBtn");
+  const liveBadges = document.querySelectorAll(".liveBadge");
 
-  demoBtns.forEach(btn => {
-  btn.addEventListener("click", bookDemo);
+  /* Disable all join buttons initially */
+  joinBtns.forEach(btn => {
+    btn.style.opacity = "0.5";
+    btn.style.pointerEvents = "none";
   });
-  const liveBadge = document.getElementById("liveBadge");
 
-  /* Disable Join initially */
-  joinBtn.style.opacity = "0.5";
-  joinBtn.style.pointerEvents = "auto";
-
-  /* =========================
-     LIVE BADGE (6PM–8PM)
-  ========================= */
+  /* LIVE BADGE (6PM–8PM) */
   let currentHour = new Date().getHours();
 
   if(currentHour >= 18 && currentHour <= 20){
-    if(liveBadge){
-      liveBadge.style.display = "inline-block";
-    }
+    liveBadges.forEach(badge => {
+      badge.style.display = "inline-block";
+    });
   }
 
-  /* =========================
-     DEMO AUTO DISABLE (1 hour)
-  ========================= */
-  setTimeout(()=>{
-    if(demoBtn){
-      demoBtn.style.pointerEvents = "auto";
-      demoBtn.style.opacity = "0.5";
-    }
-  }, 3600000);
-
-  /* =========================
-     SEAT LIMIT CHECK
-  ========================= */
+  /* SEAT LIMIT */
   if(students_count >= 35){
-    joinBtn.innerText = "Full";
-    joinBtn.style.background = "gray";
-    joinBtn.style.pointerEvents = "auto";
+    joinBtns.forEach(btn => {
+      btn.innerText = "Full";
+      btn.style.background = "gray";
+      btn.style.pointerEvents = "none";
+    });
   }
 
 });
@@ -600,34 +593,97 @@ document.addEventListener("DOMContentLoaded", function(){
 /* =========================
    DEMO FUNCTION
 ========================= */
- let demoDone = false;
-let demoTime = new Date();
-demoTime.setHours(18,0,0); // 6 PM
+function bookDemo(course){
 
-function bookDemo(){
-
-  if(demoDone){
+  if(courseState[course].demoDone){
     showMessage("⚠ Demo already completed");
     return;
   }
+
+  let demoTime = new Date();
+  demoTime.setHours(18,0,0); // 6 PM
 
   let now = new Date();
   let diff = demoTime - now;
 
   if(diff > 0){
+    showMessage("⏳ Demo at 6:00 PM. Please wait...");
     startCountdown(diff);
-    showMessage("⏳ Demo scheduled at 6:00 PM. Please wait...");
   }else{
     window.open("https://meet.google.com/", "_blank");
-    showMessage("🎥 Demo started");
-    
+    showMessage("🎥 Demo Started");
+
     setTimeout(()=>{
-      demoDone = true;
-      showMessage("✅ Demo Completed");
-    }, 60000); // simulate 1 min demo
+      courseState[course].demoDone = true;
+      showMessage("✅ Demo Completed for " + course.toUpperCase());
+    }, 60000);
   }
 }
+
+
+/* =========================
+   ENROLL FUNCTION
+========================= */
+function enroll(course){
+
+  if(!courseState[course].demoDone){
+    showMessage("⚠ Attend demo first");
+    return;
+  }
+
+  let name = prompt("Enter your Name:");
+  let studentClass = prompt("Enter Class:");
+  let payment = prompt("Enter Payment Amount:");
+
+  if(name && studentClass && payment){
+
+    showMessage("💳 Processing Payment...");
+
+    setTimeout(()=>{
+      courseState[course].enrolled = true;
+
+      showMessage("🎉 Successfully Enrolled in " + course.toUpperCase());
+
+      /* Enable correct join button */
+      let btn = document.querySelector(`.joinBtn[data-course="${course}"]`);
+      btn.style.opacity = "1";
+      btn.style.pointerEvents = "auto";
+
+    },2000);
+  }
+}
+
+
+/* =========================
+   JOIN CLASS
+========================= */
+function joinClass(course){
+
+  if(!courseState[course].enrolled){
+    showMessage("⚠ Please enroll first");
+    return;
+  }
+
+  let classTime = new Date();
+  classTime.setHours(19,0,0); // 7 PM
+
+  let now = new Date();
+  let diff = classTime - now;
+
+  if(diff > 0){
+    showMessage("⏳ Class starts at 7:00 PM");
+    startCountdown(diff);
+  }else{
+    window.open("https://meet.google.com/", "_blank");
+  }
+}
+
+
+/* =========================
+   COUNTDOWN
+========================= */
 function startCountdown(duration){
+
   let timer = duration / 1000;
 
   let interval = setInterval(()=>{
@@ -640,116 +696,35 @@ function startCountdown(duration){
 
     if(timer < 0){
       clearInterval(interval);
-      showMessage("🎥 Demo is live now!");
+      showMessage("🎥 Now Live!");
     }
 
   }, 1000);
 }
 
-/* =========================
-   ENROLL FUNCTION
-========================= */
- function enroll(){
-
-  if(!demoDone){
-    showMessage("⚠ Attend demo first");
-    return;
-  }
-
-  let name = prompt("Enter your Name:");
-  let studentClass = prompt("Enter Class:");
-  let time = prompt("Preferred Time:");
-  let payment = prompt("Enter Payment Amount:");
-
-  if(name && studentClass && payment){
-    showMessage("💳 Processing Payment...");
-
-    setTimeout(()=>{
-      showMessage("🎉 Successfully Registered!");
-
-      let btn = document.getElementById("joinBtn");
-      btn.style.opacity = "1";
-      btn.style.pointerEvents = "auto";
-
-    },2000);
-  }
-}
-
 
 /* =========================
-   JOIN CLASS
+   MESSAGE BOX
 ========================= */
- let classTime = new Date();
-classTime.setHours(19,0,0); // 7 PM
+function showMessage(msg){
 
-function joinClass(){
-
-  let now = new Date();
-  let diff = classTime - now;
-
-  if(diff > 0){
-    showMessage("⏳ Class starts at 7:00 PM");
-    startCountdown(diff);
-  }else{
-    window.location.href = "https://meet.google.com/";
-  }
-}
-
- function showMessage(msg){
   let box = document.createElement("div");
   box.innerText = msg;
 
   box.style.position = "fixed";
   box.style.bottom = "20px";
   box.style.left = "50%";
-  box.style.transform = "translateX(-50%) scale(0.9)";
+  box.style.transform = "translateX(-50%)";
   box.style.background = "#1e3a8a";
   box.style.color = "white";
   box.style.padding = "12px 20px";
   box.style.borderRadius = "10px";
   box.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
-  box.style.transition = "0.3s";
 
   document.body.appendChild(box);
 
-  setTimeout(()=>{
-    box.style.transform = "translateX(-50%) scale(1)";
-  },100);
-
-  setTimeout(()=>{
-    box.style.opacity = "0";
-    setTimeout(()=>box.remove(),300);
-  },3000);
+  setTimeout(()=>box.remove(),3000);
 }
- function convertTime(){
-
-  let timezone = document.querySelectorAll("input")[3].value;
-
-  let time = new Date().toLocaleString("en-US", {
-    timeZone: timezone
-  });
-
-  console.log("User Time:", time);
-}
- function submitForm(){
-
-  fetch("/enroll", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({
-      name:"student",
-      class:"10",
-      country:"UAE",
-      timezone:"Asia/Dubai",
-      time:"6PM"
-    })
-  })
-  .then(res=>res.json())
-  .then(data=>{
-    showMessage("🎉 Registered Successfully!");
-  });
-}
- 
 </script>
 </body>
 </html>
