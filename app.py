@@ -118,7 +118,10 @@ def demo_class():
     if not session.get("user"):
         return redirect("/login")
 
-    user = users[session["user"]]
+    user = users.get(session.get("user"))
+
+    if not user:
+        return redirect("/login")
 
     if user["demo_attended"]:
         return "<h3 style='text-align:center;'>Demo already completed ✅<br>Enroll now</h3>"
@@ -202,8 +205,10 @@ def enroll():
     if not session.get("user"):
         return redirect("/login")
 
-    user = users[session["user"]]
+    user = users.get(session.get("user"))
 
+    if not user:
+        return redirect("/login")
     if request.method == "POST":
 
         student = {
@@ -232,7 +237,10 @@ def live_room():
     if not session.get("user"):
         return redirect("/login")
 
-    user = users[session["user"]]
+    user = users.get(session.get("user"))
+
+    if not user:
+        return redirect("/login")
 
     if not user["enrolled"]:
         return "<h3 style='text-align:center;'>Please enroll first</h3>"
