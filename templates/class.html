@@ -582,31 +582,78 @@ document.addEventListener("DOMContentLoaded", function(){
 /* =========================
    DEMO FUNCTION
 ========================= */
- function bookDemo(){
-  if(!demoDone){
-    showMessage("🎓 Demo Scheduled. Please join at the fixed time.");
-    demoDone = true;
-  } else {
-    showMessage("⚠ Demo already completed.");
+ let demoDone = false;
+let demoTime = new Date();
+demoTime.setHours(18,0,0); // 6 PM
+
+function bookDemo(){
+
+  if(demoDone){
+    showMessage("⚠ Demo already completed");
+    return;
+  }
+
+  let now = new Date();
+  let diff = demoTime - now;
+
+  if(diff > 0){
+    startCountdown(diff);
+    showMessage("⏳ Demo scheduled at 6:00 PM. Please wait...");
+  }else{
+    window.open("https://meet.google.com/", "_blank");
+    showMessage("🎥 Demo started");
+    
+    setTimeout(()=>{
+      demoDone = true;
+      showMessage("✅ Demo Completed");
+    }, 60000); // simulate 1 min demo
   }
 }
+function startCountdown(duration){
+  let timer = duration / 1000;
 
+  let interval = setInterval(()=>{
+    let minutes = Math.floor(timer / 60);
+    let seconds = Math.floor(timer % 60);
+
+    showMessage("⏳ " + minutes + "m " + seconds + "s remaining");
+
+    timer--;
+
+    if(timer < 0){
+      clearInterval(interval);
+      showMessage("🎥 Demo is live now!");
+    }
+
+  }, 1000);
+}
 
 /* =========================
    ENROLL FUNCTION
 ========================= */
  function enroll(){
-  if(demoDone){
-    enrolled = true;
 
-    showMessage("🎉 Registered Successfully!");
+  if(!demoDone){
+    showMessage("⚠ Attend demo first");
+    return;
+  }
 
-    let btn = document.getElementById("joinBtn");
-    btn.style.opacity = "1";
-    btn.style.pointerEvents = "auto";
+  let name = prompt("Enter your Name:");
+  let studentClass = prompt("Enter Class:");
+  let time = prompt("Preferred Time:");
+  let payment = prompt("Enter Payment Amount:");
 
-  } else {
-    showMessage("⚠ Please attend demo first.");
+  if(name && studentClass && payment){
+    showMessage("💳 Processing Payment...");
+
+    setTimeout(()=>{
+      showMessage("🎉 Successfully Registered!");
+
+      let btn = document.getElementById("joinBtn");
+      btn.style.opacity = "1";
+      btn.style.pointerEvents = "auto";
+
+    },2000);
   }
 }
 
@@ -614,14 +661,19 @@ document.addEventListener("DOMContentLoaded", function(){
 /* =========================
    JOIN CLASS
 ========================= */
- function joinClass(){
-  if(enrolled){
-    showMessage("🚀 Redirecting to live class...");
-    setTimeout(()=>{
-      window.location.href = "https://meet.google.com/";
-    }, 1000);
-  } else {
-    showMessage("⚠ Complete registration first.");
+ let classTime = new Date();
+classTime.setHours(19,0,0); // 7 PM
+
+function joinClass(){
+
+  let now = new Date();
+  let diff = classTime - now;
+
+  if(diff > 0){
+    showMessage("⏳ Class starts at 7:00 PM");
+    startCountdown(diff);
+  }else{
+    window.location.href = "https://meet.google.com/";
   }
 }
 
