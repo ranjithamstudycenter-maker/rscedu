@@ -288,19 +288,48 @@ def enroll():
         <h2>Enroll for Class</h2>
 
         <form method="post">
-            <input name="name" placeholder="Your Name" required>
-            <input name="class" placeholder="Class" required>
-            <input name="country" placeholder="Country" required>
-            <input name="timezone" placeholder="Time Zone (e.g. Asia/Dubai)" required>
-            <input name="time" placeholder="Preferred Time" required>
 
-            <button type="submit">Pay & Enroll</button>
-        </form>
+<input name="name" placeholder="Your Name" required>
+
+<select name="class" required>
+  <option value="">Select Class</option>
+  <option>Class 10</option>
+  <option>Class 12</option>
+  <option>Engineering Maths</option>
+</select>
+
+<!-- 🌍 COUNTRY -->
+<select name="country" id="country" onchange="setTimezone()" required>
+  <option value="">Select Country</option>
+  <option value="India">India 🇮🇳</option>
+  <option value="UAE">UAE 🇦🇪</option>
+  <option value="Singapore">Singapore 🇸🇬</option>
+  <option value="Malaysia">Malaysia 🇲🇾</option>
+  <option value="UK">UK 🇬🇧</option>
+  <option value="Canada">Canada 🇨🇦</option>
+  <option value="Australia">Australia 🇦🇺</option>
+</select>
+
+<!-- ⏰ TIME ZONE (AUTO) -->
+<input name="timezone" id="timezone" placeholder="Time Zone" readonly>
+
+<!-- 🕒 PREFERRED TIME -->
+<select name="time" required>
+  <option value="">Preferred Class Time</option>
+  <option>6:00 PM – 7:00 PM</option>
+  <option>7:00 PM – 8:00 PM</option>
+  <option>8:00 PM – 9:00 PM</option>
+</select>
+
+<button type="submit">Pay & Enroll</button>
+
+</form>
 
     </div>
     </body>
     </html>
     """
+    
 # ================= LIVE ROOM (PAID STUDENTS) =================
 
 @app.route("/live-room")
