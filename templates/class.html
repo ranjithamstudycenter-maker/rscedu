@@ -573,7 +573,7 @@ document.addEventListener("DOMContentLoaded", function(){
   /* Disable all join buttons initially */
   joinBtns.forEach(btn => {
     btn.style.opacity = "0.5";
-    btn.style.pointerEvents = "none";
+    btn.style.pointerEvents = "auto";
   });
 
   /* LIVE BADGE (6PM–8PM) */
@@ -590,7 +590,7 @@ document.addEventListener("DOMContentLoaded", function(){
     joinBtns.forEach(btn => {
       btn.innerText = "Full";
       btn.style.background = "gray";
-      btn.style.pointerEvents = "none";
+      btn.style.pointerEvents = "auto";
     });
   }
 
