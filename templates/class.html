@@ -472,7 +472,7 @@ body{
 
 <div class="actions">
 
-  <button class="btn outline" onclick="bookDemo()">Free Demo</button>
+ <button class="btn outline">Free Demo</button>
 
   <a href="/enroll" class="btn secondary">Enroll</a>
 
@@ -553,7 +553,11 @@ let students_count = 20; // change dynamically later
 document.addEventListener("DOMContentLoaded", function(){
 
   const joinBtn = document.getElementById("joinBtn");
-  const demoBtn = document.querySelector(".outline");
+  const demoBtns = document.querySelectorAll(".outline");
+
+  demoBtns.forEach(btn => {
+  btn.addEventListener("click", bookDemo);
+  });
   const liveBadge = document.getElementById("liveBadge");
 
   /* Disable Join initially */
