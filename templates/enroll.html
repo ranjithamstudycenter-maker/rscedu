@@ -1,0 +1,141 @@
+ <!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Enroll | Ranjitham Study Center</title>
+
+<style>
+    body{
+        font-family:Poppins;
+        background:#f5f7fa;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+    }
+    .box{
+        background:white;
+        padding:40px;
+        border-radius:15px;
+        text-align:center;
+        width:300px;
+	box-shadow:0 10px 25px rgba(0,0,0,0.1);
+    }
+
+/* 🔷 LOGO */
+.logo{
+  width:80px;
+  margin-bottom:10px;
+}
+
+/* 🔷 TITLE */
+.title{
+  color:#1e3a8a;
+  font-size:20px;
+  font-weight:700;
+}
+
+.subtitle{
+  font-size:13px;
+  color:#666;
+  margin-bottom:20px;
+}
+
+h2{text-align:center;margin-bottom:20px;}
+    
+    input,select{
+  width:100%;
+  padding:10px;
+  margin:8px 0;
+  border-radius:8px;
+  border:1px solid #ccc;
+}
+    
+button{
+  width:100%;
+  padding:12px;
+  background:#1e3a8a;
+  color:white;
+  border:none;
+  border-radius:10px;
+  margin-top:10px;
+  cursor:pointer;
+}
+
+button:hover{
+  background:#6366f1;
+}
+        
+    </style>
+    </head>
+
+    <body>
+    <div class="box">
+
+<!-- 🔷 LOGO -->
+<img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo">
+
+<!-- 🔷 NAME -->
+<div class="title">Ranjitham Study Center</div>
+<div class="subtitle">Learn • Practice • Excel in Mathematics</div>
+
+        <h2>Enroll for Class</h2>
+
+        <form method="post">
+
+<input name="name" placeholder="Your Name" required>
+
+<select name="class" required>
+  <option value="">Select Class</option>
+  <option>Class 10</option>
+  <option>Class 12</option>
+  <option>Engineering Maths</option>
+</select>
+
+<!-- 🌍 COUNTRY -->
+<select name="country" id="country" onchange="setTimezone()" required>
+  <option value="">Select Country</option>
+  <option value="India">India 🇮🇳</option>
+  <option value="UAE">UAE 🇦🇪</option>
+  <option value="Singapore">Singapore 🇸🇬</option>
+  <option value="Malaysia">Malaysia 🇲🇾</option>
+  <option value="UK">UK 🇬🇧</option>
+  <option value="Canada">Canada 🇨🇦</option>
+  <option value="Australia">Australia 🇦🇺</option>
+</select>
+
+<!-- ⏰ TIME ZONE (AUTO) -->
+<input name="timezone" id="timezone" placeholder="Time Zone" readonly>
+
+<!-- 🕒 PREFERRED TIME -->
+<select name="time" required>
+  <option value="">Preferred Class Time</option>
+  <option>6:00 PM – 7:00 PM</option>
+  <option>7:00 PM – 8:00 PM</option>
+  <option>8:00 PM – 9:00 PM</option>
+</select>
+
+<button type="submit">Pay & Enroll</button>
+
+</form>
+
+    </div>
+<script>
+function setTimezone(){
+  let map = {
+    "India":"Asia/Kolkata",
+    "UAE":"Asia/Dubai",
+    "Singapore":"Asia/Singapore",
+    "Malaysia":"Asia/Kuala_Lumpur",
+    "UK":"Europe/London",
+    "Canada":"America/Toronto",
+    "Australia":"Australia/Sydney"
+  };
+
+  let country = document.getElementById("country").value;
+  document.getElementById("timezone").value = map[country] || "";
+}
+</script>
+    </body>
+    </html>
+
