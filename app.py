@@ -186,38 +186,121 @@ scheduler.add_job(reset_all_students, 'cron', day=30)
 scheduler.start()
 
 # ================= ENROLL =================
+from flask import request, jsonify, session, redirect
+
+students = []
+
 @app.route("/enroll", methods=["GET", "POST"])
 def enroll():
 
+    # 🔒 Login check
     if not session.get("user"):
         return redirect("/login")
 
     user = users[session["user"]]
 
+    # =========================
+    # POST → SAVE DATA
+    # =========================
     if request.method == "POST":
+
+        # If coming from JS (JSON)
+        if request.is_json:
+            data = request.get_json()
+
+            student = {
+                "name": data.get("name"),
+                "class": data.get("class"),
+                "country": data.get("country"),
+                "timezone": data.get("timezone"),
+                "time": data.get("time")
+            }
+
+            students.append(student)
+
+        else:
+            # If coming from HTML form
+            student = {
+                "name": request.form.get("name"),
+                "class": request.form.get("class"),
+                "country": request.form.get("country"),
+                "timezone": request.form.get("timezone"),
+                "time": request.form.get("time")
+            }
+
+            students.append(student)
+
+        # ✅ Update user status
         user["enrolled"] = True
         user["demo_attended"] = True
         user["demo_waiting"] = False
 
-        return "<h3 style='text-align:center;'>Registered Successfully ✅</h3>"
+        return """
+        <h3 style='text-align:center;color:green;'>
+        🎉 Registered Successfully ✅
+        </h3>
+        """
 
+    # =========================
+    # GET → SHOW FORM
+    # =========================
     return """
-    <html><head><title>Enroll</title>
+    <html>
+    <head>
+    <title>Enroll</title>
     <style>
-    body{font-family:Poppins;background:#f5f7fa;display:flex;justify-content:center;align-items:center;height:100vh;}
-    .box{background:white;padding:40px;border-radius:15px;text-align:center;}
-    button{padding:12px 30px;background:#0b5394;color:white;border:none;border-radius:10px;}
-    </style></head>
+    body{
+        font-family:Poppins;
+        background:#f5f7fa;
+        display:flex;
+        justify-content:center;
+        align-items:center;
+        height:100vh;
+    }
+    .box{
+        background:white;
+        padding:40px;
+        border-radius:15px;
+        text-align:center;
+        width:300px;
+    }
+    input{
+        width:100%;
+        padding:10px;
+        margin:8px 0;
+        border-radius:8px;
+        border:1px solid #ccc;
+    }
+    button{
+        padding:12px;
+        width:100%;
+        background:#1e3a8a;
+        color:white;
+        border:none;
+        border-radius:10px;
+        margin-top:10px;
+    }
+    </style>
+    </head>
+
     <body>
     <div class="box">
-    <h2>Confirm Enrollment</h2>
-    <form method="post">
-    <button>Confirm</button>
-    </form>
-    </div>
-    </body></html>
-    """
+        <h2>Enroll for Class</h2>
 
+        <form method="post">
+            <input name="name" placeholder="Your Name" required>
+            <input name="class" placeholder="Class" required>
+            <input name="country" placeholder="Country" required>
+            <input name="timezone" placeholder="Time Zone (e.g. Asia/Dubai)" required>
+            <input name="time" placeholder="Preferred Time" required>
+
+            <button type="submit">Pay & Enroll</button>
+        </form>
+
+    </div>
+    </body>
+    </html>
+    """
 # ================= LIVE ROOM (PAID STUDENTS) =================
 
 @app.route("/live-room")
