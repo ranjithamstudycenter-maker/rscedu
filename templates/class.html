@@ -559,16 +559,18 @@ if(currentHour >= 18 && currentHour <= 20){
   document.getElementById("liveBadge").style.display = "block";
 }
 
-
-
 setTimeout(()=>{
   document.querySelector(".outline").disabled = true;
 }, 3600000);
 
 
+let students_count = 20; // example
 
-if students_count >= 35:
-    disable_join = True
+if(students_count >= 35){
+  document.getElementById("joinBtn").innerText = "Full";
+  document.getElementById("joinBtn").style.background = "gray";
+  document.getElementById("joinBtn").onclick = null;
+}
 </script>
 </body>
 </html>
