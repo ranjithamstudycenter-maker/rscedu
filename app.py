@@ -193,142 +193,30 @@ students = []
 @app.route("/enroll", methods=["GET", "POST"])
 def enroll():
 
-    # 🔒 Login check
     if not session.get("user"):
         return redirect("/login")
 
     user = users[session["user"]]
 
-    # =========================
-    # POST → SAVE DATA
-    # =========================
     if request.method == "POST":
 
-        # If coming from JS (JSON)
-        if request.is_json:
-            data = request.get_json()
+        student = {
+            "name": request.form.get("name"),
+            "class": request.form.get("class"),
+            "country": request.form.get("country"),
+            "timezone": request.form.get("timezone"),
+            "time": request.form.get("time")
+        }
 
-            student = {
-                "name": data.get("name"),
-                "class": data.get("class"),
-                "country": data.get("country"),
-                "timezone": data.get("timezone"),
-                "time": data.get("time")
-            }
+        students.append(student)
 
-            students.append(student)
-
-        else:
-            # If coming from HTML form
-            student = {
-                "name": request.form.get("name"),
-                "class": request.form.get("class"),
-                "country": request.form.get("country"),
-                "timezone": request.form.get("timezone"),
-                "time": request.form.get("time")
-            }
-
-            students.append(student)
-
-        # ✅ Update user status
         user["enrolled"] = True
         user["demo_attended"] = True
         user["demo_waiting"] = False
 
-        return """
-        <h3 style='text-align:center;color:green;'>
-        🎉 Registered Successfully ✅
-        </h3>
-        """
+        return "<h3 style='text-align:center;'>🎉 Registered Successfully</h3>"
 
-    # =========================
-    # GET → SHOW FORM
-    # =========================
-    return """
-    <html>
-    <head>
-    <title>Enroll</title>
-    <style>
-    body{
-        font-family:Poppins;
-        background:#f5f7fa;
-        display:flex;
-        justify-content:center;
-        align-items:center;
-        height:100vh;
-    }
-    .box{
-        background:white;
-        padding:40px;
-        border-radius:15px;
-        text-align:center;
-        width:300px;
-    }
-    input{
-        width:100%;
-        padding:10px;
-        margin:8px 0;
-        border-radius:8px;
-        border:1px solid #ccc;
-    }
-    button{
-        padding:12px;
-        width:100%;
-        background:#1e3a8a;
-        color:white;
-        border:none;
-        border-radius:10px;
-        margin-top:10px;
-    }
-    </style>
-    </head>
-
-    <body>
-    <div class="box">
-        <h2>Enroll for Class</h2>
-
-        <form method="post">
-
-<input name="name" placeholder="Your Name" required>
-
-<select name="class" required>
-  <option value="">Select Class</option>
-  <option>Class 10</option>
-  <option>Class 12</option>
-  <option>Engineering Maths</option>
-</select>
-
-<!-- 🌍 COUNTRY -->
-<select name="country" id="country" onchange="setTimezone()" required>
-  <option value="">Select Country</option>
-  <option value="India">India 🇮🇳</option>
-  <option value="UAE">UAE 🇦🇪</option>
-  <option value="Singapore">Singapore 🇸🇬</option>
-  <option value="Malaysia">Malaysia 🇲🇾</option>
-  <option value="UK">UK 🇬🇧</option>
-  <option value="Canada">Canada 🇨🇦</option>
-  <option value="Australia">Australia 🇦🇺</option>
-</select>
-
-<!-- ⏰ TIME ZONE (AUTO) -->
-<input name="timezone" id="timezone" placeholder="Time Zone" readonly>
-
-<!-- 🕒 PREFERRED TIME -->
-<select name="time" required>
-  <option value="">Preferred Class Time</option>
-  <option>6:00 PM – 7:00 PM</option>
-  <option>7:00 PM – 8:00 PM</option>
-  <option>8:00 PM – 9:00 PM</option>
-</select>
-
-<button type="submit">Pay & Enroll</button>
-
-</form>
-
-    </div>
-    </body>
-    </html>
-    """
+    return render_template("enroll.html")
     
 # ================= LIVE ROOM (PAID STUDENTS) =================
 
