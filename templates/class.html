@@ -441,6 +441,17 @@ body{
 <div class="actions">
  <a class="btn outline" onclick="bookDemo()">Free Demo</a>
  <a class="btn secondary" onclick="enroll()">Enroll</a>
+ <form id="enrollForm">
+  <input type="text" placeholder="Name" required>
+  <input type="text" placeholder="Class" required>
+
+  <input type="text" placeholder="Country" required>
+  <input type="text" placeholder="Time Zone (e.g. Asia/Dubai)" required>
+
+  <input type="text" placeholder="Preferred Class Time" required>
+
+  <button type="submit">Pay & Enroll</button>
+</form>
  <a class="btn primary" id="joinBtn" onclick="joinClass()">Join Now</a>
 </div>
  
@@ -463,6 +474,17 @@ body{
 <div class="actions">
 <a class="btn outline" onclick="bookDemo()">Free Demo</a>
 <a class="btn secondary" onclick="enroll()">Enroll</a>
+ <form id="enrollForm">
+  <input type="text" placeholder="Name" required>
+  <input type="text" placeholder="Class" required>
+
+  <input type="text" placeholder="Country" required>
+  <input type="text" placeholder="Time Zone (e.g. Asia/Dubai)" required>
+
+  <input type="text" placeholder="Preferred Class Time" required>
+
+  <button type="submit">Pay & Enroll</button>
+</form>
 <a class="btn primary" onclick="joinClass()">Join Now</a>
 </div>
 
@@ -702,6 +724,34 @@ function joinClass(){
     box.style.opacity = "0";
     setTimeout(()=>box.remove(),300);
   },3000);
+}
+ function convertTime(){
+
+  let timezone = document.querySelectorAll("input")[3].value;
+
+  let time = new Date().toLocaleString("en-US", {
+    timeZone: timezone
+  });
+
+  console.log("User Time:", time);
+}
+ function submitForm(){
+
+  fetch("/enroll", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      name:"student",
+      class:"10",
+      country:"UAE",
+      timezone:"Asia/Dubai",
+      time:"6PM"
+    })
+  })
+  .then(res=>res.json())
+  .then(data=>{
+    showMessage("🎉 Registered Successfully!");
+  });
 }
 </script>
 </body>
