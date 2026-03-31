@@ -170,61 +170,80 @@
   }
 
 }
-/* HERO */
-.hero{
-  background:linear-gradient(135deg,#004aad,#0b5394);
-  color:white;
-  text-align:center;
-  padding:50px 20px;
+
+body{
+  margin:0;
+  font-family: 'Poppins', sans-serif;
+  background:#f9fafb;
+  color:#111827;
 }
 
-.hero h1{font-size:32px;}
+/* HERO */
+.hero{
+  background: linear-gradient(135deg,#1e3a8a,#6366f1);
+  color:white;
+  text-align:center;
+  padding:60px 20px;
+}
+.hero h1{font-size:40px;}
+.hero p{font-size:18px;margin-top:10px}
 
 /* SECTION */
 .section{padding:50px 20px;}
-.container{max-width:1100px;margin:auto;}
+.container{max-width:1100px;margin:auto}
 
-.course-grid{
+/* CARD */
+.card{
+  background:white;
+  border-radius:15px;
+  padding:25px;
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  margin-bottom:30px;
+}
+
+/* FLEX BUTTONS */
+.actions{
+  display:flex;
+  gap:15px;
+  margin-top:20px;
+}
+.btn{
+  flex:1;
+  text-align:center;
+  padding:12px;
+  border-radius:8px;
+  cursor:pointer;
+  text-decoration:none;
+  font-weight:600;
+}
+.primary{background:#1e3a8a;color:white;}
+.secondary{background:#6366f1;color:white;}
+.outline{border:2px solid #1e3a8a;color:#1e3a8a}
+
+/* GRID */
+.grid{
   display:grid;
-  grid-template-columns:repeat(auto-fit,minmax(260px,1fr));
+  grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
   gap:20px;
 }
 
-/* CARD */
-.course-card{
-  background:white;
-  padding:25px;
-  border-radius:15px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.08);
-  text-align:center;
-  transition:0.3s;
-}
-
-.course-card:hover{
-  transform:translateY(-6px);
-}
-
-/* BUTTON */
-.btn{
-  display:block;
-  text-align:center;
-  padding:10px;
-  border-radius:8px;
-  margin-top:10px;
-  font-weight:600;
-  text-decoration:none;
-}
-
-.demo{background:#28a745;color:white;}
-.enroll{background:#0b5394;color:white;}
-
 /* BADGE */
-.live-badge{
-  color:red;
-  font-weight:700;
-  text-align:center;
-  margin-bottom:20px;
+.badge{
+  background:red;
+  color:white;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  display:inline-block;
 }
+
+/* NOTICE */
+.notice{
+  background:#eef2ff;
+  padding:15px;
+  border-left:5px solid #6366f1;
+  margin-top:20px;
+
 
 /* FOOTER */
 .footer{
@@ -374,78 +393,213 @@
 
 <body>
 
+<!-- ==========================
+         NAVBAR
+    ========================== -->
+    <nav class="navbar"> 
+        <div class="nav-left"> 
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo"> 
+            <div class="brand-text"> 
+                <h1>RANJITHAM STUDY CENTER</h1> 
+                <p>Learn • Practice • Excel in Mathematics</p> 
+            </div>
+        </div>
+        <div class="nav-center"> 
+            <a href="{{ url_for('home') }}">Home</a> 
+            <a href="{{ url_for('about') }}">About</a> 
+            <a href="{{ url_for('courses') }}">Class</a> 
+            <a href="{{ url_for('materials') }}">Materials</a>
+            <a href="{{ url_for('contact') }}">Contact</a> 
+        </div> 
+        <div class="nav-right">
+        <a href="/contact" class="demo-btn">Free demo class</a>
+        </div>
+    </nav>
 <!-- HERO -->
 <section class="hero">
   <h1>🌍 Global Live Classes</h1>
-  <p>CBSE & Engineering Coaching + International Online Classes</p>
+  <p>Online Classes Available for Students Worldwide</p>
+  <p>Special Support for Indian Students Abroad</p>
 </section>
 
 <!-- COURSES -->
 <section class="section">
 <div class="container">
 
-<h2 style="text-align:center;">Our Programs</h2>
+<div class="grid">
 
-<div class="course-grid">
+<!-- CBSE -->
+<div class="card">
+<h2>CBSE Mathematics</h2>
+<p><b>Online:</b> Class 10 & 12</p>
+<p><b>Offline:</b> Class 6 – 9</p>
 
-<div class="course-card">
-<h3>CBSE Mathematics</h3>
-<p>Class 6 – 12</p>
-<p>Concept + Practice + Exams</p>
+<p>✔ Concept + Practice + Exam Focus</p>
+
+<div class="notice">
+<strong>India:</strong> ₹300 – ₹700/hour (12 Classes/Month)<br>
+<strong>International:</strong> $10 – $20/hour
 </div>
 
-<div class="course-card">
-<h3>Engineering Maths</h3>
+<div class="actions">
+<a class="btn outline" onclick="bookDemo()">Free Demo</a>
+<a class="btn secondary" onclick="enroll()">Enroll</a>
+<a class="btn primary" id="joinBtn" onclick="joinClass()">Join Now</a>
+</div>
+
+<p style="margin-top:10px;color:red;">⚠ Only 35 Seats Available</p>
+<p style="font-size:13px;">If students increase, fees will be reduced</p>
+
+</div>
+
+<!-- ENGINEERING -->
+<div class="card">
+<h2>Engineering Maths</h2>
 <p>Maths I, II, III</p>
-<p>Arrear Coaching</p>
+<p>For Arrear / Backlog Students</p>
+
+<div class="notice">
+<strong>India:</strong> ₹10,000 (Full Course)<br>
+<strong>International:</strong> $10 – $20/hour
 </div>
 
+<div class="actions">
+<a class="btn outline" onclick="bookDemo()">Free Demo</a>
+<a class="btn secondary" onclick="enroll()">Enroll</a>
+<a class="btn primary" onclick="joinClass()">Join Now</a>
+</div>
+
+</div>
+
+</div>
+
+<!-- TARGET COUNTRIES -->
+<div class="card">
+<h3>🌍 Our International Students</h3>
+<p>UAE 🇦🇪 | Singapore 🇸🇬 | Malaysia 🇲🇾 | UK 🇬🇧 | Canada 🇨🇦 | Australia 🇦🇺</p>
+</div>
+
+<!-- PAYMENT -->
+<div class="card">
+<h3>Flexible Fee Structure</h3>
+<p>✔ Monthly Payment</p>
+<p>✔ Special Offers Available</p>
+
+<p><b>International Payments:</b></p>
+<p>✔ PayPal</p>
+<p>✔ Wise Transfer</p>
+</div>
+
+<!-- DEMO CTA -->
+<div class="card">
+<h3>🎓 Free Demo for UAE / UK Students – Limited Seats</h3>
+<p>Book now and experience our teaching</p>
 </div>
 
 </div>
 </section>
 
-<!-- LIVE CLASSES -->
-<section class="section" style="background:#eef3fb;">
-<div class="container">
+<!-- ==========================
+         CTA SECTION
+    ========================== -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <p class="cta-small">Best Maths Tuition in Medavakkam </p>
+            <h2>Ready to improve your Maths?</h2>
+            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with good guidance.</p>
+            <a href="/contact" class="cta-btn">Enroll Now</a>
+        </div>
+    </section>
 
-<h2 style="text-align:center;">🌍 Live Classes</h2>
-<p class="live-badge">⭐ First Class FREE Demo Available</p>
+    <!-- ==========================
+         CONTACT & FOOTER
+    ========================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>RANJITHAM STUDY CENTER</h3>
+                <p>Focused maths coaching for Class 6–12 students</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/courses">Courses</a>
+                <a href="/materials">Materials</a>
+                <a href="/contact">Contact</a>
+                <a href="/admin">Admin</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact Details</h3>
+                <p>📞 7702616245</p>
+                <p>📧 ranjithamstudycenter@gmail.com</p>
+           </div>
+        </div>
+        </footer>
+  <div class="privacy-box">
+  🔒 <strong>Your Privacy Matters</strong><br>
+    We collect your name, contact number, email, and feedback solely for communication purposes. 
+    This information is used to provide you with relevant educational updates and materials. 
+    Your data is securely stored and will not be shared with any third parties.
+  </div>
 
-<div class="course-grid">
+  
+ 
+    <!-- ==========================
+         WHATSAPP FLOAT BUTTON
+    ========================== -->
+    <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
 
-<!-- INDIAN -->
-<div class="course-card">
-<h3>🇮🇳 Indian Batch</h3>
-<p>🕒 7:00 PM IST</p>
-<p>💰 ₹300 / hour</p>
-<p style="color:red;">Limited Seats</p>
 
-<a href="/demo-class" class="btn demo">Join Free Demo</a>
-<a href="/enroll" class="btn enroll">Enroll Now</a>
-</div>
+ <script>
+let demoDone = false;
+let enrolled = false;
 
-<!-- INTERNATIONAL -->
-<div class="course-card">
-<h3>🌍 International Batch</h3>
-<p>🕒 IST / UK / USA</p>
-<p>💰 $10 / hour</p>
-<p style="color:red;">Limited Seats</p>
+function bookDemo(){
+  if(!demoDone){
+    alert("Demo Scheduled. Please wait for class timing.");
+    demoDone = true;
+  } else {
+    alert("Demo already completed");
+  }
+}
 
-<a href="/demo-class" class="btn demo">Join Free Demo</a>
-<a href="/enroll" class="btn enroll">Enroll Now</a>
-</div>
+function enroll(){
+  if(demoDone){
+    enrolled = true;
+    alert("Registered Successfully");
+    document.getElementById("joinBtn").style.opacity = "1";
+  } else {
+    alert("Please attend demo first");
+  }
+}
 
-</div>
+function joinClass(){
+  if(enrolled){
+    window.location.href = "https://meet.google.com/";
+  } else {
+    alert("Complete registration first");
+  }
+}
+  let currentHour = new Date().getHours();
 
-</div>
-</section>
+if(currentHour >= 18 && currentHour <= 20){
+  document.getElementById("liveBadge").style.display = "block";
+}
 
-<!-- FOOTER -->
-<div class="footer">
-© 2026 Ranjitham Study Center | All Rights Reserved
-</div>
 
+
+setTimeout(()=>{
+  document.querySelector(".outline").disabled = true;
+}, 3600000);
+
+
+
+if students_count >= 35:
+    disable_join = True
+</script>
 </body>
 </html>
-"""
+
+
+
