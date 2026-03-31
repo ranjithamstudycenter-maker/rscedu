@@ -546,21 +546,19 @@ body{
 
 
 <script>
+
 /* =========================
-   COURSE STATE (GLOBAL)
+   COURSE STATE
 ========================= */
 let courseState = {
-  cbse: {
-    demoDone: false,
-    enrolled: false
-  },
-  engg: {
-    demoDone: false,
-    enrolled: false
-  }
+  cbse: { demoDone: false, enrolled: false },
+  engg: { demoDone: false, enrolled: false },
+  intl: { demoDone: false, enrolled: false }
 };
 
 let students_count = 20;
+let userCountry = "India"; // later dynamic
+let isInternational = userCountry !== "India";
 
 /* =========================
    DOM READY
@@ -570,35 +568,29 @@ document.addEventListener("DOMContentLoaded", function(){
   const joinBtns = document.querySelectorAll(".joinBtn");
   const liveBadges = document.querySelectorAll(".liveBadge");
 
-  /* Disable all join buttons initially */
   joinBtns.forEach(btn => {
     btn.style.opacity = "0.5";
-    btn.style.pointerEvents = "auto";
+    btn.style.pointerEvents = "none";
   });
 
-  /* LIVE BADGE (6PM–8PM) */
   let currentHour = new Date().getHours();
 
   if(currentHour >= 18 && currentHour <= 20){
-    liveBadges.forEach(badge => {
-      badge.style.display = "inline-block";
-    });
+    liveBadges.forEach(b => b.style.display = "inline-block");
   }
 
-  /* SEAT LIMIT */
   if(students_count >= 35){
     joinBtns.forEach(btn => {
       btn.innerText = "Full";
       btn.style.background = "gray";
-      btn.style.pointerEvents = "auto";
+      btn.style.pointerEvents = "none";
     });
   }
-
 });
 
 
 /* =========================
-   DEMO FUNCTION
+   DEMO
 ========================= */
 function bookDemo(course){
 
@@ -608,13 +600,13 @@ function bookDemo(course){
   }
 
   let demoTime = new Date();
-  demoTime.setHours(17.35,0,0); // 6 PM
+  demoTime.setHours(18,0,0); // 6:00 PM
 
   let now = new Date();
   let diff = demoTime - now;
 
   if(diff > 0){
-    showMessage("⏳ Demo at 6:00 PM. Please wait...");
+    showMessage("⏳ Demo at 6:00 PM. Wait...");
     startCountdown(diff);
   }else{
     window.open("https://meet.google.com/", "_blank");
@@ -622,14 +614,14 @@ function bookDemo(course){
 
     setTimeout(()=>{
       courseState[course].demoDone = true;
-      showMessage("✅ Demo Completed for " + course.toUpperCase());
-    }, 60000);
+      showMessage("✅ Demo Completed");
+    }, 3600000); // 1 hour
   }
 }
 
 
 /* =========================
-   ENROLL FUNCTION
+   ENROLL
 ========================= */
 function enroll(course){
 
@@ -638,41 +630,37 @@ function enroll(course){
     return;
   }
 
-  let name = prompt("Enter your Name:");
-  let studentClass = prompt("Enter Class:");
-  let payment = prompt("Enter Payment Amount:");
-
-  // 💰 VALIDATION
-  let validAmount = 0;
-
-  if(course === "cbse"){
-    validAmount = 300; // minimum
-  }else if(course === "engg"){
-    validAmount = 10000;
+  if(isInternational && (course === "cbse" || course === "engg")){
+    showMessage("❌ Not available for International");
+    return;
   }
 
-  if(!name || !studentClass){
-    showMessage("⚠ Fill all details");
+  let name = prompt("Enter Name:");
+  let cls = prompt("Enter Class:");
+  let payment = prompt("Enter Payment:");
+
+  let validAmount = 0;
+
+  if(course === "cbse") validAmount = 300;
+  else if(course === "engg") validAmount = 10000;
+  else if(course === "intl") validAmount = 10;
+
+  if(!name || !cls){
+    showMessage("⚠ Fill details");
     return;
   }
 
   if(!payment || isNaN(payment) || payment < validAmount){
-    showMessage("❌ Invalid Payment. Please pay correct amount");
+    showMessage("❌ Invalid Payment");
     return;
   }
 
-  if(isInternational && (course === "cbse" || course === "engg")){
-   showMessage("❌ This course not available for international students");
-   return;
- }
-
-  // ✅ SUCCESS
-  showMessage("💳 Payment Verified...");
+  showMessage("💳 Payment Processing...");
 
   setTimeout(()=>{
     courseState[course].enrolled = true;
 
-    showMessage("🎉 Successfully Enrolled in " + course.toUpperCase());
+    showMessage("🎉 Enrolled Successfully");
 
     let btn = document.querySelector(`.joinBtn[data-course="${course}"]`);
     btn.style.opacity = "1";
@@ -693,13 +681,13 @@ function joinClass(course){
   }
 
   let classTime = new Date();
-  classTime.setHours(17.37,0,0); // 7 PM
+  classTime.setHours(19,0,0); // 7 PM
 
   let now = new Date();
   let diff = classTime - now;
 
   if(diff > 0){
-    showMessage("⏳ Class starts at 7:00 PM");
+    showMessage("⏳ Class at 7:00 PM");
     startCountdown(diff);
   }else{
     window.open("https://meet.google.com/", "_blank");
@@ -715,19 +703,18 @@ function startCountdown(duration){
   let timer = duration / 1000;
 
   let interval = setInterval(()=>{
-    let minutes = Math.floor(timer / 60);
-    let seconds = Math.floor(timer % 60);
+    let m = Math.floor(timer / 60);
+    let s = Math.floor(timer % 60);
 
-    showMessage("⏳ " + minutes + "m " + seconds + "s remaining");
+    showMessage("⏳ " + m + "m " + s + "s");
 
     timer--;
 
     if(timer < 0){
       clearInterval(interval);
-      showMessage("⏳ Demo running (1 hour session)");
     }
 
-  }, 1000);
+  },1000);
 }
 
 
@@ -747,29 +734,12 @@ function showMessage(msg){
   box.style.color = "white";
   box.style.padding = "12px 20px";
   box.style.borderRadius = "10px";
-  box.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
 
   document.body.appendChild(box);
 
   setTimeout(()=>box.remove(),3000);
 }
 
- let isInternational = false;
-
-// Example: you can later set this from form
-let userCountry = "India"; // change dynamically
-
-if(userCountry !== "India"){
-  isInternational = true;
-}
-
- intl: {
-  demoDone: false,
-  enrolled: false
-}
- if(course === "intl"){
-  validAmount = 10; // USD minimum
-}
 </script>
 </body>
 </html>
