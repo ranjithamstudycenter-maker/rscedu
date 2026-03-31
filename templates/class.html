@@ -479,6 +479,13 @@ body{
 
 </div>
 
+<h2>International Maths Program</h2>
+<p>Custom 1-to-1 Coaching</p>
+
+<button onclick="bookDemo('intl')">Free Demo</button>
+<button onclick="enroll('intl')">Enroll</button>
+<button class="joinBtn" data-course="intl" onclick="joinClass('intl')">Join</button>
+
 </div>
 
 </div>
@@ -635,22 +642,43 @@ function enroll(course){
   let studentClass = prompt("Enter Class:");
   let payment = prompt("Enter Payment Amount:");
 
-  if(name && studentClass && payment){
+  // 💰 VALIDATION
+  let validAmount = 0;
 
-    showMessage("💳 Processing Payment...");
-
-    setTimeout(()=>{
-      courseState[course].enrolled = true;
-
-      showMessage("🎉 Successfully Enrolled in " + course.toUpperCase());
-
-      /* Enable correct join button */
-      let btn = document.querySelector(`.joinBtn[data-course="${course}"]`);
-      btn.style.opacity = "1";
-      btn.style.pointerEvents = "auto";
-
-    },2000);
+  if(course === "cbse"){
+    validAmount = 300; // minimum
+  }else if(course === "engg"){
+    validAmount = 10000;
   }
+
+  if(!name || !studentClass){
+    showMessage("⚠ Fill all details");
+    return;
+  }
+
+  if(!payment || isNaN(payment) || payment < validAmount){
+    showMessage("❌ Invalid Payment. Please pay correct amount");
+    return;
+  }
+
+  if(isInternational && (course === "cbse" || course === "engg")){
+   showMessage("❌ This course not available for international students");
+   return;
+ }
+
+  // ✅ SUCCESS
+  showMessage("💳 Payment Verified...");
+
+  setTimeout(()=>{
+    courseState[course].enrolled = true;
+
+    showMessage("🎉 Successfully Enrolled in " + course.toUpperCase());
+
+    let btn = document.querySelector(`.joinBtn[data-course="${course}"]`);
+    btn.style.opacity = "1";
+    btn.style.pointerEvents = "auto";
+
+  },2000);
 }
 
 
@@ -696,7 +724,7 @@ function startCountdown(duration){
 
     if(timer < 0){
       clearInterval(interval);
-      showMessage("🎥 Now Live!");
+      showMessage("⏳ Demo running (1 hour session)");
     }
 
   }, 1000);
@@ -724,6 +752,23 @@ function showMessage(msg){
   document.body.appendChild(box);
 
   setTimeout(()=>box.remove(),3000);
+}
+
+ let isInternational = false;
+
+// Example: you can later set this from form
+let userCountry = "India"; // change dynamically
+
+if(userCountry !== "India"){
+  isInternational = true;
+}
+
+ intl: {
+  demoDone: false,
+  enrolled: false
+}
+ if(course === "intl"){
+  validAmount = 10; // USD minimum
 }
 </script>
 </body>
