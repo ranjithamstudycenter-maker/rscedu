@@ -163,7 +163,6 @@ def demo_class():
     </body></html>
     """
 
-from apscheduler.schedulers.background import BackgroundScheduler
 from datetime import datetime
 
 last_reset_day = None
@@ -172,18 +171,25 @@ def reset_all_students():
     global last_reset_day
     
     today = datetime.now().day
-    
+
     if last_reset_day == today:
-        return   # prevent multiple runs
-    
+        return   # avoid multiple runs
+
     print("Monthly reset done")
-    
+
+    # 👉 add your actual reset logic here
+    # example:
+    # students.clear()
+
     last_reset_day = today
 
 
-scheduler = BackgroundScheduler()
-scheduler.add_job(reset_all_students, 'cron', day=30)
-scheduler.start()
+@app.before_request
+def check_month_end():
+    today = datetime.now().day
+
+    if today == 30:
+        reset_all_students()
 
 # ================= ENROLL =================
 from flask import request, jsonify, session, redirect
