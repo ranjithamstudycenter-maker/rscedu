@@ -199,6 +199,8 @@ body{
   padding:25px;
   box-shadow:0 10px 25px rgba(0,0,0,0.08);
   margin-bottom:30px;
+  position: relative;
+  z-index: 1;
 }
 
 /* FLEX BUTTONS */
@@ -206,6 +208,8 @@ body{
   display:flex;
   gap:15px;
   margin-top:20px;
+  position: relative;
+  z-index: 5;
 }
 .btn{
   flex:1;
@@ -215,6 +219,8 @@ body{
   cursor:pointer;
   text-decoration:none;
   font-weight:600;
+  display: inline-block;
+  pointer-events: auto;
 }
 .primary{background:#1e3a8a;color:white;}
 .secondary{background:#6366f1;color:white;}
@@ -439,9 +445,13 @@ body{
 
 <!-- 🔘 BUTTONS -->
 <div class="actions">
- <a class="btn outline" onclick="bookDemo()">Free Demo</a>
- <a class="btn secondary" onclick="enroll()">Enroll</a>
-  <a class="btn primary" id="joinBtn" onclick="joinClass()">Join Now</a>
+
+  <button class="btn outline" onclick="bookDemo()">Free Demo</button>
+
+  <a href="/enroll" class="btn secondary">Enroll</a>
+
+  <button class="btn primary" id="joinBtn" onclick="joinClass()">Join Now</button>
+
 </div>
  
 <p style="margin-top:10px;color:red;">⚠ Only limited Seats Available</p>
@@ -461,9 +471,13 @@ body{
 </div>
 
 <div class="actions">
-<a class="btn outline" onclick="bookDemo()">Free Demo</a>
-<a class="btn secondary" onclick="enroll()">Enroll</a>
- <a class="btn primary" onclick="joinClass()">Join Now</a>
+
+  <button class="btn outline" onclick="bookDemo()">Free Demo</button>
+
+  <a href="/enroll" class="btn secondary">Enroll</a>
+
+  <button class="btn primary" id="joinBtn" onclick="joinClass()">Join Now</button>
+
 </div>
 
 </div>
@@ -544,7 +558,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   /* Disable Join initially */
   joinBtn.style.opacity = "0.5";
-  joinBtn.style.pointerEvents = "none";
+  joinBtn.style.pointerEvents = "auto";
 
   /* =========================
      LIVE BADGE (6PM–8PM)
@@ -562,7 +576,7 @@ document.addEventListener("DOMContentLoaded", function(){
   ========================= */
   setTimeout(()=>{
     if(demoBtn){
-      demoBtn.style.pointerEvents = "none";
+      demoBtn.style.pointerEvents = "auto";
       demoBtn.style.opacity = "0.5";
     }
   }, 3600000);
@@ -573,7 +587,7 @@ document.addEventListener("DOMContentLoaded", function(){
   if(students_count >= 35){
     joinBtn.innerText = "Full";
     joinBtn.style.background = "gray";
-    joinBtn.style.pointerEvents = "none";
+    joinBtn.style.pointerEvents = "auto";
   }
 
 });
