@@ -694,13 +694,16 @@ document.addEventListener("DOMContentLoaded", function(){
 ========================= */
 function bookDemo(course){
 
-  if(courseState[course].demoDone){
-    showMessage("⚠ Demo already completed");
+  // 🔐 Check local storage (same device block)
+  let demoKey = "demo_done_" + course;
+
+  if(localStorage.getItem(demoKey) === "true"){
+    showMessage("⚠ Demo already completed on this device");
     return;
   }
 
   let demoTime = new Date();
-  demoTime.setHours(18,0,0); // 6:00 PM
+  demoTime.setHours(18,0,0); // 6 PM
 
   let now = new Date();
   let diff = demoTime - now;
@@ -713,12 +716,15 @@ function bookDemo(course){
     showMessage("🎥 Demo Started");
 
     setTimeout(()=>{
-  courseState[course].demoDone = true;
-  showMessage("✅ Demo Completed");
-}, 120000); // 2 mins
+      courseState[course].demoDone = true;
+
+      // ✅ Save in browser
+      localStorage.setItem(demoKey, "true");
+
+      showMessage("✅ Demo Completed");
+    }, 120000); // 2 mins
   }
 }
-
 
 /* =========================
    ENROLL
