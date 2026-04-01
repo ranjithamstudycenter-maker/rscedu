@@ -696,8 +696,14 @@ function bookDemo(course){
 
   // 🔐 Check local storage (same device block)
   let demoKey = "demo_done_" + course;
+ 
 
-  if(localStorage.getItem(demoKey) === "true"){
+  if(localStorage.getItem(demoKey) === "true")
+  {
+  courseState[course].demoDone = true;
+  }
+  
+  {
     showMessage("⚠ Demo already completed on this device");
     return;
   }
@@ -736,11 +742,14 @@ function enroll(course){
     return;
   }
 
-  if(isInternational && (course === "cbse" || course === "engg")){
-    showMessage("❌ Not available for International");
-    return;
-  }
-
+  if(isInternational && (
+  course === "cbse10" || 
+  course === "cbse12" || 
+  course.startsWith("engg")
+)){
+  showMessage("❌ Not available for International");
+  return;
+}
   let name = prompt("Enter Name:");
   let cls = prompt("Enter Class:");
   let payment = prompt("Enter Payment:");
