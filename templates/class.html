@@ -970,7 +970,7 @@ function payNow(){
   let amount = pricePerHour[selectedCourse] * classesPerMonth;
 
   let options = {
-    key: "YOUR_RAZORPAY_KEY",
+    key: "{{ razorpay_key }}",
     amount: amount*100,
     currency: "INR",
     name: "Ranjitham Study Center",
