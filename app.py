@@ -118,26 +118,28 @@ def demo_class():
     if not session.get("user"):
         return redirect("/login")
 
-    user = users.get(session.get("user"))
+    email = session.get("user")
+    user = users.get(email)
 
     if not user:
         return redirect("/login")
 
-    if user["demo_attended"]:
+    # ✅ Already attended check
+    if user.get("demo_done"):
         return "<h3 style='text-align:center;'>Demo already completed ✅<br>Enroll now</h3>"
 
+    # ✅ Put user in waiting
     user["demo_waiting"] = True
-    users[email]["demo_done"] = True
-    
+
     indian = []
     international = []
 
     for u in users.values():
-        if u["demo_waiting"]:
-            if u["batch"] == "indian":
-                indian.append(u["name"])
+        if u.get("demo_waiting"):
+            if u.get("batch") == "indian":
+                indian.append(u.get("name", "Student"))
             else:
-                international.append(u["name"])
+                international.append(u.get("name", "Student"))
 
     return f"""
     <html><head><title>Demo Waiting</title>
@@ -152,20 +154,50 @@ def demo_class():
 
     <div class="box">
     <h3>🇮🇳 Indian ({len(indian)})</h3>
-    {"<br>".join(indian)}
+    {"<br>".join(indian) if indian else "No students yet"}
     </div>
 
     <div class="box">
     <h3>🌍 International ({len(international)})</h3>
-    {"<br>".join(international)}
+    {"<br>".join(international) if international else "No students yet"}
     </div>
 
     <br><br>
 
-    <a href="/live-room" style="padding:10px 20px;background:red;color:white;border-radius:8px;">Start Demo</a>
+    <a href="/live-room" style="padding:10px 20px;background:red;color:white;border-radius:8px;">
+    Start Demo
+    </a>
 
     </body></html>
     """
+
+# 🔍 CHECK DEMO STATUS
+@app.route("/api/check-demo")
+def check_demo():
+
+    email = session.get("user")
+
+    if not email or email not in users:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    return jsonify({
+        "demo_done": users[email].get("demo_done", False)
+    })
+
+# ✅ MARK DEMO COMPLETE
+@app.route("/api/demo-complete", methods=["POST"])
+def demo_complete():
+
+    email = session.get("user")
+
+    if not email or email not in users:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    users[email]["demo_done"] = True
+    users[email]["demo_waiting"] = False
+
+    return jsonify({"status": "saved"})
+
 
 from datetime import datetime
 
