@@ -518,6 +518,7 @@ body{
 }
   </style>
  <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+ <button onclick="payNow()">Pay Now</button>
 </head>
 
 <body>
@@ -910,7 +911,20 @@ document.addEventListener("DOMContentLoaded", function(){
       btn.style.pointerEvents = "none";
     });
   }
+ Object.keys(courseState).forEach(course => {
+
+  if(localStorage.getItem("demo_done_" + course) === "true"){
+    courseState[course].demoDone = true;
+  }
+
+  if(localStorage.getItem("enrolled_" + course) === "true"){
+    courseState[course].enrolled = true;
+  }
+
+  updateUI(course);
 });
+});
+ 
 
 
 /* =========================
@@ -984,6 +998,11 @@ function showTimer(course, msg){
     timerDiv.innerHTML = msg;
   }
 }
+ courseState[course].demoDone = true;
+localStorage.setItem("demo_done_" + course, "true");
+
+// 🔥 UPDATE UI
+updateUI(course);
 
 /* =========================
    COURSE PRICE MAP
@@ -1077,10 +1096,14 @@ function payNow(){
     description: selectedCourse + " Monthly Fee",
 
     handler: function () {
-
+    
       showMessage("🎉 Payment Successful");
 
       courseState[selectedCourse].enrolled = true;
+     localStorage.setItem("enrolled_" + selectedCourse, "true");
+
+      // 🔥 UPDATE UI
+      updateUI(selectedCourse);
 
       // ✅ Enable Join button
       let btn = document.querySelector(`.joinBtn[data-course="${selectedCourse}"]`);
@@ -1108,19 +1131,16 @@ function payNow(){
 ========================= */
  function joinClass(course){
 
-  // ✅ Check enrollment
   if(!courseState[course].enrolled){
     showMessage("⚠ Please enroll first");
     return;
   }
 
   let now = new Date();
-
-  // ✅ Get local class time
   let classTime = getLocalClassTime(course);
 
   let start = classTime;
-  let end = new Date(classTime.getTime() + 60*60*1000); // 1 hour duration
+  let end = new Date(classTime.getTime() + 60*60*1000);
 
   // ⏳ Before class
   if(now < start){
@@ -1136,15 +1156,28 @@ function payNow(){
     return;
   }
 
-  // ✅ DURING CLASS → allow unlimited join
-  window.open("https://meet.google.com/sus-iead-rhq", "_blank");
+  // ✅ OPEN MEET
+  window.open("https://meet.google.com/sus-iead-rhq", "_self");
+ 
 
-  // 🔴 Show LIVE badge
+  // 🔥 CHANGE BUTTON → JOINED
+  let joinBtn = document.querySelector(`.joinBtn[data-course="${course}"]`);
+  if(joinBtn){
+    joinBtn.innerText = "Joined";
+  }
+
+   // ⏳ AFTER CLASS → RESET BACK TO JOIN
+  setTimeout(()=>{
+    if(joinBtn){
+      joinBtn.innerText = "Join Now";
+    }
+  }, 3600000); // 1 hour
+}
+  // 🔴 SHOW LIVE
   let liveBadge = document.getElementById("live-" + course);
   if(liveBadge){
     liveBadge.style.display = "inline-block";
   }
-
   // 🔥 Show popup
   showLivePopup(course);
 }
@@ -1268,6 +1301,34 @@ function joinFromPopup(){
   }
 
   joinClass(currentLiveCourse);
+}
+
+ function updateUI(course){
+
+  let demoBtn = document.querySelector(`[onclick="bookDemo('${course}')"]`);
+  let enrollBtn = document.querySelector(`[onclick="enroll('${course}')"]`);
+  let joinBtn = document.querySelector(`.joinBtn[data-course="${course}"]`);
+
+  // ✅ DEMO
+  if(courseState[course].demoDone){
+    if(demoBtn){
+      demoBtn.innerText = "Demo Completed";
+      demoBtn.style.background = "green";
+    }
+  }
+
+  // ✅ ENROLL
+  if(courseState[course].enrolled){
+    if(enrollBtn){
+      enrollBtn.innerText = "Registered";
+      enrollBtn.style.background = "#0b5394";
+    }
+
+    if(joinBtn){
+      joinBtn.style.opacity = "1";
+      joinBtn.style.pointerEvents = "auto";
+    }
+  }
 }
 </script>
    
