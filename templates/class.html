@@ -1004,8 +1004,8 @@ function closeEnroll(){
   let amount = coursePrices[selectedCourse];
 
   var options = {
-    key: "rzp_test_xxxxx",   // 🔥 replace
-    amount: amount * 100,
+    key: "{{ razorpay_key }}",   // 🔥 replace
+    amount: amount * 12,
     currency: "INR",
     name: "Ranjitham Study Center",
     description: selectedCourse + " Monthly Fee",
