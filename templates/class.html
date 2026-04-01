@@ -827,11 +827,24 @@ body{
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <script>
 
-/* =========================
-   GLOBAL CONFIG
-========================= */
+let userCountry = "";
 let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+/* =========================
+   COUNTRY DETECT
+========================= */
+fetch("https://ipapi.co/json/")
+.then(res => res.json())
+.then(data => {
+  userCountry = data.country_name;
+})
+.catch(()=>{
+  userCountry = "India";
+});
+
+/* =========================
+   SCHEDULE
+========================= */
 let courseSchedule = {
   cbse10: { hour: 19, minute: 0 },
   cbse12: { hour: 20, minute: 0 },
@@ -843,18 +856,15 @@ let courseSchedule = {
   Maths: { hour: 0, minute: 30 }
 };
 
-let pricePerHour = {
-  cbse10: 300,
-  cbse12: 400,
-  engg1: 700,
-  engg2: 700,
-  engg3: 700,
-  control: 800,
-  AGS: 20,
-  Maths: 20
-};
+function getLocalClassTime(course){
+  let schedule = courseSchedule[course];
+  let indiaTime = new Date();
+  indiaTime.setHours(schedule.hour, schedule.minute, 0);
 
-let classesPerMonth = 12;
+  return new Date(
+    indiaTime.toLocaleString("en-US",{timeZone:userTimeZone})
+  );
+}
 
 /* =========================
    STATE
@@ -872,30 +882,51 @@ let courseState = {
 
 let selectedCourse = "";
 let currentLiveCourse = "";
+let isInternational = false;
 
 /* =========================
-   TIME CONVERSION
+   PRICING
 ========================= */
-function getLocalClassTime(course){
-  let s = courseSchedule[course];
+let pricePerHour = {
+  cbse10:300,
+  cbse12:400,
+  engg1:700,
+  engg2:700,
+  engg3:700,
+  control:800,
+  AGS:20,
+  Maths:20
+};
 
-  let indiaTime = new Date();
-  indiaTime.setHours(s.hour, s.minute, 0);
+let classesPerMonth = 12;
 
-  return new Date(indiaTime.toLocaleString("en-US",{timeZone:userTimeZone}));
-}
+/* =========================
+   DOM READY
+========================= */
+document.addEventListener("DOMContentLoaded", function(){
+
+  const joinBtns = document.querySelectorAll(".joinBtn");
+
+  joinBtns.forEach(btn => {
+    btn.style.opacity = "0.5";
+    btn.style.pointerEvents = "none";
+  });
+
+  showAllTimes();
+});
 
 /* =========================
    DEMO
 ========================= */
 function bookDemo(course){
 
+  let key = "demo_"+course;
   let timerDiv = document.getElementById("timer-"+course);
   let liveBadge = document.getElementById("live-"+course);
 
-  if(localStorage.getItem("demo_"+course)){
-    courseState[course].demoDone = true;
+  if(localStorage.getItem(key)){
     timerDiv.innerHTML = "✅ Demo Completed";
+    courseState[course].demoDone = true;
     return;
   }
 
@@ -907,6 +938,7 @@ function bookDemo(course){
   window.open("https://meet.google.com/wss-haop-vva","_blank");
 
   let interval = setInterval(()=>{
+
     let m = Math.floor(duration/60);
     let s = duration%60;
 
@@ -921,7 +953,7 @@ function bookDemo(course){
       liveBadge.style.display = "none";
 
       courseState[course].demoDone = true;
-      localStorage.setItem("demo_"+course,true);
+      localStorage.setItem(key,true);
     }
 
   },1000);
@@ -942,16 +974,16 @@ function enroll(course){
   let monthly = pricePerHour[course] * classesPerMonth;
 
   document.getElementById("courseTitle").innerText =
-    course.toUpperCase()+" Monthly Plan";
+    course.toUpperCase()+" - Monthly Plan";
 
   document.getElementById("coursePrice").innerText =
     "💳 ₹"+monthly+" ("+classesPerMonth+" classes)";
 
-  document.getElementById("enrollPopup").style.display="block";
+  document.getElementById("enrollPopup").style.display = "block";
 }
 
 function closeEnroll(){
-  document.getElementById("enrollPopup").style.display="none";
+  document.getElementById("enrollPopup").style.display = "none";
 }
 
 /* =========================
@@ -963,30 +995,27 @@ function payNow(){
   let email = document.getElementById("studentEmail").value;
 
   if(!name || !email){
-    showMessage("⚠ Fill details");
+    showMessage("⚠ Fill all details");
     return;
   }
 
   let amount = pricePerHour[selectedCourse] * classesPerMonth;
 
-  let options = {
+  var options = {
     key: "{{ razorpay_key }}",
-    amount: amount*100,
+    amount: amount * 100,
     currency: "INR",
     name: "Ranjitham Study Center",
     description: selectedCourse+" Monthly",
 
     handler: function(){
-      showMessage("🎉 Payment Success");
+      showMessage("🎉 Payment Successful");
 
       courseState[selectedCourse].enrolled = true;
 
-      let btn = document.querySelector(
-        `.joinBtn[data-course="${selectedCourse}"]`
-      );
-
-      btn.style.opacity="1";
-      btn.style.pointerEvents="auto";
+      let btn = document.querySelector(`.joinBtn[data-course="${selectedCourse}"]`);
+      btn.style.opacity = "1";
+      btn.style.pointerEvents = "auto";
 
       closeEnroll();
     },
@@ -999,21 +1028,21 @@ function payNow(){
 }
 
 /* =========================
-   JOIN CLASS (UNLIMITED ENTRY)
+   JOIN CLASS (FINAL VERSION)
 ========================= */
 function joinClass(course){
 
   if(!courseState[course].enrolled){
-    showMessage("⚠ Enroll first");
+    showMessage("⚠ Please enroll first");
     return;
   }
 
   let now = new Date();
   let start = getLocalClassTime(course);
-  let end = new Date(start.getTime()+3600000);
+  let end = new Date(start.getTime() + 3600000);
 
   if(now < start){
-    showMessage("⏳ Not started");
+    showMessage("⏳ Class not started");
     return;
   }
 
@@ -1022,13 +1051,31 @@ function joinClass(course){
     return;
   }
 
-  // ✅ Unlimited entry
+  // ✅ unlimited join
   window.open("https://meet.google.com/sus-iead-rhq","_blank");
 
   let badge = document.getElementById("live-"+course);
-  badge.style.display="inline-block";
+  if(badge) badge.style.display = "inline-block";
 
   showLivePopup(course);
+}
+
+/* =========================
+   TIME DISPLAY
+========================= */
+function showAllTimes(){
+  Object.keys(courseSchedule).forEach(course => {
+    let time = getLocalClassTime(course);
+
+    let formatted = time.toLocaleTimeString([], {
+      hour:'2-digit', minute:'2-digit'
+    });
+
+    let el = document.getElementById("time-"+course);
+    if(el){
+      el.innerText = "🕒 Your Time: " + formatted;
+    }
+  });
 }
 
 /* =========================
@@ -1043,10 +1090,10 @@ function showLivePopup(course){
 
   text.innerHTML = "🔴 "+course.toUpperCase()+" LIVE NOW";
 
-  popup.style.display="block";
+  popup.style.display = "block";
 
   setTimeout(()=>{
-    popup.style.display="none";
+    popup.style.display = "none";
   },5000);
 }
 
@@ -1067,8 +1114,8 @@ function showMessage(msg){
   box.style.transform="translateX(-50%)";
   box.style.background="#1e3a8a";
   box.style.color="white";
-  box.style.padding="10px 20px";
-  box.style.borderRadius="8px";
+  box.style.padding="12px 20px";
+  box.style.borderRadius="10px";
 
   document.body.appendChild(box);
   setTimeout(()=>box.remove(),3000);
