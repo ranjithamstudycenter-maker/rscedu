@@ -514,8 +514,7 @@ body{
   #coursePrice{
   font-size:18px;
 }
-</style>
- <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 </head>
 
 <body>
@@ -861,11 +860,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   let currentHour = new Date().getHours();
 
-  if(currentHour >= 18 && currentHour <= 20){
-    liveBadges.forEach(b => b.style.display = "inline-block");
-  }
-
-  if(students_count >= 35){
+   if(students_count >= 35){
     joinBtns.forEach(btn => {
       btn.innerText = "Full";
       btn.style.background = "gray";
@@ -884,10 +879,14 @@ function bookDemo(course){
   let timerDiv = document.getElementById("timer-" + course);
   let liveBadge = document.getElementById("live-" + course);
 
-  if(localStorage.getItem(demoKey) === "true"){
-    timerDiv.innerHTML = "⚠ Demo already completed";
-    return;
-  }
+ if(localStorage.getItem(demoKey) === "true"){
+  timerDiv.innerHTML = "⚠ Demo already completed";
+
+  // ✅ IMPORTANT FIX
+  courseState[course].demoDone = true;
+
+  return;
+}
 
   let duration = 120;
 
@@ -992,7 +991,7 @@ function closeEnroll(){
 /* =========================
    PAYMENT
 ========================= */
-function payNow(){
+ function payNow(){
 
   let name = document.getElementById("studentName").value;
   let email = document.getElementById("studentEmail").value;
@@ -1002,11 +1001,10 @@ function payNow(){
     return;
   }
 
-  // 🔥 AUTO AMOUNT
   let amount = coursePrices[selectedCourse];
 
   var options = {
-    key: "YOUR_RAZORPAY_KEY",
+    key: "rzp_test_xxxxx",   // 🔥 replace
     amount: amount * 100,
     currency: "INR",
     name: "Ranjitham Study Center",
@@ -1018,7 +1016,6 @@ function payNow(){
 
       courseState[selectedCourse].enrolled = true;
 
-      // ✅ ENABLE JOIN BUTTON
       let btn = document.querySelector(`.joinBtn[data-course="${selectedCourse}"]`);
       btn.style.opacity = "1";
       btn.style.pointerEvents = "auto";
@@ -1277,6 +1274,8 @@ function showLivePopup(course){
 
   </div>
 </div>
+   </style>
+ <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </body>
 </html>
 
