@@ -127,7 +127,8 @@ def demo_class():
         return "<h3 style='text-align:center;'>Demo already completed ✅<br>Enroll now</h3>"
 
     user["demo_waiting"] = True
-
+    users[email]["demo_done"] = True
+    
     indian = []
     international = []
 
