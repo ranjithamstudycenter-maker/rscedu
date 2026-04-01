@@ -432,59 +432,112 @@ body{
 
 <!-- CBSE -->
 <div class="card">
-<span class="badge liveBadge" style="display:none;">🔴 LIVE</span>
-<h2>CBSE Mathematics</h2>
-<p><b>Online:</b> Class 10 & 12</p>
-<p><b>Offline:</b> Class 6 – 9</p>
+<div class="grid">
 
-
-<div class="notice">
-<strong>India:</strong> ₹300 – ₹700/hour (12 Classes/Month)<br>
-<strong>International:</strong> $10 – $20/hour
-</div>
-
-<!-- 🔘 BUTTONS -->
-<div class="actions">
-
-<button class="btn outline" onclick="bookDemo('cbse')">Free Demo</button>
-
-<button class="btn secondary" onclick="enroll('cbse')">Enroll</button>
-
-<button class="btn primary joinBtn" data-course="cbse" onclick="joinClass('cbse')">Join Now</button>
-</div>
- 
-<p style="margin-top:10px;color:red;">⚠ Only limited Seats Available</p>
-<p style="font-size:13px;">If students increase, fees will be reduced</p>
-
-</div>
-
-<!-- ENGINEERING -->
+<!-- CBSE 10 -->
 <div class="card">
-<h2>Engineering Maths</h2>
-<p>Maths I, II, III</p>
-<p>For Arrear / Backlog Students</p>
-
-<div class="notice">
-<strong>India:</strong> ₹10,000 (Full Course)<br>
-<strong>International:</strong> $10 – $20/hour
-</div>
+<h2>CBSE Maths – Class 10</h2>
+<p>₹300 / hour</p>
+<p>12 Hours / Month</p>
 
 <div class="actions">
-
- <button class="btn outline" onclick="bookDemo('engg')">Free Demo</button>
-
-<button class="btn secondary" onclick="enroll('engg')">Enroll</button>
-
-<button class="btn primary joinBtn" data-course="engg" onclick="joinClass('engg')">Join Now</button>
-
+<button class="btn outline" onclick="bookDemo('cbse10')">Free Demo</button>
+<button class="btn secondary" onclick="enroll('cbse10')">Enroll</button>
+<button class="btn primary joinBtn" data-course="cbse10" onclick="joinClass('cbse10')">Join Now</button>
+</div>
 </div>
 
-<h2>International Maths Program</h2>
-<p>Custom 1-to-1 Coaching</p>
+<!-- CBSE 12 -->
+<div class="card">
+<h2>CBSE Maths – Class 12</h2>
+<p>₹400 / hour</p>
+<p>12 Hours / Month</p>
 
-<button onclick="bookDemo('intl')">Free Demo</button>
-<button onclick="enroll('intl')">Enroll</button>
-<button class="joinBtn" data-course="intl" onclick="joinClass('intl')">Join</button>
+<div class="actions">
+<button class="btn outline" onclick="bookDemo('cbse12')">Free Demo</button>
+<button class="btn secondary" onclick="enroll('cbse12')">Enroll</button>
+<button class="btn primary joinBtn" data-course="cbse12" onclick="joinClass('cbse12')">Join Now</button>
+</div>
+</div>
+
+<!-- Engg Maths 1 -->
+<div class="card">
+<h2>Engineering Maths I</h2>
+<p>₹10,000 (15 Hours)</p>
+<p>2 Installments Available</p>
+
+<div class="actions">
+<button class="btn outline" onclick="bookDemo('engg1')">Free Demo</button>
+<button class="btn secondary" onclick="enroll('engg1')">Enroll</button>
+<button class="btn primary joinBtn" data-course="engg1" onclick="joinClass('engg1')">Join Now</button>
+</div>
+</div>
+
+<!-- Engg Maths 2 -->
+<div class="card">
+<h2>Engineering Maths II</h2>
+<p>₹10,000 (15 Hours)</p>
+
+<div class="actions">
+<button class="btn outline" onclick="bookDemo('engg2')">Free Demo</button>
+<button class="btn secondary" onclick="enroll('engg2')">Enroll</button>
+<button class="btn primary joinBtn" data-course="engg2" onclick="joinClass('engg2')">Join Now</button>
+</div>
+</div>
+
+<!-- Engg Maths 3 -->
+<div class="card">
+<h2>Engineering Maths III</h2>
+<p>₹10,000 (15 Hours)</p>
+
+<div class="actions">
+<button class="btn outline" onclick="bookDemo('engg3')">Free Demo</button>
+<button class="btn secondary" onclick="enroll('engg3')">Enroll</button>
+<button class="btn primary joinBtn" data-course="engg3" onclick="joinClass('engg3')">Join Now</button>
+</div>
+</div>
+
+<!-- Control System (International) -->
+<div class="card">
+<h2>Control System (International)</h2>
+<p>$100 (15 hours)</p>
+<p>Custom 1-to-1</p>
+
+<div class="actions">
+<button class="btn outline" onclick="bookDemo('control')">Free Demo</button>
+<button class="btn secondary" onclick="enroll('control')">Enroll</button>
+<button class="btn primary joinBtn" data-course="control" onclick="joinClass('control')">Join Now</button>
+</div>
+</div>
+
+
+ <!-- Algebra/Geometry/Calculus -->
+<div class="card">
+<h2>USA-Algebra/Geometry/Calculus</h2>
+<p>$20 (15 Hours)</p>
+<p>Custom 1-to-1</p>
+<div class="actions">
+<button class="btn outline" onclick="bookDemo('AGS')">Free Demo</button>
+<button class="btn secondary" onclick="enroll('AGS')">Enroll</button>
+<button class="btn primary joinBtn" data-course="AGS" onclick="joinClass('AGS')">Join Now</button>
+</div>
+</div>
+
+
+ <!-- Maths -->
+<div class="card">
+<h2>USA-Maths</h2>
+<p>$20 (15 Hours)</p>
+<p>Custom 1-to-1</p>
+
+<div class="actions">
+<button class="btn outline" onclick="bookDemo('Maths')">Free Demo</button>
+<button class="btn secondary" onclick="enroll('Maths')">Enroll</button>
+<button class="btn primary joinBtn" data-course="Maths" onclick="joinClass('Maths')">Join Now</button>
+</div>
+</div>
+
+</div>
 
 </div>
 
@@ -551,9 +604,15 @@ body{
    COURSE STATE
 ========================= */
 let courseState = {
-  cbse: { demoDone: false, enrolled: false },
-  engg: { demoDone: false, enrolled: false },
-  intl: { demoDone: false, enrolled: false }
+  cbse10: { demoDone:false, enrolled:false },
+  cbse12: { demoDone:false, enrolled:false },
+  engg1: { demoDone:false, enrolled:false },
+  engg2: { demoDone:false, enrolled:false },
+  engg3: { demoDone:false, enrolled:false },
+  control: { demoDone:false, enrolled:false },
+  AGS: { demoDone:false, enrolled:false },
+  Maths: { demoDone:false, enrolled:false }
+ 
 };
 
 let students_count = 20;
@@ -613,9 +672,9 @@ function bookDemo(course){
     showMessage("🎥 Demo Started");
 
     setTimeout(()=>{
-      courseState[course].demoDone = true;
-      showMessage("✅ Demo Completed");
-    }, 3600000); // 1 hour
+  courseState[course].demoDone = true;
+  showMessage("✅ Demo Completed");
+}, 120000); // 2 mins
   }
 }
 
@@ -641,9 +700,12 @@ function enroll(course){
 
   let validAmount = 0;
 
-  if(course === "cbse") validAmount = 300;
-  else if(course === "engg") validAmount = 10000;
-  else if(course === "intl") validAmount = 10;
+ if(course === "cbse10") validAmount = 300;
+ else if(course === "cbse12") validAmount = 400;
+ else if(course.startsWith("engg")) validAmount = 10000; // installment allowed
+ else if(course === "control") validAmount = 10;
+ else if(course === "AGS") validAmount = 20;
+ else if(course === "Maths") validAmount = 20;
 
   if(!name || !cls){
     showMessage("⚠ Fill details");
