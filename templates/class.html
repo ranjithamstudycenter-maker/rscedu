@@ -830,8 +830,8 @@ function startCountdown(duration){
 /* =========================
    MESSAGE BOX
 ========================= */
+<script>
 function showMessage(msg){
-
   let box = document.createElement("div");
   box.innerText = msg;
 
@@ -843,12 +843,50 @@ function showMessage(msg){
   box.style.color = "white";
   box.style.padding = "12px 20px";
   box.style.borderRadius = "10px";
+  box.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
 
   document.body.appendChild(box);
-
   setTimeout(()=>box.remove(),3000);
 }
 
+
+function startDemoFlow(){
+
+  fetch("/api/check-demo")
+  .then(res => res.json())
+  .then(data => {
+
+    // ❌ Already attended
+    if(data.demo_done){
+      showMessage("⚠ Demo already completed");
+      return;
+    }
+
+    // ✅ Start demo
+    showMessage("🎥 Demo Started");
+
+    window.open("https://meet.google.com/", "_blank");
+
+    // ⏳ After 2 mins → mark complete
+    setTimeout(()=>{
+
+      fetch("/api/demo-complete", {
+        method: "POST"
+      })
+      .then(res => res.json())
+      .then(()=>{
+        showMessage("✅ Demo Completed");
+      });
+
+    }, 120000); // 2 minutes
+
+  })
+  .catch(()=>{
+    showMessage("❌ Please login first");
+  });
+
+}
+</script>
 </script>
 </body>
 </html>
