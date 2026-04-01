@@ -830,9 +830,7 @@ body{
 let userCountry = "";
 let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-/* =========================
-   COUNTRY DETECT
-========================= */
+// 🌍 Detect country (simple API)
 fetch("https://ipapi.co/json/")
 .then(res => res.json())
 .then(data => {
@@ -841,12 +839,9 @@ fetch("https://ipapi.co/json/")
 .catch(()=>{
   userCountry = "India";
 });
-
-/* =========================
-   SCHEDULE
-========================= */
+ 
 let courseSchedule = {
-  cbse10: { hour: 19, minute: 0 },
+  cbse10: { hour: 19, minute: 0 },   // India time
   cbse12: { hour: 20, minute: 0 },
   engg1: { hour: 18, minute: 30 },
   engg2: { hour: 19, minute: 30 },
@@ -855,50 +850,40 @@ let courseSchedule = {
   AGS: { hour: 0, minute: 0 },
   Maths: { hour: 0, minute: 30 }
 };
+ 
+ function getLocalClassTime(course){
 
-function getLocalClassTime(course){
   let schedule = courseSchedule[course];
+
   let indiaTime = new Date();
   indiaTime.setHours(schedule.hour, schedule.minute, 0);
 
-  return new Date(
-    indiaTime.toLocaleString("en-US",{timeZone:userTimeZone})
+  // Convert to user's timezone
+  let localTime = new Date(
+    indiaTime.toLocaleString("en-US", { timeZone: userTimeZone })
   );
-}
 
+  return localTime;
+}
+ 
 /* =========================
-   STATE
+   COURSE STATE
 ========================= */
 let courseState = {
-  cbse10:{demoDone:false,enrolled:false},
-  cbse12:{demoDone:false,enrolled:false},
-  engg1:{demoDone:false,enrolled:false},
-  engg2:{demoDone:false,enrolled:false},
-  engg3:{demoDone:false,enrolled:false},
-  control:{demoDone:false,enrolled:false},
-  AGS:{demoDone:false,enrolled:false},
-  Maths:{demoDone:false,enrolled:false}
+  cbse10: { demoDone:false, enrolled:false },
+  cbse12: { demoDone:false, enrolled:false },
+  engg1: { demoDone:false, enrolled:false },
+  engg2: { demoDone:false, enrolled:false },
+  engg3: { demoDone:false, enrolled:false },
+  control: { demoDone:false, enrolled:false },
+  AGS: { demoDone:false, enrolled:false },
+  Maths: { demoDone:false, enrolled:false }
+ 
 };
 
-let selectedCourse = "";
-let currentLiveCourse = "";
-let isInternational = false;
-
-/* =========================
-   PRICING
-========================= */
-let pricePerHour = {
-  cbse10:300,
-  cbse12:400,
-  engg1:700,
-  engg2:700,
-  engg3:700,
-  control:800,
-  AGS:20,
-  Maths:20
-};
-
-let classesPerMonth = 12;
+let students_count = 20;
+let userCountry = "India"; // later dynamic
+let isInternational = userCountry !== "India";
 
 /* =========================
    DOM READY
@@ -906,43 +891,59 @@ let classesPerMonth = 12;
 document.addEventListener("DOMContentLoaded", function(){
 
   const joinBtns = document.querySelectorAll(".joinBtn");
+  const liveBadges = document.querySelectorAll(".liveBadge");
 
   joinBtns.forEach(btn => {
     btn.style.opacity = "0.5";
     btn.style.pointerEvents = "none";
   });
 
-  showAllTimes();
+  let currentHour = new Date().getHours();
+
+   if(students_count >= 35){
+    joinBtns.forEach(btn => {
+      btn.innerText = "Full";
+      btn.style.background = "gray";
+      btn.style.pointerEvents = "none";
+    });
+  }
 });
+
 
 /* =========================
    DEMO
 ========================= */
 function bookDemo(course){
 
-  let key = "demo_"+course;
-  let timerDiv = document.getElementById("timer-"+course);
-  let liveBadge = document.getElementById("live-"+course);
+  let demoKey = "demo_done_" + course;
+  let timerDiv = document.getElementById("timer-" + course);
+  let liveBadge = document.getElementById("live-" + course);
 
-  if(localStorage.getItem(key)){
-    timerDiv.innerHTML = "✅ Demo Completed";
-    courseState[course].demoDone = true;
-    return;
-  }
+ if(localStorage.getItem(demoKey) === "true"){
+  timerDiv.innerHTML = "⚠ Demo already completed";
+
+  // ✅ IMPORTANT FIX
+  courseState[course].demoDone = true;
+
+  return;
+}
 
   let duration = 120;
 
+  // 🔴 SHOW LIVE
   liveBadge.style.display = "inline-block";
+
+  // 🔥 ADD THIS
   showLivePopup(course);
 
-  window.open("https://meet.google.com/wss-haop-vva","_blank");
+  window.open("https://meet.google.com/wss-haop-vva", "_blank");
 
   let interval = setInterval(()=>{
 
-    let m = Math.floor(duration/60);
-    let s = duration%60;
+    let m = Math.floor(duration / 60);
+    let s = duration % 60;
 
-    timerDiv.innerHTML = "⏳ "+m+"m "+s+"s";
+    timerDiv.innerHTML = "⏳ Demo: " + m + "m " + s + "s";
 
     duration--;
 
@@ -950,46 +951,105 @@ function bookDemo(course){
       clearInterval(interval);
 
       timerDiv.innerHTML = "✅ Demo Completed";
-      liveBadge.style.display = "none";
+      liveBadge.style.display = "none"; // ❌ hide LIVE
 
       courseState[course].demoDone = true;
-      localStorage.setItem(key,true);
+      localStorage.setItem(demoKey, "true");
     }
 
   },1000);
 }
+ function showTimer(course, msg){
+  let timerDiv = document.getElementById("timer-" + course);
+  timerDiv.innerHTML = msg;
+}
+
+/* =========================
+   COURSE PRICE MAP
+========================= */
+let coursePrices = {
+  cbse10: 300,
+  cbse12: 400,
+  engg1: 10000,
+  engg2: 10000,
+  engg3: 10000,
+  control: 8000,
+  AGS: 1600,
+  Maths: 1600
+};
+
+let selectedCourse = "";
+
+ let pricePerHour = {
+  cbse10: 300,
+  cbse12: 400,
+  engg1: 700,
+  engg2: 700,
+  engg3: 700,
+  control: 800,
+  AGS: 20,
+  Maths: 20
+};
+
+let classesPerMonth = 12;
+
 
 /* =========================
    ENROLL
 ========================= */
 function enroll(course){
 
+  // ✅ Demo check
   if(!courseState[course].demoDone){
     showMessage("⚠ Attend demo first");
     return;
   }
 
+  // 🌍 International restriction
+  if(isInternational && (
+    course === "cbse10" || 
+    course === "cbse12" || 
+    course.startsWith("engg")
+  )){
+    showMessage("❌ Not available for International");
+    return;
+  }
+
   selectedCourse = course;
 
-  let monthly = pricePerHour[course] * classesPerMonth;
-
+  // 🔥 SET TITLE
   document.getElementById("courseTitle").innerText =
-    course.toUpperCase()+" - Monthly Plan";
+    course.toUpperCase() + " - Monthly Plan";
 
+  // 🔥 SET PRICE
   document.getElementById("coursePrice").innerText =
-    "💳 ₹"+monthly+" ("+classesPerMonth+" classes)";
+    "💳 Monthly Fee: ₹" + coursePrices[course];
 
+  // ✅ OPEN POPUP
   document.getElementById("enrollPopup").style.display = "block";
 }
+timerDiv.style.background = "none";
+timerDiv.style.color = "#1e3a8a";
+timerDiv.style.fontWeight = "bold";
 
+ let monthlyAmount = pricePerHour[course] * classesPerMonth;
+
+document.getElementById("coursePrice").innerText =
+  "💳 Monthly Fee: ₹" + monthlyAmount + " (" + classesPerMonth + " classes)";
+ let amount = pricePerHour[selectedCourse] * classesPerMonth;
+
+/* =========================
+   CLOSE POPUP
+========================= */
 function closeEnroll(){
   document.getElementById("enrollPopup").style.display = "none";
 }
 
+
 /* =========================
    PAYMENT
 ========================= */
-function payNow(){
+ function payNow(){
 
   let name = document.getElementById("studentName").value;
   let email = document.getElementById("studentEmail").value;
@@ -999,16 +1059,17 @@ function payNow(){
     return;
   }
 
-  let amount = pricePerHour[selectedCourse] * classesPerMonth;
+  let amount = coursePrices[selectedCourse];
 
   var options = {
-    key: "{{ razorpay_key }}",
-    amount: amount * 100,
+    key: "{{ razorpay_key }}",   // 🔥 replace
+    amount: amount * 12,
     currency: "INR",
     name: "Ranjitham Study Center",
-    description: selectedCourse+" Monthly",
+    description: selectedCourse + " Monthly Fee",
 
-    handler: function(){
+    handler: function () {
+
       showMessage("🎉 Payment Successful");
 
       courseState[selectedCourse].enrolled = true;
@@ -1020,16 +1081,116 @@ function payNow(){
       closeEnroll();
     },
 
-    prefill:{name,email},
-    theme:{color:"#1e3a8a"}
+    prefill: {
+      name: name,
+      email: email
+    },
+
+    theme: {
+      color: "#1e3a8a"
+    }
   };
 
-  new Razorpay(options).open();
+  let rzp1 = new Razorpay(options);
+  rzp1.open();
+}
+ 
+/* =========================
+   JOIN CLASS
+========================= */
+ function joinClass(course){
+
+  let liveBadge = document.getElementById("live-" + course);
+
+  if(!courseState[course].enrolled){
+    showMessage("⚠ Please enroll first");
+    return;
+  }
+
+  let classTime = new Date();
+  classTime.setHours(19,0,0);
+
+  let now = new Date();
+  let diff = classTime - now;
+
+  if(diff > 0){
+    showMessage("⏳ Class at 7:00 PM");
+  }else{
+
+    // 🔴 SHOW LIVE
+    liveBadge.style.display = "inline-block";
+
+    // 🔥 ADD THIS
+   showLivePopup(course);
+
+    window.open("https://meet.google.com/sus-iead-rhq", "_self");
+
+    // ⏳ Assume class duration 1 hour
+    setTimeout(()=>{
+      liveBadge.style.display = "none";
+    }, 1000); // 1 hour
+  }
+}
+function joinClass(course){
+
+  let liveBadge = document.getElementById("live-" + course);
+
+  if(!courseState[course].enrolled){
+    showMessage("⚠ Please enroll first");
+    return;
+  }
+
+  let now = new Date();
+
+  // ✅ Get course time
+  let schedule = courseSchedule[course];
+
+  let classTime = new Date();
+  classTime.setHours(schedule.hour, schedule.minute, 0);
+ let classTime = getLocalClassTime(course);
+ let now = new Date();
+
+
+  let diff = classTime - now;
+
+  if(diff > 0){
+
+    let m = Math.floor(diff / 60000);
+    showMessage("⏳ Class starts in " + m + " mins");
+
+  }else{
+
+    // 🔴 LIVE SHOW
+    liveBadge.style.display = "inline-block";
+
+    showLivePopup(course);
+
+    window.open("https://meet.google.com/sus-iead-rhq", "_self");
+
+    // Auto hide after 1 hour
+    setTimeout(()=>{
+      liveBadge.style.display = "none";
+    }, 3600000);
+  }
 }
 
-/* =========================
-   JOIN CLASS (FINAL VERSION)
-========================= */
+function showAllTimes(){
+  Object.keys(courseSchedule).forEach(course => {
+    let time = getLocalClassTime(course);
+
+    let formatted = time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
+
+    let el = document.getElementById("time-" + course);
+    if(el){
+      el.innerText = "🕒 Your Time: " + formatted;
+    }
+  });
+}
+
+document.addEventListener("DOMContentLoaded", showAllTimes);
+
+ let activeClasses = {};
+
 function joinClass(course){
 
   if(!courseState[course].enrolled){
@@ -1038,8 +1199,10 @@ function joinClass(course){
   }
 
   let now = new Date();
-  let start = getLocalClassTime(course);
-  let end = new Date(start.getTime() + 3600000);
+  let classTime = getLocalClassTime(course);
+
+  let start = classTime;
+  let end = new Date(classTime.getTime() + 60*60*1000); // 1 hour
 
   if(now < start){
     showMessage("⏳ Class not started");
@@ -1051,36 +1214,99 @@ function joinClass(course){
     return;
   }
 
-  // ✅ unlimited join
-  window.open("https://meet.google.com/sus-iead-rhq","_blank");
+  // ✅ Allow unlimited entry
+  window.open("https://meet.google.com/sus-iead-rhq", "_blank");
 
-  let badge = document.getElementById("live-"+course);
-  if(badge) badge.style.display = "inline-block";
+  // 🔴 Show LIVE
+  let liveBadge = document.getElementById("live-" + course);
+  if(liveBadge){
+    liveBadge.style.display = "inline-block";
+  }
 
   showLivePopup(course);
 }
-
 /* =========================
-   TIME DISPLAY
+   COUNTDOWN
 ========================= */
-function showAllTimes(){
-  Object.keys(courseSchedule).forEach(course => {
-    let time = getLocalClassTime(course);
+function startCountdown(duration){
 
-    let formatted = time.toLocaleTimeString([], {
-      hour:'2-digit', minute:'2-digit'
-    });
+  let timer = duration / 1000;
 
-    let el = document.getElementById("time-"+course);
-    if(el){
-      el.innerText = "🕒 Your Time: " + formatted;
+  let interval = setInterval(()=>{
+    let m = Math.floor(timer / 60);
+    let s = Math.floor(timer % 60);
+
+    showMessage("⏳ " + m + "m " + s + "s");
+
+    timer--;
+
+    if(timer < 0){
+      clearInterval(interval);
     }
-  });
+
+  },1000);
 }
 
+
 /* =========================
-   LIVE POPUP
+   MESSAGE BOX
 ========================= */
+
+function showMessage(msg){
+  let box = document.createElement("div");
+  box.innerText = msg;
+
+  box.style.position = "fixed";
+  box.style.bottom = "20px";
+  box.style.left = "50%";
+  box.style.transform = "translateX(-50%)";
+  box.style.background = "#1e3a8a";
+  box.style.color = "white";
+  box.style.padding = "12px 20px";
+  box.style.borderRadius = "10px";
+  box.style.boxShadow = "0 8px 20px rgba(0,0,0,0.2)";
+
+  document.body.appendChild(box);
+  setTimeout(()=>box.remove(),3000);
+}
+
+
+function startDemoFlow(){
+
+  fetch("/api/check-demo")
+  .then(res => res.json())
+  .then(data => {
+
+    // ❌ Already attended
+    if(data.demo_done){
+      showMessage("⚠ Demo already completed");
+      return;
+    }
+
+    // ✅ Start demo
+    showMessage("🎥 Demo Started");
+
+    window.open("https://meet.google.com/wss-haop-vva", "_self");
+    // ⏳ After 2 mins → mark complete
+    setTimeout(()=>{
+
+      fetch("/api/demo-complete", {
+        method: "POST"
+      })
+      .then(res => res.json())
+      .then(()=>{
+        showMessage("✅ Demo Completed");
+      });
+
+    }, 120000); // 2 minutes
+
+  })
+  .catch(()=>{
+    showMessage("❌ Please login first");
+  });
+
+}
+ let currentLiveCourse = "";
 function showLivePopup(course){
 
   currentLiveCourse = course;
@@ -1088,40 +1314,116 @@ function showLivePopup(course){
   let popup = document.getElementById("livePopup");
   let text = document.getElementById("popupText");
 
-  text.innerHTML = "🔴 "+course.toUpperCase()+" LIVE NOW";
+  text.innerHTML = "🔴 " + course.toUpperCase() + " LIVE NOW – Join Fast!";
 
   popup.style.display = "block";
 
+  // auto hide after 6 sec
   setTimeout(()=>{
     popup.style.display = "none";
-  },5000);
+  },6000);
 }
-
-function joinFromPopup(){
+ function joinFromPopup(){
   joinClass(currentLiveCourse);
 }
-
-/* =========================
-   MESSAGE
-========================= */
-function showMessage(msg){
-  let box = document.createElement("div");
-
-  box.innerText = msg;
-  box.style.position="fixed";
-  box.style.bottom="20px";
-  box.style.left="50%";
-  box.style.transform="translateX(-50%)";
-  box.style.background="#1e3a8a";
-  box.style.color="white";
-  box.style.padding="12px 20px";
-  box.style.borderRadius="10px";
-
-  document.body.appendChild(box);
-  setTimeout(()=>box.remove(),3000);
-}
-
 </script>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<!-- 🔴 LIVE POPUP -->
+<div id="livePopup" style="
+  display:none;
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:red;
+  color:white;
+  padding:15px 25px;
+  border-radius:10px;
+  font-weight:bold;
+  z-index:9999;
+  box-shadow:0 5px 20px rgba(0,0,0,0.3);
+">
+  <span id="popupText"></span>
+  <button onclick="joinFromPopup()" style="
+    margin-left:15px;
+    background:white;
+    color:red;
+    border:none;
+    padding:5px 10px;
+    border-radius:5px;
+    cursor:pointer;
+  ">Join</button>
+</div>
+ <!-- =========================
+     ENROLL POPUP (CENTER BOX)
+========================= -->
+<div id="enrollPopup" style="
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:2000;
+">
+
+  <div style="
+    background:white;
+    width:320px;
+    padding:25px;
+    border-radius:12px;
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%, -50%);
+    text-align:center;
+  ">
+
+    <h3 id="courseTitle">Enroll Now</h3>
+
+    <p id="coursePrice" style="
+      font-weight:bold;
+      color:#1e3a8a;
+      margin-bottom:10px;
+    "></p>
+
+    <input id="studentName" placeholder="Enter Name" style="
+      width:100%;
+      padding:10px;
+      margin-bottom:10px;
+    ">
+
+    <input id="studentEmail" placeholder="Enter Email" style="
+      width:100%;
+      padding:10px;
+      margin-bottom:15px;
+    ">
+
+    <button onclick="payNow()" style="
+      background:#1e3a8a;
+      color:white;
+      padding:10px 20px;
+      border:none;
+      border-radius:6px;
+      cursor:pointer;
+    ">
+      Pay Now
+    </button>
+
+    <br><br>
+
+    <button onclick="closeEnroll()" style="
+      background:none;
+      border:none;
+      color:red;
+      cursor:pointer;
+    ">
+      Close
+    </button>
+
+  </div>
+</div>
 
 </body>
 </html>
