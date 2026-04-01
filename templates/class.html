@@ -447,6 +447,63 @@ body{
             margin-right:auto;
             line-height:1.6;
         }  
+
+  .demo-timer{
+  margin-top:10px;
+  padding:8px;
+  background:#e0f2fe;
+  color:#1e3a8a;
+  border-radius:8px;
+  font-weight:600;
+  text-align:center;
+}
+  .live-badge{
+  display:none;
+  background:red;
+  color:white;
+  padding:3px 8px;
+  border-radius:6px;
+  font-size:12px;
+  margin-left:10px;
+  animation: blink 1s infinite;
+}
+
+@keyframes blink{
+  50%{opacity:0;}
+}
+
+  .live-popup{
+  position:fixed;
+  top:20px;
+  right:20px;
+  display:none;
+  z-index:9999;
+}
+
+.popup-box{
+  background:linear-gradient(45deg,#ff0000,#ff4d4d);
+  color:white;
+  padding:15px 20px;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  animation:slideIn 0.5s ease;
+}
+
+.popup-box button{
+  margin-top:10px;
+  padding:8px 15px;
+  border:none;
+  border-radius:6px;
+  background:white;
+  color:red;
+  font-weight:600;
+  cursor:pointer;
+}
+
+@keyframes slideIn{
+  from{transform:translateX(100%);}
+  to{transform:translateX(0);}
+}
 </style>
 </head>
 
@@ -489,7 +546,10 @@ body{
 
  <!-- CBSE 10 -->
 <div class="card">
- <h2>CBSE Maths – Class 10</h2>
+<h2>
+  CBSE Maths – Class 10 
+  <span class="live-badge" id="live-cbse10">🔴 LIVE</span>
+</h2>
 <div class="price-box">
  <p>₹300 / hour</p>
 <p>12 Hours / Month</p>
@@ -506,9 +566,24 @@ body{
 </div>
 </div>
 
+<!-- 🔥 ADD THIS -->
+  <div class="demo-timer" id="timer-cbse10"></div>
+
+ <div id="livePopup" class="live-popup">
+  <div class="popup-box">
+    <p id="popupText">🔴 LIVE NOW – Join Fast!</p>
+    <button onclick="joinFromPopup()">Join Now</button>
+  </div>
+</div>
+
+
 <!-- CBSE 12 -->
 <div class="card">
- <h2>CBSE Maths – Class 12</h2>
+ <h2>
+  CBSE Maths – Class 12
+  <span class="live-badge" id="live-cbse12">🔴 LIVE</span>
+</h2>
+ 
 <div class="price-box">
  <p>₹400 / hour</p>
 <p>12 Hours / Month</p>
@@ -526,9 +601,24 @@ body{
 </div>
 </div>
 
+
+ <!-- 🔥 ADD THIS -->
+  <div class="demo-timer" id="timer-cbse12"></div>
+
+ <div id="livePopup" class="live-popup">
+  <div class="popup-box">
+    <p id="popupText">🔴 LIVE NOW – Join Fast!</p>
+    <button onclick="joinFromPopup()">Join Now</button>
+  </div>
+</div>
+
 <!-- Engg Maths 1 -->
 <div class="card">
- <h2>Engineering Maths I</h2>
+ <h2>
+  Engineering Maths I
+  <span class="live-badge" id="live-engg1">🔴 LIVE</span>
+</h2>
+ 
 <div class="price-box">
  <p>₹10,000 (15 Hours)</p>
   </div>
@@ -541,9 +631,25 @@ body{
 </div>
 </div>
 
+
+ <!-- 🔥 ADD THIS -->
+  <div class="demo-timer" id="timer-engg1"></div>
+
+ <div id="livePopup" class="live-popup">
+  <div class="popup-box">
+    <p id="popupText">🔴 LIVE NOW – Join Fast!</p>
+    <button onclick="joinFromPopup()">Join Now</button>
+  </div>
+</div>
+
+
 <!-- Engg Maths 2 -->
 <div class="card">
- <h2>Engineering Maths II</h2>
+ <h2>
+  Engineering Maths II
+  <span class="live-badge" id="live-engg2">🔴 LIVE</span>
+</h2>
+
 <div class="price-box">
  <p>₹10,000 (15 Hours)</p>
   </div>
@@ -556,9 +662,24 @@ body{
 </div>
 </div>
 
+ <!-- 🔥 ADD THIS -->
+  <div class="demo-timer" id="timer-engg2"></div>
+
+ <div id="livePopup" class="live-popup">
+  <div class="popup-box">
+    <p id="popupText">🔴 LIVE NOW – Join Fast!</p>
+    <button onclick="joinFromPopup()">Join Now</button>
+  </div>
+</div>
+
+
 <!-- Engg Maths 3 -->
 <div class="card">
-<h2>Engineering Maths III</h2>
+ <h2>
+  Engineering Maths III
+  <span class="live-badge" id="live-engg3">🔴 LIVE</span>
+</h2>
+
  <div class="price-box">
  <p>₹10,000 (15 Hours)</p>
   </div>
@@ -570,9 +691,24 @@ body{
 </div>
 </div>
 
+ <!-- 🔥 ADD THIS -->
+  <div class="demo-timer" id="timer-engg3"></div>
+
+ <div id="livePopup" class="live-popup">
+  <div class="popup-box">
+    <p id="popupText">🔴 LIVE NOW – Join Fast!</p>
+    <button onclick="joinFromPopup()">Join Now</button>
+  </div>
+</div>
+
+
 <!-- Control System (International) -->
 <div class="card">
- <h2>Control System (International)</h2>
+ <h2>
+ Control System
+  <span class="live-badge" id="live-control">🔴 LIVE</span>
+</h2>
+ 
 <div class="price-box">
  <p>$100 (15 hours)</p>
 <p>Custom 1-to-1</p>
@@ -590,9 +726,24 @@ body{
 </div>
 
 
+ <!-- 🔥 ADD THIS -->
+  <div class="demo-timer" id="timer-control"></div>
+
+ <div id="livePopup" class="live-popup">
+  <div class="popup-box">
+    <p id="popupText">🔴 LIVE NOW – Join Fast!</p>
+    <button onclick="joinFromPopup()">Join Now</button>
+  </div>
+</div>
+
+
  <!-- Algebra/Geometry/Calculus -->
 <div class="card">
-<h2>USA-Algebra/Geometry/Calculus</h2>
+ <h2>
+ USA-Algebra/Geometry/Calculus
+  <span class="live-badge" id="live-AGS">🔴 LIVE</span>
+</h2>
+
 <div class="price-box">
  <p>$20 (15 Hours)</p>
 <p>Custom 1-to-1</p>
@@ -609,10 +760,25 @@ body{
 </div>
 </div>
 
+ <!-- 🔥 ADD THIS -->
+  <div class="demo-timer" id="timer-AGS"></div>
+
+ <div id="livePopup" class="live-popup">
+  <div class="popup-box">
+    <p id="popupText">🔴 LIVE NOW – Join Fast!</p>
+    <button onclick="joinFromPopup()">Join Now</button>
+  </div>
+</div>
+
+
 
  <!-- Maths -->
 <div class="card">
-<h2>USA-Maths</h2>
+ <h2>
+ USA-Maths
+  <span class="live-badge" id="live-Maths">🔴 LIVE</span>
+</h2>
+
 <div class="price-box">
 <p>$20 (15 Hours)</p>
 <p>Custom 1-to-1</p>
@@ -628,6 +794,17 @@ body{
 <button class="btn primary joinBtn" data-course="Maths" onclick="joinClass('Maths')">Join Now</button>
 </div>
 </div>
+
+ <!-- 🔥 ADD THIS -->
+  <div class="demo-timer" id="timer-Maths"></div>
+
+ <div id="livePopup" class="live-popup">
+  <div class="popup-box">
+    <p id="popupText">🔴 LIVE NOW – Join Fast!</p>
+    <button onclick="joinFromPopup()">Join Now</button>
+  </div>
+</div>
+
 
 </div>
 
@@ -741,38 +918,51 @@ document.addEventListener("DOMContentLoaded", function(){
 ========================= */
 function bookDemo(course){
 
-  // 🔐 Check local storage (same device block)
   let demoKey = "demo_done_" + course;
- 
+  let timerDiv = document.getElementById("timer-" + course);
+  let liveBadge = document.getElementById("live-" + course);
 
- if(localStorage.getItem(demoKey) === "true"){
-  showMessage("⚠ Demo already completed on this device");
-  return;
-}
-
-  let demoTime = new Date();
-  demoTime.setHours(18,0,0); // 6 PM
-
-  let now = new Date();
-  let diff = demoTime - now;
-
-  if(diff > 0){
-    showMessage("⏳ Demo at 6:00 PM. Wait...");
-    startCountdown(diff);
-  }else{
-    window.open("https://meet.google.com/", "_blank");
-    showMessage("🎥 Demo Started");
-
-    setTimeout(()=>{
-      courseState[course].demoDone = true;
-
-      // ✅ Save in browser
-      localStorage.setItem(demoKey, "true");
-
-      showMessage("✅ Demo Completed");
-    }, 120000); // 2 mins
+  if(localStorage.getItem(demoKey) === "true"){
+    timerDiv.innerHTML = "⚠ Demo already completed";
+    return;
   }
+
+  let duration = 120;
+
+  // 🔴 SHOW LIVE
+  liveBadge.style.display = "inline-block";
+
+  // 🔥 ADD THIS
+  showLivePopup(course);
+
+  window.open("https://meet.google.com/wss-haop-vva", "_blank");
+
+  let interval = setInterval(()=>{
+
+    let m = Math.floor(duration / 60);
+    let s = duration % 60;
+
+    timerDiv.innerHTML = "⏳ Demo: " + m + "m " + s + "s";
+
+    duration--;
+
+    if(duration < 0){
+      clearInterval(interval);
+
+      timerDiv.innerHTML = "✅ Demo Completed";
+      liveBadge.style.display = "none"; // ❌ hide LIVE
+
+      courseState[course].demoDone = true;
+      localStorage.setItem(demoKey, "true");
+    }
+
+  },1000);
 }
+ function showTimer(course, msg){
+  let timerDiv = document.getElementById("timer-" + course);
+  timerDiv.innerHTML = msg;
+}
+
 
 /* =========================
    ENROLL
@@ -833,7 +1023,9 @@ function enroll(course){
 /* =========================
    JOIN CLASS
 ========================= */
-function joinClass(course){
+ function joinClass(course){
+
+  let liveBadge = document.getElementById("live-" + course);
 
   if(!courseState[course].enrolled){
     showMessage("⚠ Please enroll first");
@@ -841,18 +1033,30 @@ function joinClass(course){
   }
 
   let classTime = new Date();
-  classTime.setHours(19,0,0); // 7 PM
+  classTime.setHours(19,0,0);
 
   let now = new Date();
   let diff = classTime - now;
 
   if(diff > 0){
     showMessage("⏳ Class at 7:00 PM");
-    startCountdown(diff);
   }else{
-   window.open("https://meet.google.com/sus-iead-rhq", "_self");
+
+    // 🔴 SHOW LIVE
+    liveBadge.style.display = "inline-block";
+
+    // 🔥 ADD THIS
+   showLivePopup(course);
+
+    window.open("https://meet.google.com/sus-iead-rhq", "_self");
+
+    // ⏳ Assume class duration 1 hour
+    setTimeout(()=>{
+      liveBadge.style.display = "none";
+    }, 1000); // 1 hour
   }
 }
+
 
 
 /* =========================
@@ -936,8 +1140,56 @@ function startDemoFlow(){
   });
 
 }
+ let currentLiveCourse = "";
+function showLivePopup(course){
 
+  currentLiveCourse = course;
+
+  let popup = document.getElementById("livePopup");
+  let text = document.getElementById("popupText");
+
+  text.innerHTML = "🔴 " + course.toUpperCase() + " LIVE NOW – Join Fast!";
+
+  popup.style.display = "block";
+
+  // auto hide after 6 sec
+  setTimeout(()=>{
+    popup.style.display = "none";
+  },6000);
+}
+ function joinFromPopup(){
+  joinClass(currentLiveCourse);
+}
 </script>
+ <!-- 🔴 LIVE POPUP -->
+<div id="livePopup" style="
+  display:none;
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:red;
+  color:white;
+  padding:15px 25px;
+  border-radius:10px;
+  font-weight:bold;
+  z-index:9999;
+  box-shadow:0 5px 20px rgba(0,0,0,0.3);
+">
+  <span id="popupText"></span>
+  <button onclick="joinFromPopup()" style="
+    margin-left:15px;
+    background:white;
+    color:red;
+    border:none;
+    padding:5px 10px;
+    border-radius:5px;
+    cursor:pointer;
+  ">Join</button>
+</div>
+
+</body>
+</html>
 </body>
 </html>
 
