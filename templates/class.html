@@ -517,6 +517,7 @@ body{
   pointer-events: auto;
 }
   </style>
+ <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 </head>
 
 <body>
@@ -824,24 +825,33 @@ body{
     ========================== -->
     <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
 
-<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
 <script>
 
+// 🌍 USER LOCATION
 let userCountry = "";
+let isInternational = false;
 let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
-// 🌍 Detect country (simple API)
+// 🌍 Detect country (API)
 fetch("https://ipapi.co/json/")
 .then(res => res.json())
 .then(data => {
   userCountry = data.country_name;
+
+  // ✅ Update here only
+  isInternational = userCountry !== "India";
+
+  console.log("User Country:", userCountry);
+  console.log("International:", isInternational);
 })
 .catch(()=>{
   userCountry = "India";
+  isInternational = false;
 });
- 
-let courseSchedule = {
-  cbse10: { hour: 19, minute: 0 },   // India time
+
+ let courseSchedule = {
+  cbse10: { hour: 19, minute: 0 },
   cbse12: { hour: 20, minute: 0 },
   engg1: { hour: 18, minute: 30 },
   engg2: { hour: 19, minute: 30 },
@@ -850,26 +860,24 @@ let courseSchedule = {
   AGS: { hour: 0, minute: 0 },
   Maths: { hour: 0, minute: 30 }
 };
- 
+
  function getLocalClassTime(course){
 
   let schedule = courseSchedule[course];
 
   let indiaTime = new Date();
+
   indiaTime.setHours(schedule.hour, schedule.minute, 0);
 
-  // Convert to user's timezone
+  // ✅ convert timezone properly
   let localTime = new Date(
     indiaTime.toLocaleString("en-US", { timeZone: userTimeZone })
   );
 
   return localTime;
 }
- 
-/* =========================
-   COURSE STATE
-========================= */
-let courseState = {
+
+ let courseState = {
   cbse10: { demoDone:false, enrolled:false },
   cbse12: { demoDone:false, enrolled:false },
   engg1: { demoDone:false, enrolled:false },
@@ -878,14 +886,9 @@ let courseState = {
   control: { demoDone:false, enrolled:false },
   AGS: { demoDone:false, enrolled:false },
   Maths: { demoDone:false, enrolled:false }
- 
 };
 
-let students_count = 20;
-let userCountry = "India"; // later dynamic
-let isInternational = userCountry !== "India";
-
-/* =========================
+ /* =========================
    DOM READY
 ========================= */
 document.addEventListener("DOMContentLoaded", function(){
@@ -913,29 +916,40 @@ document.addEventListener("DOMContentLoaded", function(){
 /* =========================
    DEMO
 ========================= */
-function bookDemo(course){
+
+ function bookDemo(course){
 
   let demoKey = "demo_done_" + course;
   let timerDiv = document.getElementById("timer-" + course);
   let liveBadge = document.getElementById("live-" + course);
 
- if(localStorage.getItem(demoKey) === "true"){
-  timerDiv.innerHTML = "⚠ Demo already completed";
+  // ✅ Safety check
+  if(!timerDiv || !liveBadge){
+    console.error("Missing element for:", course);
+    return;
+  }
 
-  // ✅ IMPORTANT FIX
-  courseState[course].demoDone = true;
+  // ✅ Already done check
+  if(localStorage.getItem(demoKey) === "true"){
+    timerDiv.innerHTML = "⚠ Demo already completed";
+    courseState[course].demoDone = true;
+    return;
+  }
 
-  return;
-}
+  // ❌ Prevent multiple clicks
+  if(timerDiv.dataset.running === "true"){
+    return;
+  }
+  timerDiv.dataset.running = "true";
 
   let duration = 120;
 
-  // 🔴 SHOW LIVE
+  // 🔴 SHOW LIVE only during demo
   liveBadge.style.display = "inline-block";
 
-  // 🔥 ADD THIS
   showLivePopup(course);
 
+  // 🎥 Open demo
   window.open("https://meet.google.com/wss-haop-vva", "_blank");
 
   let interval = setInterval(()=>{
@@ -951,36 +965,33 @@ function bookDemo(course){
       clearInterval(interval);
 
       timerDiv.innerHTML = "✅ Demo Completed";
-      liveBadge.style.display = "none"; // ❌ hide LIVE
+
+      // 🔴 Hide LIVE after demo
+      liveBadge.style.display = "none";
 
       courseState[course].demoDone = true;
       localStorage.setItem(demoKey, "true");
+
+      // ✅ allow re-click safe
+      timerDiv.dataset.running = "false";
     }
 
   },1000);
 }
- function showTimer(course, msg){
+function showTimer(course, msg){
   let timerDiv = document.getElementById("timer-" + course);
-  timerDiv.innerHTML = msg;
+  if(timerDiv){
+    timerDiv.innerHTML = msg;
+  }
 }
 
 /* =========================
    COURSE PRICE MAP
 ========================= */
-let coursePrices = {
-  cbse10: 300,
-  cbse12: 400,
-  engg1: 10000,
-  engg2: 10000,
-  engg3: 10000,
-  control: 8000,
-  AGS: 1600,
-  Maths: 1600
-};
-
 let selectedCourse = "";
 
- let pricePerHour = {
+// 💰 Price per hour
+let pricePerHour = {
   cbse10: 300,
   cbse12: 400,
   engg1: 700,
@@ -991,6 +1002,7 @@ let selectedCourse = "";
   Maths: 20
 };
 
+// 📅 Monthly class count
 let classesPerMonth = 12;
 
 
@@ -1021,22 +1033,17 @@ function enroll(course){
   document.getElementById("courseTitle").innerText =
     course.toUpperCase() + " - Monthly Plan";
 
-  // 🔥 SET PRICE
+  // ✅ CALCULATE MONTHLY PRICE
+  let monthlyAmount = pricePerHour[course] * classesPerMonth;
+
+  // 🔥 SET PRICE DISPLAY
   document.getElementById("coursePrice").innerText =
-    "💳 Monthly Fee: ₹" + coursePrices[course];
+    "💳 Monthly Fee: ₹" + monthlyAmount + " (" + classesPerMonth + " classes)";
 
   // ✅ OPEN POPUP
   document.getElementById("enrollPopup").style.display = "block";
 }
-timerDiv.style.background = "none";
-timerDiv.style.color = "#1e3a8a";
-timerDiv.style.fontWeight = "bold";
 
- let monthlyAmount = pricePerHour[course] * classesPerMonth;
-
-document.getElementById("coursePrice").innerText =
-  "💳 Monthly Fee: ₹" + monthlyAmount + " (" + classesPerMonth + " classes)";
- let amount = pricePerHour[selectedCourse] * classesPerMonth;
 
 /* =========================
    CLOSE POPUP
@@ -1049,7 +1056,7 @@ function closeEnroll(){
 /* =========================
    PAYMENT
 ========================= */
- function payNow(){
+function payNow(){
 
   let name = document.getElementById("studentName").value;
   let email = document.getElementById("studentEmail").value;
@@ -1059,11 +1066,12 @@ function closeEnroll(){
     return;
   }
 
-  let amount = coursePrices[selectedCourse];
+  // ✅ Monthly calculation
+  let amount = pricePerHour[selectedCourse] * classesPerMonth;
 
   var options = {
-    key: "{{ razorpay_key }}",   // 🔥 replace
-    amount: amount * 12,
+    key: "{{ razorpay_key }}",   // 🔥 replace with your key
+    amount: amount,        // ✅ paise conversion
     currency: "INR",
     name: "Ranjitham Study Center",
     description: selectedCourse + " Monthly Fee",
@@ -1074,6 +1082,7 @@ function closeEnroll(){
 
       courseState[selectedCourse].enrolled = true;
 
+      // ✅ Enable Join button
       let btn = document.querySelector(`.joinBtn[data-course="${selectedCourse}"]`);
       btn.style.opacity = "1";
       btn.style.pointerEvents = "auto";
@@ -1094,47 +1103,12 @@ function closeEnroll(){
   let rzp1 = new Razorpay(options);
   rzp1.open();
 }
- 
 /* =========================
    JOIN CLASS
 ========================= */
  function joinClass(course){
 
-  let liveBadge = document.getElementById("live-" + course);
-
-  if(!courseState[course].enrolled){
-    showMessage("⚠ Please enroll first");
-    return;
-  }
-
-  let classTime = new Date();
-  classTime.setHours(19,0,0);
-
-  let now = new Date();
-  let diff = classTime - now;
-
-  if(diff > 0){
-    showMessage("⏳ Class at 7:00 PM");
-  }else{
-
-    // 🔴 SHOW LIVE
-    liveBadge.style.display = "inline-block";
-
-    // 🔥 ADD THIS
-   showLivePopup(course);
-
-    window.open("https://meet.google.com/sus-iead-rhq", "_self");
-
-    // ⏳ Assume class duration 1 hour
-    setTimeout(()=>{
-      liveBadge.style.display = "none";
-    }, 1000); // 1 hour
-  }
-}
-function joinClass(course){
-
-  let liveBadge = document.getElementById("live-" + course);
-
+  // ✅ Check enrollment
   if(!courseState[course].enrolled){
     showMessage("⚠ Please enroll first");
     return;
@@ -1142,89 +1116,39 @@ function joinClass(course){
 
   let now = new Date();
 
-  // ✅ Get course time
-  let schedule = courseSchedule[course];
-
-  let classTime = new Date();
-  classTime.setHours(schedule.hour, schedule.minute, 0);
- let classTime = getLocalClassTime(course);
- let now = new Date();
-
-
-  let diff = classTime - now;
-
-  if(diff > 0){
-
-    let m = Math.floor(diff / 60000);
-    showMessage("⏳ Class starts in " + m + " mins");
-
-  }else{
-
-    // 🔴 LIVE SHOW
-    liveBadge.style.display = "inline-block";
-
-    showLivePopup(course);
-
-    window.open("https://meet.google.com/sus-iead-rhq", "_self");
-
-    // Auto hide after 1 hour
-    setTimeout(()=>{
-      liveBadge.style.display = "none";
-    }, 3600000);
-  }
-}
-
-function showAllTimes(){
-  Object.keys(courseSchedule).forEach(course => {
-    let time = getLocalClassTime(course);
-
-    let formatted = time.toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'});
-
-    let el = document.getElementById("time-" + course);
-    if(el){
-      el.innerText = "🕒 Your Time: " + formatted;
-    }
-  });
-}
-
-document.addEventListener("DOMContentLoaded", showAllTimes);
-
- let activeClasses = {};
-
-function joinClass(course){
-
-  if(!courseState[course].enrolled){
-    showMessage("⚠ Please enroll first");
-    return;
-  }
-
-  let now = new Date();
+  // ✅ Get local class time
   let classTime = getLocalClassTime(course);
 
   let start = classTime;
-  let end = new Date(classTime.getTime() + 60*60*1000); // 1 hour
+  let end = new Date(classTime.getTime() + 60*60*1000); // 1 hour duration
 
+  // ⏳ Before class
   if(now < start){
-    showMessage("⏳ Class not started");
+    let diff = start - now;
+    let mins = Math.floor(diff / 60000);
+    showMessage("⏳ Class starts in " + mins + " mins");
     return;
   }
 
+  // ❌ After class
   if(now > end){
     showMessage("❌ Class ended");
     return;
   }
 
-  // ✅ Allow unlimited entry
+  // ✅ DURING CLASS → allow unlimited join
   window.open("https://meet.google.com/sus-iead-rhq", "_blank");
 
-  // 🔴 Show LIVE
+  // 🔴 Show LIVE badge
   let liveBadge = document.getElementById("live-" + course);
   if(liveBadge){
     liveBadge.style.display = "inline-block";
   }
 
+  // 🔥 Show popup
   showLivePopup(course);
 }
+
 /* =========================
    COUNTDOWN
 ========================= */
@@ -1246,7 +1170,6 @@ function startCountdown(duration){
 
   },1000);
 }
-
 
 /* =========================
    MESSAGE BOX
@@ -1286,7 +1209,9 @@ function startDemoFlow(){
     // ✅ Start demo
     showMessage("🎥 Demo Started");
 
-    window.open("https://meet.google.com/wss-haop-vva", "_self");
+    // 🔥 Open in new tab (better UX)
+    window.open("https://meet.google.com/wss-haop-vva", "_blank");
+
     // ⏳ After 2 mins → mark complete
     setTimeout(()=>{
 
@@ -1306,13 +1231,21 @@ function startDemoFlow(){
   });
 
 }
- let currentLiveCourse = "";
+
+
+/* =========================
+   LIVE POPUP
+========================= */
+let currentLiveCourse = "";
+
 function showLivePopup(course){
 
   currentLiveCourse = course;
 
   let popup = document.getElementById("livePopup");
   let text = document.getElementById("popupText");
+
+  if(!popup || !text) return; // ✅ safety check
 
   text.innerHTML = "🔴 " + course.toUpperCase() + " LIVE NOW – Join Fast!";
 
@@ -1323,11 +1256,21 @@ function showLivePopup(course){
     popup.style.display = "none";
   },6000);
 }
- function joinFromPopup(){
+
+/* =========================
+   JOIN FROM POPUP
+========================= */
+function joinFromPopup(){
+
+  if(!currentLiveCourse){
+    showMessage("⚠ No active class");
+    return;
+  }
+
   joinClass(currentLiveCourse);
 }
 </script>
-    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+   
 <!-- 🔴 LIVE POPUP -->
 <div id="livePopup" style="
   display:none;
