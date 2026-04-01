@@ -190,23 +190,38 @@ body{
 
 /* SECTION */
 .section{padding:50px 20px;}
-.container{max-width:1100px;margin:auto}
+  
+/* CONTAINER */
+.container{
+  display:flex;
+  gap:30px;
+  justify-content:center;
+  padding:40px;
+  flex-wrap:wrap;
+}
 
 /* CARD */
 .card{
   margin-bottom:30px;
   position: relative;
   z-index: 1;
-  background: linear-gradient(145deg,#ffffff,#f1f5f9);
+  background:white;
   border-radius:18px;
+  width:420px;
   padding:25px;
   box-shadow:0 10px 30px rgba(0,0,0,0.08);
   transition:0.3s;
-}
+  padding:25px;
+  width:420px;
+ }
 
   .card:hover{
   transform:translateY(-5px);
   box-shadow:0 15px 40px rgba(0,0,0,0.12);
+}
+  .card h2{
+  color:#1e3a8a;
+  margin-bottom:10px;
 }
 
 /* FLEX BUTTONS */
@@ -217,6 +232,17 @@ body{
   position: relative;
   z-index: 5;
 }
+
+  /* PRICE BOX */
+.price-box{
+  background:#eef2ff;
+  border-left:5px solid #6366f1;
+  padding:15px;
+  margin:15px 0;
+  border-radius:8px;
+}
+
+/* BUTTONS */
 .btn{
   flex:1;
   text-align:center;
@@ -242,7 +268,7 @@ body{
   background:#6366f1;
   color:white;
 }
-.primary{
+.primary joinBtn{
   background:#1e3a8a;
   color:white;
 }
