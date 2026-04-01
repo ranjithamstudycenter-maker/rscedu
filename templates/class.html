@@ -698,15 +698,10 @@ function bookDemo(course){
   let demoKey = "demo_done_" + course;
  
 
-  if(localStorage.getItem(demoKey) === "true")
-  {
-  courseState[course].demoDone = true;
-  }
-  
-  {
-    showMessage("⚠ Demo already completed on this device");
-    return;
-  }
+ if(localStorage.getItem(demoKey) === "true"){
+  showMessage("⚠ Demo already completed on this device");
+  return;
+}
 
   let demoTime = new Date();
   demoTime.setHours(18,0,0); // 6 PM
@@ -808,7 +803,7 @@ function joinClass(course){
     showMessage("⏳ Class at 7:00 PM");
     startCountdown(diff);
   }else{
-    window.open("https://meet.google.com/", "_blank");
+   window.open("https://meet.google.com/sus-iead-rhq", "_self");
   }
 }
 
@@ -874,8 +869,7 @@ function startDemoFlow(){
     // ✅ Start demo
     showMessage("🎥 Demo Started");
 
-    window.open("https://meet.google.com/", "_blank");
-
+    window.open("https://meet.google.com/wss-haop-vva", "_self");
     // ⏳ After 2 mins → mark complete
     setTimeout(()=>{
 
