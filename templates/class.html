@@ -197,7 +197,8 @@ body{
   gap:30px;
   justify-content:center;
   padding:40px;
-  flex-wrap:wrap;
+  align-items:stretch;
+  flex-wrap:nowrap;   /* 🔥 IMPORTANT */
 }
 
 /* CARD */
@@ -211,8 +212,7 @@ body{
   padding:25px;
   box-shadow:0 10px 30px rgba(0,0,0,0.08);
   transition:0.3s;
-  padding:25px;
-  width:420px;
+  min-width:400px;
  }
 
   .card:hover{
@@ -306,6 +306,12 @@ body{
 /* MOBILE */
 @media(max-width:768px){
   .hero h1{font-size:26px;}
+}
+
+  @media(max-width:768px){
+  .course-container{
+    flex-wrap:wrap;   /* mobile la vertical */
+  }
 }
 
     /* ==========================
