@@ -19,8 +19,8 @@ app.secret_key = os.environ.get("SECRET_KEY")
 users = {}
 
 teachers = {
-    "faculty1": {
-        "password": "123",
+    "Balakumar": {
+        "password": "M10@2026",
         "course": "class10",
         "link": "https://meet.google.com/xxx-10",
         "active": True
