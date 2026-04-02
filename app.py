@@ -293,7 +293,44 @@ def live_room():
 
     </body></html>
     """
+@app.route("/teacher-dashboard")
+def teacher_dashboard():
 
+    if "teacher" not in session:
+        return redirect("/teacher-login")
+
+    username = session["teacher"]
+
+    teacher = teachers[username]
+
+    # SAMPLE DATA (later DB connect pannalam)
+    feedbacks = [
+        {"rating": 5, "comment": "Very clear explanation"},
+        {"rating": 3, "comment": "Need more examples"},
+        {"rating": 4, "comment": "Good class"}
+    ]
+
+    avg_rating = round(sum(f["rating"] for f in feedbacks)/len(feedbacks),2)
+
+    return render_template("teacher_dashboard.html",
+                           teacher_name=username,
+                           course=teacher["course"],
+                           meet_link=teacher["link"],
+                           feedbacks=feedbacks,
+                           avg_rating=avg_rating)
+
+@app.route("/teacher-login", methods=["GET","POST"])
+def teacher_login():
+
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+
+        if username in teachers and teachers[username]["password"] == password:
+            session["teacher"] = username
+            return redirect("/teacher-dashboard")
+
+    return render_template("teacher_login.html")
 # -------------------- FOLDERS --------------------
 PDF_FOLDER = "rsc_download"
 os.makedirs(PDF_FOLDER, exist_ok=True)
