@@ -293,32 +293,24 @@ def live_room():
 
     </body></html>
     """
-@app.route("/teacher-dashboard")
-def teacher_dashboard():
+feedback_db = {
+    "teacher1": [],
+    "teacher2": []
+}
+def check_teacher(feedbacks):
 
-    if "teacher" not in session:
-        return redirect("/teacher-login")
+    bad_count = 0
 
-    username = session["teacher"]
+    for f in reversed(feedbacks):
+        if f["rating"] < 3:
+            bad_count += 1
+        else:
+            break
 
-    teacher = teachers[username]
+        if bad_count >= 10:
+            return "REMOVE"
 
-    # SAMPLE DATA (later DB connect pannalam)
-    feedbacks = [
-        {"rating": 5, "comment": "Very clear explanation"},
-        {"rating": 3, "comment": "Need more examples"},
-        {"rating": 4, "comment": "Good class"}
-    ]
-
-    avg_rating = round(sum(f["rating"] for f in feedbacks)/len(feedbacks),2)
-
-    return render_template("teacher_dashboard.html",
-                           teacher_name=username,
-                           course=teacher["course"],
-                           meet_link=teacher["link"],
-                           feedbacks=feedbacks,
-                           avg_rating=avg_rating)
-
+    return "OK"
 @app.route("/teacher-login", methods=["GET","POST"])
 def teacher_login():
 
@@ -327,10 +319,66 @@ def teacher_login():
         password = request.form["password"]
 
         if username in teachers and teachers[username]["password"] == password:
+
+            # ✅ CHECK ACTIVE STATUS
+            if not teachers[username].get("active", True):
+                return "Your account is disabled"
+
             session["teacher"] = username
             return redirect("/teacher-dashboard")
 
     return render_template("teacher_login.html")
+
+@app.route("/teacher-dashboard")
+def teacher_dashboard():
+
+    if "teacher" not in session:
+        return redirect("/teacher-login")
+
+    username = session["teacher"]
+    teacher = teachers[username]
+
+    # ✅ GET REAL FEEDBACK
+    feedbacks = feedback_db.get(username, [])
+
+    # ✅ AVERAGE CALCULATION
+    if feedbacks:
+        avg_rating = round(sum(f["rating"] for f in feedbacks)/len(feedbacks),2)
+    else:
+        avg_rating = 0
+
+    # ✅ PERFORMANCE CHECK
+    status = check_teacher(feedbacks)
+
+    if status == "REMOVE":
+        teachers[username]["active"] = False
+        return "Your account has been disabled due to poor feedback"
+
+    return render_template("teacher_dashboard.html",
+                           teacher_name=username,
+                           course=teacher["course"],
+                           meet_link=teacher["link"],
+                           feedbacks=feedbacks,
+                           avg_rating=avg_rating)
+
+@app.route("/submit-feedback", methods=["POST"])
+def submit_feedback():
+
+    teacher = request.form["teacher"]
+    rating = int(request.form["rating"])
+    comment = request.form["comment"]
+
+    if teacher not in feedback_db:
+        feedback_db[teacher] = []
+
+    feedback_db[teacher].append({
+        "rating": rating,
+        "comment": comment
+    })
+
+    return "Feedback Submitted Successfully"
+
+
 # -------------------- FOLDERS --------------------
 PDF_FOLDER = "rsc_download"
 os.makedirs(PDF_FOLDER, exist_ok=True)
