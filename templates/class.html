@@ -293,8 +293,6 @@ body{
 
 /* NOTICE */
 .notice{
-  border-left:5px solid #6366f1;
-  background:#eef2ff;
   padding:15px;
   border-radius:10px;
   margin:15px 0;
@@ -451,7 +449,6 @@ body{
   .demo-timer{
   margin-top:10px;
   padding:8px;
-  background:#e0f2fe;
   color:#1e3a8a;
   border-radius:8px;
   font-weight:bold;
@@ -516,7 +513,24 @@ body{
   #enrollPopup {
   pointer-events: auto;
 }
- 
+ .seats{
+  font-weight:600;
+  color:#1e3a8a;
+}
+
+.offer{
+  color:green;
+  font-weight:bold;
+}
+  .disabled{
+  background:gray;
+  color:white;
+  pointer-events:none;
+}
+  .days{
+  font-size:14px;
+  color:#555;
+}
   </style>
 
  
@@ -570,7 +584,7 @@ body{
        <p>₹300 / hour</p>
       <p>12 Hours / Month</p>
        </div>
-      
+      <p class="days">📅 Mon • Wed • Fri</p>
       <div class="actions">
       <button class="btn outline" onclick="bookDemo('cbse10')">Free Demo</button>
       <button class="btn secondary" onclick="enroll('cbse10')">Enroll</button>
@@ -578,7 +592,8 @@ body{
       </div>
  
       <div class="notice">
-       ⚠ Only limited seats available
+       <p class="seats">🎯 Seats: 30</p>
+       <p class="offer">🔥 First 10 Students – 50% OFF</p>
       </div>
       <p class="class-time">🕒 7:00 PM</p>
       <!-- 🔥 ADD THIS -->
@@ -605,7 +620,8 @@ body{
      </div>
  
      <div class="notice">
-      ⚠ Only limited seats available
+      <p class="seats">🎯 Seats: 30</p>
+      <p class="offer">🔥 First 10 Students – 50% OFF</p>
      </div>
      <p class="class-time">🕒 8:00 PM</p>
       <!-- 🔥 ADD THIS -->
@@ -630,7 +646,7 @@ body{
       <button class="btn secondary" onclick="enroll('engg1')">Enroll</button>
       <button class="btn primary joinBtn" data-course="engg1" onclick="joinClass('engg1')">Join Now</button>
       </div>
-     
+      <button class="btn disabled">Coming Soon</button>
       <!-- 🔥 ADD THIS -->
       <div class="demo-timer" id="timer-engg1"></div>
       
@@ -1334,6 +1350,15 @@ function joinFromPopup(){
     }
   }
 }
+ let totalSeats = {
+  cbse10: 30,
+  cbse12: 30
+};
+
+let bookedSeats = {
+  cbse10: 0,
+  cbse12: 0
+};
 </script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <!-- 🔴 LIVE POPUP -->
