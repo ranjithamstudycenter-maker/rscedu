@@ -845,7 +845,15 @@ body{
 
 
 <script>
+let totalSeats = {
+  cbse10: 30,
+  cbse12: 30
+};
 
+let bookedSeats = {
+  cbse10: 0,
+  cbse12: 0
+};
 // 🌍 USER LOCATION
 let userCountry = "";
 let isInternational = false;
@@ -1122,6 +1130,13 @@ function payNow(){
       courseState[selectedCourse].enrolled = true;
      localStorage.setItem("enrolled_" + selectedCourse, "true");
 
+     // ✅ ADD THIS HERE ONLY
+     bookedSeats[selectedCourse]++;
+
+     if(bookedSeats[selectedCourse] >= totalSeats[selectedCourse]){
+       showMessage("❌ Seats Full");
+     }
+
       // 🔥 UPDATE UI
       updateUI(selectedCourse);
 
@@ -1350,33 +1365,8 @@ function joinFromPopup(){
     }
   }
 
- let totalSeats = {
-  cbse10: 30,
-  cbse12: 30
-};
-
-let bookedSeats = {
-  cbse10: 0,
-  cbse12: 0
-};
- bookedSeats[selectedCourse]++;
-
-if(bookedSeats[selectedCourse] >= 30){
-  showMessage("❌ Seats Full");
-}
-  if(bookedSeats[course] >= 10){
-  // remove discount text
-}
  }
- function teacherJoin(course){
 
-  let meetLinks = {
-    cbse10: "https://meet.google.com/xxx-10",
-    cbse12: "https://meet.google.com/xxx-12"
-  };
-
-  window.open(meetLinks[course], "_blank");
-}
 </script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <!-- 🔴 LIVE POPUP -->
