@@ -326,7 +326,7 @@ def check_teacher(feedbacks):
             return "REMOVE"
 
     return "OK"
-@app.route("/Faculty-login", methods=["GET","POST"])
+@app.route("/teacher-login", methods=["GET","POST"])
 def teacher_login():
 
     error = None
@@ -341,20 +341,20 @@ def teacher_login():
                 error = "Your account is disabled"
             else:
                 session["teacher"] = username
-                return redirect("/Faculty-Dashboard")
+                return redirect("/teacher-Dashboard")
 
         else:
             error = "Invalid Username or Password ❌"
 
     return render_template("teacher_login.html", error=error)
 
-@app.route("/Faculty-Dashboard")
+@app.route("/teacher-Dashboard")
 def teacher_dashboard():
 
     if "teacher" not in session:
-        return redirect("/Faculty-login")
+        return redirect("/teacher-login")
 
-    username = session["Faculty"]
+    username = session["teacher"]
     teacher = teachers[username]
 
     # ✅ GET REAL FEEDBACK
