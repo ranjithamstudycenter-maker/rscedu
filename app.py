@@ -329,16 +329,16 @@ def check_teacher(feedbacks):
 @app.route("/teacher-login", methods=["GET","POST"])
 def teacher_login():
 
-    error = None
+    error = ""
 
     if request.method == "POST":
-        username = request.form["username"]
-        password = request.form["password"]
+        username = request.form.get("username")
+        password = request.form.get("password")
 
         if username in teachers and teachers[username]["password"] == password:
 
             if not teachers[username].get("active", True):
-                error = "Your account is disabled"
+                error = "Your account is disabled ❌"
             else:
                 session["teacher"] = username
                 return redirect("/teacher-Dashboard")
@@ -346,7 +346,124 @@ def teacher_login():
         else:
             error = "Invalid Username or Password ❌"
 
-    return render_template("teacher_login.html", error=error)
+    return f"""
+<!DOCTYPE html>
+<html>
+<head>
+<title>Faculty Login</title>
+<style>
+body {{
+    margin:0;
+    height:100vh;
+    display:flex;
+    justify-content:center;
+    align-items:center;
+    background:#f4f6f9;
+    font-family:Arial;
+}}
+
+.login-box {{
+    background:white;
+    padding:40px;
+    border-radius:12px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.1);
+    text-align:center;
+    width:320px;
+}}
+
+.logo {{
+    width:70px;
+    margin-bottom:10px;
+}}
+
+h2 {{
+    margin-bottom:15px;
+    color:#0b5394;
+}}
+
+.error {{
+    color:red;
+    font-size:14px;
+    margin-bottom:10px;
+}}
+
+.input-group {{
+    text-align:left;
+    margin-bottom:15px;
+}}
+
+.input-group input {{
+    width:100%;
+    padding:10px;
+    border-radius:6px;
+    border:1px solid #ccc;
+}}
+
+.password-box {{
+    position:relative;
+}}
+
+.eye {{
+    position:absolute;
+    right:10px;
+    top:10px;
+    cursor:pointer;
+}}
+
+button {{
+    width:100%;
+    padding:10px;
+    background:#0b5394;
+    color:white;
+    border:none;
+    border-radius:6px;
+    cursor:pointer;
+}}
+
+button:hover {{
+    background:#083b73;
+}}
+</style>
+</head>
+
+<body>
+
+<div class="login-box">
+
+    <!-- ✅ LOGO TOP -->
+    <img src="/static/images/logo.jpg" class="logo">
+
+    <h2>Faculty Login</h2>
+
+    <div class="error">{error}</div>
+
+    <form method="post">
+
+        <div class="input-group">
+            <input type="text" name="username" placeholder="Enter Username" required>
+        </div>
+
+        <div class="input-group password-box">
+            <input type="password" id="pwd" name="password" placeholder="Enter Password" required>
+            <span class="eye" onclick="toggle()">👁️</span>
+        </div>
+
+        <button type="submit">Login</button>
+
+    </form>
+
+</div>
+
+<script>
+function toggle(){{
+    const p = document.getElementById("pwd");
+    p.type = p.type === "password" ? "text" : "password";
+}}
+</script>
+
+</body>
+</html>
+"""
 
 @app.route("/teacher-Dashboard")
 def teacher_dashboard():
