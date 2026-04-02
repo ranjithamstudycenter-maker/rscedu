@@ -1,27 +1,35 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
 <meta charset="UTF-8">
-<title>Teacher Dashboard</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Faculty Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 body{
   margin:0;
-  font-family:'Poppins',sans-serif;
-  background:#f5f7fa;
+  font-family:Poppins;
+  background:#f4f7fb;
 }
 
 /* HEADER */
 .header{
   background:#0b5394;
   color:white;
-  padding:20px;
-  text-align:center;
-  font-size:22px;
-  font-weight:600;
+  padding:15px;
+  display:flex;
+  justify-content:center;
+  align-items:center;
+  gap:15px;
+}
+
+.header img{
+  width:50px;
+}
+
+.header h2{
+  margin:0;
 }
 
 /* CONTAINER */
@@ -48,92 +56,111 @@ body{
   border:none;
   border-radius:8px;
   cursor:pointer;
-  font-size:16px;
 }
 
 .btn:hover{
   background:#073763;
 }
 
-/* FEEDBACK */
-.feedback{
-  background:#f9fafc;
-  padding:10px;
-  margin:8px 0;
-  border-radius:6px;
+/* STAR */
+.star{
+  font-size:22px;
+  cursor:pointer;
+  color:gray;
+}
+
+.star.active{
+  color:gold;
 }
 </style>
 </head>
 
 <body>
 
-<div style="text-align:center; margin-bottom:20px;">
-  <img src="/static/logo.jpg" width="120">
-</div>
-
+<!-- HEADER WITH LOGO -->
 <div class="header">
-  Faculty Dashboard
+  <img src="{{ url_for('static', filename='logo.jpg') }}">
+  <h2>Faculty Dashboard</h2>
 </div>
 
 <div class="container">
 
-  <!-- WELCOME -->
-  <div class="card">
-    <h2>Welcome, {{ teacher_name }}</h2>
-    <p><b>Course:</b> {{ course }}</p>
+<div class="card">
+  <h2>Welcome, {{ teacher_name }}</h2>
+  <p><b>Course:</b> {{ course }}</p>
+</div>
+
+<div class="card">
+  <h3>Live Class</h3>
+  <button class="btn" onclick="startClass()">Start Class</button>
+</div>
+
+<div class="card">
+  <h3>Feedback Summary</h3>
+  <p>⭐ Average Rating: {{ avg_rating }}</p>
+</div>
+
+<!-- ⭐ STAR RATING UI -->
+<div class="card">
+  <h3>Give Demo Rating</h3>
+  <div id="stars">
+    <span class="star" onclick="rate(1)">★</span>
+    <span class="star" onclick="rate(2)">★</span>
+    <span class="star" onclick="rate(3)">★</span>
+    <span class="star" onclick="rate(4)">★</span>
+    <span class="star" onclick="rate(5)">★</span>
   </div>
+</div>
 
-  <!-- START CLASS -->
-  <div class="card">
-    <h3>Live Class</h3>
-    <button class="btn" onclick="startClass()">Start Class</button>
-  </div>
+<!-- 📊 GRAPH -->
+<div class="card">
+  <h3>Performance Graph</h3>
+  <canvas id="chart"></canvas>
+</div>
 
-  <!-- FEEDBACK SUMMARY -->
-  <div class="card">
-    <h3>Feedback Summary</h3>
-    <p>⭐ Average Rating: {{ avg_rating }}</p>
-  </div>
+<div class="card">
+  <h3>Recent Feedback</h3>
 
-  <!-- RECENT FEEDBACK -->
-  <div class="card">
-    <h3>Recent Feedback</h3>
-
-    {% for f in feedbacks %}
-      <div class="feedback">
-        ⭐ {{ f.rating }} <br>
-        "{{ f.comment }}"
-      </div>
-    {% endfor %}
-
-  </div>
+  {% for f in feedbacks %}
+    <p>⭐ {{ f.rating }} - "{{ f.comment }}"</p>
+  {% endfor %}
 
 </div>
 
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
 <script>
+// ⭐ STAR UI
+function rate(n){
+  let stars = document.querySelectorAll(".star");
+
+  stars.forEach((s,i)=>{
+    s.classList.toggle("active", i < n);
+  });
+}
+
+// 📊 GRAPH
+const ctx = document.getElementById('chart');
+
+new Chart(ctx, {
+  type: 'line',
+  data: {
+    labels: [1,2,3,4,5],
+    datasets: [{
+      label: 'Rating Trend',
+      data: {{ feedbacks|map(attribute='rating')|list }},
+      borderWidth: 2
+    }]
+  }
+});
+
+// CLASS
 function startClass(){
   window.open("{{ meet_link }}", "_blank");
 }
-function checkTeacherPerformance(feedbacks){
-
-  let badCount = 0;
-
-  for(let i = feedbacks.length-1; i >= 0; i--){
-
-    if(feedbacks[i].rating < 3){
-      badCount++;
-    }else{
-      break; // stop if good rating comes
-    }
-
-    if(badCount >= 10){
-      return "REMOVE";
-    }
-  }
-
-  return "OK";
-}
-
 </script>
+
 </body>
 </html>
