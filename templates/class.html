@@ -903,7 +903,7 @@ document.addEventListener("DOMContentLoaded", function(){
   });
 
   let currentHour = new Date().getHours();
-
+  let students_count = 20;
    if(students_count >= 35){
     joinBtns.forEach(btn => {
       btn.innerText = "Full";
@@ -998,12 +998,14 @@ function showTimer(course, msg){
   if(timerDiv){
     timerDiv.innerHTML = msg;
   }
-}
- courseState[course].demoDone = true;
+  courseState[course].demoDone = true;
 localStorage.setItem("demo_done_" + course, "true");
 
 // 🔥 UPDATE UI
 updateUI(course);
+}
+
+
 
 /* =========================
    COURSE PRICE MAP
@@ -1091,7 +1093,7 @@ function payNow(){
 
   var options = {
     key: "{{ razorpay_key }}",   // 🔥 replace with your key
-    amount: amount,        // ✅ paise conversion
+    amount: amount*100,        // ✅ paise conversion
     currency: "INR",
     name: "Ranjitham Study Center",
     description: selectedCourse + " Monthly Fee",
@@ -1158,7 +1160,7 @@ function payNow(){
   }
 
   // ✅ OPEN MEET
-  window.open("https://meet.google.com/sus-iead-rhq", "_self");
+  window.open("https://meet.google.com/sus-iead-rhq", "_blank");
  
 
   // 🔥 CHANGE BUTTON → JOINED
