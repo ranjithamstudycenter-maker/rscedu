@@ -18,6 +18,21 @@ app.secret_key = os.environ.get("SECRET_KEY")
 # TEMP USER STORAGE
 users = {}
 
+teachers = {
+    "faculty1": {
+        "password": "123",
+        "course": "class10",
+        "link": "https://meet.google.com/xxx-10",
+        "active": True
+    },
+    "faculty2": {
+        "password": "456",
+        "course": "class12",
+        "link": "https://meet.google.com/xxx-12",
+        "active": True
+    }
+}
+
 # ================= REGISTER =================
 @app.route("/register", methods=["GET", "POST"])
 def register():
