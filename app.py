@@ -346,7 +346,7 @@ def teacher_login():
         else:
             error = "Invalid Username or Password ❌"
 
-    return render_template("Faculty_login.html", error=error)
+    return render_template("teacher_login.html", error=error)
 
 @app.route("/Faculty-Dashboard")
 def teacher_dashboard():
@@ -373,7 +373,7 @@ def teacher_dashboard():
         teachers[username]["active"] = False
         return "Your account has been disabled due to poor feedback"
 
-    return render_template("Faculty_Dashboard.html",
+    return render_template("teacher_Dashboard.html",
                            teacher_name=username,
                            course=teacher["course"],
                            meet_link=teacher["link"],
