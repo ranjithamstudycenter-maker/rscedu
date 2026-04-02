@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Teacher Dashboard</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+
+<style>
+body{
+  margin:0;
+  font-family:'Poppins',sans-serif;
+  background:#f5f7fa;
+}
+
+/* HEADER */
+.header{
+  background:#0b5394;
+  color:white;
+  padding:20px;
+  text-align:center;
+  font-size:22px;
+  font-weight:600;
+}
+
+/* CONTAINER */
+.container{
+  max-width:900px;
+  margin:30px auto;
+  padding:20px;
+}
+
+/* CARD */
+.card{
+  background:white;
+  padding:25px;
+  border-radius:12px;
+  margin-bottom:20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+}
+
+/* BUTTON */
+.btn{
+  background:#0b5394;
+  color:white;
+  padding:12px 20px;
+  border:none;
+  border-radius:8px;
+  cursor:pointer;
+  font-size:16px;
+}
+
+.btn:hover{
+  background:#073763;
+}
+
+/* FEEDBACK */
+.feedback{
+  background:#f9fafc;
+  padding:10px;
+  margin:8px 0;
+  border-radius:6px;
+}
+</style>
+</head>
+
+<body>
+
+<div class="header">
+  Teacher Dashboard
+</div>
+
+<div class="container">
+
+  <!-- WELCOME -->
+  <div class="card">
+    <h2>Welcome, {{ teacher_name }}</h2>
+    <p><b>Course:</b> {{ course }}</p>
+  </div>
+
+  <!-- START CLASS -->
+  <div class="card">
+    <h3>Live Class</h3>
+    <button class="btn" onclick="startClass()">Start Class</button>
+  </div>
+
+  <!-- FEEDBACK SUMMARY -->
+  <div class="card">
+    <h3>Feedback Summary</h3>
+    <p>⭐ Average Rating: {{ avg_rating }}</p>
+  </div>
+
+  <!-- RECENT FEEDBACK -->
+  <div class="card">
+    <h3>Recent Feedback</h3>
+
+    {% for f in feedbacks %}
+      <div class="feedback">
+        ⭐ {{ f.rating }} <br>
+        "{{ f.comment }}"
+      </div>
+    {% endfor %}
+
+  </div>
+
+</div>
+
+<script>
+function startClass(){
+  window.open("{{ meet_link }}", "_blank");
+}
+function checkTeacherPerformance(feedbacks){
+
+  let badCount = 0;
+
+  for(let i = feedbacks.length-1; i >= 0; i--){
+
+    if(feedbacks[i].rating < 3){
+      badCount++;
+    }else{
+      break; // stop if good rating comes
+    }
+
+    if(badCount >= 10){
+      return "REMOVE";
+    }
+  }
+
+  return "OK";
+}
+
+</script>
+</body>
+</html>
