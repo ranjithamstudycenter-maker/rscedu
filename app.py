@@ -314,20 +314,24 @@ def check_teacher(feedbacks):
 @app.route("/teacher-login", methods=["GET","POST"])
 def teacher_login():
 
+    error = None
+
     if request.method == "POST":
         username = request.form["username"]
         password = request.form["password"]
 
         if username in teachers and teachers[username]["password"] == password:
 
-            # ✅ CHECK ACTIVE STATUS
             if not teachers[username].get("active", True):
-                return "Your account is disabled"
+                error = "Your account is disabled"
+            else:
+                session["teacher"] = username
+                return redirect("/teacher-dashboard")
 
-            session["teacher"] = username
-            return redirect("/teacher-dashboard")
+        else:
+            error = "Invalid Username or Password ❌"
 
-    return render_template("teacher_login.html")
+    return render_template("teacher_login.html", error=error)
 
 @app.route("/teacher-dashboard")
 def teacher_dashboard():
