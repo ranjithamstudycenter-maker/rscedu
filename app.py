@@ -361,8 +361,8 @@ def teacher_dashboard():
                            feedbacks=feedbacks,
                            avg_rating=avg_rating)
 
-@app.route("/submit-feedback", methods=["POST"])
-def submit_feedback():
+@app.route('/submit-teacher-feedback', methods=['POST'])
+def submit_teacher_feedback():
 
     teacher = request.form["teacher"]
     rating = int(request.form["rating"])
@@ -376,7 +376,7 @@ def submit_feedback():
         "comment": comment
     })
 
-    return "Feedback Submitted Successfully"
+    return "Feedback submitted" 
 
 
 # -------------------- FOLDERS --------------------
