@@ -911,6 +911,7 @@ document.addEventListener("DOMContentLoaded", function(){
       btn.style.pointerEvents = "none";
     });
   }
+ });
  Object.keys(courseState).forEach(course => {
 
   if(localStorage.getItem("demo_done_" + course) === "true"){
@@ -923,7 +924,7 @@ document.addEventListener("DOMContentLoaded", function(){
 
   updateUI(course);
 });
-});
+
  
 
 
@@ -1172,7 +1173,7 @@ function payNow(){
       joinBtn.innerText = "Join Now";
     }
   }, 3600000); // 1 hour
-}
+
   // 🔴 SHOW LIVE
   let liveBadge = document.getElementById("live-" + course);
   if(liveBadge){
