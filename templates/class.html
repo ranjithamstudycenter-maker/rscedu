@@ -516,11 +516,9 @@ body{
   #enrollPopup {
   pointer-events: auto;
 }
-  #enrollPopup > div{
-  pointer-events:auto;       /* 🔥 VERY IMPORTANT */
-}
+ 
   </style>
- <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
  
 </head>
 
@@ -1337,7 +1335,7 @@ function joinFromPopup(){
   }
 }
 </script>
-   
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 <!-- 🔴 LIVE POPUP -->
 <div id="livePopup" style="
   display:none;
@@ -1375,11 +1373,8 @@ function joinFromPopup(){
   width:100%;
   height:100%;
   background:rgba(0,0,0,0.6);
-  z-index:99999;
-  display:flex;              /* 🔥 IMPORTANT */
-  justify-content:center;
-  align-items:center;
-">
+  z-index:2000;
+  ">
 
 
   <div style="
