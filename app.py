@@ -326,14 +326,14 @@ def teacher_login():
                 error = "Your account is disabled"
             else:
                 session["teacher"] = username
-                return redirect("/teacher-dashboard")
+                return redirect("/teacher-Dashboard")
 
         else:
             error = "Invalid Username or Password ❌"
 
     return render_template("teacher_login.html", error=error)
 
-@app.route("/teacher-dashboard")
+@app.route("/teacher-Dashboard")
 def teacher_dashboard():
 
     if "teacher" not in session:
@@ -358,7 +358,7 @@ def teacher_dashboard():
         teachers[username]["active"] = False
         return "Your account has been disabled due to poor feedback"
 
-    return render_template("teacher_dashboard.html",
+    return render_template("teacher_Dashboard.html",
                            teacher_name=username,
                            course=teacher["course"],
                            meet_link=teacher["link"],
