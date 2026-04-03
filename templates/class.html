@@ -531,6 +531,24 @@ body{
   font-size:14px;
   color:#555;
 }
+
+  @media(max-width:768px){
+
+  .cards{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+  .class-card{
+    width:90%;
+  }
+
+  #searchBox{
+    width:90%;
+  }
+
+}
   </style>
 
  
@@ -566,6 +584,11 @@ body{
   <p>Online Classes Available for Students Worldwide</p>
   <p>Special Support for Indian Students Abroad</p>
 </section>
+
+ <div style="text-align:center; margin:20px;">
+  <input type="text" id="searchBox" placeholder="Search classes..."
+  style="width:60%; padding:12px; border-radius:8px; border:1px solid #ccc;">
+</div>
 
 <!-- COURSES -->
 <section class="section">
@@ -1369,6 +1392,20 @@ function joinFromPopup(){
 
 </script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+ <script>
+document.getElementById("searchBox").addEventListener("keyup", function() {
+
+  let value = this.value.toLowerCase();
+  let cards = document.querySelectorAll(".class-card");
+
+  cards.forEach(card => {
+    let text = card.innerText.toLowerCase();
+    card.style.display = text.includes(value) ? "block" : "none";
+  });
+
+});
+</script>
 <!-- 🔴 LIVE POPUP -->
 <div id="livePopup" style="
   display:none;
