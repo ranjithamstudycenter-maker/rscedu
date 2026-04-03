@@ -5,6 +5,7 @@
 <title>Faculty Dashboard</title>
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
 body{
@@ -21,15 +22,11 @@ body{
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:15px;
+  gap:10px;
 }
 
 .header img{
-  width:50px;
-}
-
-.header h2{
-  margin:0;
+  width:45px;
 }
 
 /* CONTAINER */
@@ -77,29 +74,42 @@ body{
 
 <body>
 
-<!-- HEADER WITH LOGO -->
+<!-- ✅ HEADER WITH LOGO -->
 <div class="header">
+  <img src="{{ url_for('static', filename='images/logo.jpg') }}">
   <h2>Faculty Dashboard</h2>
 </div>
 
 <div class="container">
 
+<!-- ✅ WELCOME -->
 <div class="card">
   <h2>Welcome, {{ teacher_name }}</h2>
   <p><b>Course:</b> {{ course }}</p>
 </div>
 
+<!-- ✅ LIVE CLASS -->
 <div class="card">
   <h3>Live Class</h3>
   <button class="btn" onclick="startClass()">Start Class</button>
 </div>
 
+<!-- ✅ AVG RATING -->
 <div class="card">
   <h3>Feedback Summary</h3>
   <p>⭐ Average Rating: {{ avg_rating }}</p>
 </div>
 
-<!-- ⭐ STAR RATING UI -->
+<!-- ⭐ STAR DISPLAY (AUTO) -->
+<div class="card">
+  <h3>Performance</h3>
+  <p>
+    {% for i in range(avg_rating|int) %}★{% endfor %}
+    {% for i in range(5 - avg_rating|int) %}☆{% endfor %}
+  </p>
+</div>
+
+<!-- ⭐ DEMO STAR CLICK -->
 <div class="card">
   <h3>Give Demo Rating</h3>
   <div id="stars">
@@ -117,6 +127,7 @@ body{
   <canvas id="chart"></canvas>
 </div>
 
+<!-- ✅ FEEDBACK -->
 <div class="card">
   <h3>Recent Feedback</h3>
 
@@ -128,28 +139,25 @@ body{
 
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-
 <script>
 // ⭐ STAR UI
 function rate(n){
   let stars = document.querySelectorAll(".star");
-
   stars.forEach((s,i)=>{
     s.classList.toggle("active", i < n);
   });
 }
 
 // 📊 GRAPH
-const ctx = document.getElementById('chart');
+const ratings = {{ feedbacks | map(attribute='rating') | list | tojson }};
 
-new Chart(ctx, {
+new Chart(document.getElementById("chart"), {
   type: 'line',
   data: {
-    labels: [1,2,3,4,5],
+    labels: ratings.map((_,i)=>i+1),
     datasets: [{
-      label: 'Rating Trend',
-      data: {{ feedbacks|map(attribute='rating')|list }},
+      label: "Ratings",
+      data: ratings.length ? ratings : [0],
       borderWidth: 2
     }]
   }
