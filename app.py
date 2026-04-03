@@ -330,12 +330,18 @@ def check_teacher(feedbacks):
 def teacher_login():
 
     error = ""
+    selected_class = request.args.get("class")
 
     if request.method == "POST":
+
         username = request.form.get("username")
         password = request.form.get("password")
 
         if username in teachers and teachers[username]["password"] == password:
+
+            # ✅ CLASS CHECK
+            if selected_class and teachers[username]["course"] != selected_class:
+                return "Wrong class login ❌"
 
             if not teachers[username].get("active", True):
                 error = "Your account is disabled ❌"
@@ -346,15 +352,7 @@ def teacher_login():
         else:
             error = "Invalid Username or Password ❌"
 
-    selected_class = request.args.get("class")  # 👈 GET CLASS
-
-    print(selected_class)  # test
-
-    return render_template("teacher_login.html", class_name=selected_class)
-    
-    if teachers[username]["course"] != selected_class:
-    return "Wrong class login ❌"
-
+    return render_template("teacher_login.html", error=error, class_name=selected_class)
     
 
 @app.route("/teacher-Dashboard")
