@@ -346,6 +346,14 @@ def teacher_login():
         else:
             error = "Invalid Username or Password ❌"
 
+    selected_class = request.args.get("class")  # 👈 GET CLASS
+
+    print(selected_class)  # test
+
+    return render_template("teacher_login.html", class_name=selected_class)
+    if teachers[username]["course"] != selected_class:
+    return "Wrong class login ❌"
+
     return f"""
 <!DOCTYPE html>
 <html>
