@@ -484,7 +484,7 @@ def teacher_dashboard():
     # ⭐ ratings list for graph
     ratings = [f["rating"] for f in feedbacks]
 
-    return render_template("teacher_dashboard.html",
+    return render_template("teacher_Dashboard.html",
                            teacher_name=username,
                            course=teacher["course"],
                            meet_link=teacher["link"],
