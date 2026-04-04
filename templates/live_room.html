@@ -2,51 +2,58 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Demo Class | Ranjitham Study Center</title>
+<title>Live Class | Ranjitham Study Center</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-<!-- Font -->
-<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600&display=swap" rel="stylesheet">
 
 <style>
 body{
     margin:0;
     font-family:'Poppins', sans-serif;
-    background:#f5f7fa;
+    background:#f4f7fb;
+    text-align:center;
 }
 
 /* HEADER */
 .header{
-    text-align:center;
     padding:30px 20px;
+}
+
+.logo{
+    width:70px;
+    margin-bottom:10px;
 }
 
 .header h2{
     color:red;
-    margin-bottom:10px;
 }
 
-.header p{
-    color:#555;
+/* LOADING BOX */
+.main-box{
+    max-width:400px;
+    margin:20px auto;
+    background:white;
+    padding:25px;
+    border-radius:15px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.1);
 }
 
-/* ZOOM BUTTON */
-.zoom-btn{
-    display:inline-block;
-    margin-top:15px;
-    padding:12px 25px;
-    background:#0b5394;
-    color:white;
-    border-radius:8px;
-    text-decoration:none;
-    font-weight:600;
+.loader{
+    margin:15px auto;
+    border:5px solid #eee;
+    border-top:5px solid #0b5394;
+    border-radius:50%;
+    width:40px;
+    height:40px;
+    animation:spin 1s linear infinite;
 }
 
-.zoom-btn:hover{
-    background:#083c6d;
+@keyframes spin{
+    100%{ transform:rotate(360deg); }
 }
 
-/* WAITING SECTION */
+/* WAITING */
 .container{
     display:flex;
     justify-content:center;
@@ -59,80 +66,51 @@ body{
     background:white;
     padding:20px;
     border-radius:12px;
-    width:260px;
-    text-align:center;
+    width:250px;
     box-shadow:0 8px 20px rgba(0,0,0,0.1);
 }
 
 .box h3{
     color:#0b5394;
 }
-
-.name{
-    font-size:14px;
-    margin:5px 0;
-}
-
-/* NOTICE */
-.notice{
-    text-align:center;
-    margin-top:20px;
-    color:#444;
-    font-size:14px;
-}
 </style>
 
-<!-- 🔄 AUTO REFRESH -->
-<meta http-equiv="refresh" content="5">
+<!-- 🔥 AUTO REDIRECT -->
+<script>
+setTimeout(function(){
+    window.location.href = "{{ meet_link }}";
+}, 3000);  // 3 sec delay
+</script>
 
 </head>
 
 <body>
 
 <div class="header">
-    <h2>🔴 Demo Class Session</h2>
-    <p>Click below to join live demo class via Zoom</p>
-
-    <!-- 👉 Replace with your Zoom link -->
-    <a href="https://zoom.us/j/your-meeting-id" target="_blank" class="zoom-btn">
-        Join Demo Class
-    </a>
-</div>
-<html><head><title>Live Class</title></head>
-    <body style="font-family:Poppins;text-align:center;padding:40px;">
-
-    <h2 style="color:red;">🔴 Live Class</h2>
-
-    
-
-    <p style="margin-top:20px;">No app needed (browser works)</p>
-
-    </body></html>
-<div class="notice">
-📢 Use mobile or laptop <br>
-No app required (browser works) <br>
-🎤 Allow camera & microphone when asked
+    <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo">
+    <h2>🔴 Connecting to Live Class...</h2>
 </div>
 
-<!-- 👇 WAITING LIST -->
+<div class="main-box">
+    <div class="loader"></div>
+    <p>Please wait... redirecting to your class</p>
+</div>
+
+<!-- WAITING LIST -->
 <div class="container">
 
 <div class="box">
 <h3>🇮🇳 Indian ({{ indian|length }})</h3>
-
 {% for name in indian %}
-<p class="name">{{ name }}</p>
+<p>{{ name }}</p>
 {% endfor %}
-
 </div>
 
 <div class="box">
 <h3>🌍 International ({{ international|length }})</h3>
-
 {% for name in international %}
-<p class="name">{{ name }}</p>
+<p>{{ name }}</p>
 {% endfor %}
-
 </div>
 
 </div>
