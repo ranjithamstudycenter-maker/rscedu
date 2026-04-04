@@ -270,15 +270,25 @@ body{
   border:none;
   
 }
- /* FREE DEMO */
+/* FREE DEMO */
 .btn-demo{
-  background:#ffd54f;
+  background:#fff3b0;
+  color:#000;
+}
+
+.btn-demo-done{
+  background:#fbc02d;
   color:#000;
 }
 
 /* ENROLL */
 .btn-enroll{
-  background:#64b5f6;
+  background:#bbdefb;
+  color:#000;
+}
+
+.btn-registered{
+  background:#1565c0;
   color:white;
 }
 
@@ -288,12 +298,10 @@ body{
   color:white;
 }
 
-/* REGISTERED */
-.btn-registered{
-  background:#1565c0;
+.btn-joined{
+  background:#2e7d32;
   color:white;
 }
-
 /* LIVE */
   .btn.live{
   background:red;
@@ -303,11 +311,6 @@ body{
 }
   .btn:hover{
   transform:scale(1.05);
-}
-
-.btn.demo-completed {
-  background:#fff3cd;
-  color:#856404;
 }
 
 /* GRID */
@@ -692,11 +695,23 @@ body{
   </div>
 
   <p class="days">📅 Mon • Wed • Fri</p>
-    <!-- ACTION BUTTONS -->
-  <div class="actions">
-  <button class="btn btn-demo" onclick="bookDemo('cbse10')">Free Demo</button>
-  <button class="btn btn-enroll" onclick="enroll('cbse10')">Enroll</button>
-  </div>
+    <!-- FREE DEMO -->
+  {% if demo_done %}
+    <button class="btn btn-demo-done" disabled>Demo Completed</button>
+  {% else %}
+    <button class="btn btn-demo" onclick="window.location.href='/demo-class'">
+      Free Demo
+    </button>
+  {% endif %}
+
+  <!-- ENROLL -->
+  {% if registered %}
+    <button class="btn btn-registered" disabled>Registered</button>
+  {% else %}
+    <button class="btn btn-enroll" onclick="window.location.href='/payment'">
+      Enroll
+    </button>
+  {% endif %}
  <!-- 🔥 LIVE / JOIN SECTION -->
 <div class="live-section">
   {% if class_status['class10'] %}
@@ -705,7 +720,7 @@ body{
     {% if registered %}
       <button class="btn btn-join" onclick="joinClass('cbse10')">Join Now</button>  
     {% else %}
-      <button class="btn btn-join" disabled>Join Now</button>
+      <button class="btn btn-joined" disabled>Joined</button>
     {% endif %}
   {% endif %}
 </div>
