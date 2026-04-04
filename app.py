@@ -495,7 +495,7 @@ def about():
 
 @app.route("/class")
 def courses():
-    return render_template("class.html")
+    return render_template("class.html", class_status=class_status)
    
 def is_valid(expiry): 
   if not expiry: 
