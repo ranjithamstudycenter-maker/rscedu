@@ -16,7 +16,15 @@ app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 
 # TEMP USER STORAGE
-users = {}
+users = {
+    "test@gmail.com": {
+        "name": "Student1",
+        "hours_used": 0,
+        "max_hours": 12,
+        "demo_done": False,
+        "demo_waiting": False
+    }
+}
 
 teachers = {
     "Balakumar": {
@@ -239,13 +247,6 @@ def reset_all_students():
     last_reset_day = today
 
 
-@app.before_request
-def check_month_end():
-    today = datetime.now().day
-
-    if today == 30:
-        reset_all_students()
-
 # ================= ENROLL =================
 from flask import request, jsonify, session, redirect
 
@@ -289,13 +290,24 @@ def live_room():
     if not session.get("user"):
         return redirect("/login")
 
-    user = users.get(session.get("user"))
+    email = session.get("user")
+    user = users.get(email)
 
     if not user:
         return redirect("/login")
 
-    if not user["enrolled"]:
+    # ✅ ENROLL CHECK
+    if not user.get("enrolled"):
         return "<h3 style='text-align:center;'>Please enroll first</h3>"
+
+    # ✅ HOURS CHECK
+    if user.get("hours_used", 0) >= user.get("max_hours", 12):
+        return "<h3 style='text-align:center;'>Your class hours completed ❌</h3>"
+
+    # ✅ INCREMENT HOURS (only once per session)
+    if not session.get("joined"):
+        user["hours_used"] = user.get("hours_used", 0) + 1
+        session["joined"] = True
 
     return """
     <html><head><title>Live Class</title></head>
@@ -312,24 +324,6 @@ def live_room():
 
     </body></html>
     """
-feedback_db = {
-    "teacher1": [],
-    "teacher2": []
-}
-def check_teacher(feedbacks):
-
-    bad_count = 0
-
-    for f in reversed(feedbacks):
-        if f["rating"] < 3:
-            bad_count += 1
-        else:
-            break
-
-        if bad_count >= 10:
-            return "REMOVE"
-
-    return "OK"
 @app.route("/teacher-login", methods=["GET","POST"])
 def teacher_login():
 
