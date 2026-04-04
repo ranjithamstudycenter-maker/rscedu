@@ -310,19 +310,7 @@ def live_room():
         session["joined"] = True
 
     return """
-    <html><head><title>Live Class</title></head>
-    <body style="font-family:Poppins;text-align:center;padding:40px;">
-
-    <h2 style="color:red;">🔴 Live Class</h2>
-
-    <a href="https://zoom.us/j/your-meeting-id" target="_blank"
-    style="padding:12px 25px;background:#0b5394;color:white;border-radius:10px;text-decoration:none;">
-    Join Zoom Class
-    </a>
-
-    <p style="margin-top:20px;">No app needed (browser works)</p>
-
-    </body></html>
+    
     """
 @app.route("/teacher-login", methods=["GET","POST"])
 def teacher_login():
