@@ -309,9 +309,14 @@ def live_room():
         user["hours_used"] = user.get("hours_used", 0) + 1
         session["joined"] = True
 
-    return """
+    course = request.args.get("course")
+
+    print(course)  # test
+
+    return render_template("live_room.html", course=course)
+
     
-    """
+
 @app.route("/teacher-login", methods=["GET","POST"])
 def teacher_login():
 
