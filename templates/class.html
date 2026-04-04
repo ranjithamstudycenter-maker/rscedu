@@ -620,6 +620,11 @@ body{
       </div>
       <p class="class-time">🕒 7:00 PM</p>
  <a href="/teacher-login?class=class10">Faculty Login 🔐</a>
+ {% if class_status['class10'] %}
+    <button style="background:red;color:white;">🔴 LIVE NOW</button>
+{% else %}
+    <button disabled>Join Now</button>
+{% endif %}
       <!-- 🔥 ADD THIS -->
       <div class="demo-timer" id="timer-cbse10"></div>
 </div>
