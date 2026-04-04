@@ -32,6 +32,10 @@ teachers = {
         "active": True
     }
 }
+class_status = {
+    "class10": False,
+    "class12": False
+}
 
 # ================= REGISTER =================
 @app.route("/register", methods=["GET", "POST"])
