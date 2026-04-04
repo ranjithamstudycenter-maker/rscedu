@@ -232,6 +232,10 @@ body{
   position: relative;
   z-index: 5;
 }
+.title{
+  margin-bottom:10px;
+  color:#0b5394;
+}
 
   /* PRICE BOX */
 .price-box{
@@ -240,7 +244,16 @@ body{
   padding:15px;
   margin:15px 0;
   border-radius:8px;
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
 }
+ 
+.price{
+  font-weight:bold;
+  color:#111;
+}
+
 
 /* BUTTONS */
 .btn{
@@ -254,6 +267,14 @@ body{
   display: inline-block;
   pointer-events: auto;
   transition:0.3s;
+  border:none;
+  
+}
+  .btn.live{
+  background:red;
+  color:white;
+  width:100%;
+  animation:pulse 1s infinite;
 }
   .btn:hover{
   transform:scale(1.05);
@@ -268,9 +289,24 @@ body{
   background:#6366f1;
   color:white;
 }
-.primary joinBtn{
+.primary{
   background:#1e3a8a;
   color:white;
+}
+
+  .btn.primary{
+  background:#0b5394;
+  color:white;
+}
+
+.btn.secondary{
+  background:#2e7d32;
+  color:white;
+}
+
+.btn.outline{
+  background:white;
+  border:1px solid #ccc;
 }
 
 
@@ -298,7 +334,10 @@ body{
   margin:15px 0;
   font-weight:500;
   color:red;
+  margin-top:10px;
+  font-size:13px;
 }
+
 
 
 /* MOBILE */
@@ -466,6 +505,11 @@ body{
   margin-left:10px;
   animation:blink 1.5s infinite;
 }
+  /* 🔴 LIVE SECTION */
+.live-section{
+  text-align:center;
+  margin-bottom:10px;
+}
 
 @keyframes blink{
   50%{opacity:0;}
@@ -519,17 +563,22 @@ body{
 }
 
 .offer{
-  color:green;
   font-weight:bold;
+  color:red;
 }
   .disabled{
   background:gray;
   color:white;
   pointer-events:none;
 }
+  .duration{
+  font-size:13px;
+  color:#666;
+}
   .days{
   font-size:14px;
   color:#555;
+   margin-bottom:15px;
 }
 
   @media(max-width:768px){
@@ -540,14 +589,48 @@ body{
     align-items:center;
   }
 
-  .class-card{
-    width:90%;
-  }
+ .class-card{
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  width:280px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+  transition:0.3s;
+}
+
+.class-card:hover{
+  transform:translateY(-5px);
+}
 
   #searchBox{
     width:90%;
   }
 
+}
+  @media(max-width:768px){
+  .class-card{
+    width:90%;
+  }
+}
+  /* FOOTER */
+.footer{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  margin-top:10px;
+}
+
+.faculty-link{
+  font-size:12px;
+  color:#0b5394;
+  text-decoration:none;
+}
+
+/* 🔴 LIVE ANIMATION */
+@keyframes pulse{
+  0%{opacity:1;}
+  50%{opacity:0.6;}
+  100%{opacity:1;}
 }
   </style>
 
@@ -586,7 +669,7 @@ body{
 </section>
 
  <div style="text-align:center; margin:20px;">
-  <input type="text" id="searchBox" placeholder="Search classes..."
+  <input type="text" id="searchBox" placeholder="Search classes...">
   style="width:60%; padding:12px; border-radius:8px; border:1px solid #ccc;">
 </div>
 
@@ -597,36 +680,46 @@ body{
 <div class="grid">
 
  <!-- CBSE 10 -->
-<div class="card">
-      <h2>
-        CBSE Maths – Class 10 
-        <span class="live-badge" id="live-cbse10">🔴 LIVE</span>
-      </h2>
- 
-      <div class="price-box">
-       <p>₹300 / hour</p>
-      <p>12 Hours / Month</p>
-       </div>
-      <p class="days">📅 Mon • Wed • Fri</p>
-      <div class="actions">
-      <button class="btn outline" onclick="bookDemo('cbse10')">Free Demo</button>
-      <button class="btn secondary" onclick="enroll('cbse10')">Enroll</button>
-      <button class="btn primary joinBtn" data-course="cbse10" onclick="joinClass('cbse10')">Join Now</button>
-      </div>
-      <button onclick="teacherJoin('cbse10')">Start Class</button>
-      <div class="notice">
-       <p class="seats">🎯 Seats: 30</p>
-       <p class="offer">🔥 First 10 Students – 50% OFF</p>
-      </div>
-      <p class="class-time">🕒 7:00 PM</p>
- <a href="/teacher-login?class=class10">Faculty Login 🔐</a>
- {% if class_status['class10'] %}
-    <button style="background:red;color:white;">🔴 LIVE NOW</button>
-{% else %}
-    <button disabled>Join Now</button>
-{% endif %}
-      <!-- 🔥 ADD THIS -->
-      <div class="demo-timer" id="timer-cbse10"></div>
+<div class="class-card">
+
+  <h2 class="title">CBSE Maths – Class 10</h2>
+
+  <div class="price-box">
+    <p class="price">₹300 / hour</p>
+    <p class="duration">12 Hours / Month</p>
+  </div>
+
+  <p class="days">📅 Mon • Wed • Fri</p>
+
+  <!-- 🔥 LIVE / JOIN SECTION -->
+  <div class="live-section">
+    {% if class_status['class10'] %}
+      <button class="btn live">🔴 LIVE NOW</button>
+    {% else %}
+      <button class="btn primary" onclick="joinClass('cbse10')">Join Now</button>
+    {% endif %}
+  </div>
+
+  <!-- ACTION BUTTONS -->
+  <div class="actions">
+    <button class="btn outline" onclick="bookDemo('cbse10')">Free Demo</button>
+    <button class="btn secondary" onclick="enroll('cbse10')">Enroll</button>
+  </div>
+
+  <!-- NOTICE -->
+  <div class="notice">
+    <p class="seats">🎯 Seats: 30</p>
+    <p class="offer">🔥 First 10 Students – 50% OFF</p>
+  </div>
+
+  <!-- TIME + FACULTY -->
+  <div class="footer">
+    <p class="class-time">🕒 7:00 PM</p>
+    <a class="faculty-link" href="/teacher-login?class=class10">🔐 Faculty</a>
+  </div>
+
+  <div class="demo-timer" id="timer-cbse10"></div>
+
 </div>
 
 <!-- CBSE 12 -->
