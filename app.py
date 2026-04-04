@@ -487,7 +487,20 @@ def about():
 
 @app.route("/class")
 def courses():
-    return render_template("class.html", class_status=class_status)
+
+    email = session.get("user")
+
+    if not email or email not in users:
+        return redirect("/login")
+
+    user = users[email]
+
+    return render_template(
+        "class.html",class_status=class_status,
+        demo_completed=user.get("demo_completed", False),
+        registered=user.get("enrolled", False),
+        joined=session.get("joined", False)
+    )
    
 def is_valid(expiry): 
   if not expiry: 
