@@ -270,6 +270,31 @@ body{
   border:none;
   
 }
+ /* FREE DEMO */
+.btn-demo{
+  background:#ffd54f;
+  color:#000;
+}
+
+/* ENROLL */
+.btn-enroll{
+  background:#64b5f6;
+  color:white;
+}
+
+/* JOIN */
+.btn-join{
+  background:#81c784;
+  color:white;
+}
+
+/* REGISTERED */
+.btn-registered{
+  background:#1565c0;
+  color:white;
+}
+
+/* LIVE */
   .btn.live{
   background:red;
   color:white;
@@ -280,35 +305,10 @@ body{
   transform:scale(1.05);
 }
 
-/* Button Colors */
-.outline{
-  border:2px solid #1e3a8a;
-  color:#1e3a8a;
+.btn.demo-completed {
+  background:#fff3cd;
+  color:#856404;
 }
-.secondary{
-  background:#6366f1;
-  color:white;
-}
-.primary{
-  background:#1e3a8a;
-  color:white;
-}
-
-  .btn.primary{
-  background:#0b5394;
-  color:white;
-}
-
-.btn.secondary{
-  background:#2e7d32;
-  color:white;
-}
-
-.btn.outline{
-  background:white;
-  border:1px solid #ccc;
-}
-
 
 /* GRID */
 .grid{
@@ -613,15 +613,17 @@ body{
   }
 }
   /* FOOTER */
-.footer{
+.card-footer{
   display:flex;
   justify-content:space-between;
   align-items:center;
-  margin-top:10px;
+  margin-top:15px;
+  padding-top:10px;
+  border-top:1px solid #eee;
 }
 
 .faculty-link{
-  font-size:12px;
+  font-size:13px;
   color:#0b5394;
   text-decoration:none;
 }
@@ -680,7 +682,7 @@ body{
 <div class="grid">
 
  <!-- CBSE 10 -->
-<div class="class-card">
+<div class="card">
 
   <h2 class="title">CBSE Maths – Class 10</h2>
 
@@ -690,22 +692,23 @@ body{
   </div>
 
   <p class="days">📅 Mon • Wed • Fri</p>
-
-  <!-- 🔥 LIVE / JOIN SECTION -->
-  <div class="live-section">
-    {% if class_status['class10'] %}
-      <button class="btn live">🔴 LIVE NOW</button>
-    {% else %}
-      <button class="btn primary" onclick="joinClass('cbse10')">Join Now</button>
-    {% endif %}
-  </div>
-
-  <!-- ACTION BUTTONS -->
+    <!-- ACTION BUTTONS -->
   <div class="actions">
-    <button class="btn outline" onclick="bookDemo('cbse10')">Free Demo</button>
-    <button class="btn secondary" onclick="enroll('cbse10')">Enroll</button>
+  <button class="btn btn-demo" onclick="bookDemo('cbse10')">Free Demo</button>
+  <button class="btn btn-enroll" onclick="enroll('cbse10')">Enroll</button>
   </div>
-
+ <!-- 🔥 LIVE / JOIN SECTION -->
+<div class="live-section">
+  {% if class_status['class10'] %}
+    <button class="btn btn-live">🔴 LIVE NOW</button>
+  {% else %}
+    {% if registered %}
+      <button class="btn btn-join" onclick="joinClass('cbse10')">Join Now</button>
+    {% else %}
+      <button class="btn btn-join" disabled>Join Now</button>
+    {% endif %}
+  {% endif %}
+</div>
   <!-- NOTICE -->
   <div class="notice">
     <p class="seats">🎯 Seats: 30</p>
@@ -713,12 +716,11 @@ body{
   </div>
 
   <!-- TIME + FACULTY -->
-  <div class="footer">
-    <p class="class-time">🕒 7:00 PM</p>
-    <a class="faculty-link" href="/teacher-login?class=class10">🔐 Faculty</a>
-  </div>
-
-  <div class="demo-timer" id="timer-cbse10"></div>
+  <div class="card-footer">
+     <span>🕒 7:00 PM</span>
+  <a href="/teacher-login?class=class10" class="faculty-link">🔐 Faculty Login</a>
+   </div>
+ <div class="demo-timer" id="timer-cbse10"></div>
 
 </div>
 
