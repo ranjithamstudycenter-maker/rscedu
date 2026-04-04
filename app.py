@@ -313,7 +313,12 @@ def live_room():
 
     print(course)  # test
 
-    return render_template("live_room.html", course=course)
+    return render_template(
+    "live_room.html",course=course,
+    meet_link="https://meet.google.com/your-link",
+    indian=indian,
+    international=international
+)
 
     
 
