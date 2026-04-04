@@ -703,7 +703,7 @@ body{
     <button class="btn btn-live">🔴 LIVE NOW</button>
   {% else %}
     {% if registered %}
-      <button class="btn btn-join" onclick="joinClass('cbse10')">Join Now</button>
+      <button class="btn btn-join" onclick="joinClass('cbse10')">Join Now</button>  
     {% else %}
       <button class="btn btn-join" disabled>Join Now</button>
     {% endif %}
@@ -1507,7 +1507,15 @@ document.getElementById("searchBox").addEventListener("keyup", function() {
 
 });
 </script>
-<!-- 🔴 LIVE POPUP -->
+
+ <script>
+function joinClass(course){
+  window.location.href = "/live-room?course=" + course;
+}
+</script>
+ 
+ 
+ <!-- 🔴 LIVE POPUP -->
 <div id="livePopup" style="
   display:none;
   position:fixed;
