@@ -702,6 +702,18 @@ body{
     <button class="btn btn-demo" onclick="window.location.href='/demo-class'">
       Free Demo
     </button>
+
+         <div class="demo-box">
+        
+          <input type="text" id="phone" placeholder="Enter Mobile Number">
+        
+          <input type="text" id="otp" placeholder="Enter OTP">
+        
+          <button onclick="sendOTP()">Send OTP</button>
+        
+          <button onclick="verifyOTP()">Proceed for Demo</button>
+        
+        </div>
   {% endif %}
 
   <!-- ENROLL -->
@@ -1526,6 +1538,42 @@ document.getElementById("searchBox").addEventListener("keyup", function() {
  <script>
 function joinClass(course){
   window.location.href = "/live-room?course=" + course;
+}
+</script>
+
+ <script>
+function sendOTP(){
+  let phone = document.getElementById("phone").value;
+
+  if(!/^[6-9]\d{9}$/.test(phone)){
+    alert("Enter valid Indian mobile number");
+    return;
+  }
+
+  fetch("/send-otp", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({phone:phone})
+  });
+}
+
+function verifyOTP(){
+  let phone = document.getElementById("phone").value;
+  let otp = document.getElementById("otp").value;
+
+  fetch("/verify-otp", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({phone:phone, otp:otp})
+  })
+  .then(res=>res.json())
+  .then(data=>{
+    if(data.status=="ok"){
+      window.location.href="/demo-class";
+    }else{
+      alert("Invalid OTP");
+    }
+  });
 }
 </script>
  
