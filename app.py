@@ -215,6 +215,9 @@ def demo_class():
 def check_demo():
 
     email = session.get("user")
+    
+    if not user.get("demo_done"):
+    return "Please attend demo first ❌"
 
     if not email or email not in users:
         return jsonify({"error": "Unauthorized"}), 401
