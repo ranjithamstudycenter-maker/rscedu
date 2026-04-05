@@ -712,47 +712,42 @@ body{
   </div>
 
   <p class="days">📅 Mon • Wed • Fri</p>
+
   <div class="actions">
 
-  <!-- FREE DEMO -->
-  {% if demo_done %}
-    <button class="btn btn-demo-done" disabled>Demo Completed</button>
-  {% else %}
-    <button class="btn btn-demo" onclick="openDemoBox()">
-      Free Demo
-    </button>
-  {% endif %}
+    {% if demo_done %}
+      <button class="btn btn-demo-done" disabled>Demo Completed</button>
+    {% else %}
+      <button class="btn btn-demo" onclick="openDemoBox()">Free Demo</button>
+    {% endif %}
 
-  <!-- ENROLL -->
-  {% if registered %}
-    <button class="btn btn-registered" disabled>Registered</button>
-  {% else %}
-    <button class="btn btn-enroll" onclick="window.location.href='/payment'">
-      Enroll
-    </button>
-  {% endif %}
+    {% if registered %}
+      <button class="btn btn-registered" disabled>Registered</button>
+    {% else %}
+      <button class="btn btn-enroll" onclick="window.location.href='/payment'">Enroll</button>
+    {% endif %}
 
-<!-- 🔴 JOIN SECTION -->
-      <button class="btn btn-join" onclick="joinClass('cbse10')">
-        Join Now
-      </button>  
-  <!-- NOTICE -->
+    <button class="btn btn-join" onclick="joinClass('cbse10')">
+      Join Now
+    </button>
+
+  </div>
+
   <div class="notice">
     <p class="seats">🎯 Seats: 30</p>
     <p class="offer">🔥 First 10 Students – 50% OFF</p>
   </div>
 
-  <!-- TIME + FACULTY -->
   <div class="card-footer">
     <button class="btn btn-join" disabled>
-  Starts at 7:00 PM
+      Starts at 7:00 PM
     </button>
-  <a href="/teacher-login?class=class10" class="faculty-link">🔐 Faculty Login</a>
-   </div>
- <div class="demo-timer" id="timer-cbse10"></div>
+    <a href="/teacher-login?class=class10" class="faculty-link">🔐 Faculty Login</a>
   </div>
-</div>
 
+  <div class="demo-timer" id="timer-cbse10"></div>
+
+</div>
 <!-- CBSE 12 -->
 <div class="card">
       <h2>
