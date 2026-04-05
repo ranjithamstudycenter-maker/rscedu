@@ -44,7 +44,19 @@ class_status = {
     "class10": False,
     "class12": False
 }
+@app.route("/reset-demo")
+def reset_demo():
 
+    if not session.get("admin"):
+        return "Unauthorized ❌"
+
+    email = request.args.get("email")
+
+    if email in users:
+        users[email]["demo_done"] = False
+        users[email]["demo_waiting"] = False
+
+    return "Demo reset done ✅"
 # ================= REGISTER =================
 @app.route("/register", methods=["GET", "POST"])
 def register():
