@@ -503,14 +503,7 @@ def about():
 
 @app.route("/class")
 def courses():
-
-    email = session.get("user")
-
-    if not email or email not in users:
-        return redirect("/login")
-
-    user = users[email]
-
+   
     return render_template(
         "class.html",class_status=class_status,
         demo_completed=user.get("demo_completed", False),
