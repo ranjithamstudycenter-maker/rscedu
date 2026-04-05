@@ -57,27 +57,37 @@ def send_otp():
     data = request.json
     phone = data["phone"]
 
-    otp = "1234"  # 🔥 test (later real OTP)
+    otp = "1234"  # 🔥 test
 
     otp_store[phone] = otp
 
+    # ✅ session set here (IMPORTANT)
+    session["phone"] = phone
+
     return {"status": "sent"}
 
-@app.route("/send-otp", methods=["POST"])
-def send_otp():
+@app.route("/verify-otp", methods=["POST"])
+def verify_otp():
 
     data = request.json
     phone = data["phone"]
+    otp = data["otp"]
 
-    otp = "1234"  # 🔥 test (later real OTP)
+    if otp_store.get(phone) == otp:
 
-    otp_store[phone] = otp
+        # ✅ create user if not exists
+        if phone not in demo_users:
+            demo_users[phone] = {
+                "demo_done": False,
+                "demo_waiting": False,
+                "enrolled": False,
+                "hours_used": 0,
+                "max_hours": 12
+            }
 
-    return {"status": "sent"}
+        return {"status": "ok"}
 
-demo_users[phone]["enrolled"] = True
-demo_users[phone]["hours_used"] = 0
-demo_users[phone]["max_hours"] = 12
+    return {"status": "fail"}
 
 @app.route("/reset-demo")
 def reset_demo():
@@ -189,14 +199,21 @@ def logout():
 @app.route("/demo-class")
 def demo_class():
 
-    if not session.get("user"):
-        return redirect("/login")
+    phone = session.get("phone")
 
-    email = session.get("user")
-    user = users.get(email)
+    if not phone:
+        return "Enter mobile number first ❌"
+
+    user = demo_users.get(phone)
 
     if not user:
-        return redirect("/login")
+        demo_users[phone] = {
+            "demo_done": False,
+            "demo_waiting": False,
+            "batch": "indian",   # default (later detect pannalam)
+            "name": "Student"
+        }
+        user = demo_users[phone]
 
     # ✅ Already attended check
     if user.get("demo_done"):
@@ -208,95 +225,46 @@ def demo_class():
     indian = []
     international = []
 
-    for u in users.values():
+    for u in demo_users.values():
         if u.get("demo_waiting"):
             if u.get("batch") == "indian":
                 indian.append(u.get("name", "Student"))
             else:
                 international.append(u.get("name", "Student"))
 
-    return f"""
-    <html><head><title>Demo Waiting</title>
-    <style>
-    body{{font-family:Poppins;background:#f5f7fa;text-align:center;padding:40px;}}
-    .box{{background:white;padding:20px;margin:20px auto;width:300px;border-radius:12px;}}
-    </style></head>
-
-    <body>
-
-    <h2>🔴 Demo Waiting Room</h2>
-
-    <div class="box">
-    <h3>🇮🇳 Indian ({len(indian)})</h3>
-    {"<br>".join(indian) if indian else "No students yet"}
-    </div>
-
-    <div class="box">
-    <h3>🌍 International ({len(international)})</h3>
-    {"<br>".join(international) if international else "No students yet"}
-    </div>
-
-    <br><br>
-
-    <a href="/live-room" style="padding:10px 20px;background:red;color:white;border-radius:8px;">
-    Start Demo
-    </a>
-
-    </body></html>
-    """
+    return render_template(
+        "demo_waiting.html",
+        indian=indian,
+        international=international
+    )
 
 @app.route("/api/check-demo")
 def check_demo():
-    email = session.get("user")
 
-    # முதலில் login check
-    if not email or email not in users:
+    phone = session.get("phone")
+
+    if not phone or phone not in demo_users:
         return jsonify({"error": "Unauthorized"}), 401
 
-    # பிறகு demo check
-    user = users[email]  # ← இதுவும் missing ஆக இருந்தது!
-    if not user.get("demo_done"):
-        return "Please attend demo first ❌"
+    user = demo_users[phone]
 
     return jsonify({
-        "demo_done": users[email].get("demo_done", False)
+        "demo_done": user.get("demo_done", False)
     })
 
 # ✅ MARK DEMO COMPLETE
 @app.route("/api/demo-complete", methods=["POST"])
 def demo_complete():
 
-    email = session.get("user")
+    phone = session.get("phone")
 
-    if not email or email not in users:
+    if not phone or phone not in demo_users:
         return jsonify({"error": "Unauthorized"}), 401
 
-    users[email]["demo_done"] = True
-    users[email]["demo_waiting"] = False
+    demo_users[phone]["demo_done"] = True
+    demo_users[phone]["demo_waiting"] = False
 
     return jsonify({"status": "saved"})
-
-
-from datetime import datetime
-
-last_reset_day = None
-
-def reset_all_students():
-    global last_reset_day
-    
-    today = datetime.now().day
-
-    if last_reset_day == today:
-        return   # avoid multiple runs
-
-    print("Monthly reset done")
-
-    # 👉 add your actual reset logic here
-    # example:
-    # students.clear()
-
-    last_reset_day = today
-
 
 # ================= ENROLL =================
 from flask import request, jsonify, session, redirect
@@ -744,6 +712,12 @@ def payment_success():
     phone = request.args.get("phone")
     email = request.args.get("email")
     state = request.args.get("state")
+
+    phone = session.get("phone")
+
+    if phone in demo_users:
+        demo_users[phone]["enrolled"] = True
+        demo_users[phone]["hours_used"] = 0
 
     board=session.get("board")
     cls=session.get("cls")
