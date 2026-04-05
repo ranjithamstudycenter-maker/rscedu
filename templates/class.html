@@ -658,7 +658,7 @@ body{
         <div class="nav-center"> 
             <a href="{{ url_for('home') }}">Home</a> 
             <a href="{{ url_for('about') }}">About</a> 
-            <a href="{{ url_for('teacher_login') }}">Faculty</a> 
+            <a href="{{ url_for('courses') }}">Class</a> 
             <a href="{{ url_for('materials') }}">Materials</a>
             <a href="{{ url_for('contact') }}">Contact</a> 
         </div> 
@@ -695,47 +695,44 @@ body{
   </div>
 
   <p class="days">📅 Mon • Wed • Fri</p>
-    <!-- FREE DEMO -->
+  <!-- 1. FREE DEMO -->
   {% if demo_done %}
-    <button class="btn btn-demo-done" disabled>Demo Completed</button>
+    <button class="btn btn-demo-done" disabled>Demo Completed ✓</button>
   {% else %}
-    <button class="btn btn-demo" onclick="window.location.href='/demo-class'">
-      Free Demo
-    </button>
-
-         <div class="demo-box">
-        
-          <input type="text" id="phone" placeholder="Enter Mobile Number">
-        
-          <input type="text" id="otp" placeholder="Enter OTP">
-        
-          <button onclick="sendOTP()">Send OTP</button>
-        
-          <button onclick="verifyOTP()">Proceed for Demo</button>
-        
+    <div>
+      <button class="btn btn-demo" onclick="toggleOtp(this)">Free Demo</button>
+      <div class="otp-box" id="otp-box" style="display:none;">
+        <input type="tel" id="phone" maxlength="10" placeholder="Mobile number (10 digits)">
+        <div class="otp-row">
+          <button class="otp-btn" onclick="sendOTP()">Send OTP</button>
+          <input type="text" id="otp" maxlength="6" placeholder="Enter OTP">
         </div>
+        <button class="otp-btn primary" onclick="verifyOTP()">Proceed for Demo</button>
+        <p id="otp-msg" style="font-size:12px;color:red;margin-top:4px;"></p>
+      </div>
+    </div>
   {% endif %}
 
-  <!-- ENROLL -->
-  {% if registered %}
-    <button class="btn btn-registered" disabled>Registered</button>
+  <!-- 2. ENROLL -->
+  {% if enrolled %}
+    <button class="btn btn-enrolled" disabled>Enrolled ✓</button>
+  {% elif demo_done %}
+    <button class="btn btn-enroll" onclick="window.location.href='/payment'">Enroll</button>
   {% else %}
-    <button class="btn btn-enroll" onclick="window.location.href='/payment'">
-      Enroll
-    </button>
+    <button class="btn btn-disabled" disabled>Enroll</button>
   {% endif %}
- <!-- 🔥 LIVE / JOIN SECTION -->
-<div class="live-section">
-  {% if class_status['class10'] %}
-    <button class="btn btn-live">🔴 LIVE NOW</button>
+
+  <!-- 3. JOIN NOW -->
+  {% if class_status[course_key] %}
+    <button class="btn btn-live">🔴 Live Now</button>
+  {% elif enrolled and hours_used < max_hours %}
+    <button class="btn btn-join" onclick="joinClass('{{ course_key }}')">Join Now</button>
+  {% elif enrolled and hours_used >= max_hours %}
+    <button class="btn btn-enroll" onclick="window.location.href='/payment'">Re-Enroll</button>
   {% else %}
-    {% if registered %}
-      <button class="btn btn-join" onclick="joinClass('cbse10')">Join Now</button>  
-    {% else %}
-      <button class="btn btn-joined" disabled>Joined</button>
-    {% endif %}
+    <button class="btn btn-disabled" disabled>Join Now</button>
   {% endif %}
-</div>
+
   <!-- NOTICE -->
   <div class="notice">
     <p class="seats">🎯 Seats: 30</p>
