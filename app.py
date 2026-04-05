@@ -45,6 +45,11 @@ class_status = {
     "class10": False,
     "class12": False
 }
+class_links = {
+    "cbse10": "https://meet.google.com/link-class10",
+    "cbse12": "https://meet.google.com/link-class12",
+    
+}
 
 @app.route("/send-otp", methods=["POST"])
 def send_otp():
