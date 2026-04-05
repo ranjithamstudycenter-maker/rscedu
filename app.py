@@ -506,8 +506,8 @@ def courses():
    
     return render_template(
         "class.html",class_status=class_status,
-        demo_completed=user.get("demo_completed", False),
-        registered=user.get("enrolled", False),
+        demo_completed=users.get("demo_completed", False),
+        registered=users.get("enrolled", False),
         joined=session.get("joined", False)
     )
    
