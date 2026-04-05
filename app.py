@@ -116,7 +116,7 @@ def login():
 
         if user and user["password"] == password:
             session["user"] = email
-            return redirect("/class")
+            return redirect("/admin")
 
         return "<h3 style='text-align:center;color:red;'>Invalid Login ❌</h3>"
 
