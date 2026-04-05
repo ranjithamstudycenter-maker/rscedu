@@ -210,17 +210,18 @@ def demo_class():
     </body></html>
     """
 
-# 🔍 CHECK DEMO STATUS
 @app.route("/api/check-demo")
 def check_demo():
-
     email = session.get("user")
-    
-    if not user.get("demo_done"):
-    return "Please attend demo first ❌"
 
+    # முதலில் login check
     if not email or email not in users:
         return jsonify({"error": "Unauthorized"}), 401
+
+    # பிறகு demo check
+    user = users[email]  # ← இதுவும் missing ஆக இருந்தது!
+    if not user.get("demo_done"):
+        return "Please attend demo first ❌"
 
     return jsonify({
         "demo_done": users[email].get("demo_done", False)
