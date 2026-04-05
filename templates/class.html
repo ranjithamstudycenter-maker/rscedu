@@ -319,6 +319,19 @@ body{
   grid-template-columns:repeat(3,1fr);
   gap:20px;
 }
+  /* SEARCH BAR */
+.search-box{
+  max-width:500px;
+  margin:20px auto;
+  text-align:center;
+}
+.search-box input{
+  width:100%;
+  padding:12px 18px;
+  border-radius:30px;
+  border:2px solid #0b5394;
+  font-size:15px;
+}
 
 /* BADGE */
 .badge{
@@ -673,10 +686,14 @@ body{
   <p>Special Support for Indian Students Abroad</p>
 </section>
 
- <div style="text-align:center; margin:20px;">
-  <input type="text" id="searchBox" placeholder="Search classes...">
-  style="width:60%; padding:12px; border-radius:8px; border:1px solid #ccc;">
-</div>
+<div class="search-box">
+        <input type="text" id="searchInput" placeholder="🔎 Search class..."
+         onkeyup="searchclass()">
+
+        <div class="last-updated">
+        Last Updated: <span class="date"></span>
+        </div>
+  </div>
 
 <!-- COURSES -->
 <section class="section">
