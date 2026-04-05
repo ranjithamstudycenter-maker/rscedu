@@ -25,6 +25,7 @@ users = {
         "demo_waiting": False
     }
 }
+demo_users = {}  # {phone: data}
 
 teachers = {
     "Balakumar": {
@@ -44,6 +45,35 @@ class_status = {
     "class10": False,
     "class12": False
 }
+
+@app.route("/send-otp", methods=["POST"])
+def send_otp():
+
+    data = request.json
+    phone = data["phone"]
+
+    otp = "1234"  # 🔥 test (later real OTP)
+
+    otp_store[phone] = otp
+
+    return {"status": "sent"}
+
+@app.route("/send-otp", methods=["POST"])
+def send_otp():
+
+    data = request.json
+    phone = data["phone"]
+
+    otp = "1234"  # 🔥 test (later real OTP)
+
+    otp_store[phone] = otp
+
+    return {"status": "sent"}
+
+demo_users[phone]["enrolled"] = True
+demo_users[phone]["hours_used"] = 0
+demo_users[phone]["max_hours"] = 12
+
 @app.route("/reset-demo")
 def reset_demo():
 
@@ -303,14 +333,15 @@ def enroll():
 @app.route("/live-room")
 def live_room():
 
-    if not session.get("user"):
-        return redirect("/login")
+    phone = session.get("phone")
 
-    email = session.get("user")
-    user = users.get(email)
+    if not phone:
+        return "Unauthorized ❌"
+
+    user = demo_users.get(phone)
 
     if not user:
-        return redirect("/login")
+        return "User not found ❌"
 
     # ✅ ENROLL CHECK
     if not user.get("enrolled"):
@@ -318,25 +349,35 @@ def live_room():
 
     # ✅ HOURS CHECK
     if user.get("hours_used", 0) >= user.get("max_hours", 12):
-        return "<h3 style='text-align:center;'>Your class hours completed ❌</h3>"
+        user["enrolled"] = False
+        return "<h3 style='text-align:center;'>Plan completed ❌<br>Please enroll again</h3>"
 
-    # ✅ INCREMENT HOURS (only once per session)
-    if not session.get("joined"):
+    # ✅ INCREMENT (ONLY ONCE PER DAY / SESSION)
+    if not session.get("joined_today"):
         user["hours_used"] = user.get("hours_used", 0) + 1
-        session["joined"] = True
+        session["joined_today"] = True
 
+   # ✅ GET COURSE
     course = request.args.get("course")
 
-    print(course)  # test
+    # ✅ GET LINK
+    meet_link = class_links.get(course)
+
+    if not meet_link:
+        return "Invalid class ❌"
 
     return render_template(
-    "live_room.html",course=course,
-    meet_link="https://meet.google.com/your-link",
-    indian=indian,
-    international=international
-)
-
-    
+        "live_room.html",
+        course=course,
+        meet_link=meet_link,
+        indian=[],
+        international=[]
+    )
+   
+@app.route("/reset-session")
+def reset_session():
+    session["joined_today"] = False
+    return "Session reset"    
 
 @app.route("/teacher-login", methods=["GET","POST"])
 def teacher_login():
