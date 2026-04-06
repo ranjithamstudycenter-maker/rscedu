@@ -510,7 +510,13 @@ body{
   text-align:center;
   
 }
-
+  .start-time-btn{background:#eef2ff;color:#1e3a8a;border:none;padding:8px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:default;}
+/* SEATS LEFT */
+.seats-left{font-size:13px;margin-top:6px;}
+ 
+/* HOURS LEFT */
+.hours-left{font-size:13px;color:#0b5394;margin-top:4px;display:none;}
+  
   .live-badge{
   display:none;
   background:red;
@@ -596,6 +602,7 @@ body{
   color:#555;
    margin-bottom:15px;
 }
+  .class-time{font-size:13px;color:#555;margin-top:8px;}
 
   @media(max-width:768px){
 
@@ -650,6 +657,20 @@ body{
   50%{opacity:0.6;}
   100%{opacity:1;}
 }
+  /* MOBILE */
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr;}
+  .hero h1{font-size:26px;}
+  .navbar{flex-direction:column;align-items:center;}
+  .nav-left{width:100%;}
+  .logo{height:55px;}
+  .brand-text h1{font-size:18px;}
+  .nav-center{width:100%;display:flex;flex-wrap:nowrap;justify-content:center;margin-top:8px;gap:6px;}
+  .nav-center a{font-size:12px;margin:0 4px;white-space:nowrap;}
+  .nav-right{width:100%;display:flex;justify-content:center;margin-top:8px;}
+  .search-box{width:100%;}
+}
   </style>
 
  
@@ -686,14 +707,11 @@ body{
   <p>Special Support for Indian Students Abroad</p>
 </section>
 
+<!-- SEARCH -->
 <div class="search-box">
-        <input type="text" id="searchInput" placeholder="🔎 Search class..."
-         onkeyup="searchclass()">
-
-        <div class="last-updated">
-        Last Updated: <span class="date"></span>
-        </div>
-  </div>
+  <input type="text" id="searchInput" placeholder="🔎 Search class..." onkeyup="searchClass()">
+  <div class="last-updated">Last Updated: <span class="date"></span></div>
+</div>
 
 <!-- COURSES -->
 <section class="section">
@@ -701,57 +719,31 @@ body{
 
 <div class="grid">
 
- <!-- CBSE 10 -->
-<div class="card">
-
-  <h2 class="title">CBSE Maths – Class 10</h2>
-
-  <div class="price-box">
-    <p class="price">₹300 / hour</p>
-    <p class="duration">12 Hours / Month</p>
+<!-- ========== CBSE 10 ========== -->
+  <div class="card" id="card-cbse10">
+    <h2>CBSE Maths – Class 10 <span class="live-badge" id="live-cbse10">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹300 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Mon • Wed • Fri</p>
+    <div class="actions">
+      <button class="btn btn-demo" id="demoBtn-cbse10" onclick="bookDemo('cbse10')">Free Demo</button>
+      <button class="btn btn-enroll" id="enrollBtn-cbse10" onclick="enroll('cbse10')">Enroll</button>
+      <button class="btn btn-join joinBtn" id="joinBtn-cbse10" data-course="cbse10" onclick="joinClass('cbse10')">Join Now</button>
+    </div>
+    <div class="notice">
+      <p class="seats">🎯 Seats: 30</p>
+      <p class="offer">🔥 First 10 Students – 50% OFF</p>
+    </div>
+    <p class="seats-left" id="seats-cbse10"></p>
+    <p class="hours-left" id="hours-cbse10"></p>
+    <div class="demo-timer" id="timer-cbse10"></div>
+    <div class="card-footer">
+      <button class="start-time-btn">Starts at 7:00 PM</button>
+      <a href="/teacher-login?class=cbse10" class="faculty-link">🔐 Faculty Login</a>
+    </div>
   </div>
-
-  <p class="days">📅 Mon • Wed • Fri</p>
-
-  <div class="actions">
-
-    {% if demo_done %}
-      <button class="btn btn-demo-done" disabled>Demo Completed</button>
-    {% else %}
-      <button class="btn btn-demo" onclick="openDemoBox()">Free Demo</button>
-    {% endif %}
-
-    {% if registered %}
-      <button class="btn btn-registered" disabled>Registered</button>
-    {% else %}
-      <button class="btn btn-enroll" onclick="window.location.href='/payment'">Enroll</button>
-    {% endif %}
-
-    <button class="btn btn-join" onclick="joinClass('cbse10')">
-      Join Now
-    </button>
-
-  </div>
-
-  <div class="notice">
-    <p class="seats">🎯 Seats: 30</p>
-    <p class="offer">🔥 First 10 Students – 50% OFF</p>
-  </div>
-<span id="seats-cbse10" style="font-size:13px;color:#555;"></span>
-  <div class="card-footer">
-    <button class="btn btn-join" disabled>
-      Starts at 7:00 PM
-    </button>
-    <a href="/teacher-login?class=class10" class="faculty-link">🔐 Faculty Login</a>
-  </div>
-  <div id="timer-cbse10" style="font-size:13px;margin-top:4px;"></div>
-  <span id="live-cbse10" class="liveBadge" style="display:none;background:red;color:white;padding:2px 8px;border-radius:4px;font-size:12px;">🔴 LIVE</span>
- 
-  And hours remaining display:
-  <span id="hours-cbse10" style="display:none;font-size:13px;color:#0b5394;"></span>
-  <div class="demo-timer" id="timer-cbse10"></div>
-
-</div>
 <!-- CBSE 12 -->
 <div class="card">
       <h2>
@@ -996,364 +988,333 @@ body{
     <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
 
 
-<!-- ===================== RAZORPAY SDK ===================== -->
+<!-- ========== RAZORPAY ========== -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
  
-<!-- ===================== MAIN SCRIPT ===================== -->
+<!-- ========== MAIN SCRIPT ========== -->
 <script>
-/* ----------------------------------------------------------
-   STATE
----------------------------------------------------------- */
-let studentStatus   = null;   // loaded from /api/student-status
-let selectedCourse  = "";
-let razorpayKey     = "";     // loaded from /api/create-order response
- 
+/* ---- STATE ---- */
+let studentStatus  = null;
+let selectedCourse = "";
 const CLASSES_PER_MONTH = 24;
  
-/* ----------------------------------------------------------
-   INIT — runs on page load
----------------------------------------------------------- */
-document.addEventListener("DOMContentLoaded", async () => {
+const PRICE_PER_HOUR = {
+  cbse10: 300, cbse12: 400, cbse11: 400, cbse9: 300,
+  engg1: 700,  engg2: 700,  engg3: 700,  control: 800,
+  AGS: 400,    Maths: 400
+};
  
-  // Disable all join buttons by default
+/* ---- INIT ---- */
+document.addEventListener("DOMContentLoaded", async () => {
+  // All join buttons disabled by default
   document.querySelectorAll(".joinBtn").forEach(btn => {
-    btn.style.opacity        = "0.5";
-    btn.style.pointerEvents  = "none";
+    btn.style.opacity       = "0.5";
+    btn.style.pointerEvents = "none";
   });
  
-  // Load student status (logged-in state, enrollments, seats)
-  await refreshStatus();
+  // Set today's date
+  const dateEl = document.querySelector(".date");
+  if (dateEl) dateEl.textContent = new Date().toLocaleDateString("en-IN");
  
-  // Search box
-  const searchBox = document.getElementById("searchBox");
-  if (searchBox) {
-    searchBox.addEventListener("keyup", function () {
-      const val = this.value.toLowerCase();
-      document.querySelectorAll(".class-card").forEach(card => {
-        card.style.display = card.innerText.toLowerCase().includes(val) ? "" : "none";
-      });
-    });
-  }
+  await refreshStatus();
 });
  
-/* ----------------------------------------------------------
-   STATUS REFRESH — call after any state change
----------------------------------------------------------- */
+/* ---- REFRESH STATUS FROM SERVER ---- */
 async function refreshStatus() {
   try {
     const res  = await fetch("/api/student-status");
     const data = await res.json();
     studentStatus = data;
- 
-    if (data.logged_in) {
-      updateAllCourseUI();
-      updateSeatDisplays(data.available_seats);
-    }
+    updateSeatDisplays(data.available_seats || {});
+    if (data.logged_in) updateAllCourseUI();
   } catch (e) {
     console.error("Status load failed:", e);
   }
 }
  
-/* ----------------------------------------------------------
-   SEAT DISPLAY
----------------------------------------------------------- */
+/* ---- SEAT DISPLAY ---- */
 function updateSeatDisplays(seats) {
-  if (!seats) return;
   Object.entries(seats).forEach(([course, count]) => {
     const el = document.getElementById("seats-" + course);
     if (!el) return;
-    el.textContent = count + " seats left";
-    // Red when < 10 seats
-    el.style.color = count < 10 ? "red" : "";
-    el.style.fontWeight = count < 10 ? "bold" : "";
+    el.textContent  = count + " seats left";
+    el.style.color  = count < 10 ? "red" : "#555";
+    el.style.fontWeight = count < 10 ? "bold" : "normal";
   });
 }
  
-/* ----------------------------------------------------------
-   UPDATE UI FOR ALL COURSES
----------------------------------------------------------- */
+/* ---- UPDATE ALL COURSE UIs ---- */
 function updateAllCourseUI() {
-  if (!studentStatus) return;
-  const courses = Object.keys(studentStatus.demo_done || {});
-  // Also handle courses that exist in the page
-  document.querySelectorAll("[data-course]").forEach(el => {
-    const c = el.dataset.course;
-    if (c) updateUI(c);
-  });
-  courses.forEach(updateUI);
+  const allCourses = ["cbse10","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
+  allCourses.forEach(updateUI);
 }
  
 function updateUI(course) {
-  if (!studentStatus) return;
- 
-  const demoDone  = (studentStatus.demo_done  || {})[course] || false;
-  const enrolled  = (studentStatus.enrolled   || {})[course] || false;
-  const hoursUsed = (studentStatus.hours_used || {})[course] || 0;
-  const maxHours  = (studentStatus.max_hours  || {})[course] || CLASSES_PER_MONTH;
+  const s         = studentStatus || {};
+  const demoDone  = (s.demo_done    || {})[course] || false;
+  const enrolled  = (s.enrolled     || {})[course] || false;
+  const hoursUsed = (s.hours_used   || {})[course] || 0;
+  const maxHours  = (s.max_hours    || {})[course] || CLASSES_PER_MONTH;
   const planDone  = enrolled && hoursUsed >= maxHours;
+  const isAdmin   = s.is_admin || false;
  
-  // Demo button
-  const demoBtn = document.querySelector(`[onclick="bookDemo('${course}')"]`);
+  /* Demo button */
+  const demoBtn = document.getElementById("demoBtn-" + course);
   if (demoBtn) {
-    if (demoDone && !studentStatus.is_admin) {
-      demoBtn.textContent        = "Demo Completed ✓";
+    if (demoDone && !isAdmin) {
+      demoBtn.textContent        = "Demo Done ✓";
       demoBtn.style.background   = "#16a34a";
+      demoBtn.style.color        = "white";
       demoBtn.style.pointerEvents = "none";
-    } else if (studentStatus.is_admin) {
+    } else if (isAdmin) {
       demoBtn.textContent = "Free Demo (Admin)";
+    } else {
+      demoBtn.textContent        = "Free Demo";
+      demoBtn.style.background   = "#fff3b0";
+      demoBtn.style.color        = "#333";
+      demoBtn.style.pointerEvents = "auto";
     }
   }
  
-  // Enroll button
-  const enrollBtn = document.querySelector(`[onclick="enroll('${course}')"]`);
+  /* Enroll button */
+  const enrollBtn = document.getElementById("enrollBtn-" + course);
   if (enrollBtn) {
-    if (enrolled && !planDone) {
-      enrollBtn.textContent      = "Registered ✓";
-      enrollBtn.style.background = "#0b5394";
+    if (planDone) {
+      enrollBtn.textContent        = "Re-Enroll";
+      enrollBtn.style.background   = "#dc2626";
+      enrollBtn.style.color        = "white";
+      enrollBtn.style.pointerEvents = "auto";
+    } else if (enrolled) {
+      enrollBtn.textContent        = "Registered ✓";
+      enrollBtn.style.background   = "#0b5394";
+      enrollBtn.style.color        = "white";
       enrollBtn.style.pointerEvents = "none";
-    } else if (planDone) {
-      enrollBtn.textContent      = "Re-Enroll";
-      enrollBtn.style.background = "#dc2626";
+    } else {
+      enrollBtn.textContent        = "Enroll";
+      enrollBtn.style.background   = "#bbdefb";
+      enrollBtn.style.color        = "#333";
       enrollBtn.style.pointerEvents = "auto";
     }
   }
  
-  // Join button
-  const joinBtn = document.querySelector(`.joinBtn[data-course="${course}"]`);
+  /* Join button */
+  const joinBtn = document.getElementById("joinBtn-" + course);
   if (joinBtn) {
     if (enrolled && !planDone) {
-      joinBtn.style.opacity      = "1";
+      joinBtn.style.opacity       = "1";
       joinBtn.style.pointerEvents = "auto";
-      const remaining = maxHours - hoursUsed;
-      joinBtn.title = remaining + " classes remaining";
+      const rem = maxHours - hoursUsed;
+      joinBtn.title = rem + " classes remaining";
     } else {
-      joinBtn.style.opacity      = "0.5";
+      joinBtn.style.opacity       = "0.5";
       joinBtn.style.pointerEvents = "none";
     }
   }
  
-  // Hours display
+  /* Hours left */
   const hoursEl = document.getElementById("hours-" + course);
-  if (hoursEl && enrolled) {
-    hoursEl.textContent = (maxHours - hoursUsed) + " classes left";
-    hoursEl.style.display = "inline";
+  if (hoursEl) {
+    if (enrolled && !planDone) {
+      hoursEl.textContent  = "📚 " + (maxHours - hoursUsed) + " classes remaining";
+      hoursEl.style.display = "block";
+    } else {
+      hoursEl.style.display = "none";
+    }
   }
 }
  
-/* ----------------------------------------------------------
-   DEMO FLOW
-   - Checks OTP login first
-   - Shows phone + OTP popup if not logged in
-   - Opens Meet link after OTP verified
----------------------------------------------------------- */
+/* ======================================
+   FREE DEMO
+====================================== */
 function bookDemo(course) {
- 
+  // Not logged in → OTP first
   if (!studentStatus || !studentStatus.logged_in) {
-    // Not logged in → show phone/OTP popup
     showPhonePopup(course, "demo");
     return;
   }
- 
-  // Check if demo already done (non-admin)
+  // Already done (non-admin)
   if (!studentStatus.is_admin && (studentStatus.demo_done || {})[course]) {
-    showMessage("⚠ Demo already completed. Please enroll.");
+    showMessage("⚠️ Demo already completed. Please enroll to continue.");
     return;
   }
- 
-  startDemoTimer(course);
+  startDemoSession(course);
 }
  
-function startDemoTimer(course) {
+function startDemoSession(course) {
   const timerDiv  = document.getElementById("timer-" + course);
   const liveBadge = document.getElementById("live-" + course);
  
   if (!timerDiv) return;
-  if (timerDiv.dataset.running === "true") return;
+  if (timerDiv.dataset.running === "true") {
+    showMessage("⏳ Demo already running...");
+    return;
+  }
   timerDiv.dataset.running = "true";
  
   if (liveBadge) liveBadge.style.display = "inline-block";
   showLivePopup(course);
  
-  // Open Meet link
   const meetLink = (studentStatus && studentStatus.meet_link) || "https://meet.google.com/sus-iead-rhq";
-  openMeetWithLogo(meetLink, course);
+  window.open(meetLink, "_blank");
  
-  let duration = 3600; // 1 hour demo
+  let duration = 3600; // 1 hour
  
   const interval = setInterval(async () => {
-    const m = Math.floor(duration / 60);
-    const s = duration % 60;
-    timerDiv.innerHTML = "⏳ Demo: " + m + "m " + s + "s remaining";
+    const m = String(Math.floor(duration / 60)).padStart(2,"0");
+    const s = String(duration % 60).padStart(2,"0");
+    timerDiv.textContent = "⏳ Demo: " + m + ":" + s + " remaining";
     duration--;
  
     if (duration < 0) {
       clearInterval(interval);
-      timerDiv.innerHTML = "✅ Demo Completed";
+      timerDiv.textContent = "✅ Demo Completed — Please Enroll";
       if (liveBadge) liveBadge.style.display = "none";
       timerDiv.dataset.running = "false";
  
-      // Mark demo complete on server (non-admin)
       if (!studentStatus.is_admin) {
         try {
           await fetch("/api/demo-complete", {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ course: course })
+            method:  "POST",
+            headers: {"Content-Type":"application/json"},
+            body:    JSON.stringify({course: course})
           });
           await refreshStatus();
-        } catch (e) {
-          console.error("Demo complete error:", e);
-        }
+          showMessage("✅ Demo done! Click Enroll to join.");
+        } catch(e) { console.error(e); }
       }
     }
   }, 1000);
 }
  
-/* ----------------------------------------------------------
+/* ======================================
    PHONE + OTP POPUP
----------------------------------------------------------- */
+====================================== */
 let _pendingAction = null;
 let _pendingCourse = null;
  
 function showPhonePopup(course, action) {
   _pendingAction = action;
   _pendingCourse = course;
-  const popup = document.getElementById("phonePopup");
-  if (popup) popup.style.display = "block";
-  document.getElementById("otpSection") &&
-    (document.getElementById("otpSection").style.display = "none");
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("otpInput") && (document.getElementById("otpInput").value = "");
+  document.getElementById("otpSection").style.display = "none";
+  document.getElementById("phonePopup").style.display  = "block";
 }
  
 function closePhonePopup() {
-  const popup = document.getElementById("phonePopup");
-  if (popup) popup.style.display = "none";
+  document.getElementById("phonePopup").style.display = "none";
 }
  
 async function sendOTP() {
-  const phone = (document.getElementById("phoneInput") || {}).value || "";
+  const phone = document.getElementById("phoneInput").value.trim();
   if (!/^[6-9]\d{9}$/.test(phone)) {
-    showMessage("⚠ Enter valid 10-digit Indian mobile number");
+    showMessage("⚠️ Enter valid 10-digit Indian mobile number");
     return;
   }
+  const btn = document.getElementById("sendOtpBtn");
+  btn.textContent = "Sending...";
+  btn.disabled    = true;
   try {
     const res  = await fetch("/send-otp", {
       method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ phone: phone })
+      headers: {"Content-Type":"application/json"},
+      body:    JSON.stringify({phone: phone})
     });
     const data = await res.json();
     if (data.status === "sent") {
       document.getElementById("otpSection").style.display = "block";
-      showMessage("📱 OTP sent");
+      showMessage("📱 OTP sent to " + phone);
+      btn.textContent = "Resend OTP";
+      btn.disabled    = false;
     } else {
       showMessage("❌ " + (data.message || "Failed to send OTP"));
+      btn.textContent = "Send OTP";
+      btn.disabled    = false;
     }
-  } catch (e) {
-    showMessage("❌ Network error");
+  } catch(e) {
+    showMessage("❌ Network error. Try again.");
+    btn.textContent = "Send OTP";
+    btn.disabled    = false;
   }
 }
  
 async function verifyOTP() {
-  const phone = (document.getElementById("phoneInput") || {}).value || "";
-  const otp   = (document.getElementById("otpInput")   || {}).value || "";
+  const phone = document.getElementById("phoneInput").value.trim();
+  const otp   = document.getElementById("otpInput").value.trim();
+  if (!otp) { showMessage("⚠️ Enter OTP"); return; }
   try {
     const res  = await fetch("/verify-otp", {
       method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ phone: phone, otp: otp })
+      headers: {"Content-Type":"application/json"},
+      body:    JSON.stringify({phone: phone, otp: otp})
     });
     const data = await res.json();
     if (data.status === "ok") {
       showMessage("✅ Verified!");
       closePhonePopup();
       await refreshStatus();
-      // Continue with pending action
+      // Continue with what was clicked
       if (_pendingAction === "demo")   bookDemo(_pendingCourse);
       if (_pendingAction === "enroll") enroll(_pendingCourse);
+      if (_pendingAction === "join")   joinClass(_pendingCourse);
     } else {
       showMessage("❌ Wrong OTP. Try again.");
     }
-  } catch (e) {
-    showMessage("❌ Network error");
+  } catch(e) {
+    showMessage("❌ Network error. Try again.");
   }
 }
  
-/* ----------------------------------------------------------
-   ENROLL FLOW
----------------------------------------------------------- */
+/* ======================================
+   ENROLL
+====================================== */
 function enroll(course) {
   if (!studentStatus || !studentStatus.logged_in) {
     showPhonePopup(course, "enroll");
     return;
   }
- 
-  if (!(studentStatus.demo_done || {})[course] && !studentStatus.is_admin) {
-    showMessage("⚠ Attend free demo first");
+  if (!studentStatus.is_admin && !(studentStatus.demo_done || {})[course]) {
+    showMessage("⚠️ Please attend Free Demo first before enrolling.");
     return;
   }
- 
-  // Check seats
   const seats = (studentStatus.available_seats || {})[course];
   if (seats !== undefined && seats <= 0) {
-    showMessage("❌ Seats Full for this course");
+    showMessage("❌ Seats Full! No seats available for this course.");
     return;
   }
  
   selectedCourse = course;
+  const monthly  = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
  
-  const monthly = (getPricePerHour(course) * CLASSES_PER_MONTH);
-  const titleEl = document.getElementById("courseTitle");
-  const priceEl = document.getElementById("coursePrice");
-  const nameEl  = document.getElementById("studentName");
- 
-  if (titleEl) titleEl.textContent = course.toUpperCase() + " – Monthly Plan";
-  if (priceEl) priceEl.textContent = "💳 Monthly Fee: ₹" + monthly + " (" + CLASSES_PER_MONTH + " classes)";
- 
-  // Pre-fill name if known
-  if (nameEl && studentStatus.name) nameEl.value = studentStatus.name;
- 
-  const popup = document.getElementById("enrollPopup");
-  if (popup) popup.style.display = "block";
+  document.getElementById("courseTitle").textContent  = course.toUpperCase() + " – Monthly Plan";
+  document.getElementById("coursePrice").textContent  = "💳 Monthly Fee: ₹" + monthly + " (" + CLASSES_PER_MONTH + " classes)";
+  document.getElementById("studentName").value        = studentStatus.name || "";
+  document.getElementById("enrollPopup").style.display = "block";
 }
  
 function closeEnroll() {
-  const popup = document.getElementById("enrollPopup");
-  if (popup) popup.style.display = "none";
+  document.getElementById("enrollPopup").style.display = "none";
 }
  
-function getPricePerHour(course) {
-  const prices = {
-    cbse10: 400, cbse12: 400, cbse11: 400, cbse9: 400,
-    engg1: 700, engg2: 700, engg3: 700, control: 800
-  };
-  return prices[course] || 400;
-}
- 
-/* ----------------------------------------------------------
+/* ======================================
    PAYMENT
----------------------------------------------------------- */
+====================================== */
 async function payNow() {
-  const name = (document.getElementById("studentName") || {}).value || "";
-  if (!name.trim()) {
-    showMessage("⚠ Please enter your name");
+  const name = document.getElementById("studentName").value.trim();
+  if (!name) {
+    showMessage("⚠️ Please enter your name to continue.");
+    document.getElementById("studentName").focus();
     return;
   }
- 
   try {
-    // Create order via backend
     const res  = await fetch("/api/create-order", {
       method:  "POST",
-      headers: { "Content-Type": "application/json" },
-      body:    JSON.stringify({ course: selectedCourse, name: name.trim() })
+      headers: {"Content-Type":"application/json"},
+      body:    JSON.stringify({course: selectedCourse, name: name})
     });
     const data = await res.json();
+    if (data.error) { showMessage("❌ " + data.error); return; }
  
-    if (data.error) {
-      showMessage("❌ " + data.error);
-      return;
-    }
- 
-    // Open Razorpay
     const options = {
       key:         data.razorpay_key,
       amount:      data.amount,
@@ -1361,197 +1322,125 @@ async function payNow() {
       name:        "Ranjitham Study Center",
       description: data.course.toUpperCase() + " Monthly Fee",
       order_id:    data.order_id,
-      prefill:     { name: data.name, contact: studentStatus.phone || "" },
-      theme:       { color: "#1e3a8a" },
- 
-      handler: async function (response) {
-        // Notify backend
-        const successRes = await fetch("/api/payment-success", {
+      prefill:     {name: data.name, contact: studentStatus.phone || ""},
+      theme:       {color: "#1e3a8a"},
+      handler: async function(response) {
+        const sRes  = await fetch("/api/payment-success", {
           method:  "POST",
-          headers: { "Content-Type": "application/json" },
+          headers: {"Content-Type":"application/json"},
           body:    JSON.stringify({
-            course:    selectedCourse,
-            order_id:  response.razorpay_order_id,
+            course:     selectedCourse,
+            order_id:   response.razorpay_order_id,
             payment_id: response.razorpay_payment_id
           })
         });
-        const successData = await successRes.json();
- 
-        if (successData.status === "success") {
-          showMessage("🎉 Payment Successful! You are enrolled.");
+        const sData = await sRes.json();
+        if (sData.status === "success") {
+          showMessage("🎉 Payment Successful! You are now Registered.");
           closeEnroll();
           await refreshStatus();
         } else {
-          showMessage("⚠ Payment noted but enrollment failed. Contact support.");
+          showMessage("⚠️ Payment done but enrollment failed. Contact support.");
         }
       }
     };
- 
     const rzp = new Razorpay(options);
-    rzp.on("payment.failed", function (response) {
-      showMessage("❌ Payment failed: " + response.error.description);
-    });
+    rzp.on("payment.failed", r => showMessage("❌ Payment failed: " + r.error.description));
     rzp.open();
- 
-  } catch (e) {
-    showMessage("❌ Error starting payment");
+  } catch(e) {
+    showMessage("❌ Error starting payment. Try again.");
     console.error(e);
   }
 }
  
-/* ----------------------------------------------------------
+/* ======================================
    JOIN CLASS
----------------------------------------------------------- */
+====================================== */
 async function joinClass(course) {
   if (!studentStatus || !studentStatus.logged_in) {
-    showPhonePopup(course, "enroll");
+    showPhonePopup(course, "join");
     return;
   }
- 
   if (!(studentStatus.enrolled || {})[course]) {
-    showMessage("⚠ Please enroll first");
+    showMessage("⚠️ Please enroll first to join the class.");
     return;
   }
- 
   try {
     const res  = await fetch("/api/join-class?course=" + course);
     const data = await res.json();
- 
     if (data.error) {
       showMessage("❌ " + data.error);
-      await refreshStatus(); // Re-check (may have been deactivated)
+      await refreshStatus();
       return;
     }
+    window.open(data.meet_link, "_blank");
  
-    // Open Meet link (same for demo and live)
-    openMeetWithLogo(data.meet_link, course);
- 
-    // Update join button
-    const joinBtn = document.querySelector(`.joinBtn[data-course="${course}"]`);
+    const joinBtn = document.getElementById("joinBtn-" + course);
     if (joinBtn) {
       joinBtn.textContent = "Joined ✓";
-      setTimeout(() => {
+      setTimeout(async () => {
         joinBtn.textContent = "Join Now";
-        refreshStatus();
-      }, 3600000); // reset after 1 hour
+        await refreshStatus();
+      }, 3600000);
     }
- 
-    // Show live badge
     const liveBadge = document.getElementById("live-" + course);
     if (liveBadge) liveBadge.style.display = "inline-block";
  
-    showMessage("✅ " + data.hours_remaining + " classes remaining");
+    showMessage("✅ Joined! " + data.hours_remaining + " classes remaining.");
     showLivePopup(course);
- 
-  } catch (e) {
-    showMessage("❌ Error joining class");
+  } catch(e) {
+    showMessage("❌ Error joining. Try again.");
     console.error(e);
   }
 }
  
-/* ----------------------------------------------------------
-   OPEN MEET WITH LOGO (top banner)
-   Opens in new tab with a logo overlay if possible,
-   otherwise direct link (cross-origin cannot inject)
----------------------------------------------------------- */
-function openMeetWithLogo(link, course) {
-  // Open the Meet link directly (cannot inject into Google Meet cross-origin)
-  window.open(link, "_blank");
-}
- 
-/* ----------------------------------------------------------
+/* ======================================
    LIVE POPUP
----------------------------------------------------------- */
+====================================== */
 let currentLiveCourse = "";
- 
 function showLivePopup(course) {
   currentLiveCourse = course;
   const popup = document.getElementById("livePopup");
   const text  = document.getElementById("popupText");
   if (!popup || !text) return;
-  text.innerHTML = "🔴 " + course.toUpperCase() + " LIVE NOW – Join Fast!";
+  text.textContent = "🔴 " + course.toUpperCase() + " LIVE NOW – Join Fast!";
   popup.style.display = "block";
   setTimeout(() => { popup.style.display = "none"; }, 6000);
 }
- 
 function joinFromPopup() {
   if (currentLiveCourse) joinClass(currentLiveCourse);
 }
  
-/* ----------------------------------------------------------
-   MESSAGE TOAST
----------------------------------------------------------- */
-function showMessage(msg) {
-  const existing = document.querySelectorAll(".rsc-toast");
-  existing.forEach(e => e.remove());
+/* ======================================
+   SEARCH
+====================================== */
+function searchClass() {
+  const val = document.getElementById("searchInput").value.toLowerCase();
+  document.querySelectorAll(".card").forEach(card => {
+    card.style.display = card.innerText.toLowerCase().includes(val) ? "" : "none";
+  });
+}
  
+/* ======================================
+   TOAST MESSAGE
+====================================== */
+function showMessage(msg) {
+  document.querySelectorAll(".rsc-toast").forEach(e => e.remove());
   const box = document.createElement("div");
-  box.className    = "rsc-toast";
-  box.textContent  = msg;
+  box.className   = "rsc-toast";
+  box.textContent = msg;
   Object.assign(box.style, {
-    position:     "fixed",
-    bottom:       "24px",
-    left:         "50%",
-    transform:    "translateX(-50%)",
-    background:   "#1e3a8a",
-    color:        "white",
-    padding:      "12px 24px",
-    borderRadius: "10px",
-    boxShadow:    "0 8px 20px rgba(0,0,0,0.25)",
-    zIndex:       "9999",
-    fontSize:     "15px",
-    maxWidth:     "90vw",
-    textAlign:    "center"
+    position:"fixed", bottom:"24px", left:"50%", transform:"translateX(-50%)",
+    background:"#1e3a8a", color:"white", padding:"12px 24px",
+    borderRadius:"10px", boxShadow:"0 8px 20px rgba(0,0,0,0.25)",
+    zIndex:"9999", fontSize:"15px", maxWidth:"90vw", textAlign:"center",
+    fontFamily:"Poppins,sans-serif"
   });
   document.body.appendChild(box);
   setTimeout(() => box.remove(), 3500);
 }
 </script>
-
-<div id="phonePopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:3000;">
-  <div style="background:white;width:320px;padding:28px;border-radius:14px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
-    <h3 style="color:#1e3a8a;margin-bottom:16px;">📱 Verify Your Number</h3>
-    <input id="phoneInput" placeholder="10-digit mobile number" maxlength="10"
-      style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;">
-    <button onclick="sendOTP()"
-      style="width:100%;padding:10px;background:#1e3a8a;color:white;border:none;border-radius:8px;cursor:pointer;margin-bottom:16px;">
-      Send OTP
-    </button>
-    <div id="otpSection" style="display:none;">
-      <input id="otpInput" placeholder="Enter OTP" maxlength="6"
-        style="width:100%;padding:10px;margin-bottom:10px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;">
-      <button onclick="verifyOTP()"
-        style="width:100%;padding:10px;background:#16a34a;color:white;border:none;border-radius:8px;cursor:pointer;">
-        Verify OTP
-      </button>
-    </div>
-    <br>
-    <button onclick="closePhonePopup()"
-      style="background:none;border:none;color:#dc2626;cursor:pointer;margin-top:8px;">
-      Cancel
-    </button>
-  </div>
-</div>
- 
-
-<div id="enrollPopup" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:2000;">
-  <div style="background:white;width:340px;padding:28px;border-radius:14px;position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);text-align:center;">
-    <h3 id="courseTitle" style="color:#1e3a8a;">Enroll Now</h3>
-    <p id="coursePrice" style="font-weight:bold;color:#0b5394;margin-bottom:16px;"></p>
-    <input id="studentName" placeholder="Your Name (required)"
-      style="width:100%;padding:10px;margin-bottom:16px;border-radius:8px;border:1px solid #ccc;box-sizing:border-box;">
-    <button onclick="payNow()"
-      style="width:100%;padding:10px;background:#1e3a8a;color:white;border:none;border-radius:8px;cursor:pointer;font-size:16px;">
-      Pay Now
-    </button>
-    <br>
-    <button onclick="closeEnroll()"
-      style="background:none;border:none;color:#dc2626;cursor:pointer;margin-top:12px;">
-      Close
-    </button>
-  </div>
-</div>
- </body>
+</body>
 </html>
 -->
  
