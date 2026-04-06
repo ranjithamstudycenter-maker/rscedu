@@ -1,439 +1,614 @@
-from flask import Flask, render_template, request, redirect, session, send_from_directory, url_for,abort,jsonify,send_file
+from flask import Flask, render_template, request, redirect, session, send_from_directory, url_for, abort, jsonify, send_file
 import os
 import razorpay
 import json
 import smtplib
 import time
-import sqlite3
 import csv
-from datetime import datetime
-from email.message import EmailMessage
+import random
 from datetime import datetime, timedelta
-
+from email.message import EmailMessage
 
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
 
-# TEMP USER STORAGE
-users = {
-    "test@gmail.com": {
-        "name": "Student1",
-        "hours_used": 0,
-        "max_hours": 12,
-        "demo_done": False,
-        "demo_waiting": False
-    }
-}
-demo_users = {}  # {phone: data}
+# -------------------- IN-MEMORY STORES --------------------
+# FIX: otp_store was never initialized — caused NameError crash
+otp_store = {}
 
+# FIX: feedback_db was never initialized — caused NameError crash
+feedback_db = {}
+
+# FIX: test user had no password field — caused KeyError on login
+users = {}  # registered users: {email: {...}}
+
+# Phone-based demo users
+demo_users = {}  # {phone: {...}}
+
+# Teacher accounts
 teachers = {
     "Balakumar": {
         "password": "M10@2026",
-        "course": "class10",
-        "link": "https://meet.google.com/xxx-10",
+        "course": "cbse10",
+        "meet_link": "https://meet.google.com/sus-iead-rhq",
         "active": True
     },
     "faculty2": {
-        "password": "456",
-        "course": "class12",
-        "link": "https://meet.google.com/xxx-12",
+        "password": "Faculty2@2026",
+        "course": "cbse12",
+        "meet_link": "https://meet.google.com/sus-iead-rhq",
         "active": True
     }
 }
-class_status = {
-    "class10": False,
-    "class12": False
+
+# Seat tracking — shared across server (in production use DB/Redis)
+seat_data = {
+    "cbse10": {"total": 30, "booked": 0},
+    "cbse12": {"total": 30, "booked": 0},
+    "cbse11": {"total": 30, "booked": 0},
+    "cbse9":  {"total": 30, "booked": 0},
 }
-class_links = {
-    "cbse10": "https://meet.google.com/link-class10",
-    "cbse12": "https://meet.google.com/link-class12",
-    
+
+# Single Google Meet link for demo and live class
+CLASS_MEET_LINK = "https://meet.google.com/sus-iead-rhq"
+DEMO_MEET_LINK  = "https://meet.google.com/sus-iead-rhq"  # same link per requirement
+
+# Admin phone for testing (demo always available)
+ADMIN_PHONE = os.environ.get("ADMIN_PHONE", "7702616245")
+
+# -------------------- PRICE CONFIG --------------------
+price_per_hour = {
+    "cbse10": 1,
+    "cbse12": 400,
+    "cbse11": 350,
+    "cbse9":  2000,
+    "engg1":  700,
+    "engg2":  700,
+    "engg3":  700,
+    "control": 800,
 }
+classes_per_month = 12  # 3 days/week * 4 weeks
+
+# -------------------- HELPERS --------------------
+
+def get_user(phone):
+    """Get or create a demo_user by phone."""
+    if phone not in demo_users:
+        demo_users[phone] = {
+            "name": "",
+            "phone": phone,
+            "demo_done": {},      # {course: True/False}
+            "enrolled": {},       # {course: True/False}
+            "hours_used": {},     # {course: int}
+            "max_hours": {},      # {course: int}
+        }
+    return demo_users[phone]
+
+def is_admin_phone(phone):
+    """Admin phone always gets demo access for testing."""
+    return phone == ADMIN_PHONE
+
+def available_seats(course):
+    d = seat_data.get(course, {"total": 30, "booked": 0})
+    return d["total"] - d["booked"]
+
+# -------------------- AUTH: OTP --------------------
 
 @app.route("/send-otp", methods=["POST"])
 def send_otp():
-
     data = request.json
-    phone = data["phone"]
+    phone = data.get("phone", "").strip()
+    if not phone or not phone.isdigit() or len(phone) != 10:
+        return jsonify({"status": "error", "message": "Invalid phone"}), 400
 
-    otp = "1234"  # 🔥 test
+    # Generate OTP (use real SMS service in production)
+    otp = str(random.randint(100000, 999999))
+    otp_store[phone] = {"otp": otp, "expires": time.time() + 300}  # 5 min expiry
 
-    otp_store[phone] = otp
+    # For testing: print OTP (replace with SMS API)
+    print(f"[OTP] Phone: {phone} → OTP: {otp}")
 
-    # ✅ session set here (IMPORTANT)
     session["phone"] = phone
+    return jsonify({"status": "sent"})
 
-    return {"status": "sent"}
 
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
-
     data = request.json
-    phone = data["phone"]
-    otp = data["otp"]
+    phone = data.get("phone", "").strip()
+    otp   = data.get("otp", "").strip()
 
-    if otp_store.get(phone) == otp:
+    stored = otp_store.get(phone)
+    if not stored:
+        return jsonify({"status": "fail", "message": "OTP not sent"})
 
-        # ✅ create user if not exists
-        if phone not in demo_users:
-            demo_users[phone] = {
-                "demo_done": False,
-                "demo_waiting": False,
-                "enrolled": False,
-                "hours_used": 0,
-                "max_hours": 12
-            }
+    if time.time() > stored["expires"]:
+        del otp_store[phone]
+        return jsonify({"status": "fail", "message": "OTP expired"})
 
-        return {"status": "ok"}
+    if stored["otp"] != otp:
+        return jsonify({"status": "fail", "message": "Wrong OTP"})
 
-    return {"status": "fail"}
+    del otp_store[phone]
+    session["phone"] = phone
 
-@app.route("/reset-demo")
-def reset_demo():
+    # Create user if not exists
+    get_user(phone)
 
-    if not session.get("admin"):
-        return "Unauthorized ❌"
+    return jsonify({"status": "ok"})
 
-    email = request.args.get("email")
-
-    if email in users:
-        users[email]["demo_done"] = False
-        users[email]["demo_waiting"] = False
-
-    return "Demo reset done ✅"
-# ================= REGISTER =================
-@app.route("/register", methods=["GET", "POST"])
-def register():
-    if request.method == "POST":
-        name = request.form["name"]
-        email = request.form["email"]
-        password = request.form["password"]
-        batch = request.form["batch"]
-
-        users[email] = {
-            "name": name,
-            "password": password,
-            "batch": batch,
-            "demo_attended": False,
-            "demo_waiting": False,
-            "enrolled": False
-        }
-
-        session["user"] = email
-        return redirect("/enroll")
-
-    return """
-    <html><head><title>Register</title>
-    <style>
-    body{font-family:Poppins;background:linear-gradient(135deg,#004aad,#0b5394);
-    display:flex;justify-content:center;align-items:center;height:100vh;}
-    .box{background:white;padding:40px;border-radius:15px;width:300px;text-align:center;}
-    input,select{width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid #ccc;}
-    button{width:100%;padding:10px;background:#28a745;color:white;border:none;border-radius:8px;}
-    </style></head>
-    <body>
-    <div class="box">
-    <h2>Register</h2>
-    <form method="post">
-    <input name="name" placeholder="Name" required>
-    <input name="email" placeholder="Email" required>
-    <input name="password" type="password" placeholder="Password" required>
-    <select name="batch">
-        <option value="indian">Indian</option>
-        <option value="international">International</option>
-    </select>
-    <button>Register</button>
-    </form>
-    </div>
-    </body></html>
-    """
-
-
-# ================= LOGIN =================
-@app.route("/login", methods=["GET", "POST"])
-def login():
-    if request.method == "POST":
-        email = request.form["email"]
-        password = request.form["password"]
-
-        user = users.get(email)
-
-        if user and user["password"] == password:
-            session["user"] = email
-            return redirect("/admin")
-
-        return "<h3 style='text-align:center;color:red;'>Invalid Login ❌</h3>"
-
-    return """
-    <html><head><title>Login</title>
-    <style>
-    body{font-family:Poppins;background:linear-gradient(135deg,#004aad,#0b5394);
-    display:flex;justify-content:center;align-items:center;height:100vh;}
-    .box{background:white;padding:40px;border-radius:15px;width:300px;text-align:center;}
-    input{width:100%;padding:10px;margin:10px 0;border-radius:8px;border:1px solid #ccc;}
-    button{width:100%;padding:10px;background:#0b5394;color:white;border:none;border-radius:8px;}
-    a{color:#0b5394;}
-    </style></head>
-    <body>
-    <div class="box">
-    <h2>Login</h2>
-    <form method="post">
-    <input name="email" placeholder="Email" required>
-    <input name="password" type="password" required>
-    <button>Login</button>
-    </form>
-    <p><a href="/register">New user? Register</a></p>
-    </div>
-    </body></html>
-    """
-
-
-# ================= LOGOUT =================
-@app.route("/logout")
-def logout():
-    session.clear()
-    return redirect("/login")
-
-# ================= DEMO CLASS =================
-@app.route("/demo-class")
-def demo_class():
-
-    phone = session.get("phone")
-
-    if not phone:
-        return "Enter mobile number first ❌"
-
-    user = demo_users.get(phone)
-
-    if not user:
-        demo_users[phone] = {
-            "demo_done": False,
-            "demo_waiting": False,
-            "batch": "indian",   # default (later detect pannalam)
-            "name": "Student"
-        }
-        user = demo_users[phone]
-
-    # ✅ Already attended check
-    if user.get("demo_done"):
-        return "<h3 style='text-align:center;'>Demo already completed ✅<br>Enroll now</h3>"
-
-    # ✅ Put user in waiting
-    user["demo_waiting"] = True
-
-    indian = []
-    international = []
-
-    for u in demo_users.values():
-        if u.get("demo_waiting"):
-            if u.get("batch") == "indian":
-                indian.append(u.get("name", "Student"))
-            else:
-                international.append(u.get("name", "Student"))
-
-    return render_template(
-        "demo_waiting.html",
-        indian=indian,
-        international=international
-    )
+# -------------------- DEMO --------------------
 
 @app.route("/api/check-demo")
 def check_demo():
-
     phone = session.get("phone")
-
-    if not phone or phone not in demo_users:
+    if not phone:
         return jsonify({"error": "Unauthorized"}), 401
 
-    user = demo_users[phone]
+    course = request.args.get("course", "cbse10")
+    user = get_user(phone)
 
-    return jsonify({
-        "demo_done": user.get("demo_done", False)
-    })
+    # Admin always gets demo
+    if is_admin_phone(phone):
+        return jsonify({"demo_done": False, "admin": True, "meet_link": DEMO_MEET_LINK})
 
-# ✅ MARK DEMO COMPLETE
+    demo_done = user["demo_done"].get(course, False)
+    return jsonify({"demo_done": demo_done, "meet_link": DEMO_MEET_LINK})
+
+
 @app.route("/api/demo-complete", methods=["POST"])
 def demo_complete():
-
     phone = session.get("phone")
-
-    if not phone or phone not in demo_users:
+    if not phone:
         return jsonify({"error": "Unauthorized"}), 401
 
-    demo_users[phone]["demo_done"] = True
-    demo_users[phone]["demo_waiting"] = False
+    course = request.json.get("course", "cbse10")
+    user = get_user(phone)
+
+    # Admin phone: don't mark as done (so they can demo again)
+    if not is_admin_phone(phone):
+        user["demo_done"][course] = True
 
     return jsonify({"status": "saved"})
 
-# ================= ENROLL =================
-from flask import request, jsonify, session, redirect
 
-students = []
-
-@app.route("/enroll", methods=["GET", "POST"])
-def enroll():
-
-    if not session.get("user"):
-        return redirect("/login")
-
-    user = users.get(session.get("user"))
-
-    if not user:
-        return redirect("/login")
-    if request.method == "POST":
-
-        student = {
-            "name": request.form.get("name"),
-            "class": request.form.get("class"),
-            "country": request.form.get("country"),
-            "timezone": request.form.get("timezone"),
-            "time": request.form.get("time")
+@app.route("/api/seat-count")
+def seat_count():
+    """Return available seats for all courses."""
+    result = {}
+    for course, d in seat_data.items():
+        result[course] = {
+            "available": d["total"] - d["booked"],
+            "total": d["total"]
         }
+    return jsonify(result)
 
-        students.append(student)
+# -------------------- ENROLL + PAYMENT --------------------
 
-        user["enrolled"] = True
-        user["demo_attended"] = True
-        user["demo_waiting"] = False
-
-        return "<h3 style='text-align:center;'>🎉 Registered Successfully</h3>"
-
-    return render_template("enroll.html")
-    
-# ================= LIVE ROOM (PAID STUDENTS) =================
-
-@app.route("/live-room")
-def live_room():
-
-    phone = session.get("phone")
-
-    if not phone:
-        return "Unauthorized ❌"
-
-    user = demo_users.get(phone)
-
-    if not user:
-        return "User not found ❌"
-
-    # ✅ ENROLL CHECK
-    if not user.get("enrolled"):
-        return "<h3 style='text-align:center;'>Please enroll first</h3>"
-
-    # ✅ HOURS CHECK
-    if user.get("hours_used", 0) >= user.get("max_hours", 12):
-        user["enrolled"] = False
-        return "<h3 style='text-align:center;'>Plan completed ❌<br>Please enroll again</h3>"
-
-    # ✅ INCREMENT (ONLY ONCE PER DAY / SESSION)
-    if not session.get("joined_today"):
-        user["hours_used"] = user.get("hours_used", 0) + 1
-        session["joined_today"] = True
-
-   # ✅ GET COURSE
+@app.route("/api/enroll-info")
+def enroll_info():
+    """Return price info for a course."""
     course = request.args.get("course")
+    if course not in price_per_hour:
+        return jsonify({"error": "Invalid course"}), 400
 
-    # ✅ GET LINK
-    meet_link = class_links.get(course)
-
-    if not meet_link:
-        return "Invalid class ❌"
-
-    return render_template(
-        "live_room.html",
-        course=course,
-        meet_link=meet_link,
-        indian=[],
-        international=[]
-    )
-   
-@app.route("/reset-session")
-def reset_session():
-    session["joined_today"] = False
-    return "Session reset"    
-
-@app.route("/teacher-login", methods=["GET","POST"])
-def teacher_login():
-
-    error = ""
-    selected_class = request.args.get("class")
-
-    if request.method == "POST":
-
-        username = request.form.get("username")
-        password = request.form.get("password")
-
-        if username in teachers and teachers[username]["password"] == password:
-
-            # ✅ CLASS CHECK
-            if selected_class and teachers[username]["course"] != selected_class:
-                return "Wrong class login ❌"
-
-            if not teachers[username].get("active", True):
-                error = "Your account is disabled ❌"
-            else:
-                session["teacher"] = username
-                return redirect("/teacher-Dashboard")
-
-        else:
-            error = "Invalid Username or Password ❌"
-
-    return render_template("teacher_login.html", error=error, class_name=selected_class)
-    
-
-@app.route("/teacher-Dashboard")
-def teacher_dashboard():
-
-    if "teacher" not in session:
-        return redirect("/teacher-login")
-
-    username = session["teacher"]
-    teacher = teachers[username]
-
-    feedbacks = feedback_db.get(username, [])
-
-    if feedbacks:
-        avg_rating = round(sum(f["rating"] for f in feedbacks)/len(feedbacks),2)
-    else:
-        avg_rating = 0
-
-    # ⭐ ratings list for graph
-    ratings = [f["rating"] for f in feedbacks]
-
-    return render_template("teacher_Dashboard.html",
-                           teacher_name=username,
-                           course=teacher["course"],
-                           meet_link=teacher["link"],
-                           feedbacks=feedbacks,
-                           avg_rating=avg_rating)
-
-
-@app.route('/submit-teacher-feedback', methods=['POST'])
-def submit_teacher_feedback():
-
-    teacher = request.form["teacher"]
-    rating = int(request.form["rating"])
-    comment = request.form["comment"]
-
-    if teacher not in feedback_db:
-        feedback_db[teacher] = []
-
-    feedback_db[teacher].append({
-        "rating": rating,
-        "comment": comment
+    monthly = price_per_hour[course] * classes_per_month
+    return jsonify({
+        "course": course,
+        "monthly_amount": monthly,
+        "classes_per_month": classes_per_month,
+        "meet_link": CLASS_MEET_LINK
     })
 
-    return "Feedback submitted" 
+
+@app.route("/api/create-order", methods=["POST"])
+def create_order():
+    """Create Razorpay order for enrollment."""
+    phone = session.get("phone")
+    if not phone:
+        return jsonify({"error": "Not logged in"}), 401
+
+    data = request.json
+    course = data.get("course")
+    name   = data.get("name", "").strip()
+
+    if not name:
+        return jsonify({"error": "Name required"}), 400
+    if course not in price_per_hour:
+        return jsonify({"error": "Invalid course"}), 400
+
+    user = get_user(phone)
+
+    # Check demo done
+    if not user["demo_done"].get(course) and not is_admin_phone(phone):
+        return jsonify({"error": "Attend demo first"}), 403
+
+    # Check seats
+    if available_seats(course) <= 0:
+        return jsonify({"error": "Seats full"}), 403
+
+    amount = price_per_hour[course] * classes_per_month
+
+    try:
+        with open("admin.json") as f:
+            keys = json.load(f)
+        client = razorpay.Client(auth=(keys["razorpay_key"], keys["razorpay_secret"]))
+        order = client.order.create({
+            "amount": amount * 100,
+            "currency": "INR",
+            "payment_capture": 1,
+            "notes": {"course": course, "phone": phone, "name": name}
+        })
+    except Exception as e:
+        print("Razorpay error:", e)
+        return jsonify({"error": "Payment init failed"}), 500
+
+    # Save name
+    user["name"] = name
+    session["pending_course"] = course
+
+    return jsonify({
+        "order_id": order["id"],
+        "amount": amount * 100,
+        "razorpay_key": keys["razorpay_key"],
+        "name": name,
+        "course": course
+    })
 
 
-# -------------------- FOLDERS --------------------
+@app.route("/api/payment-success", methods=["POST"])
+def payment_success_api():
+    """Called after successful Razorpay payment."""
+    phone = session.get("phone")
+    if not phone:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.json
+    course = data.get("course") or session.get("pending_course")
+
+    if not course:
+        return jsonify({"error": "No course"}), 400
+
+    user = get_user(phone)
+
+    # Mark enrolled + set hours
+    user["enrolled"][course] = True
+    user["hours_used"][course] = 0
+    user["max_hours"][course] = classes_per_month  # 24 classes
+
+    # Increment seat count
+    if course in seat_data:
+        seat_data[course]["booked"] = min(
+            seat_data[course]["booked"] + 1,
+            seat_data[course]["total"]
+        )
+
+    # Save to CSV
+    try:
+        file = "payments.csv"
+        write_header = not os.path.exists(file)
+        with open(file, "a", newline="") as f:
+            writer = csv.writer(f)
+            if write_header:
+                writer.writerow(["Date", "Phone", "Name", "Course", "Amount"])
+            writer.writerow([
+                datetime.now().strftime("%d-%m-%Y %H:%M"),
+                phone,
+                user.get("name", ""),
+                course,
+                price_per_hour.get(course, 0) * classes_per_month
+            ])
+    except Exception as e:
+        print("CSV error:", e)
+
+    return jsonify({
+        "status": "success",
+        "enrolled": True,
+        "meet_link": CLASS_MEET_LINK,
+        "hours_remaining": user["max_hours"][course]
+    })
+
+# -------------------- JOIN CLASS --------------------
+
+@app.route("/api/join-class")
+def join_class_api():
+    """Check if student can join and return meet link."""
+    phone = session.get("phone")
+    if not phone:
+        return jsonify({"error": "Not logged in"}), 401
+
+    course = request.args.get("course", "cbse10")
+    user = get_user(phone)
+
+    if not user["enrolled"].get(course):
+        return jsonify({"error": "Enroll first"}), 403
+
+    hours_used = user["hours_used"].get(course, 0)
+    max_hours  = user["max_hours"].get(course, classes_per_month)
+
+    if hours_used >= max_hours:
+        # Auto-deactivate: mark as not enrolled
+        user["enrolled"][course] = False
+        return jsonify({"error": "Plan completed. Please re-enroll."}), 403
+
+    # Increment class count
+    user["hours_used"][course] = hours_used + 1
+
+    return jsonify({
+        "status": "ok",
+        "meet_link": CLASS_MEET_LINK,
+        "hours_used": user["hours_used"][course],
+        "hours_remaining": max_hours - user["hours_used"][course]
+    })
+
+# -------------------- STUDENT STATUS --------------------
+
+@app.route("/api/student-status")
+def student_status():
+    """Return full status for a phone number."""
+    phone = session.get("phone")
+    if not phone:
+        return jsonify({"logged_in": False})
+
+    user = get_user(phone)
+    seats = {}
+    for course in seat_data:
+        seats[course] = available_seats(course)
+
+    return jsonify({
+        "logged_in": True,
+        "phone": phone,
+        "name": user.get("name", ""),
+        "demo_done": user["demo_done"],
+        "enrolled": user["enrolled"],
+        "hours_used": user["hours_used"],
+        "max_hours": user["max_hours"],
+        "available_seats": seats,
+        "meet_link": CLASS_MEET_LINK,
+        "is_admin": is_admin_phone(phone)
+    })
+
+# -------------------- TEACHER --------------------
+
+@app.route("/teacher-login", methods=["GET", "POST"])
+def teacher_login():
+    error = ""
+    if request.method == "POST":
+        username = request.form.get("username", "").strip()
+        password = request.form.get("password", "")
+        if username in teachers and teachers[username]["password"] == password:
+            if not teachers[username].get("active", True):
+                error = "Your account is disabled"
+            else:
+                session["teacher"] = username
+                return redirect("/teacher-dashboard")
+        else:
+            error = "Invalid username or password"
+    return render_template("teacher_login.html", error=error)
+
+
+@app.route("/teacher-dashboard")
+def teacher_dashboard():
+    if "teacher" not in session:
+        return redirect("/teacher-login")
+    username = session["teacher"]
+    teacher = teachers[username]
+    feedbacks = feedback_db.get(username, [])
+    avg_rating = round(sum(f["rating"] for f in feedbacks) / len(feedbacks), 2) if feedbacks else 0
+    return render_template(
+        "teacher_Dashboard.html",
+        teacher_name=username,
+        course=teacher["course"],
+        meet_link=teacher["meet_link"],
+        feedbacks=feedbacks,
+        avg_rating=avg_rating
+    )
+
+
+@app.route("/teacher-logout")
+def teacher_logout():
+    session.pop("teacher", None)
+    return redirect("/teacher-login")
+
+# -------------------- FEEDBACK --------------------
+
+@app.route("/submit_feedback", methods=["POST"])
+def submit_feedback():
+    """Student submits feedback for a teacher."""
+    phone = session.get("phone")
+    data = request.get_json()
+
+    teacher_name = data.get("teacher")
+    course       = data.get("course")
+    rating       = int(data.get("rating", 0))
+    comment      = data.get("comment", "").strip()
+
+    if not teacher_name or not course or not rating:
+        return jsonify({"error": "Missing fields"}), 400
+
+    entry = {
+        "phone": phone or "anonymous",
+        "course": course,
+        "rating": rating,
+        "comment": comment,
+        "time": datetime.now().strftime("%d-%m-%Y %H:%M"),
+        "approved": False
+    }
+
+    if teacher_name not in feedback_db:
+        feedback_db[teacher_name] = []
+    feedback_db[teacher_name].append(entry)
+
+    # Persist to JSON
+    _save_feedback()
+    return jsonify({"status": "success"})
+
+
+@app.route("/get_feedback")
+def get_feedback():
+    teacher = request.args.get("teacher")
+    # If teacher is logged in, show their feedback
+    if session.get("teacher"):
+        teacher = teacher or session["teacher"]
+        return jsonify(feedback_db.get(teacher, []))
+    # Public: only approved
+    if teacher:
+        approved = [f for f in feedback_db.get(teacher, []) if f.get("approved")]
+        return jsonify(approved)
+    return jsonify([])
+
+
+@app.route("/submit-teacher-feedback", methods=["POST"])
+def submit_teacher_feedback():
+    teacher  = request.form.get("teacher")
+    rating   = int(request.form.get("rating", 0))
+    comment  = request.form.get("comment", "").strip()
+    course   = request.form.get("course", "")
+    if teacher not in feedback_db:
+        feedback_db[teacher] = []
+    feedback_db[teacher].append({
+        "rating": rating,
+        "comment": comment,
+        "course": course,
+        "time": datetime.now().strftime("%d-%m-%Y %H:%M"),
+        "approved": False
+    })
+    _save_feedback()
+    return jsonify({"status": "submitted"})
+
+
+def _save_feedback():
+    try:
+        with open("feedback.json", "w") as f:
+            json.dump(feedback_db, f, indent=4)
+    except Exception as e:
+        print("Feedback save error:", e)
+
+
+def _load_feedback():
+    global feedback_db
+    try:
+        with open("feedback.json", "r") as f:
+            feedback_db = json.load(f)
+    except:
+        feedback_db = {}
+
+# -------------------- ADMIN --------------------
+
+@app.route("/admin", methods=["GET", "POST"])
+def admin():
+    error = ""
+    if request.method == "POST":
+        if request.form.get("password") == os.environ.get("ADMIN_PASSWORD", "admin123"):
+            session["admin"] = True
+            return redirect("/upload")
+        else:
+            error = "Wrong Password"
+    return render_template("admin_login.html", error=error)
+
+
+@app.route("/upload", methods=["GET", "POST"])
+def upload():
+    if not session.get("admin"):
+        return redirect("/admin")
+    pdf_folder = "rsc_download"
+    os.makedirs(pdf_folder, exist_ok=True)
+    if request.method == "POST":
+        file = request.files.get("pdf")
+        if file:
+            file.save(os.path.join(pdf_folder, file.filename))
+            return jsonify({"status": "uploaded", "filename": file.filename})
+    return render_template("upload.html")
+
+
+@app.route("/admin/students")
+def admin_students():
+    """Admin: see all students, demo status, enrollment."""
+    if not session.get("admin"):
+        return redirect("/admin")
+    return jsonify({
+        "students": [
+            {
+                "phone": phone,
+                "name": u.get("name", ""),
+                "demo_done": u["demo_done"],
+                "enrolled": u["enrolled"],
+                "hours_used": u["hours_used"]
+            }
+            for phone, u in demo_users.items()
+        ],
+        "seats": {
+            course: {"available": available_seats(course), "total": d["total"]}
+            for course, d in seat_data.items()
+        }
+    })
+
+
+@app.route("/admin/reset-demo", methods=["POST"])
+def admin_reset_demo():
+    if not session.get("admin"):
+        return jsonify({"error": "Unauthorized"}), 403
+    phone  = request.json.get("phone")
+    course = request.json.get("course")
+    if phone in demo_users:
+        if course:
+            demo_users[phone]["demo_done"].pop(course, None)
+        else:
+            demo_users[phone]["demo_done"] = {}
+    return jsonify({"status": "reset"})
+
+
+@app.route("/manage-feedback")
+def manage_feedback():
+    if not session.get("admin"):
+        return redirect("/admin")
+    return render_template("manage_feedback.html")
+
+
+@app.route("/admin_feedback")
+def admin_feedback():
+    if not session.get("admin"):
+        return jsonify({"error": "unauthorized"}), 403
+    # Flatten all teachers
+    all_fb = []
+    for teacher, fbs in feedback_db.items():
+        for i, fb in enumerate(fbs):
+            all_fb.append({**fb, "teacher": teacher, "index": i})
+    return jsonify(all_fb)
+
+
+@app.route("/approve_feedback", methods=["POST"])
+def approve_feedback():
+    if not session.get("admin"):
+        return jsonify({"error": "unauthorized"}), 403
+    data    = request.get_json()
+    teacher = data.get("teacher")
+    index   = data.get("index")
+    if teacher in feedback_db and index is not None and index < len(feedback_db[teacher]):
+        feedback_db[teacher][index]["approved"] = True
+        _save_feedback()
+    return jsonify({"status": "approved"})
+
+
+@app.route("/delete_feedback", methods=["POST"])
+def delete_feedback():
+    if not session.get("admin"):
+        return jsonify({"error": "unauthorized"}), 403
+    data    = request.get_json()
+    teacher = data.get("teacher")
+    index   = data.get("index")
+    if teacher in feedback_db and index is not None and index < len(feedback_db[teacher]):
+        feedback_db[teacher].pop(index)
+        _save_feedback()
+    return jsonify({"status": "deleted"})
+
+# -------------------- MATERIALS (PDF) --------------------
+
 PDF_FOLDER = "rsc_download"
 os.makedirs(PDF_FOLDER, exist_ok=True)
 
-# -------------------- PRODUCTS --------------------
 PRODUCTS = {
-    
-
     "Linear Programming": {
         "title": "Linear Programming – Class 12",
         "file": "Linear Programming1_merged.pdf",
@@ -448,49 +623,192 @@ PRODUCTS = {
     }
 }
 
+try:
+    with open("admin.json") as f:
+        _keys = json.load(f)
+    razorpay_client = razorpay.Client(auth=(_keys["razorpay_key"], _keys["razorpay_secret"]))
+except:
+    razorpay_client = None
+    _keys = {"razorpay_key": "", "razorpay_secret": ""}
 
-# -------------------- EMAIL CONFIG --------------------
-EMAIL_ID = "ranjithamstudycenter@gmail.com"
-EMAIL_PASS = "YOUR_APP_PASSWORD"
 
-download_tokens = {}
+def check_access(key):
+    data = session.get(key)
+    if not isinstance(data, dict) or "expiry" not in data:
+        return False
+    try:
+        expiry = datetime.fromisoformat(data["expiry"])
+    except:
+        return False
+    if datetime.now() > expiry:
+        session.pop(key, None)
+        return False
+    return True
 
-def send_email(to_email, link):
-    msg = EmailMessage()
-    msg["Subject"] = "Your Maths PDF – Ranjitham Study Center"
-    msg["From"] = EMAIL_ID
-    msg["To"] = to_email
 
-    msg.set_content(f"""
-Hello,
+@app.route("/materials")
+def materials():
+    board    = request.args.get("board")
+    cls      = request.args.get("cls")
+    open_id  = request.args.get("open") or request.args.get("product_id")
 
-Thank you for your payment.
+    access = {}
+    for pid in PRODUCTS:
+        view_key     = "view_" + pid
+        download_key = "download_" + pid
+        access[pid]  = {
+            "view": check_access(view_key),
+            "download": check_access(download_key)
+        }
 
-Download your Maths PDF (valid for 1 hour):
-{link}
+    expiry_time = None
+    if open_id:
+        product = PRODUCTS.get(open_id)
+        if not product:
+            abort(403)
+        if cls and str(product["class"]) != str(cls):
+            abort(403)
+        if not access.get(open_id, {}).get("view"):
+            abort(403)
+        data = session.get("view_" + open_id)
+        if data:
+            expiry_time = data.get("expiry")
 
-Regards,
-Ranjitham Study Center
-""")
+    session["access"] = access
+    return render_template(
+        "materials.html",
+        active_board=board,
+        active_class=cls,
+        open=open_id,
+        products=PRODUCTS,
+        access=access,
+        expiry_time=expiry_time
+    )
 
-    with smtplib.SMTP_SSL("smtp.gmail.com", 465) as server:
-        server.login(EMAIL_ID, EMAIL_PASS)
-        server.send_message(msg)
 
-def whatsapp_link(phone, link):
-    msg = f"Payment successful! Download your Maths PDF (valid 1 hour): {link}"
-    return f"https://wa.me/91{phone}?text={msg.replace(' ', '%20')}"
+@app.route("/secure_view/<product_id>")
+def secure_view(product_id):
+    if not check_access("view_" + product_id):
+        return "Unauthorized", 403
+    product = PRODUCTS.get(product_id)
+    if not product:
+        return "Invalid", 404
+    return send_file(
+        os.path.join(PDF_FOLDER, product["file"]),
+        mimetype="application/pdf",
+        as_attachment=False
+    )
 
-# -------------------- RAZORPAY --------------------
 
-with open("admin.json") as f:
-    keys = json.load(f)
+@app.route("/download/<product_id>")
+def download(product_id):
+    product = PRODUCTS.get(product_id)
+    if not product:
+        return "Invalid product", 404
+    if not check_access("download_" + product_id):
+        return "Download access expired", 403
+    return send_from_directory(PDF_FOLDER, product["file"], as_attachment=True)
 
-razorpay_client = razorpay.Client(auth=(
-    keys["razorpay_key"],
-    keys["razorpay_secret"]
-))
-# -------------------- ROUTES --------------------
+
+@app.route("/pay")
+def pay():
+    product_id = request.args.get("product")
+    mode       = request.args.get("mode")
+    board      = request.args.get("board", "cbse")
+    cls        = request.args.get("cls", "12")
+    session.update({"last_board": board, "last_cls": cls,
+                    "last_product": product_id, "last_mode": mode})
+    product = PRODUCTS.get(product_id)
+    if not product:
+        return "Invalid product", 404
+    if not razorpay_client:
+        return "Payment not configured", 500
+    order = razorpay_client.order.create({
+        "amount": int(product["price"] * 100),
+        "currency": "INR",
+        "payment_capture": 1
+    })
+    return render_template(
+        "pay.html", product=product, order_id=order["id"],
+        razorpay_key=_keys["razorpay_key"],
+        board=board, cls=cls, product_id=product_id, mode=mode
+    )
+
+
+@app.route("/payment_success")
+def payment_success():
+    product_id = request.args.get("product")
+    mode       = request.args.get("mode")
+    board      = session.get("last_board", "cbse")
+    cls        = session.get("last_cls", "12")
+
+    if not product_id:
+        return redirect(url_for("materials"))
+
+    if mode == "view":
+        session["view_" + product_id] = {
+            "expiry": (datetime.now() + timedelta(hours=1)).isoformat()
+        }
+    elif mode == "download":
+        session["download_" + product_id] = {
+            "expiry": (datetime.now() + timedelta(hours=1)).isoformat()
+        }
+
+    # FIX: was timedelta(minutes=1) — too short, changed to 1 hour
+    session.setdefault("access", {})[product_id] = {"view": True}
+
+    # Save to CSV
+    phone = session.get("phone", "")
+    try:
+        file = "payments.csv"
+        write_header = not os.path.exists(file)
+        with open(file, "a", newline="") as f:
+            writer = csv.writer(f)
+            if write_header:
+                writer.writerow(["Date", "Phone", "Product", "Mode"])
+            writer.writerow([
+                datetime.now().strftime("%d-%m-%Y %H:%M"),
+                phone, product_id, mode
+            ])
+    except Exception as e:
+        print("CSV error:", e)
+
+    return redirect(url_for("materials", board=board, cls=cls, paid=1))
+
+# -------------------- GENERAL ROUTES --------------------
+
+@app.route("/")
+def home():
+    return render_template("home.html")
+
+
+@app.route("/about")
+def about():
+    return render_template("about.html")
+
+
+@app.route("/class")
+def courses():
+    return render_template("class.html")
+
+
+@app.route("/contact", methods=["GET", "POST"])
+def contact():
+    if request.method == "POST":
+        print(request.form)
+    return render_template("contact.html")
+
+
+@app.route("/logout")
+def logout():
+    session.clear()
+    return redirect("/")
+
+
+@app.route("/sitemap.xml")
+def sitemap():
+    return send_from_directory(".", "sitemap.xml")
+
 
 @app.after_request
 def add_header(response):
@@ -501,563 +819,9 @@ def add_header(response):
     response.headers["Expires"] = "0"
     return response
 
-@app.route('/check_file')
-def check_file():
-    with open('feedback.json', 'r') as f:
-        return f.read()
+# -------------------- STARTUP --------------------
 
-
-@app.route("/")
-def home():
-    return render_template("home.html")
-
-@app.route("/about")
-def about():
-    return render_template("about.html")
-
-@app.route("/class")
-def courses():
-   
-    return render_template(
-        "class.html",class_status=class_status,
-        demo_completed=users.get("demo_completed", False),
-        registered=users.get("enrolled", False),
-        joined=session.get("joined", False)
-    )
-   
-def is_valid(expiry): 
-  if not expiry: 
-      return False 
-  return datetime.fromisoformat(expiry) > datetime.now()
-
-
-@app.route("/materials")
-def materials():
-    
-    board = request.args.get("board")
-    cls = request.args.get("cls")
-    open_id = request.args.get("open") or request.args.get("product_id")
-
-    access = {}
-
-    # 🔹 BUILD ACCESS + HANDLE EXPIRY
-    for pid in PRODUCTS:
-
-        view_key = "view_" + pid
-        download_key = "download_" + pid
-
-        view_data = session.get(view_key)
-        download_data = session.get(download_key)
-
-        def is_valid(data):
-            if not data:
-                return False
-            expiry = data.get("expiry")
-            if not expiry:
-                return False
-            return datetime.fromisoformat(expiry) > datetime.now()
-
-        # ✅ valid check
-        access[pid] = {
-            "view": is_valid(view_data),
-            "download": is_valid(download_data)
-        }
-
-        # ❌ remove expired
-        if view_data and not is_valid(view_data):
-            session.pop(view_key, None)
-
-        if download_data and not is_valid(download_data):
-            session.pop(download_key, None)
-
-    # 🔥 EXPIRY TIME FOR FRONTEND
-    expiry_time = None
-    if open_id:
-        data = session.get("view_" + open_id)
-        if data:
-            expiry_time = data.get("expiry")
-
-    # 🔐 SECURITY CHECK
-    if open_id:
-        product = PRODUCTS.get(open_id)
-
-        if not product:
-            abort(403)
-
-        if cls and str(product["class"]) != str(cls):
-            abort(403)
-
-        if not access.get(open_id, {}).get("view"):
-            abort(403)
-
-    # ✅ SAVE ACCESS
-    session["access"] = access
-
-    return render_template(
-        "materials.html",
-        active_board=board,
-        active_class=cls,
-        open=open_id,
-        products=PRODUCTS,
-        access=access,
-        expiry_time=expiry_time
-    )
-@app.route("/secure_view/<product_id>")
-def secure_view(product_id):
-
-    if not check_access("view_" + product_id):
-        return "Unauthorized", 403
-
-    product = PRODUCTS.get(product_id)
-    if not product:
-        return "Invalid"
-
-    file_path = os.path.join(PDF_FOLDER, product["file"])
-
-    return send_file(
-        file_path,
-        mimetype="application/pdf",
-        as_attachment=False
-    )
-
-def check_access(key):
-
-    data = session.get(key)
-
-    # Nothing stored
-    if not isinstance(data, dict):
-        return False
-
-    # Missing expiry
-    if "expiry" not in data:
-        return False
-
-    try:
-        expiry = datetime.fromisoformat(data["expiry"])
-    except:
-        return False
-
-    # Expired
-    if datetime.now() > expiry:
-        session.pop(key, None)
-        return False
-
-    return True
-
-@app.route("/download/<product_id>")
-def download(product_id):
-
-    product = PRODUCTS.get(product_id)
-    if not product:
-        return "Invalid product"
-
-    # Permission check
-    if not check_access("download_" + product_id):
-        return "⛔ Download access expired"
-
-    return send_from_directory(
-        PDF_FOLDER,
-        product["file"],
-        as_attachment=True
-    )
-
-@app.route("/pay")
-def pay():
-
-    product_id = request.args.get("product")
-    mode = request.args.get("mode")
-    board = request.args.get("board") or "cbse"
-    cls = request.args.get("cls") or "12"
-
-    session["board"] = board
-    session["cls"]   = cls
-   
-  
-    session["last_board"] = board
-    session["last_cls"] = cls
-    session["last_product"] = product_id
-    session["last_mode"] = mode
-
-    product = PRODUCTS.get(product_id)
-    if not product:
-        return "Invalid product"
-
-    order = razorpay_client.order.create({
-        "amount": int(product["price"] * 100),
-        "currency": "INR",
-        "payment_capture": 1
-    })
-
-    return render_template(
-        "pay.html",
-        product=product,
-        order_id=order["id"],
-        razorpay_key=keys["razorpay_key"],
-        board=board,
-        cls=cls,
-        product_id=product_id,
-        mode=mode
-        
-    )
-
-@app.route("/payment_success")
-def payment_success():
-
-    # ---------- GET DATA ----------
-    product_id = request.args.get("product")
-    mode = request.args.get("mode")
-    board = request.args.get("board")
-    cls = request.args.get("cls")
-
-    phone = request.args.get("phone")
-    email = request.args.get("email")
-    state = request.args.get("state")
-
-    phone = session.get("phone")
-
-    if phone in demo_users:
-        demo_users[phone]["enrolled"] = True
-        demo_users[phone]["hours_used"] = 0
-
-    board=session.get("board")
-    cls=session.get("cls")
-
-    if not product_id:
-        return redirect(url_for("materials"))
-
-    # ---------- ACCESS CONTROL ----------
-    if mode == "view":
-        session["view_" + product_id] = {
-            "expiry": (datetime.now() + timedelta(minutes=1)).isoformat()
-        }
-
-    elif mode == "download":
-        session["download_" + product_id] = {
-            "expiry": (datetime.now() + timedelta(minutes=1)).isoformat()
-        }
-
-    session["access"] = session.get("access", {})
-    session["access"][product_id] = {"view": True}
-
-    # ---------- SAVE TO CSV ----------
-    file = "payments.csv"
-
-    with open(file, "a", newline="") as f:
-        writer = csv.writer(f)
-
-        if f.tell() == 0:
-            writer.writerow(["Date", "Phone", "Email", "State", "Product"])
-
-        writer.writerow([
-            datetime.now().strftime("%d-%m-%Y %H:%M"),
-            phone,
-            email,
-            state,
-            product_id
-        ])
-
-    # ---------- REDIRECT ----------
-    return redirect(url_for(
-        "materials",
-        board=board,
-        cls=cls,
-        paid=1,
-        phone=phone   # 👉 for WhatsApp
-    ))
-
-@app.route('/submit_feedback', methods=['POST'])
-def submit_feedback():
-    data = request.get_json()
-    print("Received:", data)
-
-    file_path = os.path.join(os.getcwd(), 'feedback.json')
-
-    try:
-        with open(file_path, 'r') as f:   # ✅ indent
-            feedbacks = json.load(f)
-    except:
-        feedbacks = []
-
-    feedbacks.append(data)
-
-    with open(file_path, 'w') as f:
-        json.dump(feedbacks, f, indent=4)
-
-    return jsonify({"status": "success"})
-
-# 🔹 Get feedback
-@app.route('/get_feedback', methods=['GET'])
-def get_feedback():
-    with open('feedback.json', 'r') as f:
-        feedbacks = json.load(f)
-
-    # 🔥 only approved feedback
-    approved_feedbacks = [f for f in feedbacks if f.get("approved") == True]
-    
-    return jsonify(feedbacks)
-
-
-view_counts = {}
-
-def increment_view_count(product_id):
-    view_counts[product_id] = view_counts.get(product_id, 0) + 1
-
-# ---------------- PERMISSION ----------------
-@app.route("/check_permission/<product_id>")
-def check_permission(product_id):
-
-    allowed = check_access("download_" + product_id)
-    return jsonify({"can_download": allowed})
-
-
-# ---------------- ADMIN ----------------
-@app.route("/admin", methods=["GET", "POST"])
-def admin():
-    error = ""
-
-    if request.method == "POST":
-        if request.form.get("password") == "admin123":
-            session["admin"] = True
-            return redirect("/upload")
-        else:
-            error = "Wrong Password ❌"
-
-    return f"""
-<!DOCTYPE html>
-<html>
-<head>
-<title>Admin Login</title>
-<style>
-body {{
-    margin:0;
-    height:100vh;
-    display:flex;
-    justify-content:center;
-    align-items:center;
-    background:#f4f6f9;
-    font-family:Arial;
-}}
-
-.login-box {{
-    background:white;
-    padding:40px;
-    border-radius:12px;
-    box-shadow:0 8px 20px rgba(0,0,0,0.1);
-    text-align:center;
-    width:320px;
-}}
-
-.logo {{
-    width:70px;
-    margin-bottom:10px;
-}}
-
-h2 {{
-    margin-bottom:15px;
-    color:#0b5394;
-}}
-
-.error {{
-    color:red;
-    font-size:14px;
-    margin-bottom:10px;
-}}
-
-.input-group {{
-    text-align:left;
-    margin-bottom:20px;
-}}
-
-.input-group input {{
-    width:100%;
-    padding:10px;
-    border-radius:6px;
-    border:1px solid #ccc;
-}}
-
-.password-box {{
-    position:relative;
-}}
-
-.eye {{
-    position:absolute;
-    right:10px;
-    top:10px;
-    cursor:pointer;
-}}
-
-button {{
-    width:100%;
-    padding:10px;
-    background:#0b5394;
-    color:white;
-    border:none;
-    border-radius:6px;
-    cursor:pointer;
-}}
-
-button:hover {{
-    background:#083b73;
-}}
-</style>
-</head>
-
-<body>
-
-<div class="login-box">
-
-    <img src="/static/images/logo.jpg" class="logo">
-
-    <h2>Admin Login</h2>
-
-    <div class="error">{error}</div>
-
-    <form method="post">
-        <div class="input-group password-box">
-            <input type="password" id="pwd" name="password" placeholder="Enter Password" required>
-            <span class="eye" onclick="toggle()">👁️</span>
-        </div>
-
-        <button type="submit">Login</button>
-    </form>
-</div>
-
-<script>
-function toggle(){{
-    const p = document.getElementById("pwd");
-    p.type = p.type === "password" ? "text" : "password";
-}}
-</script>
-
-</body>
-</html>
-"""
-
-@app.route("/upload", methods=["GET", "POST"])
-def upload():
-    if not session.get("admin"):
-        return redirect("/admin")
-
-    if request.method == "POST":
-        file = request.files.get("pdf")
-        if file:
-            file.save(os.path.join(PDF_FOLDER, file.filename))
-
-            # ✅ success response
-            return """
-            <h3>Uploaded Successfully ✅</h3>
-            <a href='/upload'>⬅ Back</a>
-            """
-
-    return """
-<h2>Admin Dashboard</h2>
-
-<div style="max-width:400px; margin:auto; text-align:center;">
-
-<h3>Upload Maths PDF</h3>
-
-<form method="post" enctype="multipart/form-data">
-    <input type="file" name="pdf" accept=".pdf" required><br><br>
-    <button type="submit">Upload</button>
-</form>
-
-<br><br>
-
-<a href="/manage-feedback">
-    <button>Manage Feedback</button>
-</a>
-
-<br><br>
-
-<a href="/logout">Logout</a>
-
-</div>
-"""
-    
-@app.route('/manage-feedback')
-def manage_feedback():
-    if not session.get("admin"):
-        return redirect("/admin")
-
-    return render_template("manage_feedback.html")
-
-@app.route('/admin_feedback')
-def admin_feedback():
-    if not session.get("admin"):
-        return jsonify({"error": "unauthorized"}), 403
-
-    with open('feedback.json', 'r') as f:
-        feedbacks = json.load(f)
-
-    return jsonify(feedbacks)
-
-@app.route('/approve_feedback', methods=['POST'])
-def approve_feedback():
-    if not session.get("admin"):
-        return jsonify({"error": "unauthorized"}), 403
-
-    data = request.get_json()
-    index = data.get("index")
-
-    try:
-        with open('feedback.json', 'r') as f:
-            feedbacks = json.load(f)
-    except:
-        feedbacks = []
-
-    # ✅ 👉 ADD HERE
-    if index is None or index >= len(feedbacks):
-        return jsonify({"error": "invalid index"}), 400
-
-    feedbacks[index]["approved"] = True
-
-    with open('feedback.json', 'w') as f:
-        json.dump(feedbacks, f, indent=4)
-
-    return jsonify({"status": "approved"})
-
-@app.route('/delete_feedback', methods=['POST'])
-def delete_feedback():
-    if not session.get("admin"):
-        return jsonify({"error": "unauthorized"}), 403
-
-    data = request.get_json()
-    index = data.get("index")
-
-    try:
-        with open('feedback.json', 'r') as f:
-            feedbacks = json.load(f)
-    except:
-        feedbacks = []
-
-    # ✅ 👉 ADD HERE
-    if index is None or index >= len(feedbacks):
-        return jsonify({"error": "invalid index"}), 400
-
-    feedbacks.pop(index)
-
-    with open('feedback.json', 'w') as f:
-        json.dump(feedbacks, f, indent=4)
-
-    return jsonify({"status": "deleted"})
-
-# ---------------- CONTACT ----------------
-@app.route("/contact", methods=["GET", "POST"])
-def contact():
-    if request.method == "POST":
-        print(request.form)
-    return render_template("contact.html")
-   
-
-
-# ---------------- SITEMAP ----------------
-@app.route("/sitemap.xml")
-def sitemap():
-    return send_from_directory(".", "sitemap.xml")
-
-
-# ---------------- RUN ----------------
 if __name__ == "__main__":
+    _load_feedback()
     port = int(os.environ.get("PORT", 10000))
     app.run(host="0.0.0.0", port=port, debug=True)
-
