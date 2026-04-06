@@ -1002,38 +1002,176 @@ let bookedSeats = {
   cbse10: 0,
   cbse12: 0
 };
-
-// 🌍 LOCATION
+// 🌍 USER LOCATION
 let userCountry = "";
 let isInternational = false;
+let userTimeZone = Intl.DateTimeFormat().resolvedOptions().timeZone;
 
+// 🌍 Detect country (API)
 fetch("https://ipapi.co/json/")
 .then(res => res.json())
 .then(data => {
   userCountry = data.country_name;
+
+  // ✅ Update here only
   isInternational = userCountry !== "India";
+
+  console.log("User Country:", userCountry);
+  console.log("International:", isInternational);
 })
 .catch(()=>{
   userCountry = "India";
   isInternational = false;
 });
 
-// 🕒 SCHEDULE
-let courseSchedule = {
+ let courseSchedule = {
   cbse10: { hour: 19, minute: 0 },
-  cbse12: { hour: 20, minute: 0 }
+  cbse12: { hour: 20, minute: 0 },
+  engg1: { hour: 18, minute: 30 },
+  engg2: { hour: 19, minute: 30 },
+  engg3: { hour: 21, minute: 0 },
+  control: { hour: 22, minute: 30 },
+  AGS: { hour: 0, minute: 0 },
+  Maths: { hour: 0, minute: 30 }
+};
+function getLocalClassTime(course){
+
+  let schedule = courseSchedule[course];
+
+  let indiaTime = new Date();
+
+  indiaTime.setHours(schedule.hour, schedule.minute, 0);
+
+  // ✅ convert timezone properly
+  let localTime = new Date(
+    indiaTime.toLocaleString("en-US", { timeZone: userTimeZone })
+  );
+
+  return localTime;
+}
+
+ let courseState = {
+  cbse10: { demoDone:false, enrolled:false },
+  cbse12: { demoDone:false, enrolled:false },
+  engg1: { demoDone:false, enrolled:false },
+  engg2: { demoDone:false, enrolled:false },
+  engg3: { demoDone:false, enrolled:false },
+  control: { demoDone:false, enrolled:false },
+  AGS: { demoDone:false, enrolled:false },
+  Maths: { demoDone:false, enrolled:false }
 };
  /* =========================
    DOM READY
 ========================= */
 document.addEventListener("DOMContentLoaded", function(){
-  console.log("Page Loaded ✅");
-});
- 
-function openDemoBox(){
-  document.getElementById("demoBox").style.display = "block";
-}
 
+  const joinBtns = document.querySelectorAll(".joinBtn");
+  const liveBadges = document.querySelectorAll(".liveBadge");
+
+  joinBtns.forEach(btn => {
+    btn.style.opacity = "0.5";
+    btn.style.pointerEvents = "none";
+  });
+
+  let currentHour = new Date().getHours();
+  let students_count = 20;
+   if(students_count >= 35){
+    joinBtns.forEach(btn => {
+      btn.innerText = "Full";
+      btn.style.background = "gray";
+      btn.style.pointerEvents = "none";
+    });
+  }
+ });
+ Object.keys(courseState).forEach(course => {
+
+  if(localStorage.getItem("demo_done_" + course) === "true"){
+    courseState[course].demoDone = true;
+  }
+
+  if(localStorage.getItem("enrolled_" + course) === "true"){
+    courseState[course].enrolled = true;
+  }
+
+  updateUI(course);
+});
+/* =========================
+   DEMO
+========================= */
+
+ function bookDemo(course){
+
+  let demoKey = "demo_done_" + course;
+  let timerDiv = document.getElementById("timer-" + course);
+  let liveBadge = document.getElementById("live-" + course);
+
+  // ✅ Safety check
+  if(!timerDiv || !liveBadge){
+    console.error("Missing element for:", course);
+    return;
+  }
+
+  // ✅ Already done check
+  if(localStorage.getItem(demoKey) === "true"){
+    timerDiv.innerHTML = "⚠ Demo already completed";
+    courseState[course].demoDone = true;
+    return;
+  }
+
+  // ❌ Prevent multiple clicks
+  if(timerDiv.dataset.running === "true"){
+    return;
+  }
+  timerDiv.dataset.running = "true";
+
+  let duration = 120;
+
+  // 🔴 SHOW LIVE only during demo
+  liveBadge.style.display = "inline-block";
+
+  showLivePopup(course);
+
+  // 🎥 Open demo
+  window.open("https://meet.google.com/wss-haop-vva", "_blank");
+
+  let interval = setInterval(()=>{
+
+    let m = Math.floor(duration / 60);
+    let s = duration % 60;
+
+    timerDiv.innerHTML = "⏳ Demo: " + m + "m " + s + "s";
+
+    duration--;
+
+    if(duration < 0){
+      clearInterval(interval);
+
+      timerDiv.innerHTML = "✅ Demo Completed";
+
+      // 🔴 Hide LIVE after demo
+      liveBadge.style.display = "none";
+
+      courseState[course].demoDone = true;
+      localStorage.setItem(demoKey, "true");
+
+      // ✅ allow re-click safe
+      timerDiv.dataset.running = "false";
+    }
+
+  },1000);
+}
+function showTimer(course, msg){
+  let timerDiv = document.getElementById("timer-" + course);
+  if(timerDiv){
+    timerDiv.innerHTML = msg;
+  }
+  courseState[course].demoDone = true;
+localStorage.setItem("demo_done_" + course, "true");
+
+// 🔥 UPDATE UI
+updateUI(course);
+}
+ 
 
 /* =========================
    COURSE PRICE MAP
@@ -1052,7 +1190,16 @@ let pricePerHour = {
   Maths: 20
 };
 
+/* =========================
+   ENROLL
+========================= */
 function enroll(course){
+
+  // ✅ Demo check
+  if(!courseState[course].demoDone){
+    showMessage("⚠ Attend demo first");
+    return;
+  }
 
   // 🌍 International restriction
   if(isInternational && (
@@ -1066,18 +1213,27 @@ function enroll(course){
 
   selectedCourse = course;
 
-  // 🔥 TITLE
+  // 🔥 SET TITLE
   document.getElementById("courseTitle").innerText =
     course.toUpperCase() + " - Monthly Plan";
 
-  // 💰 PRICE
+  // ✅ CALCULATE MONTHLY PRICE
   let monthlyAmount = pricePerHour[course] * classesPerMonth;
 
+  // 🔥 SET PRICE DISPLAY
   document.getElementById("coursePrice").innerText =
     "💳 Monthly Fee: ₹" + monthlyAmount + " (" + classesPerMonth + " classes)";
 
   // ✅ OPEN POPUP
   document.getElementById("enrollPopup").style.display = "block";
+}
+
+
+/* =========================
+   CLOSE POPUP
+========================= */
+function closeEnroll(){
+  document.getElementById("enrollPopup").style.display = "none";
 }
 
 /* =========================
@@ -1141,8 +1297,83 @@ function payNow(){
   let rzp1 = new Razorpay(options);
   rzp1.open();
 }
-function joinClass(course){
-  window.location.href = "/live-room?course=" + course;
+* =========================
+   JOIN CLASS
+========================= */
+ function joinClass(course){
+
+  if(!courseState[course].enrolled){
+    showMessage("⚠ Please enroll first");
+    return;
+  }
+
+  let now = new Date();
+  let classTime = getLocalClassTime(course);
+
+  let start = classTime;
+  let end = new Date(classTime.getTime() + 60*60*1000);
+
+  // ⏳ Before class
+  if(now < start){
+    let diff = start - now;
+    let mins = Math.floor(diff / 60000);
+    showMessage("⏳ Class starts in " + mins + " mins");
+    return;
+  }
+
+  // ❌ After class
+  if(now > end){
+    showMessage("❌ Class ended");
+    return;
+  }
+
+  // ✅ OPEN MEET
+  window.open("https://meet.google.com/sus-iead-rhq", "_blank");
+ 
+
+  // 🔥 CHANGE BUTTON → JOINED
+  let joinBtn = document.querySelector(`.joinBtn[data-course="${course}"]`);
+  if(joinBtn){
+    joinBtn.innerText = "Joined";
+  }
+
+   // ⏳ AFTER CLASS → RESET BACK TO JOIN
+  setTimeout(()=>{
+    if(joinBtn){
+      joinBtn.innerText = "Join Now";
+    }
+  }, 3600000); // 1 hour
+
+  // 🔴 SHOW LIVE
+  let liveBadge = document.getElementById("live-" + course);
+  if(liveBadge){
+    liveBadge.style.display = "inline-block";
+  }
+  // 🔥 Show popup
+  showLivePopup(course);
+}
+
+
+/* =========================
+   COUNTDOWN
+========================= */
+function startCountdown(duration){
+
+  let timer = duration / 1000;
+
+  let interval = setInterval(()=>{
+    let m = Math.floor(timer / 60);
+    let s = Math.floor(timer % 60);
+
+    showMessage("⏳ " + m + "m " + s + "s");
+
+    timer--;
+
+    if(timer < 0){
+      clearInterval(interval);
+    }
+
+  },1000);
 }
 
 /* =========================
@@ -1168,31 +1399,134 @@ function showMessage(msg){
 }
 
 
+function startDemoFlow(){
+
+  fetch("/api/check-demo")
+  .then(res => res.json())
+  .then(data => {
+
+    // ❌ Already attended
+    if(data.demo_done){
+      showMessage("⚠ Demo already completed");
+      return;
+    }
+
+    // ✅ Start demo
+    showMessage("🎥 Demo Started");
+
+    // 🔥 Open in new tab (better UX)
+    window.open("https://meet.google.com/wss-haop-vva", "_blank");
+
+    // ⏳ After 2 mins → mark complete
+    setTimeout(()=>{
+
+      fetch("/api/demo-complete", {
+        method: "POST"
+      })
+      .then(res => res.json())
+      .then(()=>{
+        showMessage("✅ Demo Completed");
+      });
+
+    }, 120000); // 2 minutes
+
+  })
+  .catch(()=>{
+    showMessage("❌ Please login first");
+  });
+
+}
+
+/* =========================
+   LIVE POPUP
+========================= */
+let currentLiveCourse = "";
+
+function showLivePopup(course){
+
+  currentLiveCourse = course;
+
+  let popup = document.getElementById("livePopup");
+  let text = document.getElementById("popupText");
+
+  if(!popup || !text) return; // ✅ safety check
+
+  text.innerHTML = "🔴 " + course.toUpperCase() + " LIVE NOW – Join Fast!";
+
+  popup.style.display = "block";
+
+  // auto hide after 6 sec
+  setTimeout(()=>{
+    popup.style.display = "none";
+  },6000);
+}
+
+/* =========================
+   JOIN FROM POPUP
+========================= */
+function joinFromPopup(){
+
+  if(!currentLiveCourse){
+    showMessage("⚠ No active class");
+    return;
+  }
+
+  joinClass(currentLiveCourse);
+}
+
+ function updateUI(course){
+
+  let demoBtn = document.querySelector(`[onclick="bookDemo('${course}')"]`);
+  let enrollBtn = document.querySelector(`[onclick="enroll('${course}')"]`);
+  let joinBtn = document.querySelector(`.joinBtn[data-course="${course}"]`);
+
+  // ✅ DEMO
+  if(courseState[course].demoDone){
+    if(demoBtn){
+      demoBtn.innerText = "Demo Completed";
+      demoBtn.style.background = "green";
+    }
+  }
+
+  // ✅ ENROLL
+  if(courseState[course].enrolled){
+    if(enrollBtn){
+      enrollBtn.innerText = "Registered";
+      enrollBtn.style.background = "#0b5394";
+    }
+
+    if(joinBtn){
+      joinBtn.style.opacity = "1";
+      joinBtn.style.pointerEvents = "auto";
+    }
+  }
+
+ }
 
 </script>
     <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
 
-<script>// SEARCH
-const searchBox = document.getElementById("searchBox");
+<script>
+document.getElementById("searchBox").addEventListener("keyup", function() {
 
-if(searchBox){
-  searchBox.addEventListener("keyup", function() {
-    let value = this.value.toLowerCase();
-    let cards = document.querySelectorAll(".class-card");
+  let value = this.value.toLowerCase();
+  let cards = document.querySelectorAll(".class-card");
 
-    cards.forEach(card => {
-      let text = card.innerText.toLowerCase();
-      card.style.display = text.includes(value) ? "block" : "none";
-    });
+  cards.forEach(card => {
+    let text = card.innerText.toLowerCase();
+    card.style.display = text.includes(value) ? "block" : "none";
   });
-}
 
-// JOIN
+});
+</script>
+
+ <script>
 function joinClass(course){
   window.location.href = "/live-room?course=" + course;
 }
+</script>
 
-// OTP
+ <script>
 function sendOTP(){
   let phone = document.getElementById("phone").value;
 
@@ -1205,8 +1539,7 @@ function sendOTP(){
     method:"POST",
     headers:{"Content-Type":"application/json"},
     body: JSON.stringify({phone:phone})
-  })
-  .then(()=>alert("OTP Sent ✅"));
+  });
 }
 
 function verifyOTP(){
@@ -1221,15 +1554,42 @@ function verifyOTP(){
   .then(res=>res.json())
   .then(data=>{
     if(data.status=="ok"){
-      alert("OTP Verified ✅");
       window.location.href="/demo-class";
     }else{
-      alert("Invalid OTP ❌");
+      alert("Invalid OTP");
     }
   });
 }
 </script>
-<!-- =========================
+
+
+ <!-- 🔴 LIVE POPUP -->
+<div id="livePopup" style="
+  display:none;
+  position:fixed;
+  top:20px;
+  left:50%;
+  transform:translateX(-50%);
+  background:red;
+  color:white;
+  padding:15px 25px;
+  border-radius:10px;
+  font-weight:bold;
+  z-index:9999;
+  box-shadow:0 5px 20px rgba(0,0,0,0.3);
+">
+  <span id="popupText"></span>
+  <button onclick="joinFromPopup()" style="
+    margin-left:15px;
+    background:white;
+    color:red;
+    border:none;
+    padding:5px 10px;
+    border-radius:5px;
+    cursor:pointer;
+  ">Join</button>
+</div>
+ <!-- =========================
      ENROLL POPUP (CENTER BOX)
 ========================= -->
 <div id="enrollPopup" style="
@@ -1270,7 +1630,7 @@ function verifyOTP(){
       margin-bottom:10px;
     ">
 
-   <input type="email" id="studentEmail" placeholder="Enter Email" required style="
+    <input id="studentEmail" placeholder="Enter Email" style="
       width:100%;
       padding:10px;
       margin-bottom:15px;
@@ -1300,7 +1660,6 @@ function verifyOTP(){
 
   </div>
 </div>
-
 </body>
 </html>
 
