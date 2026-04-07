@@ -1217,21 +1217,30 @@ function updateUI(course) {
    FREE DEMO — Phone OTP always required
 ====================================== */
 function bookDemo(course) {
+
+  // 🔐 Login check
   if (!studentStatus || !studentStatus.logged_in) {
     showPhonePopup(course, "demo");
     return;
   }
+
+  // ⚠️ Demo already done check
   if ((studentStatus.demo_done || {})[course]) {
-    showMessage("⚠️ Demo already completed. Click Enroll to join.");
+    showMessage("Demo already completed. Please enroll.");
     return;
   }
-  startDemoSession(course);
+
+  // ✅ Open demo popup
+  openDemoBox(course);
 }
-function openDemoBox(){
-  let box = document.getElementById("demoBox");
+
+
+// 🎯 UI மட்டும்
+function openDemoBox(course){
+  let box = document.getElementById("demoBox-" + course);
 
   if(box){
-    box.style.display = "block";
+    box.style.display = (box.style.display === "block") ? "none" : "block";
   }
 }
 function startDemoSession(course) {
