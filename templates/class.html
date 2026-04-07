@@ -317,6 +317,7 @@ body{
 .grid{
   display:grid;
   grid-template-columns:repeat(3,1fr);
+  max-width:1200px;margin:0 auto;
   gap:20px;
 }
   /* SEARCH BAR */
@@ -1026,6 +1027,7 @@ async function refreshStatus() {
     const data = await res.json();
     studentStatus = data;
     updateSeatDisplays(data.available_seats || {});
+    updateDiscountDisplays(data.discounts || {});
     if (data.logged_in) updateAllCourseUI();
   } catch (e) {
     console.error("Status load failed:", e);
@@ -1042,6 +1044,22 @@ function updateSeatDisplays(seats) {
     el.style.fontWeight = count < 10 ? "bold" : "normal";
   });
 }
+
+
+/* ---- 50% DISCOUNT DISPLAY ---- */
+function updateDiscountDisplays(discounts) {
+  Object.entries(discounts).forEach(([course, eligible]) => {
+    const el = document.getElementById("discount-" + course);
+    if (!el) return;
+    if (eligible) {
+      el.innerHTML  = "🔥 <strong>50% OFF</strong> – Only for first 10 students!";
+      el.style.display = "block";
+    } else {
+      el.style.display = "none";
+    }
+  });
+}
+
  
 /* ---- UPDATE ALL COURSE UIs ---- */
 function updateAllCourseUI() {
@@ -1056,7 +1074,7 @@ function updateUI(course) {
   const hoursUsed = (s.hours_used   || {})[course] || 0;
   const maxHours  = (s.max_hours    || {})[course] || CLASSES_PER_MONTH;
   const planDone  = enrolled && hoursUsed >= maxHours;
-  const isAdmin   = s.is_admin || false;
+  
  
   /* Demo button */
   const demoBtn = document.getElementById("demoBtn-" + course);
@@ -1067,12 +1085,13 @@ function updateUI(course) {
       demoBtn.style.color        = "white";
       demoBtn.style.pointerEvents = "none";
     } else if (isAdmin) {
-      demoBtn.textContent = "Free Demo (Admin)";
+      demoBtn.textContent = "Free Demo";
     } else {
       demoBtn.textContent        = "Free Demo";
       demoBtn.style.background   = "#fff3b0";
       demoBtn.style.color        = "#333";
       demoBtn.style.pointerEvents = "auto";
+      demoBtn.style.opacity       = "1";
     }
   }
  
@@ -1103,13 +1122,13 @@ function updateUI(course) {
     if (enrolled && !planDone) {
       joinBtn.style.opacity       = "1";
       joinBtn.style.pointerEvents = "auto";
-      const rem = maxHours - hoursUsed;
-      joinBtn.title = rem + " classes remaining";
+      joinBtn.title = (maxHours - hoursUsed) + " classes remaining";
     } else {
       joinBtn.style.opacity       = "0.5";
       joinBtn.style.pointerEvents = "none";
     }
   }
+
  
   /* Hours left */
   const hoursEl = document.getElementById("hours-" + course);
@@ -1124,22 +1143,20 @@ function updateUI(course) {
 }
  
 /* ======================================
-   FREE DEMO
+   FREE DEMO — Phone OTP always required
 ====================================== */
 function bookDemo(course) {
-  // Not logged in → OTP first
   if (!studentStatus || !studentStatus.logged_in) {
     showPhonePopup(course, "demo");
     return;
   }
-  // Already done (non-admin)
-  if (!studentStatus.is_admin && (studentStatus.demo_done || {})[course]) {
-    showMessage("⚠️ Demo already completed. Please enroll to continue.");
+  if ((studentStatus.demo_done || {})[course]) {
+    showMessage("⚠️ Demo already completed. Click Enroll to join.");
     return;
   }
   startDemoSession(course);
 }
- 
+
 function startDemoSession(course) {
   const timerDiv  = document.getElementById("timer-" + course);
   const liveBadge = document.getElementById("live-" + course);
@@ -1171,7 +1188,7 @@ function startDemoSession(course) {
       if (liveBadge) liveBadge.style.display = "none";
       timerDiv.dataset.running = "false";
  
-      if (!studentStatus.is_admin) {
+    
         try {
           await fetch("/api/demo-complete", {
             method:  "POST",
@@ -1181,7 +1198,7 @@ function startDemoSession(course) {
           await refreshStatus();
           showMessage("✅ Demo done! Click Enroll to join.");
         } catch(e) { console.error(e); }
-      }
+      
     }
   }, 1000);
 }
@@ -1196,10 +1213,12 @@ function showPhonePopup(course, action) {
   _pendingAction = action;
   _pendingCourse = course;
   document.getElementById("phoneInput").value = "";
-  document.getElementById("otpInput") && (document.getElementById("otpInput").value = "");
-  document.getElementById("otpSection").style.display = "none";
+  const otpInput = document.getElementById("otpInput");
+  if (otpInput) otpInput.value = "";
+  document.getElementById("otpSection").style.display  = "none";
   document.getElementById("phonePopup").style.display  = "block";
 }
+
  
 function closePhonePopup() {
   document.getElementById("phonePopup").style.display = "none";
@@ -1284,13 +1303,28 @@ function enroll(course) {
   }
  
   selectedCourse = course;
-  const monthly  = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
- 
-  document.getElementById("courseTitle").textContent  = course.toUpperCase() + " – Monthly Plan";
-  document.getElementById("coursePrice").textContent  = "💳 Monthly Fee: ₹" + monthly + " (" + CLASSES_PER_MONTH + " classes)";
-  document.getElementById("studentName").value        = studentStatus.name || "";
+
+  // Calculate price with discount
+  const base    = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
+  const eligible = (studentStatus.discounts || {})[course];
+  const final   = eligible ? Math.floor(base * 0.5) : base;
+
+  document.getElementById("courseTitle").textContent = course.toUpperCase() + " – Monthly Plan";
+  if (eligible) {
+    document.getElementById("coursePrice").innerHTML =
+      "<span style='text-decoration:line-through;color:#999;font-size:14px;'>₹" + base + "</span> " +
+      "<span style='color:#dc2626;font-size:20px;font-weight:bold;'>₹" + final + "</span> " +
+      "<span style='background:#dc2626;color:white;padding:2px 8px;border-radius:12px;font-size:12px;'>50% OFF</span><br>" +
+      "<small style='color:#666;'>(" + CLASSES_PER_MONTH + " classes/month)</small>";
+  } else {
+    document.getElementById("coursePrice").innerHTML =
+      "<span style='font-size:20px;'>₹" + final + "</span><br>" +
+      "<small style='color:#666;'>(" + CLASSES_PER_MONTH + " classes/month)</small>";
+  }
+  document.getElementById("studentName").value = studentStatus.name || "";
   document.getElementById("enrollPopup").style.display = "block";
 }
+
  
 function closeEnroll() {
   document.getElementById("enrollPopup").style.display = "none";
@@ -1320,7 +1354,7 @@ async function payNow() {
       amount:      data.amount,
       currency:    "INR",
       name:        "Ranjitham Study Center",
-      description: data.course.toUpperCase() + " Monthly Fee",
+      description: selectedCourse.toUpperCase() + " Monthly Fee" + (data.discount_applied ? " (50% OFF)" : ""),
       order_id:    data.order_id,
       prefill:     {name: data.name, contact: studentStatus.phone || ""},
       theme:       {color: "#1e3a8a"},
@@ -1390,7 +1424,7 @@ async function joinClass(course) {
     showLivePopup(course);
   } catch(e) {
     showMessage("❌ Error joining. Try again.");
-    console.error(e);
+    
   }
 }
  
