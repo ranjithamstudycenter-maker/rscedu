@@ -734,6 +734,44 @@ body{
            <button class="btn btn-demo-done">Demo Completed</button>
          {% else %}
            <button class="btn btn-demo" onclick="openDemoBox()">Free Demo</button>
+                 <div id="demoBox-cbse10"style="
+              display:none;
+              background:white;
+              padding:15px;
+              margin-top:10px;
+              border-radius:10px;
+              box-shadow:0 5px 15px rgba(0,0,0,0.1);
+            ">
+            
+              <input type="text" id="phone" placeholder="Enter Mobile Number"
+                style="width:100%;padding:8px;margin-bottom:8px;">
+            
+              <input type="text" id="otp" placeholder="Enter OTP"
+                style="width:100%;padding:8px;margin-bottom:8px;">
+            
+              <button onclick="sendOTP()" style="
+                width:100%;
+                padding:8px;
+                background:#ffd54f;
+                border:none;
+                border-radius:6px;
+                margin-bottom:5px;
+              ">
+                Send OTP
+              </button>
+            
+              <button onclick="verifyOTP()" style="
+                width:100%;
+                padding:8px;
+                background:#0b5394;
+                color:white;
+                border:none;
+                border-radius:6px;
+              ">
+                Proceed for Demo
+              </button>
+
+         </div>
          {% endif %}
         
           <!-- ENROLL -->
@@ -1190,7 +1228,11 @@ function bookDemo(course) {
   startDemoSession(course);
 }
 function openDemoBox(){
-  document.getElementById("demoBox").style.display = "block";
+  let box = document.getElementById("demoBox");
+
+  if(box){
+    box.style.display = "block";
+  }
 }
 function startDemoSession(course) {
   const timerDiv  = document.getElementById("timer-" + course);
@@ -1209,7 +1251,7 @@ function startDemoSession(course) {
   const meetLink = (studentStatus && studentStatus.meet_link) || "https://meet.google.com/sus-iead-rhq";
   window.open(meetLink, "_blank");
  
-  let duration = 3600; // 1 hour
+  let duration = 60; // 1 hour
  
   const interval = setInterval(async () => {
     const m = String(Math.floor(duration / 60)).padStart(2,"0");
