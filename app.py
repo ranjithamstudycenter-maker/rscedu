@@ -6,6 +6,7 @@ import smtplib
 import time
 import csv
 import random
+import requests
 from datetime import datetime, timedelta
 from email.message import EmailMessage
 
@@ -99,15 +100,29 @@ def available_seats(course):
 def send_otp():
     data = request.json
     phone = data.get("phone", "").strip()
+
     if not phone or not phone.isdigit() or len(phone) != 10:
         return jsonify({"status": "error", "message": "Invalid phone"}), 400
 
-    # Generate OTP (use real SMS service in production)
     otp = str(random.randint(100000, 999999))
-    otp_store[phone] = {"otp": otp, "expires": time.time() + 300}  # 5 min expiry
+    otp_store[phone] = {"otp": otp, "expires": time.time() + 300}
 
-    # For testing: print OTP (replace with SMS API)
-    print(f"[OTP] Phone: {phone} → OTP: {otp}")
+    # 🔥 SEND REAL SMS
+    url = "https://www.fast2sms.com/dev/bulkV2"
+
+    payload = {
+        "route": "otp",
+        "variables_values": otp,
+        "numbers": phone
+    }
+
+    headers = {
+        "authorization": "ZzTXLRvPONqiMYumJce9UBKIF3pAsCtw54SgH8EanrQ7Gko2hVDOn9lTPqQg85wZFHLN1YbvfXWeJpyx"
+    }
+
+    response = requests.post(url, data=payload, headers=headers)
+
+    print("SMS Response:", response.text)  # debug
 
     session["phone"] = phone
     return jsonify({"status": "sent"})
