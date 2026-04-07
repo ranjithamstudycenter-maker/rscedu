@@ -997,10 +997,10 @@ body{
 /* ---- STATE ---- */
 let studentStatus  = null;
 let selectedCourse = "";
-const CLASSES_PER_MONTH = 24;
+const CLASSES_PER_MONTH = 12;
  
 const PRICE_PER_HOUR = {
-  cbse10: 300, cbse12: 400, cbse11: 400, cbse9: 300,
+  cbse10: 1, cbse12: 400, cbse11: 400, cbse9: 300,
   engg1: 700,  engg2: 700,  engg3: 700,  control: 800,
   AGS: 400,    Maths: 400
 };
@@ -1020,30 +1020,49 @@ document.addEventListener("DOMContentLoaded", async () => {
   await refreshStatus();
 });
  
-/* ---- REFRESH STATUS FROM SERVER ---- */
+/* ---- REFRESH STATUS ---- */
 async function refreshStatus() {
+  // Always load seats (works even when not logged in)
+  try {
+    const seatRes  = await fetch("/api/seat-count");
+    const seatData = await seatRes.json();
+    updateSeatDisplays(seatData);
+  } catch(e) {
+    console.warn("Seat load failed:", e);
+  }
+
+  // Load student status (only if logged in)
   try {
     const res  = await fetch("/api/student-status");
     const data = await res.json();
     studentStatus = data;
-    updateSeatDisplays(data.available_seats || {});
-    updateDiscountDisplays(data.discounts || {});
-    if (data.logged_in) updateAllCourseUI();
-  } catch (e) {
-    console.error("Status load failed:", e);
+    if (data.logged_in) {
+      updateSeatDisplays(data.available_seats || {});
+      updateDiscountDisplays(data.discounts || {});
+      updateAllCourseUI();
+    }
+  } catch(e) {
+    // Not logged in — buttons still work via popup
+    studentStatus = { logged_in: false };
+    console.log("Not logged in yet");
   }
 }
+
  
 /* ---- SEAT DISPLAY ---- */
 function updateSeatDisplays(seats) {
-  Object.entries(seats).forEach(([course, count]) => {
+  Object.entries(seats).forEach(([course, val]) => {
     const el = document.getElementById("seats-" + course);
     if (!el) return;
-    el.textContent  = count + " seats left";
-    el.style.color  = count < 10 ? "red" : "#555";
+    // Handle both formats: number or {available, total}
+    const count = (typeof val === "object") ? val.available : val;
+    el.textContent      = count + " seats left";
+    el.style.color      = count < 10 ? "red" : "#555";
     el.style.fontWeight = count < 10 ? "bold" : "normal";
+    el.style.display    = "block";
   });
 }
+
 
 
 /* ---- 50% DISCOUNT DISPLAY ---- */
@@ -1076,24 +1095,24 @@ function updateUI(course) {
   const planDone  = enrolled && hoursUsed >= maxHours;
   
  
-  /* Demo button */
+ /* Demo button — NO admin text ever shown to students */
   const demoBtn = document.getElementById("demoBtn-" + course);
   if (demoBtn) {
-    if (demoDone && !isAdmin) {
-      demoBtn.textContent        = "Demo Done ✓";
-      demoBtn.style.background   = "#16a34a";
-      demoBtn.style.color        = "white";
+    if (demoDone) {
+      demoBtn.textContent         = "Demo Done ✓";
+      demoBtn.style.background    = "#16a34a";
+      demoBtn.style.color         = "white";
       demoBtn.style.pointerEvents = "none";
-    } else if (isAdmin) {
-      demoBtn.textContent = "Free Demo";
+      demoBtn.style.opacity       = "0.85";
     } else {
-      demoBtn.textContent        = "Free Demo";
-      demoBtn.style.background   = "#fff3b0";
-      demoBtn.style.color        = "#333";
+      demoBtn.textContent         = "Free Demo";
+      demoBtn.style.background    = "#fff3b0";
+      demoBtn.style.color         = "#333";
       demoBtn.style.pointerEvents = "auto";
       demoBtn.style.opacity       = "1";
     }
   }
+
  
   /* Enroll button */
   const enrollBtn = document.getElementById("enrollBtn-" + course);
@@ -1292,13 +1311,13 @@ function enroll(course) {
     showPhonePopup(course, "enroll");
     return;
   }
-  if (!studentStatus.is_admin && !(studentStatus.demo_done || {})[course]) {
+  if (!(studentStatus.demo_done || {})[course]) {
     showMessage("⚠️ Please attend Free Demo first before enrolling.");
     return;
   }
   const seats = (studentStatus.available_seats || {})[course];
   if (seats !== undefined && seats <= 0) {
-    showMessage("❌ Seats Full! No seats available for this course.");
+    showMessage("❌ Seats Full for this course.");
     return;
   }
  
