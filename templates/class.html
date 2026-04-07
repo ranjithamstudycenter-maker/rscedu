@@ -1198,14 +1198,7 @@ function bookDemo(course) {
 
   showPhonePopup(course, "demo");   // ✅ OTP FIRST
 }
- function openDemoPopup(){
-  document.getElementById("demoPopup").style.display = "flex";
-}
-
-function closeDemoPopup(){
-  document.getElementById("demoPopup").style.display = "none";
-}
-
+ 
 function startDemoSession(course) {
   const timerDiv  = document.getElementById("timer-" + course);
   const liveBadge = document.getElementById("live-" + course);
