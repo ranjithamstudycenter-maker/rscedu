@@ -734,45 +734,9 @@ body{
            <button class="btn btn-demo-done">Demo Completed</button>
          {% else %}
            <button class="btn btn-demo" onclick="bookDemo('cbse10')">Free Demo</button>
-                <div id="demoBox-cbse10" style="
-                          display:none;
-                          background:white;
-                          padding:15px;
-                          margin-top:10px;
-                          border-radius:10px;
-                          box-shadow:0 5px 15px rgba(0,0,0,0.1);
-                        ">
-                        
-                          <input type="text" id="phone-cbse10" placeholder="Enter Mobile Number"
-                            style="width:100%;padding:8px;margin-bottom:8px;">
-                        
-                          <input type="text" id="otp-cbse10" placeholder="Enter OTP"
-                            style="width:100%;padding:8px;margin-bottom:8px;">
-                        
-                          <button onclick="sendOTP()" style="
-                            width:100%;
-                            padding:8px;
-                            background:#ffd54f;
-                            border:none;
-                            border-radius:6px;
-                            margin-bottom:5px;
-                          ">
-                            Send OTP
-                          </button>
-                        
-                          <button onclick="verifyOTP()" style="
-                            width:100%;
-                            padding:8px;
-                            background:#0b5394;
-                            color:white;
-                            border:none;
-                            border-radius:6px;
-                          ">
-                            Proceed for Demo
-                          </button>
-                        
-                        </div>
-               {% endif %}
+     
+               
+        {% endif %}
                
         
         
@@ -1218,31 +1182,32 @@ function updateUI(course) {
 /* ======================================
    FREE DEMO — Phone OTP always required
 ====================================== */
+let currentCourse = "";
+
 function bookDemo(course) {
 
-  // login check
+  currentCourse = course;
+
   if (!studentStatus || !studentStatus.logged_in) {
-    showPhonePopup(course, "demo");
+    openDemoPopup();
     return;
   }
 
-  // demo already done
   if ((studentStatus.demo_done || {})[course]) {
     showMessage("Demo already completed. Please enroll.");
     return;
   }
 
-  // open popup
-  openDemoBox(course);
+  startDemoSession(course);
+}
+ function openDemoPopup(){
+  document.getElementById("demoPopup").style.display = "flex";
 }
 
-function openDemoBox(course){
-  let box = document.getElementById("demoBox-" + course);
-
-  if(box){
-    box.style.display = (box.style.display === "block") ? "none" : "block";
-  }
+function closeDemoPopup(){
+  document.getElementById("demoPopup").style.display = "none";
 }
+
 function startDemoSession(course) {
   const timerDiv  = document.getElementById("timer-" + course);
   const liveBadge = document.getElementById("live-" + course);
@@ -1560,6 +1525,67 @@ function showMessage(msg) {
   setTimeout(() => box.remove(), 3500);
 }
 </script>
+ <div id="demoPopup" style="
+  display:none;
+  position:fixed;
+  top:0;
+  left:0;
+  width:100%;
+  height:100%;
+  background:rgba(0,0,0,0.6);
+  z-index:9999;
+  justify-content:center;
+  align-items:center;
+">
+
+  <div style="
+    background:white;
+    padding:25px;
+    border-radius:12px;
+    width:300px;
+    text-align:center;
+  ">
+
+    <h3 style="margin-bottom:15px;">Free Demo</h3>
+
+    <input id="demoPhone" type="text" placeholder="Enter Mobile Number"
+      style="width:100%;padding:10px;margin-bottom:10px;">
+
+    <input id="demoOtp" type="text" placeholder="Enter OTP"
+      style="width:100%;padding:10px;margin-bottom:10px;display:none;">
+
+    <button id="sendOtpBtn" onclick="sendOTP()" style="
+      width:100%;
+      padding:10px;
+      background:#ffd54f;
+      border:none;
+      border-radius:6px;
+      margin-bottom:10px;
+    ">Send OTP</button>
+
+    <button id="verifyBtn" onclick="verifyOTP()" style="
+      width:100%;
+      padding:10px;
+      background:#0b5394;
+      color:white;
+      border:none;
+      border-radius:6px;
+      display:none;
+    ">Verify OTP</button>
+
+    <p id="otpStatus" style="margin-top:10px;color:green;"></p>
+
+    <button onclick="closeDemoPopup()" style="
+      margin-top:10px;
+      background:red;
+      color:white;
+      border:none;
+      padding:6px 12px;
+      border-radius:6px;
+    ">Close</button>
+
+  </div>
+</div>
 </body>
 </html>
 -->
