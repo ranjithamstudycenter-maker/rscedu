@@ -1186,10 +1186,8 @@ let currentCourse = "";
 
 function bookDemo(course) {
 
-  currentCourse = course;
-
   if (!studentStatus || !studentStatus.logged_in) {
-    openDemoPopup();
+    showPhonePopup(course, "demo");  // ✅ CORRECT
     return;
   }
 
@@ -1198,7 +1196,7 @@ function bookDemo(course) {
     return;
   }
 
-  startDemoSession(course);
+  showPhonePopup(course, "demo");   // ✅ OTP FIRST
 }
  function openDemoPopup(){
   document.getElementById("demoPopup").style.display = "flex";
@@ -1324,7 +1322,9 @@ async function verifyOTP() {
       closePhonePopup();
       await refreshStatus();
       // Continue with what was clicked
-      if (_pendingAction === "demo")   bookDemo(_pendingCourse);
+     if (_pendingAction === "demo") {
+  startDemoSession(_pendingCourse);  // ✅ DIRECT START AFTER VERIFY
+}
       if (_pendingAction === "enroll") enroll(_pendingCourse);
       if (_pendingAction === "join")   joinClass(_pendingCourse);
     } else {
