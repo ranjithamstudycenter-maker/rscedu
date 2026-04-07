@@ -228,7 +228,13 @@ def create_order():
     if available_seats(course) <= 0:
         return jsonify({"error": "Seats full"}), 403
 
-    amount = price_per_hour[course] * classes_per_month
+   # 50% OFF for first 10 students
+    booked = seat_data.get(course, {}).get("booked", 0)
+    discount = booked < 10
+    base_amount = price_per_hour[course] * classes_per_month
+    amount = int(base_amount * 0.5) if discount else base_amount
+    discount_applied = discount
+
 
     try:
         with open("admin.json") as f:
@@ -253,7 +259,10 @@ def create_order():
         "amount": amount * 100,
         "razorpay_key": keys["razorpay_key"],
         "name": name,
-        "course": course
+        "course": course,
+        "discount_applied": discount_applied,
+        "original_amount": base_amount * 100
+
     })
 
 
@@ -356,6 +365,12 @@ def student_status():
     for course in seat_data:
         seats[course] = available_seats(course)
 
+    # Calculate discount per course (first 10 students get 50% off)
+    discounts = {}
+    for course, d in seat_data.items():
+        booked = d["booked"]
+        discounts[course] = booked < 10  # True = eligible for 50% off
+
     return jsonify({
         "logged_in": True,
         "phone": phone,
@@ -366,7 +381,8 @@ def student_status():
         "max_hours": user["max_hours"],
         "available_seats": seats,
         "meet_link": CLASS_MEET_LINK,
-        "is_admin": is_admin_phone(phone)
+        "is_admin": False,          # Never expose admin flag to students
+        "discounts": discounts      # {course: True/False} — True means 50% off
     })
 
 # -------------------- TEACHER --------------------
