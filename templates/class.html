@@ -729,9 +729,23 @@ body{
     </div>
     <p class="days">📅 Mon • Wed • Fri</p>
     <div class="actions">
-      <button class="btn btn-demo" id="demoBtn-cbse10" onclick="bookDemo('cbse10')">Free Demo</button>
-      <button class="btn btn-enroll" id="enrollBtn-cbse10" onclick="enroll('cbse10')">Enroll</button>
-      <button class="btn btn-join joinBtn" id="joinBtn-cbse10" data-course="cbse10" onclick="joinClass('cbse10')">Join Now</button>
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+           <button class="btn btn-demo" onclick="openDemoBox()">Free Demo</button>
+         {% endif %}
+        
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button class="btn btn-join">Join Now</button>
+          
     </div>
     <div class="notice">
       <p class="seats">🎯 Seats: 30</p>
@@ -1175,7 +1189,9 @@ function bookDemo(course) {
   }
   startDemoSession(course);
 }
-
+function openDemoBox(){
+  document.getElementById("demoBox").style.display = "block";
+}
 function startDemoSession(course) {
   const timerDiv  = document.getElementById("timer-" + course);
   const liveBadge = document.getElementById("live-" + course);
