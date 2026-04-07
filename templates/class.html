@@ -1518,7 +1518,7 @@ function showMessage(msg) {
   setTimeout(() => box.remove(), 3500);
 }
 </script>
- <div id="demoPopup" style="
+ <div id="phonePopup" style="
   display:none;
   position:fixed;
   top:0;
@@ -1541,12 +1541,13 @@ function showMessage(msg) {
 
     <h3 style="margin-bottom:15px;">Free Demo</h3>
 
-    <input id="demoPhone" type="text" placeholder="Enter Mobile Number"
+    <input id="phoneInput" type="text" placeholder="Enter Mobile Number"
       style="width:100%;padding:10px;margin-bottom:10px;">
 
-    <input id="demoOtp" type="text" placeholder="Enter OTP"
+    <div id="otpSection" style="display:none;"> 
+   <input id="otpInput" type="text" placeholder="Enter OTP"
       style="width:100%;padding:10px;margin-bottom:10px;display:none;">
-
+</div>
     <button id="sendOtpBtn" onclick="sendOTP()" style="
       width:100%;
       padding:10px;
