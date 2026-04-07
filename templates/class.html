@@ -1216,25 +1216,6 @@ function updateUI(course) {
 /* ======================================
    FREE DEMO — Phone OTP always required
 ====================================== */
-function bookDemo(course) {
-
-  // 🔐 Login check
-  if (!studentStatus || !studentStatus.logged_in) {
-    showPhonePopup(course, "demo");
-    return;
-  }
-
-  // ⚠️ Demo already done check
-  if ((studentStatus.demo_done || {})[course]) {
-    showMessage("Demo already completed. Please enroll.");
-    return;
-  }
-
-  // ✅ Open demo popup
-  openDemoBox(course);
-}
-
-
 // 🎯 UI மட்டும்
 function openDemoBox(course){
   let box = document.getElementById("demoBox-" + course);
