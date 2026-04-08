@@ -108,12 +108,12 @@ def send_otp():
     otp_store[phone] = {"otp": otp, "expires": time.time() + 300}
 
     # 🔥 SEND REAL SMS
-    url = "https://www.fast2sms.com/dev/bulkV2"
+    url = "https://api.msg91.com/api/v5/otp"
 
     payload = {
-        "route": "otp",
-        "variables_values": otp,
-        "numbers": phone
+        "mobile": "91" + phone,
+        "authkey": "506853TwZjv7Xl69d5e462P1",   # 🔥 paste here
+        "template_id": "69d5e333eaffbb287f0c2344"
     }
 
     headers = {
@@ -134,24 +134,25 @@ def verify_otp():
     phone = data.get("phone", "").strip()
     otp   = data.get("otp", "").strip()
 
-    stored = otp_store.get(phone)
-    if not stored:
-        return jsonify({"status": "fail", "message": "OTP not sent"})
+    url = "https://api.msg91.com/api/v5/otp/verify"
 
-    if time.time() > stored["expires"]:
-        del otp_store[phone]
-        return jsonify({"status": "fail", "message": "OTP expired"})
+    payload = {
+        "mobile": "91" + phone,
+        "otp": otp,
+        "authkey": "506853TwZjv7Xl69d5e462P1"
+    }
 
-    if stored["otp"] != otp:
-        return jsonify({"status": "fail", "message": "Wrong OTP"})
+    response = requests.post(url, json=payload)
+    res = response.json()
 
-    del otp_store[phone]
-    session["phone"] = phone
+    print("VERIFY RESPONSE:", res)  # debug
 
-    # Create user if not exists
-    get_user(phone)
-
-    return jsonify({"status": "ok"})
+    if res.get("type") == "success":
+        session["phone"] = phone
+        get_user(phone)
+        return jsonify({"status": "ok"})
+    else:
+        return jsonify({"status": "fail", "message": "Invalid OTP"})
 
 # -------------------- DEMO --------------------
 
