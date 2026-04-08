@@ -107,7 +107,7 @@ def send_otp():
     url = "https://control.msg91.com/api/v5/otp"
 
     headers = {
-        "authkey": "506853TwZjv7Xl69d5e462P1",
+        "authkey": "506853Axr0BvOCZm5b69d61403P1",
         "Content-Type": "application/json"
     }
 
@@ -138,7 +138,7 @@ def verify_otp():
     payload = {
         "mobile": "91" + phone,
         "otp": otp,
-        "authkey": "506853TwZjv7Xl69d5e462P1"
+        "authkey": "506853Axr0BvOCZm5b69d61403P1"
     }
 
     response = requests.post(url, json=payload)
