@@ -120,21 +120,21 @@ def send_otp():
     }
 
     try:
-        response = requests.post(url, json=payload, headers=headers, timeout=10)
-        print("STATUS:", response.status_code)
-        print("RESPONSE:", response.text)
+    response = requests.post(url, json=payload, headers=headers, timeout=10)
+    print("STATUS:", response.status_code)
+    print("RESPONSE:", response.text)
 
-        if response.status_code == 200:
-    return jsonify({"status": "sent"})
-else:
-    return jsonify({
-        "status": "error",
-        "message": response.text
-    }), 500
+    if response.status_code == 200:
+        return jsonify({"status": "sent"})
+    else:
+        return jsonify({
+            "status": "error",
+            "message": response.text
+        }), 500
 
-    except Exception as e:
-        print("ERROR:", str(e))
-        return jsonify({"status": "error", "message": "SMS failed"})
+except Exception as e:
+    print("ERROR:", str(e))
+    return jsonify({"status": "error", "message": "SMS failed"})
 
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
