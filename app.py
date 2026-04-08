@@ -101,34 +101,31 @@ def send_otp():
     data = request.json
     phone = data.get("phone", "").strip()
 
-    print("👉 SEND OTP API CALLED")
+    if not phone or not phone.isdigit() or len(phone) != 10:
+        return jsonify({"status": "error", "message": "Invalid phone"}), 400
+
+    url = "https://control.msg91.com/api/v5/otp"
+
+    headers = {
+        "authkey": "506853TwZjv7Xl69d5e462P1",
+        "Content-Type": "application/json"
+    }
+
+    payload = {
+        "template_id": "69d5e333eaffbb287f0c2344",
+        "mobile": "91" + phone
+    }
 
     try:
-        response = requests.post(
-            "https://api.msg91.com/api/v5/otp",
-            json={
-                "mobile": "91" + phone,
-                "authkey": "506853TwZjy7Xi69d5e462P1",
-                "template_id": "69d5e333eaffbb287f0c2344"
-            },
-            timeout=10
-        )
-
+        response = requests.post(url, json=payload, headers=headers, timeout=10)
         print("STATUS:", response.status_code)
         print("RESPONSE:", response.text)
 
-        # ✅ ONLY STATUS CODE CHECK
-        if response.status_code == 200:
-            return jsonify({"status": "sent"})
-        else:
-            return jsonify({
-                "status": "error",
-                "message": response.text
-            }), 500
+        return jsonify({"status": "sent"})
 
     except Exception as e:
-        print("🔥 ERROR:", str(e))
-        return jsonify({"status": "error", "message": str(e)}), 500
+        print("ERROR:", str(e))
+        return jsonify({"status": "error", "message": "SMS failed"})
 
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
