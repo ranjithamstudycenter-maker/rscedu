@@ -117,12 +117,14 @@ def send_otp():
         print("STATUS:", response.status_code)
         print("RESPONSE:", response.text)
 
-        res = response.json()
-
-        if res.get("type") == "success":
+        # ✅ ONLY STATUS CODE CHECK
+        if response.status_code == 200:
             return jsonify({"status": "sent"})
         else:
-            return jsonify({"status": "error", "message": res}), 500
+            return jsonify({
+                "status": "error",
+                "message": response.text
+            }), 500
 
     except Exception as e:
         print("🔥 ERROR:", str(e))
