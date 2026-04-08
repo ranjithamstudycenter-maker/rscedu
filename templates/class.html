@@ -1600,7 +1600,13 @@ function startTimer(){
   },1000);
 }
  function resendOTP(){
+
+  document.getElementById("otpInput").style.display = "none";
+  document.getElementById("statusMsg").innerHTML = "";
+
   step = 1;
+
+  startTimer(); // reset timer
   handleOTP();
 }
  function closePopup(){
@@ -1608,7 +1614,7 @@ function startTimer(){
 }
 
   let currentCourse = "";
- let step = 1;
+  let step = 1;
 
 function openDemoPopup(course){
   currentCourse = course;
