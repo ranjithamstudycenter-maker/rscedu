@@ -1198,6 +1198,9 @@ function bookDemo(course) {
 
   showPhonePopup(course, "demo");   // ✅ OTP FIRST
 }
+ function openPhonePopup(){
+  document.getElementById("PhonePopup").style.display = "flex";
+}
  
 function startDemoSession(course) {
   const timerDiv  = document.getElementById("timer-" + course);
