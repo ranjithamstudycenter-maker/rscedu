@@ -734,12 +734,9 @@ body{
            <button class="btn btn-demo-done">Demo Completed</button>
          {% else %}
            <button class="btn btn-demo" onclick="bookDemo('cbse10')">Free Demo</button>
-     
-               
-        {% endif %}
-               
-        
-        
+         {% endif %}
+             
+       
           <!-- ENROLL -->
           {% if registered %}
             <button class="btn btn-registered">Registered</button>
@@ -1520,68 +1517,121 @@ function showMessage(msg) {
   document.body.appendChild(box);
   setTimeout(() => box.remove(), 3500);
 }
+ let step = 1; // 1=send OTP, 2=verify, 3=proceed
+let currentCourse = "";
+
+function openDemoPopup(course){
+  currentCourse = course;
+  document.getElementById("demoPopup").style.display = "flex";
+}
+
+async function handleOTP(){
+
+  const phone = document.getElementById("phoneInput").value.trim();
+  const otp   = document.getElementById("otpInput").value.trim();
+  const btn   = document.getElementById("mainBtn");
+  const msg   = document.getElementById("statusMsg");
+
+  // STEP 1 → SEND OTP
+  if(step === 1){
+
+    if(!/^[6-9]\d{9}$/.test(phone)){
+      msg.innerHTML = "⚠️ Enter valid mobile number";
+      msg.style.color = "red";
+      return;
+    }
+
+    await fetch("/send-otp", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({phone})
+    });
+
+    document.getElementById("otpInput").style.display = "block";
+
+    btn.textContent = "Verify OTP";
+    btn.style.background = "#0b5394";
+    btn.style.color = "white";
+
+    msg.innerHTML = "📱 OTP sent";
+    msg.style.color = "green";
+
+    step = 2;
+  }
+
+  // STEP 2 → VERIFY OTP
+  else if(step === 2){
+
+    if(!otp){
+      msg.innerHTML = "⚠️ Enter OTP";
+      msg.style.color = "red";
+      return;
+    }
+
+    const res = await fetch("/verify-otp", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({phone, otp})
+    });
+
+    const data = await res.json();
+
+    if(data.status === "ok"){
+
+      msg.innerHTML = "✅ Verified ✔";
+      msg.style.color = "green";
+
+      btn.textContent = "Proceed for Demo";
+      btn.style.background = "green";
+
+      step = 3;
+
+    } else {
+      msg.innerHTML = "❌ Wrong OTP";
+      msg.style.color = "red";
+    }
+  }
+
+  // STEP 3 → START DEMO
+  else if(step === 3){
+    document.getElementById("demoPopup").style.display = "none";
+    startDemoSession(currentCourse);
+  }
+}
 </script>
- <div id="phonePopup" style="
+ 
+ <div id="demoPopup" style="
   display:none;
   position:fixed;
-  top:0;
-  left:0;
-  width:100%;
-  height:100%;
+  top:0;left:0;
+  width:100%;height:100%;
   background:rgba(0,0,0,0.6);
-  z-index:9999;
   justify-content:center;
   align-items:center;
-  display:flex;               /* 🔥 ADD */
- 
+  z-index:9999;
 ">
 
-  <div style="
-    background:white;
-    padding:25px;
-    border-radius:12px;
-    width:300px;
-    text-align:center;
-  ">
+  <div style="background:white;padding:25px;border-radius:12px;width:300px;text-align:center;">
 
-    <h3 style="margin-bottom:15px;">Free Demo</h3>
+    <h3>Free Demo</h3>
 
     <input id="phoneInput" type="text" placeholder="Enter Mobile Number"
       style="width:100%;padding:10px;margin-bottom:10px;">
 
-    <div id="otpSection" style="display:none;"> 
-   <input id="otpInput" type="text" placeholder="Enter OTP"
+    <input id="otpInput" type="text" placeholder="Enter OTP"
       style="width:100%;padding:10px;margin-bottom:10px;display:none;">
-</div>
-    <button id="sendOtpBtn" onclick="sendOTP()" style="
+
+    <button id="mainBtn" onclick="handleOTP()" style="
       width:100%;
       padding:10px;
       background:#ffd54f;
       border:none;
       border-radius:6px;
-      margin-bottom:10px;
-    ">Send OTP</button>
+    ">
+      Send OTP
+    </button>
 
-    <button id="verifyBtn" onclick="verifyOTP()" style="
-      width:100%;
-      padding:10px;
-      background:#0b5394;
-      color:white;
-      border:none;
-      border-radius:6px;
-      display:none;
-    ">Verify OTP</button>
-
-    <p id="otpStatus" style="margin-top:10px;color:green;"></p>
-
-    <button onclick="closeDemoPopup()" style="
-      margin-top:10px;
-      background:red;
-      color:white;
-      border:none;
-      padding:6px 12px;
-      border-radius:6px;
-    ">Close</button>
+    <p id="statusMsg" style="margin-top:10px;font-weight:bold;"></p>
 
   </div>
 </div>
