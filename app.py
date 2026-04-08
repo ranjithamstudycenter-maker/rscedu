@@ -104,16 +104,17 @@ def send_otp():
     if not phone or not phone.isdigit() or len(phone) != 10:
         return jsonify({"status": "error", "message": "Invalid phone"}), 400
 
-    url = "https://control.msg91.com/api/v5/otp"
+    url = "https://control.msg91.com/api/v5/flow"
 
     headers = {
-        "authkey": "506853Axr0BvOCZm5b69d61403P1",
+        "authkey": "506853Axr0BvOCZm5b69d61403P1",   # 👈 use BackendOTP authkey
         "Content-Type": "application/json"
     }
 
     payload = {
-        "template_id": "69d5e333eaffbb287f0c2344",
-        "mobile": "91" + phone
+        "flow_id": "demootpflow",   # 👈 your Flow ID (small letters)
+        "mobiles": "91" + phone,
+        "OTP": "123456"   # 🔥 testing purpose (later random)
     }
 
     try:
