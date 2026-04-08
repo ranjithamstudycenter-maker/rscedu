@@ -1458,7 +1458,7 @@ async function handleOTP(){
         btn.disabled = false;
         return;
       }
-
+           
       // SUCCESS
       document.getElementById("otpInput").style.display = "block";
       document.getElementById("otpInput").focus();
@@ -1470,10 +1470,13 @@ async function handleOTP(){
 
       msg.innerHTML = "📱 OTP sent";
       msg.style.color = "green";
+            
 
       step = 2;
            // ADD THIS 👇
-      document.getElementById("resendBtn").style.display = "block";
+      setTimeout(()=>{
+         document.getElementById("resendBtn").style.display = "block";
+       }, 30000);
       startTimer();
 
     } catch(e){
@@ -1485,58 +1488,61 @@ async function handleOTP(){
     }
   }
 
-  // STEP 2 → VERIFY OTP
-  else if(step === 2){
+ // STEP 2 → VERIFY OTP
+else if(step === 2){
 
-    if(!otp){
-      msg.innerHTML = "⚠️ Enter OTP";
-      msg.style.color = "red";
-      return;
-    }
+  if(otpTimer <= 0){
+    msg.innerHTML = "❌ OTP expired. Please resend.";
+    msg.style.color = "red";
+    btn.textContent = "Send OTP";
+    btn.disabled = false;
+    step = 1;
+    return;
+  }
 
-    btn.textContent = "Verifying...";
-    btn.disabled = true;
+  if(!otp){
+    msg.innerHTML = "⚠️ Enter OTP";
+    msg.style.color = "red";
+    return;
+  }
 
-    try {
-      const res = await fetch("/verify-otp", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({phone, otp})
-      });
+  btn.textContent = "Verifying...";
+  btn.disabled = true;
 
-      if(!res.ok){
-        throw new Error("Server error");
-      }
+  try {
+    const res = await fetch("/verify-otp", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({phone, otp})
+    });
 
-      const data = await res.json();
-      console.log("VERIFY OTP RESPONSE:", data); // 🔥 DEBUG
+    const data = await res.json();
 
-      if(data.status === "ok"){
+    if(data.status === "ok"){
 
-        msg.innerHTML = "✅ Verified ✔";
-        msg.style.color = "green";
+      msg.innerHTML = "✅ Verified ✔";
+      msg.style.color = "green";
 
-        btn.textContent = "Proceed for Demo";
-        btn.style.background = "green";
-        btn.disabled = false;
+      btn.textContent = "Proceed for Demo";
+      btn.style.background = "green";
+      btn.disabled = false;
 
-        step = 3;
+      step = 3;
 
-      } else {
-        msg.innerHTML = "❌ Wrong OTP";
-        msg.style.color = "red";
-        btn.textContent = "Verify OTP";
-        btn.disabled = false;
-      }
-
-    } catch(e){
-      console.error("VERIFY OTP ERROR:", e); // 🔥 DEBUG
-      msg.innerHTML = "❌ Verification failed";
+    } else {
+      msg.innerHTML = "❌ Wrong OTP";
       msg.style.color = "red";
       btn.textContent = "Verify OTP";
       btn.disabled = false;
     }
+
+  } catch(e){
+    msg.innerHTML = "❌ Verification failed";
+    msg.style.color = "red";
+    btn.textContent = "Verify OTP";
+    btn.disabled = false;
   }
+}
 
   // STEP 3 → START DEMO
   else if(step === 3){
@@ -1599,6 +1605,8 @@ function startTimer(){
 
   },1000);
 }
+
+ 
  function resendOTP(){
 
   document.getElementById("otpInput").style.display = "none";
@@ -1606,11 +1614,11 @@ function startTimer(){
 
   step = 1;
 
-  startTimer(); // reset timer
-  handleOTP();
+   handleOTP();
 }
  function closePopup(){
   document.getElementById("demoPopup").style.display = "none";
+  clearInterval(timerInterval); // 🔥 add this
 }
 
   let currentCourse = "";
@@ -1619,6 +1627,8 @@ function startTimer(){
 function openDemoPopup(course){
   currentCourse = course;
   step = 1;
+
+  clearInterval(timerInterval); // 🔥 important
 
   document.getElementById("phoneInput").value = "";
   document.getElementById("otpInput").value = "";
