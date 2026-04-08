@@ -1443,7 +1443,13 @@ async function handleOTP(){
         body: JSON.stringify({phone})
       });
 
+      // 🔥 CHECK HTTP STATUS FIRST
+      if(!res.ok){
+        throw new Error("Server error");
+      }
+
       const data = await res.json();
+      console.log("SEND OTP RESPONSE:", data); // 🔥 DEBUG
 
       if(data.status !== "sent"){
         msg.innerHTML = "❌ Failed to send OTP";
@@ -1453,6 +1459,7 @@ async function handleOTP(){
         return;
       }
 
+      // SUCCESS
       document.getElementById("otpInput").style.display = "block";
       document.getElementById("otpInput").focus();
 
@@ -1467,7 +1474,8 @@ async function handleOTP(){
       step = 2;
 
     } catch(e){
-      msg.innerHTML = "❌ Network error";
+      console.error("SEND OTP ERROR:", e); // 🔥 DEBUG
+      msg.innerHTML = "❌ Failed to send OTP (Server issue)";
       msg.style.color = "red";
       btn.textContent = "Send OTP";
       btn.disabled = false;
@@ -1493,7 +1501,12 @@ async function handleOTP(){
         body: JSON.stringify({phone, otp})
       });
 
+      if(!res.ok){
+        throw new Error("Server error");
+      }
+
       const data = await res.json();
+      console.log("VERIFY OTP RESPONSE:", data); // 🔥 DEBUG
 
       if(data.status === "ok"){
 
@@ -1514,7 +1527,8 @@ async function handleOTP(){
       }
 
     } catch(e){
-      msg.innerHTML = "❌ Network error";
+      console.error("VERIFY OTP ERROR:", e); // 🔥 DEBUG
+      msg.innerHTML = "❌ Verification failed";
       msg.style.color = "red";
       btn.textContent = "Verify OTP";
       btn.disabled = false;
@@ -1523,13 +1537,13 @@ async function handleOTP(){
 
   // STEP 3 → START DEMO
   else if(step === 3){
-    document.getElementById("demoPopup").style.display = "none";
 
     if(!currentCourse){
       showMessage("❌ Course not selected");
       return;
     }
 
+    document.getElementById("demoPopup").style.display = "none";
     startDemoSession(currentCourse);
   }
 }
