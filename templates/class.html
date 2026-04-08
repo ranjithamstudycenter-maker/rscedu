@@ -1182,32 +1182,7 @@ function updateUI(course) {
 <!-- ALL HTML ABOVE -->
 
 
- let currentCourse = "";
- let step = 1;
-
-function openDemoPopup(course){
-  currentCourse = course;
-  step = 1;
-
-  document.getElementById("phoneInput").value = "";
-  document.getElementById("otpInput").value = "";
-  document.getElementById("otpInput").style.display = "none";
-
-  const btn = document.getElementById("mainBtn");
-  btn.textContent = "Send OTP";
-  btn.style.background = "#ffd54f";
-  btn.style.color = "#000";
-
-  document.getElementById("statusMsg").innerHTML = "";
-
-  document.getElementById("demoPopup").style.display = "flex";
-}
-
-window.openDemoPopup = openDemoPopup;
-
-
- 
-function startDemoSession(course) {
+ function startDemoSession(course) {
   const timerDiv  = document.getElementById("timer-" + course);
   const liveBadge = document.getElementById("live-" + course);
  
@@ -1442,9 +1417,6 @@ function showMessage(msg) {
   document.body.appendChild(box);
   setTimeout(() => box.remove(), 3500);
 }
- let step = 1; // 1=send OTP, 2=verify, 3=proceed
- let currentCourse = "";
-
 async function handleOTP(){
 
   const phone = document.getElementById("phoneInput").value.trim();
@@ -1561,7 +1533,32 @@ async function handleOTP(){
     startDemoSession(currentCourse);
   }
 }
-</script>
+</script>  
+ <script> 
+  let currentCourse = "";
+ let step = 1;
+
+function openDemoPopup(course){
+  currentCourse = course;
+  step = 1;
+
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("otpInput").value = "";
+  document.getElementById("otpInput").style.display = "none";
+
+  const btn = document.getElementById("mainBtn");
+  btn.textContent = "Send OTP";
+  btn.style.background = "#ffd54f";
+  btn.style.color = "#000";
+
+  document.getElementById("statusMsg").innerHTML = "";
+
+  document.getElementById("demoPopup").style.display = "flex";
+}
+
+window.openDemoPopup = openDemoPopup;
+ </script>
+
  
  <div id="demoPopup" style="
   display:none;
