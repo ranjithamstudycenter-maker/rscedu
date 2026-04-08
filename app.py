@@ -111,18 +111,26 @@ def send_otp():
         "authkey": "506853TwZjy7Xi69d5e462P1",
         "template_id": "69d5e333eaffbb287f0c2344"
     }
+
     try:
         response = requests.post(url, json=payload)
         print("STATUS:", response.status_code)
         print("RESPONSE:", response.text)
+
+        res_data = response.json()
+
+        # 🔥 CHECK MSG91 RESPONSE
+        if response.status_code == 200 and res_data.get("type") == "success":
+            return jsonify({"status": "sent"})
+        else:
+            return jsonify({
+                "status": "error",
+                "message": res_data
+            }), 500
+
     except Exception as e:
         print("ERROR:", str(e))
-
-    response = requests.post(url, json=payload)
-
-    print("SMS Response:", response.text)
-
-    return jsonify({"status": "sent"})
+        return jsonify({"status": "error", "message": str(e)}), 500
 
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
