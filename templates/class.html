@@ -1472,6 +1472,9 @@ async function handleOTP(){
       msg.style.color = "green";
 
       step = 2;
+           // ADD THIS 👇
+      document.getElementById("resendBtn").style.display = "block";
+      startTimer();
 
     } catch(e){
       console.error("SEND OTP ERROR:", e); // 🔥 DEBUG
