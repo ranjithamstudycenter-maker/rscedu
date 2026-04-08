@@ -1179,26 +1179,32 @@ function updateUI(course) {
 /* ======================================
    FREE DEMO — Phone OTP always required
 ====================================== */
-let currentCourse = "";
-let step = 1;
+<!-- ALL HTML ABOVE -->
 
-function openDemoPopup(course){
-  currentCourse = course;
-  step = 1; // 🔥 reset every time
 
-  document.getElementById("phoneInput").value = "";
-  document.getElementById("otpInput").value = "";
-  document.getElementById("otpInput").style.display = "none";
+  let currentCourse = "";
+  let step = 1;
 
-  const btn = document.getElementById("mainBtn");
-  btn.textContent = "Send OTP";
-  btn.style.background = "#ffd54f";
-  btn.style.color = "#000";
+  function openDemoPopup(course){
+    currentCourse = course;
+    step = 1;
 
-  document.getElementById("statusMsg").innerHTML = "";
+    document.getElementById("phoneInput").value = "";
+    document.getElementById("otpInput").value = "";
+    document.getElementById("otpInput").style.display = "none";
 
-  document.getElementById("demoPopup").style.display = "flex";
-}
+    const btn = document.getElementById("mainBtn");
+    btn.textContent = "Send OTP";
+    btn.style.background = "#ffd54f";
+    btn.style.color = "#000";
+
+    document.getElementById("statusMsg").innerHTML = "";
+
+    document.getElementById("demoPopup").style.display = "flex";
+  }
+    window.openDemoPopup = openDemoPopup;
+
+
  
 function startDemoSession(course) {
   const timerDiv  = document.getElementById("timer-" + course);
