@@ -113,9 +113,9 @@ def send_otp():
     otp = str(random.randint(100000, 999999))
 
     payload = {
-        "flow_id": "demootpflow",   # 👈 your Flow ID (small letters)
+         "flow_id": "demootpflow",
         "mobiles": "91" + phone,
-        "OTP": otp   # 🔥 testing purpose (later random)
+        "VAR1": otp   # 👈 variable name MUST match template
         
     }
 
@@ -124,7 +124,13 @@ def send_otp():
         print("STATUS:", response.status_code)
         print("RESPONSE:", response.text)
 
-        return jsonify({"status": "sent"})
+        if response.status_code == 200:
+    return jsonify({"status": "sent"})
+else:
+    return jsonify({
+        "status": "error",
+        "message": response.text
+    }), 500
 
     except Exception as e:
         print("ERROR:", str(e))
