@@ -110,11 +110,13 @@ def send_otp():
         "authkey": "506853Axr0BvOCZm5b69d61403P1",   # 👈 use BackendOTP authkey
         "Content-Type": "application/json"
     }
+    otp = str(random.randint(100000, 999999))
 
     payload = {
         "flow_id": "demootpflow",   # 👈 your Flow ID (small letters)
         "mobiles": "91" + phone,
-        "OTP": "123456"   # 🔥 testing purpose (later random)
+        "OTP": otp   # 🔥 testing purpose (later random)
+        
     }
 
     try:
@@ -134,7 +136,7 @@ def verify_otp():
     phone = data.get("phone", "").strip()
     otp   = data.get("otp", "").strip()
 
-    url = "https://api.msg91.com/api/v5/otp/verify"
+    url = "https://control.msg91.com/api/v5/flow"
 
     payload = {
         "mobile": "91" + phone,
