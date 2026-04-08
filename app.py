@@ -116,7 +116,7 @@ def send_otp():
     payload = {
         "flow_id": "demootpflow",
         "mobiles": "91" + phone,
-        "VAR1": otp   # 👈 match template variable
+        "number": otp   # 👈 match template variable
     }
 
     try:
