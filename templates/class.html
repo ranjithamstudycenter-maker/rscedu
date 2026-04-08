@@ -1182,27 +1182,28 @@ function updateUI(course) {
 <!-- ALL HTML ABOVE -->
 
 
-  let currentCourse = "";
-  let step = 1;
+ let currentCourse = "";
+ let step = 1;
 
-  function openDemoPopup(course){
-    currentCourse = course;
-    step = 1;
+function openDemoPopup(course){
+  currentCourse = course;
+  step = 1;
 
-    document.getElementById("phoneInput").value = "";
-    document.getElementById("otpInput").value = "";
-    document.getElementById("otpInput").style.display = "none";
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("otpInput").value = "";
+  document.getElementById("otpInput").style.display = "none";
 
-    const btn = document.getElementById("mainBtn");
-    btn.textContent = "Send OTP";
-    btn.style.background = "#ffd54f";
-    btn.style.color = "#000";
+  const btn = document.getElementById("mainBtn");
+  btn.textContent = "Send OTP";
+  btn.style.background = "#ffd54f";
+  btn.style.color = "#000";
 
-    document.getElementById("statusMsg").innerHTML = "";
+  document.getElementById("statusMsg").innerHTML = "";
 
-    document.getElementById("demoPopup").style.display = "flex";
-  }
-    window.openDemoPopup = openDemoPopup;
+  document.getElementById("demoPopup").style.display = "flex";
+}
+
+window.openDemoPopup = openDemoPopup;
 
 
  
@@ -1442,12 +1443,7 @@ function showMessage(msg) {
   setTimeout(() => box.remove(), 3500);
 }
  let step = 1; // 1=send OTP, 2=verify, 3=proceed
-let currentCourse = "";
-
-function openDemoPopup(course){
-  currentCourse = course;
-  document.getElementById("demoPopup").style.display = "flex";
-}
+ let currentCourse = "";
 
 async function handleOTP(){
 
@@ -1465,22 +1461,45 @@ async function handleOTP(){
       return;
     }
 
-    await fetch("/send-otp", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({phone})
-    });
+    btn.textContent = "Sending...";
+    btn.disabled = true;
 
-    document.getElementById("otpInput").style.display = "block";
+    try {
+      const res = await fetch("/send-otp", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({phone})
+      });
 
-    btn.textContent = "Verify OTP";
-    btn.style.background = "#0b5394";
-    btn.style.color = "white";
+      const data = await res.json();
 
-    msg.innerHTML = "📱 OTP sent";
-    msg.style.color = "green";
+      if(data.status !== "sent"){
+        msg.innerHTML = "❌ Failed to send OTP";
+        msg.style.color = "red";
+        btn.textContent = "Send OTP";
+        btn.disabled = false;
+        return;
+      }
 
-    step = 2;
+      document.getElementById("otpInput").style.display = "block";
+      document.getElementById("otpInput").focus();
+
+      btn.textContent = "Verify OTP";
+      btn.style.background = "#0b5394";
+      btn.style.color = "white";
+      btn.disabled = false;
+
+      msg.innerHTML = "📱 OTP sent";
+      msg.style.color = "green";
+
+      step = 2;
+
+    } catch(e){
+      msg.innerHTML = "❌ Network error";
+      msg.style.color = "red";
+      btn.textContent = "Send OTP";
+      btn.disabled = false;
+    }
   }
 
   // STEP 2 → VERIFY OTP
@@ -1492,33 +1511,53 @@ async function handleOTP(){
       return;
     }
 
-    const res = await fetch("/verify-otp", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({phone, otp})
-    });
+    btn.textContent = "Verifying...";
+    btn.disabled = true;
 
-    const data = await res.json();
+    try {
+      const res = await fetch("/verify-otp", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({phone, otp})
+      });
 
-    if(data.status === "ok"){
+      const data = await res.json();
 
-      msg.innerHTML = "✅ Verified ✔";
-      msg.style.color = "green";
+      if(data.status === "ok"){
 
-      btn.textContent = "Proceed for Demo";
-      btn.style.background = "green";
+        msg.innerHTML = "✅ Verified ✔";
+        msg.style.color = "green";
 
-      step = 3;
+        btn.textContent = "Proceed for Demo";
+        btn.style.background = "green";
+        btn.disabled = false;
 
-    } else {
-      msg.innerHTML = "❌ Wrong OTP";
+        step = 3;
+
+      } else {
+        msg.innerHTML = "❌ Wrong OTP";
+        msg.style.color = "red";
+        btn.textContent = "Verify OTP";
+        btn.disabled = false;
+      }
+
+    } catch(e){
+      msg.innerHTML = "❌ Network error";
       msg.style.color = "red";
+      btn.textContent = "Verify OTP";
+      btn.disabled = false;
     }
   }
 
   // STEP 3 → START DEMO
   else if(step === 3){
     document.getElementById("demoPopup").style.display = "none";
+
+    if(!currentCourse){
+      showMessage("❌ Course not selected");
+      return;
+    }
+
     startDemoSession(currentCourse);
   }
 }
