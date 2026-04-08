@@ -108,7 +108,7 @@ def send_otp():
 
     payload = {
         "mobile": "91" + phone,
-        "authkey": "506853TwZjv7Xl69d5e462P1",
+        "authkey": "506853TwZjy7Xi69d5e462P1",
         "template_id": "69d5e333eaffbb287f0c2344"
     }
 
