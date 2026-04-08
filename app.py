@@ -104,29 +104,19 @@ def send_otp():
     if not phone or not phone.isdigit() or len(phone) != 10:
         return jsonify({"status": "error", "message": "Invalid phone"}), 400
 
-    otp = str(random.randint(100000, 999999))
-    otp_store[phone] = {"otp": otp, "expires": time.time() + 300}
-
-    # 🔥 SEND REAL SMS
     url = "https://api.msg91.com/api/v5/otp"
 
     payload = {
         "mobile": "91" + phone,
-        "authkey": "506853TwZjv7Xl69d5e462P1",   # 🔥 paste here
+        "authkey": "506853TwZjv7Xl69d5e462P1",
         "template_id": "69d5e333eaffbb287f0c2344"
     }
 
-    headers = {
-        "authorization": "ZzTXLRvPONqiMYumJce9UBKIF3pAsCtw54SgH8EanrQ7Gko2hVDOn9lTPqQg85wZFHLN1YbvfXWeJpyx"
-    }
+    response = requests.post(url, json=payload)
 
-    response = requests.post(url, data=payload, headers=headers)
+    print("SMS Response:", response.text)
 
-    print("SMS Response:", response.text)  # debug
-
-    session["phone"] = phone
     return jsonify({"status": "sent"})
-
 
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
