@@ -1180,23 +1180,24 @@ function updateUI(course) {
    FREE DEMO — Phone OTP always required
 ====================================== */
 let currentCourse = "";
+let step = 1;
 
-function bookDemo(course) {
+function openDemoPopup(course){
+  currentCourse = course;
+  step = 1; // 🔥 reset every time
 
-  if (!studentStatus || !studentStatus.logged_in) {
-    showPhonePopup(course, "demo");  // ✅ CORRECT
-    return;
-  }
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("otpInput").value = "";
+  document.getElementById("otpInput").style.display = "none";
 
-  if ((studentStatus.demo_done || {})[course]) {
-    showMessage("Demo already completed. Please enroll.");
-    return;
-  }
+  const btn = document.getElementById("mainBtn");
+  btn.textContent = "Send OTP";
+  btn.style.background = "#ffd54f";
+  btn.style.color = "#000";
 
-  showPhonePopup(course, "demo");   // ✅ OTP FIRST
-}
- function openPhonePopup(){
-  document.getElementById("PhonePopup").style.display = "flex";
+  document.getElementById("statusMsg").innerHTML = "";
+
+  document.getElementById("demoPopup").style.display = "flex";
 }
  
 function startDemoSession(course) {
@@ -1243,89 +1244,6 @@ function startDemoSession(course) {
       
     }
   }, 1000);
-}
- 
-/* ======================================
-   PHONE + OTP POPUP
-====================================== */
-let _pendingAction = null;
-let _pendingCourse = null;
- 
-function showPhonePopup(course, action) {
-  _pendingAction = action;
-  _pendingCourse = course;
-  document.getElementById("phoneInput").value = "";
-  const otpInput = document.getElementById("otpInput");
-  if (otpInput) otpInput.value = "";
-  document.getElementById("otpSection").style.display  = "none";
-  document.getElementById("phonePopup").style.display  = "block";
-}
-
- 
-function closePhonePopup() {
-  document.getElementById("phonePopup").style.display = "none";
-}
- 
-async function sendOTP() {
-  const phone = document.getElementById("phoneInput").value.trim();
-  if (!/^[6-9]\d{9}$/.test(phone)) {
-    showMessage("⚠️ Enter valid 10-digit Indian mobile number");
-    return;
-  }
-  const btn = document.getElementById("sendOtpBtn");
-  btn.textContent = "Sending...";
-  btn.disabled    = true;
-  try {
-    const res  = await fetch("/send-otp", {
-      method:  "POST",
-      headers: {"Content-Type":"application/json"},
-      body:    JSON.stringify({phone: phone})
-    });
-    const data = await res.json();
-    if (data.status === "sent") {
-      document.getElementById("otpSection").style.display = "block";
-      showMessage("📱 OTP sent to " + phone);
-      btn.textContent = "Resend OTP";
-      btn.disabled    = false;
-    } else {
-      showMessage("❌ " + (data.message || "Failed to send OTP"));
-      btn.textContent = "Send OTP";
-      btn.disabled    = false;
-    }
-  } catch(e) {
-    showMessage("❌ Network error. Try again.");
-    btn.textContent = "Send OTP";
-    btn.disabled    = false;
-  }
-}
- 
-async function verifyOTP() {
-  const phone = document.getElementById("phoneInput").value.trim();
-  const otp   = document.getElementById("otpInput").value.trim();
-  if (!otp) { showMessage("⚠️ Enter OTP"); return; }
-  try {
-    const res  = await fetch("/verify-otp", {
-      method:  "POST",
-      headers: {"Content-Type":"application/json"},
-      body:    JSON.stringify({phone: phone, otp: otp})
-    });
-    const data = await res.json();
-    if (data.status === "ok") {
-      showMessage("✅ Verified!");
-      closePhonePopup();
-      await refreshStatus();
-      // Continue with what was clicked
-     if (_pendingAction === "demo") {
-  startDemoSession(_pendingCourse);  // ✅ DIRECT START AFTER VERIFY
-}
-      if (_pendingAction === "enroll") enroll(_pendingCourse);
-      if (_pendingAction === "join")   joinClass(_pendingCourse);
-    } else {
-      showMessage("❌ Wrong OTP. Try again.");
-    }
-  } catch(e) {
-    showMessage("❌ Network error. Try again.");
-  }
 }
  
 /* ======================================
