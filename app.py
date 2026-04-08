@@ -111,6 +111,12 @@ def send_otp():
         "authkey": "506853TwZjy7Xi69d5e462P1",
         "template_id": "69d5e333eaffbb287f0c2344"
     }
+    try:
+        response = requests.post(url, json=payload)
+        print("STATUS:", response.status_code)
+        print("RESPONSE:", response.text)
+    except Exception as e:
+        print("ERROR:", str(e))
 
     response = requests.post(url, json=payload)
 
