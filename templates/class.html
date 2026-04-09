@@ -720,7 +720,48 @@ body{
 
 <div class="grid">
 
-<!-- ========== CBSE 10 ========== -->
+<!-- ========== CBSE 9 ========== -->
+  <div class="card" id="card-cbse9">
+    <h2>CBSE Maths – Class 9 <span class="live-badge" id="live-cbse9">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹300 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Mon • Wed • Fri</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('cbse9')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-cbse9" class="btn btn-join" onclick="joinClass('cbse9')">Join Now</button>
+          
+    </div>
+    <div class="notice">
+      <p class="seats">🎯 Seats: 30</p>
+      <p class="offer">🔥 First 10 Students – 50% OFF</p>
+    </div>
+    <p class="seats-left" id="seats-cbse9"></p>
+    <p class="hours-left" id="hours-cbse9"></p>
+    <div class="demo-timer" id="timer-cbse9"></div>
+    <div class="card-footer">
+      <button class="start-time-btn">Starts at 7:00 PM</button>
+      <a href="/teacher-login?class=cbse9" class="faculty-link">🔐 Faculty Login</a>
+    </div>
+  </div>
+
+ <!-- ========== CBSE 10 ========== -->
   <div class="card" id="card-cbse10">
     <h2>CBSE Maths – Class 10 <span class="live-badge" id="live-cbse10">🔴 LIVE</span></h2>
     <div class="price-box">
@@ -760,34 +801,87 @@ body{
       <a href="/teacher-login?class=cbse10" class="faculty-link">🔐 Faculty Login</a>
     </div>
   </div>
-<!-- CBSE 12 -->
-<div class="card">
-      <h2>
-       CBSE Maths – Class 12
-       <span class="live-badge" id="live-cbse12">🔴 LIVE</span>
-     </h2>
-      
-     <div class="price-box">
-      <p>₹400 / hour</p>
-     <p>12 Hours / Month</p>
-       </div>
-      
-      
-     <div class="actions">
-     <button class="btn outline" onclick="bookDemo('cbse12')">Free Demo</button>
-     <button class="btn secondary" onclick="enroll('cbse12')">Enroll</button>
-     <button class="btn primary joinBtn" data-course="cbse12" onclick="joinClass('cbse12')">Join Now</button>
-     </div>
  
-     <div class="notice">
+ <!-- ========== CBSE 11 ========== -->
+  <div class="card" id="card-cbse11">
+    <h2>CBSE Maths – Class 11 <span class="live-badge" id="live-cbse11">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹300 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Mon • Wed • Fri</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('cbse11')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-cbse11" class="btn btn-join" onclick="joinClass('cbse11')">Join Now</button>
+          
+    </div>
+    <div class="notice">
       <p class="seats">🎯 Seats: 30</p>
       <p class="offer">🔥 First 10 Students – 50% OFF</p>
-     </div>
-     <p class="class-time">🕒 8:00 PM</p>
-      <!-- 🔥 ADD THIS -->
-       <div class="demo-timer" id="timer-cbse12"></div>
-
-</div>
+    </div>
+    <p class="seats-left" id="seats-cbse11"></p>
+    <p class="hours-left" id="hours-cbse11"></p>
+    <div class="demo-timer" id="timer-cbse11"></div>
+    <div class="card-footer">
+      <button class="start-time-btn">Starts at 7:00 PM</button>
+      <a href="/teacher-login?class=cbse11" class="faculty-link">🔐 Faculty Login</a>
+    </div>
+  </div>
+<!-- ========== CBSE 12 ========== -->
+  <div class="card" id="card-cbse12">
+    <h2>CBSE Maths – Class 12 <span class="live-badge" id="live-cbse12">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹300 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Mon • Wed • Fri</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('cbse12')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-cbse12" class="btn btn-join" onclick="joinClass('cbse12')">Join Now</button>
+          
+    </div>
+    <div class="notice">
+      <p class="seats">🎯 Seats: 30</p>
+      <p class="offer">🔥 First 10 Students – 50% OFF</p>
+    </div>
+    <p class="seats-left" id="seats-cbse12"></p>
+    <p class="hours-left" id="hours-cbse12"></p>
+    <div class="demo-timer" id="timer-cbse12"></div>
+    <div class="card-footer">
+      <button class="start-time-btn">Starts at 7:00 PM</button>
+      <a href="/teacher-login?class=cbse12" class="faculty-link">🔐 Faculty Login</a>
+    </div>
+  </div>
 
 <!-- Engg Maths 1 -->
 <div class="card">
@@ -1015,7 +1109,7 @@ let selectedCourse = "";
 const CLASSES_PER_MONTH = 12;
  
 const PRICE_PER_HOUR = {
-  cbse10: 1, cbse12: 400, cbse11: 400, cbse9: 300,
+  cbse9: 1, cbse10: 300, cbse11: 350, cbse12: 400,
   engg1: 700,  engg2: 700,  engg3: 700,  control: 800,
   AGS: 400,    Maths: 400
 };
@@ -1097,7 +1191,7 @@ function updateDiscountDisplays(discounts) {
  
 /* ---- UPDATE ALL COURSE UIs ---- */
 function updateAllCourseUI() {
-  const allCourses = ["cbse10","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
+  const allCourses = ["cbse11","cbse10","cbse11","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
   allCourses.forEach(updateUI);
 }
  
