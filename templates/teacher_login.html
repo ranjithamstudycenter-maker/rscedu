@@ -45,14 +45,38 @@ button{
 .error{
   color:red;
 }
+ 
+.logo-box {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.logo-box img {
+    width: 120px;
+}
 </style>
+
 </head>
 
 <body>
+<div style="text-align:center; margin-bottom:20px;">
+    <img src="/static/logo.jpg" alt="Logo" width="120">
+</div>
+  <div class="logo-box">
+    <img src="/static/logo.jpg" alt="Logo">
+</div>
 
+<style>
+.logo-box {
+    text-align: center;
+    margin-bottom: 25px;
+}
+.logo-box img {
+    width: 120px;
+}
+</style>
 
 <div class="box">
-  <h2>Faculty Login</h2>
+  <h2 style="text-align:center;">Faculty Login</h2>
 
   {% if error %}
     <p class="error">{{ error }}</p>
