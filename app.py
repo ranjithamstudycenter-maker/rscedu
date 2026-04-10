@@ -431,19 +431,32 @@ def teacher_login():
 def teacher_dashboard():
     if "teacher" not in session:
         return redirect("/teacher-login")
+
     username = session["teacher"]
-    teacher = teachers[username]
-    feedbacks = feedback_db.get(username, [])
-    avg_rating = round(sum(f["rating"] for f in feedbacks) / len(feedbacks), 2) if feedbacks else 0
+    teacher = teachers.get(username)
+
+    # 🔥 FIX: handle list properly
+    if isinstance(feedback_db, list):
+        feedbacks = [f for f in feedback_db if f.get("teacher") == username]
+    else:
+        feedbacks = feedback_db.get(username, [])
+
+    # ⭐ avg rating calculation safe
+    if feedbacks:
+        avg_rating = round(
+            sum(f.get("rating", 0) for f in feedbacks) / len(feedbacks), 2
+        )
+    else:
+        avg_rating = 0
+
     return render_template(
         "teacher_Dashboard.html",
         teacher_name=username,
-        course=teacher["course"],
-        meet_link=teacher["meet_link"],
+        course=teacher.get("course", ""),
+        meet_link=teacher.get("meet_link", ""),
         feedbacks=feedbacks,
         avg_rating=avg_rating
     )
-
 
 @app.route("/teacher-logout")
 def teacher_logout():
