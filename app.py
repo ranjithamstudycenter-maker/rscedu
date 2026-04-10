@@ -560,18 +560,34 @@ def admin():
     return render_template("admin_login.html", error=error)
 
 
+
+from werkzeug.utils import secure_filename
+
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
     if not session.get("admin"):
         return redirect("/admin")
-    pdf_folder = "rsc_download"
-    os.makedirs(pdf_folder, exist_ok=True)
+
+    message = ""
+
     if request.method == "POST":
-        file = request.files.get("pdf")
+        subject = request.form.get("subject")
+        cls     = request.form.get("class")
+        file    = request.files.get("file")
+
         if file:
-            file.save(os.path.join(pdf_folder, file.filename))
-            return jsonify({"status": "uploaded", "filename": file.filename})
-    return render_template("upload.html")
+            filename = secure_filename(file.filename)
+
+            # 📁 create folder path
+            folder_path = os.path.join(PDF_FOLDER, subject, cls)
+            os.makedirs(folder_path, exist_ok=True)
+
+            # 💾 save file
+            file.save(os.path.join(folder_path, filename))
+
+            message = "✅ File uploaded successfully!"
+
+    return render_template("upload.html", message=message)
 
 
 @app.route("/admin/students")
