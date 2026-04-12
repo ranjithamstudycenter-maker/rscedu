@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html>
+<head>
+<title>Admin Panel</title>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body { font-family:Poppins; margin:0; background:#f5f7fa; }
+
+.sidebar {
+    width:220px;
+    height:100vh;
+    background:#0b5394;
+    color:white;
+    position:fixed;
+    padding-top:20px;
+}
+
+.sidebar h3 {
+    text-align:center;
+}
+
+.sidebar button {
+    width:100%;
+    padding:12px;
+    border:none;
+    background:none;
+    color:white;
+    cursor:pointer;
+}
+
+.sidebar button:hover {
+    background:#073763;
+}
+
+.content {
+    margin-left:220px;
+    padding:20px;
+}
+
+iframe {
+    width:100%;
+    height:85vh;
+    border:none;
+    background:white;
+    border-radius:10px;
+}
+
+</style>
+</head>
+
+<body>
+
+<div class="sidebar">
+    <h3>Admin</h3>
+    <button onclick="loadPage('/upload')">📂 Upload</button>
+    <button onclick="loadPage('/manage-feedback')">⭐ Feedback</button>
+    <button onclick="loadPage('/admin/students-view')">👨‍🎓 Students</button>
+</div>
+
+<div class="content">
+    <iframe id="frame"></iframe>
+</div>
+
+<script>
+function loadPage(url){
+    document.getElementById("frame").src = url;
+}
+
+// default load
+loadPage('/upload');
+</script>
+
+</body>
+</html>
