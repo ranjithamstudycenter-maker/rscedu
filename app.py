@@ -554,19 +554,24 @@ def admin():
     if request.method == "POST":
         if request.form.get("password") == os.environ.get("ADMIN_PASSWORD", "admin123"):
             session["admin"] = True
-            return redirect("/upload")
+            return redirect("/admin-dashboard")   # 🔥 CHANGE HERE
         else:
             error = "Wrong Password"
     return render_template("admin_login.html", error=error)
 
-
+@app.route("/admin-dashboard")
+def admin_dashboard():
+    if not session.get("admin"):
+        return redirect("/admin")
+    return render_template("admin_dashboard.html")
+    
 
 from werkzeug.utils import secure_filename
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
     if not session.get("admin"):
-        return redirect("/admin")
+        return redirect("/admin-dashboard")
 
     message = ""
 
@@ -587,7 +592,7 @@ def upload():
 
             message = "✅ File uploaded successfully!"
 
-    return render_template("upload.html", message=message)
+    return render_template("admin-dashboard.html", message=message)
 
 
 @app.route("/admin/students")
