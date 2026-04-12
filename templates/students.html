@@ -12,8 +12,8 @@ h2 { text-align:center; margin-bottom:20px; }
 .card {
     background:white;
     padding:20px;
-    border-radius:10px;
-    box-shadow:0 5px 15px rgba(0,0,0,0.1);
+    border-radius:12px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.1);
     margin-bottom:20px;
 }
 
@@ -28,20 +28,32 @@ th {
 }
 
 th, td {
-    padding:10px;
-    border-bottom:1px solid #ddd;
+    padding:12px;
+    border-bottom:1px solid #eee;
     text-align:center;
 }
 
 .badge {
     padding:5px 10px;
-    border-radius:5px;
+    border-radius:20px;
     font-size:12px;
 }
 
 .yes { background:#d4edda; color:green; }
 .no  { background:#f8d7da; color:red; }
 
+.reset-btn {
+    background:#e74c3c;
+    color:white;
+    border:none;
+    padding:6px 12px;
+    border-radius:6px;
+    cursor:pointer;
+}
+
+.reset-btn:hover {
+    background:#c0392b;
+}
 </style>
 </head>
 
@@ -56,7 +68,8 @@ th, td {
 <th>Name</th>
 <th>Demo</th>
 <th>Enrolled</th>
-<th>Hours Used</th>
+<th>Hours</th>
+<th>Action</th>
 </tr>
 </table>
 </div>
@@ -74,6 +87,10 @@ th, td {
 
 <script>
 
+// 🔐 ADMIN PHONE (ONLY YOU)
+const ADMIN_PHONE = "7702616245";
+
+// 🔹 Load Students
 fetch("/admin/students")
 .then(res => res.json())
 .then(data => {
@@ -85,6 +102,11 @@ fetch("/admin/students")
         let demo = Object.keys(s.demo_done).length > 0 ? "Yes" : "No";
         let enrolled = Object.keys(s.enrolled).length > 0 ? "Yes" : "No";
 
+        // 🔥 Show reset button only for admin
+        let actionBtn = (s.phone === ADMIN_PHONE) ? 
+        `<button class="reset-btn" onclick="resetDemo('${s.phone}')">🔄 Reset</button>` 
+        : `-`;
+
         t.innerHTML += `
         <tr>
             <td>${s.phone}</td>
@@ -92,10 +114,11 @@ fetch("/admin/students")
             <td><span class="badge ${demo=='Yes'?'yes':'no'}">${demo}</span></td>
             <td><span class="badge ${enrolled=='Yes'?'yes':'no'}">${enrolled}</span></td>
             <td>${s.hours_used}</td>
+            <td>${actionBtn}</td>
         </tr>`;
     });
 
-    // Seats table
+    // Seats
     let sTable = document.getElementById("seatsTable");
 
     for (let course in data.seats){
@@ -110,6 +133,26 @@ fetch("/admin/students")
     }
 
 });
+
+// 🔹 Reset Demo
+function resetDemo(phone){
+    if(confirm("Reset demo for this user?")){
+        fetch("/admin/reset-demo", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+                phone: phone
+            })
+        })
+        .then(res => res.json())
+        .then(data => {
+            alert("Demo Reset Successful ✅");
+            location.reload();
+        });
+    }
+}
 
 </script>
 
