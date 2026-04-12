@@ -597,9 +597,9 @@ def upload():
 
 @app.route("/admin/students")
 def admin_students():
-    """Admin: see all students, demo status, enrollment."""
     if not session.get("admin"):
-        return redirect("/admin")
+        return jsonify({"error": "Unauthorized"}), 403
+
     return jsonify({
         "students": [
             {
@@ -617,7 +617,12 @@ def admin_students():
         }
     })
 
-
+@app.route("/admin/students-view")
+def students_view():
+    if not session.get("admin"):
+        return redirect("/admin")
+    return render_template("students.html")
+    
 @app.route("/admin/reset-demo", methods=["POST"])
 def admin_reset_demo():
     if not session.get("admin"):
