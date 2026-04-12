@@ -1,6 +1,68 @@
-<h2 style="text-align:center;">Manage Feedback</h2>
+<!DOCTYPE html>
+<html>
+<head>
+<title>Manage Feedback</title>
 
-<div id="container" style="max-width:700px; margin:auto;"></div>
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+
+<style>
+body {
+    font-family: Poppins;
+    background: #f5f7fa;
+    padding: 20px;
+}
+
+h2 {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+/* Card */
+.card {
+    background: white;
+    padding: 15px;
+    margin: 15px auto;
+    max-width: 600px;
+    border-radius: 12px;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+/* Name */
+.name {
+    font-weight: 600;
+    color: #0b5394;
+}
+
+/* Status */
+.status {
+    padding: 4px 10px;
+    border-radius: 20px;
+    font-size: 12px;
+}
+
+.approved { background:#d4edda; color:green; }
+.pending { background:#fff3cd; color:orange; }
+
+/* Buttons */
+.btn {
+    padding: 6px 12px;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    margin-right: 5px;
+}
+
+.approve { background: green; color:white; }
+.delete { background: red; color:white; }
+
+</style>
+</head>
+
+<body>
+
+<h2>⭐ Manage Feedback</h2>
+
+<div id="container"></div>
 
 <script type="module">
 
@@ -14,7 +76,7 @@ import {
   doc
 } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
-// 🔥 same config use pannunga
+// 🔥 உங்கள் config
 const firebaseConfig = {
   apiKey: "YOUR KEY",
   authDomain: "YOUR DOMAIN",
@@ -31,20 +93,27 @@ async function loadFeedback(){
 
   const querySnapshot = await getDocs(collection(db, "feedback"));
 
+  if(querySnapshot.empty){
+    container.innerHTML = "<p style='text-align:center;'>No feedback available</p>";
+    return;
+  }
+
   querySnapshot.forEach((d) => {
     const f = d.data();
 
+    let statusClass = f.approved ? "approved" : "pending";
+    let statusText  = f.approved ? "Approved" : "Pending";
+
     const div = document.createElement("div");
+    div.className = "card";
 
     div.innerHTML = `
-      <div style="border:1px solid #ddd; padding:15px; margin:10px; border-radius:8px;">
-        <p><b>${f.name}</b> (${f.role})</p>
+        <p class="name">${f.name} (${f.role})</p>
         <p>${f.message}</p>
-        <p>Status: ${f.approved ? "✅ Approved" : "❌ Pending"}</p>
+        <p><span class="status ${statusClass}">${statusText}</span></p>
 
-        <button onclick="approve('${d.id}')">Approve</button>
-        <button onclick="del('${d.id}')">Delete</button>
-      </div>
+        <button class="btn approve" onclick="approve('${d.id}')">✔ Approve</button>
+        <button class="btn delete" onclick="del('${d.id}')">❌ Delete</button>
     `;
 
     container.appendChild(div);
@@ -59,7 +128,6 @@ window.approve = async function(id){
     approved: true
   });
 
-  alert("Approved ✅");
   loadFeedback();
 }
 
@@ -69,7 +137,6 @@ window.del = async function(id){
 
   await deleteDoc(ref);
 
-  alert("Deleted ❌");
   loadFeedback();
 }
 
@@ -77,3 +144,6 @@ window.del = async function(id){
 loadFeedback();
 
 </script>
+
+</body>
+</html>
