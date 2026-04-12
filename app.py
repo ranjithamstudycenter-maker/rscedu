@@ -554,7 +554,7 @@ def admin():
     if request.method == "POST":
         if request.form.get("password") == os.environ.get("ADMIN_PASSWORD", "admin123"):
             session["admin"] = True
-            return redirect("/admin-dashboard")   # 🔥 CHANGE HERE
+            return redirect("/admin_dashboard")   # 🔥 CHANGE HERE
         else:
             error = "Wrong Password"
     return render_template("admin_login.html", error=error)
