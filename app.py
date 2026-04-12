@@ -592,7 +592,7 @@ def upload():
 
             message = "✅ File uploaded successfully!"
 
-    return render_template("admin_dashboard.html", message=message)
+    return render_template("upload.html", message=message)
 
 
 @app.route("/admin/students")
