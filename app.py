@@ -622,13 +622,22 @@ def admin_students():
 def admin_reset_demo():
     if not session.get("admin"):
         return jsonify({"error": "Unauthorized"}), 403
-    phone  = request.json.get("phone")
-    course = request.json.get("course")
+
+    # 🔥 extra protection (optional)
+    if session.get("admin") != True:
+        return jsonify({"error": "Access Denied"}), 403
+
+    data = request.get_json()
+
+    phone  = data.get("phone")
+    course = data.get("course")
+
     if phone in demo_users:
         if course:
             demo_users[phone]["demo_done"].pop(course, None)
         else:
             demo_users[phone]["demo_done"] = {}
+
     return jsonify({"status": "reset"})
 
 
