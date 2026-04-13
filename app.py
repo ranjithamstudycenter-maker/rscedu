@@ -328,6 +328,20 @@ def payment_success_api():
         return jsonify({"error": "No course"}), 400
 
     user = get_user(phone)
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+    
+    c.execute("SELECT * FROM students WHERE phone=?", (phone,))
+    rows = c.fetchall()
+    
+    for r in rows:
+        course = r[1]
+        demo_users[phone]["demo_done"][course] = bool(r[3])
+        demo_users[phone]["enrolled"][course] = bool(r[4])
+        demo_users[phone]["hours_used"][course] = r[5]
+        demo_users[phone]["max_hours"][course] = r[6]
+    
+    conn.close()
 
     # Mark enrolled + set hours
     user["enrolled"][course] = True
