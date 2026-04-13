@@ -1330,10 +1330,10 @@ function enroll(course) {
     showPhonePopup(course, "enroll");
     return;
   }
-  if (!(studentStatus.demo_done || {})[course]) {
-    showMessage("⚠️ Please attend Free Demo first before enrolling.");
-    return;
-  }
+  if (!(studentStatus?.demo_done || {})[course]) {
+  showCourseMessage(course, "⚠️ Attend Free Demo first");
+  return;
+}
   const seats = (studentStatus.available_seats || {})[course];
   if (seats !== undefined && seats <= 0) {
     showMessage("❌ Seats Full for this course.");
