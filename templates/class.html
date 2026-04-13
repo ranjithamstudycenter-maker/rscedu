@@ -1515,6 +1515,18 @@ function showMessage(msg) {
   document.body.appendChild(box);
   setTimeout(() => box.remove(), 3500);
 }
+
+ function showCourseMessage(course, msg) {
+  let el = document.getElementById("msg-" + course);
+  if (!el) return;
+
+  el.innerHTML = msg;
+  el.style.display = "block";
+
+  setTimeout(() => {
+    el.innerHTML = "";
+  }, 4000);
+}
 async function handleOTP(){
 
   const phone = document.getElementById("phoneInput").value.trim();
