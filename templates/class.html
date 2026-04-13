@@ -1434,7 +1434,7 @@ async function joinClass(course) {
     return;
   }
   if (!(studentStatus.demo_done || {})[course]) {
-    showMessage("⚠️ Please attend Free Demo first");
+    showCourseMessage(course, "⚠️ Attend Free Demo first");
     return;
   }
   if (!(studentStatus.enrolled || {})[course]) {
