@@ -10,6 +10,31 @@ import requests
 from datetime import datetime, timedelta
 from email.message import EmailMessage
 
+import sqlite3
+
+def init_db():
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS students (
+        phone TEXT,
+        course TEXT,
+        name TEXT,
+        demo_done INTEGER,
+        enrolled INTEGER,
+        hours_used INTEGER,
+        max_hours INTEGER,
+        payment_amount INTEGER,
+        last_updated TEXT
+    )
+    """)
+
+    conn.commit()
+    conn.close()
+
+init_db()
+
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
