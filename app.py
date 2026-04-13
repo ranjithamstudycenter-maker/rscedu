@@ -670,7 +670,7 @@ def admin_students():
                 "enrolled": u["enrolled"],
                 "hours_used": u["hours_used"]
             }
-            for phone, u in demo_users.items()
+            for phone, u in SELECT * FROM students
         ],
         "seats": {
             course: {"available": available_seats(course), "total": d["total"]}
