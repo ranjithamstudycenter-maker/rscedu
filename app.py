@@ -4,13 +4,14 @@ import razorpay
 import json
 import smtplib
 import time
+import sqlite3
 import csv
 import random
 import requests
 from datetime import datetime, timedelta
 from email.message import EmailMessage
 
-import sqlite3
+
 
 def init_db():
     conn = sqlite3.connect("students.db")
