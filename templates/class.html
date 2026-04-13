@@ -1470,7 +1470,29 @@ async function joinClass(course) {
     
   }
 }
- 
+ function showPhonePopup(course, type){
+  currentCourse = course;
+  step = 1;
+
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("otpInput").value = "";
+  document.getElementById("otpInput").style.display = "none";
+
+  document.getElementById("statusMsg").innerHTML = "";
+
+  document.getElementById("demoPopup").style.display = "flex";
+
+  // 🔥 change button text based on action
+  const btn = document.getElementById("mainBtn");
+
+  if(type === "join"){
+    btn.textContent = "Verify & Join";
+  } else if(type === "enroll"){
+    btn.textContent = "Verify & Enroll";
+  } else {
+    btn.textContent = "Send OTP";
+  }
+}
 /* ======================================
    LIVE POPUP
 ====================================== */
