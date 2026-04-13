@@ -99,16 +99,32 @@ classes_per_month = 12  # 3 days/week * 4 weeks
 # -------------------- HELPERS --------------------
 
 def get_user(phone):
-    """Get or create a demo_user by phone."""
     if phone not in demo_users:
         demo_users[phone] = {
             "name": "",
             "phone": phone,
-            "demo_done": {},      # {course: True/False}
-            "enrolled": {},       # {course: True/False}
-            "hours_used": {},     # {course: int}
-            "max_hours": {},      # {course: int}
+            "demo_done": {},
+            "enrolled": {},
+            "hours_used": {},
+            "max_hours": {},
         }
+
+        # 🔥 LOAD FROM DB
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        c.execute("SELECT * FROM students WHERE phone=?", (phone,))
+        rows = c.fetchall()
+
+        for r in rows:
+            course = r[1]
+            demo_users[phone]["demo_done"][course] = bool(r[3])
+            demo_users[phone]["enrolled"][course] = bool(r[4])
+            demo_users[phone]["hours_used"][course] = r[5]
+            demo_users[phone]["max_hours"][course] = r[6]
+
+        conn.close()
+
     return demo_users[phone]
 
 def is_admin_phone(phone):
@@ -328,21 +344,7 @@ def payment_success_api():
         return jsonify({"error": "No course"}), 400
 
     user = get_user(phone)
-    conn = sqlite3.connect("students.db")
-    c = conn.cursor()
-    
-    c.execute("SELECT * FROM students WHERE phone=?", (phone,))
-    rows = c.fetchall()
-    
-    for r in rows:
-        course = r[1]
-        demo_users[phone]["demo_done"][course] = bool(r[3])
-        demo_users[phone]["enrolled"][course] = bool(r[4])
-        demo_users[phone]["hours_used"][course] = r[5]
-        demo_users[phone]["max_hours"][course] = r[6]
-    
-    conn.close()
-
+  
     # Mark enrolled + set hours
     user["enrolled"][course] = True
     user["hours_used"][course] = 0
