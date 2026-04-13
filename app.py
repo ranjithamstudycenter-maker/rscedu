@@ -672,7 +672,31 @@ def admin_students():
                 "enrolled": u["enrolled"],
                 "hours_used": u["hours_used"]
             }
-            for phone, u in SELECT * FROM students
+            conn = sqlite3.connect("students.db")
+            c = conn.cursor()
+            
+            c.execute("SELECT phone, course, name, enrolled, hours_used FROM students")
+            rows = c.fetchall()
+            
+            students_list = []
+            for r in rows:
+                students_list.append({
+                    "phone": r[0],
+                    "course": r[1],
+                    "name": r[2],
+                    "enrolled": bool(r[3]),
+                    "hours_used": r[4]
+                })
+            
+            conn.close()
+
+                return jsonify({
+    "students": students_list,
+    "seats": {
+        course: {"available": available_seats(course), "total": d["total"]}
+        for course, d in seat_data.items()
+    }
+})
         ],
         "seats": {
             course: {"available": available_seats(course), "total": d["total"]}
