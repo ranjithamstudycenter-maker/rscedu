@@ -234,7 +234,30 @@ def demo_complete():
     if not is_admin_phone(phone):
         user["demo_done"][course] = True
 
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+        
+        c.execute("""
+        INSERT OR REPLACE INTO students 
+        (phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            phone,
+            course,
+            user.get("name", ""),
+            1,
+            int(user["enrolled"].get(course, False)),
+            user["hours_used"].get(course, 0),
+            user["max_hours"].get(course, 0),
+            0,
+            datetime.now().strftime("%Y-%m-%d %H:%M")
+        ))
+        
+        conn.commit()
+        conn.close()
+
     return jsonify({"status": "saved"})
+    
 
 
 @app.route("/api/seat-count")
@@ -430,6 +453,24 @@ def join_class_api():
     # Increment class count
     user["hours_used"][course] = hours_used + 1
 
+    # AFTER increment
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+    
+    c.execute("""
+    UPDATE students 
+    SET hours_used=?, last_updated=? 
+    WHERE phone=? AND course=?
+    """, (
+        user["hours_used"][course],
+        datetime.now().strftime("%Y-%m-%d %H:%M"),
+        phone,
+        course
+    ))
+    
+    conn.commit()
+    conn.close()
+
     return jsonify({
         "status": "ok",
         "meet_link": CLASS_MEET_LINK,
@@ -437,23 +478,7 @@ def join_class_api():
         "hours_remaining": max_hours - user["hours_used"][course]
     })
 
-# AFTER increment
-conn = sqlite3.connect("students.db")
-c = conn.cursor()
 
-c.execute("""
-UPDATE students 
-SET hours_used=?, last_updated=? 
-WHERE phone=? AND course=?
-""", (
-    user["hours_used"][course],
-    datetime.now().strftime("%Y-%m-%d %H:%M"),
-    phone,
-    course
-))
-
-conn.commit()
-conn.close()
 
 # -------------------- STUDENT STATUS --------------------
 
@@ -681,43 +706,34 @@ def admin_students():
     if not session.get("admin"):
         return jsonify({"error": "Unauthorized"}), 403
 
-    return jsonify({
-        "students": [
-            {
-                "phone": phone,
-                "name": u.get("name", ""),
-                "demo_done": u["demo_done"],
-                "enrolled": u["enrolled"],
-                "hours_used": u["hours_used"]
-            }
-            conn = sqlite3.connect("students.db")
-            c = conn.cursor()
-            
-            c.execute("SELECT phone, course, name, enrolled, hours_used FROM students")
-            rows = c.fetchall()
-            
-            students_list = []
-            for r in rows:
-                students_list.append({
-                    "phone": r[0],
-                    "course": r[1],
-                    "name": r[2],
-                    "enrolled": bool(r[3]),
-                    "hours_used": r[4]
-                })
-            
-            conn.close()
+    # ✅ FETCH FROM DB
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
 
-                return jsonify({
-    "students": students_list,
-    "seats": {
-        course: {"available": available_seats(course), "total": d["total"]}
-        for course, d in seat_data.items()
-    }
-})
-        ],
+    c.execute("SELECT phone, course, name, demo_done, enrolled, hours_used FROM students")
+    rows = c.fetchall()
+
+    students_list = []
+    for r in rows:
+        students_list.append({
+            "phone": r[0],
+            "course": r[1],
+            "name": r[2],
+            "demo_done": bool(r[3]),
+            "enrolled": bool(r[4]),
+            "hours_used": r[5]
+        })
+
+    conn.close()
+
+    # ✅ RETURN RESPONSE
+    return jsonify({
+        "students": students_list,
         "seats": {
-            course: {"available": available_seats(course), "total": d["total"]}
+            course: {
+                "available": available_seats(course),
+                "total": d["total"]
+            }
             for course, d in seat_data.items()
         }
     })
