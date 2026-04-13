@@ -1191,7 +1191,7 @@ function updateDiscountDisplays(discounts) {
  
 /* ---- UPDATE ALL COURSE UIs ---- */
 function updateAllCourseUI() {
-  const allCourses = ["cbse11","cbse10","cbse11","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
+  const allCourses = ["cbse9","cbse10","cbse11","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
   allCourses.forEach(updateUI);
 }
  
@@ -1824,6 +1824,66 @@ window.openDemoPopup = openDemoPopup;
     </button>
 
     <p id="statusMsg" style="margin-top:10px;font-weight:bold;"></p>
+
+  </div>
+</div>
+
+ <div id="enrollPopup" style="
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+
+  <div style="background:white;padding:25px;border-radius:12px;width:320px;text-align:center;position:relative;">
+
+    <!-- CLOSE -->
+    <button onclick="closeEnrollPopup()" style="
+      position:absolute;
+      top:10px;
+      right:15px;
+      border:none;
+      background:none;
+      font-size:18px;
+      cursor:pointer;
+    ">❌</button>
+
+    <h3>Enroll & Pay</h3>
+
+    <p id="courseName"></p>
+
+    <h4 style="color:#0b5394;">₹ Payment</h4>
+
+    <!-- PAYMENT OPTIONS -->
+    <button onclick="payNow()" style="
+      width:100%;
+      padding:10px;
+      background:#4caf50;
+      color:white;
+      border:none;
+      border-radius:6px;
+      margin-top:10px;
+    ">
+      💳 Pay Now
+    </button>
+
+    <button onclick="markPaid()" style="
+      width:100%;
+      padding:10px;
+      background:#0b5394;
+      color:white;
+      border:none;
+      border-radius:6px;
+      margin-top:10px;
+    ">
+      ✅ I Have Paid (Manual)
+    </button>
+
+    <p id="enrollMsg" style="margin-top:10px;"></p>
 
   </div>
 </div>
