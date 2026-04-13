@@ -731,12 +731,13 @@ def admin_students():
     return jsonify({
         "students": students_list,
         "seats": {
-            course: {
-                "available": available_seats(course),
-                "total": d["total"]
-            }
-            for course, d in seat_data.items()
-        }
+         course: {
+        "total": d["total"],
+        "available": available_seats(course),
+        "booked": d["total"] - available_seats(course)
+    }
+    for course, d in seat_data.items()
+}
     })
 
 @app.route("/admin/students-view")
