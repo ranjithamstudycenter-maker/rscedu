@@ -437,6 +437,24 @@ def join_class_api():
         "hours_remaining": max_hours - user["hours_used"][course]
     })
 
+# AFTER increment
+conn = sqlite3.connect("students.db")
+c = conn.cursor()
+
+c.execute("""
+UPDATE students 
+SET hours_used=?, last_updated=? 
+WHERE phone=? AND course=?
+""", (
+    user["hours_used"][course],
+    datetime.now().strftime("%Y-%m-%d %H:%M"),
+    phone,
+    course
+))
+
+conn.commit()
+conn.close()
+
 # -------------------- STUDENT STATUS --------------------
 
 @app.route("/api/student-status")
