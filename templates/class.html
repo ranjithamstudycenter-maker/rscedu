@@ -1433,6 +1433,10 @@ async function joinClass(course) {
     showPhonePopup(course, "join");
     return;
   }
+  if (!(studentStatus.demo_done || {})[course]) {
+    showMessage("⚠️ Please attend Free Demo first");
+    return;
+  }
   if (!(studentStatus.enrolled || {})[course]) {
     showMessage("⚠️ Please enroll first to join the class.");
     return;
