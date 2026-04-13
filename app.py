@@ -334,6 +334,28 @@ def payment_success_api():
     user["hours_used"][course] = 0
     user["max_hours"][course] = classes_per_month  # 24 classes
 
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+    
+    c.execute("""
+    INSERT OR REPLACE INTO students 
+    (phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        phone,
+        course,
+        user.get("name", ""),
+        int(user["demo_done"].get(course, False)),
+        1,
+        0,
+        classes_per_month,
+        price_per_hour.get(course, 0) * classes_per_month,
+        datetime.now().strftime("%Y-%m-%d %H:%M")
+    ))
+    
+    conn.commit()
+    conn.close()
+
     # Increment seat count
     if course in seat_data:
         seat_data[course]["booked"] = min(
