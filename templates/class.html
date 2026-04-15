@@ -795,7 +795,7 @@ body{
   <div class="card" id="card-cbse9">
     <h2>CBSE Maths – Class 9 <span class="live-badge" id="live-cbse9">🔴 LIVE</span></h2>
     <div class="price-box">
-      <p class="price">₹200 / hour</p>
+      <p class="price">₹250 / hour</p>
       <p class="duration">12 Hours / Month</p>
     </div>
     <p class="days">📅 Tue • Thur • Sat</p>
@@ -840,7 +840,7 @@ body{
       <p class="price">₹300 / hour</p>
       <p class="duration">12 Hours / Month</p>
     </div>
-    <p class="days">📅 Mon • Wed • Fri</p>
+    <p class="days">📅 Tue • Thur • Sat</p>
     <div class="actions">
        <!-- FREE DEMO -->
           {% if demo_done %}
@@ -854,25 +854,25 @@ body{
           {% if registered %}
             <button class="btn btn-registered">Registered</button>
           {% else %}
-            <button class="btn btn-enroll">Enroll</button>
+            <button class="btn btn-enroll" onclick="enroll('cbse10')">Enroll</button>
           {% endif %}
         
           <!-- JOIN -->
            <button id="joinBtn-cbse10" class="btn btn-join" onclick="joinClass('cbse10')">Join Now</button>
-          
+         
     </div>
-    <div id="msg-cbse10" class="course-msg"></div>
-    <div class="notice">
-      <p class="seats">🎯 Available Seats: 30</p>
-      <p class="offer">🔥 50% OFF for first 10 seats</p>
-    </div>
-   
-    <p class="hours-left" id="hours-cbse10"></p>
-    <div class="demo-timer" id="timer-cbse10"></div>
-    <div class="card-footer">
-      <button class="start-time-btn">Starts at 7:00 PM</button>
-      <a href="/teacher-login?class=cbse10" class="faculty-link">🔐 Faculty Login</a>
-    </div>
+   <div id="msg-cbse10" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-cbse10"></p>
+         <div class="demo-timer" id="timer-cbse10"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=cbse10" class="faculty-link">🔐 Faculty Login</a>
+       </div>
   </div>
 
  
@@ -898,25 +898,25 @@ body{
           {% if registered %}
             <button class="btn btn-registered">Registered</button>
           {% else %}
-            <button class="btn btn-enroll">Enroll</button>
+            <button class="btn btn-enroll" onclick="enroll('cbse9')">Enroll</button>
           {% endif %}
         
           <!-- JOIN -->
            <button id="joinBtn-cbse11" class="btn btn-join" onclick="joinClass('cbse11')">Join Now</button>
-          
+         
     </div>
-    <div id="msg-cbse11" class="course-msg"></div>
-    <div class="notice">
-      <p class="seats">🎯 Available Seats: 30</p>
-      <p class="offer">🔥 50% OFF for first 10 seats</p>
-    </div>
-  
-    <p class="hours-left" id="hours-cbse11"></p>
-    <div class="demo-timer" id="timer-cbse11"></div>
-    <div class="card-footer">
-      <button class="start-time-btn">Starts at 7:00 PM</button>
-      <a href="/teacher-login?class=cbse11" class="faculty-link">🔐 Faculty Login</a>
-    </div>
+   <div id="msg-cbse11" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-cbse11"></p>
+         <div class="demo-timer" id="timer-cbse11"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=cbse11" class="faculty-link">🔐 Faculty Login</a>
+       </div>
   </div>
 <!-- ========== CBSE 12 ========== -->
   <div class="card" id="card-cbse12">
@@ -925,7 +925,7 @@ body{
       <p class="price">₹400 / hour</p>
       <p class="duration">12 Hours / Month</p>
     </div>
-    <p class="days">📅 Mon • Wed • Fri</p>
+    <p class="days">📅 Tue • Thur • Sat</p>
     <div class="actions">
        <!-- FREE DEMO -->
           {% if demo_done %}
@@ -939,184 +939,280 @@ body{
           {% if registered %}
             <button class="btn btn-registered">Registered</button>
           {% else %}
-            <button class="btn btn-enroll">Enroll</button>
+            <button class="btn btn-enroll" onclick="enroll('cbse12')">Enroll</button>
           {% endif %}
         
           <!-- JOIN -->
            <button id="joinBtn-cbse12" class="btn btn-join" onclick="joinClass('cbse12')">Join Now</button>
-          
+         
     </div>
-    <div id="msg-cbse12" class="course-msg"></div>
-    <div class="notice">
-      <p class="seats">🎯 Available Seats: 30</p>
-      <p class="offer">🔥50% OFF for first 10 seats</p>
-    </div>
-   
-    <p class="hours-left" id="hours-cbse12"></p>
-    <div class="demo-timer" id="timer-cbse12"></div>
-    <div class="card-footer">
-      <button class="start-time-btn">Starts at 7:00 PM</button>
-      <a href="/teacher-login?class=cbse12" class="faculty-link">🔐 Faculty Login</a>
-    </div>
+   <div id="msg-cbse12" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-cbse12"></p>
+         <div class="demo-timer" id="timer-cbse12"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=cbse12" class="faculty-link">🔐 Faculty Login</a>
+       </div>
   </div>
 
 <!-- Engg Maths 1 -->
-<div class="card">
-       <h2>
-        Engineering Maths I
-        <span class="live-badge" id="live-engg1">🔴 LIVE</span>
-      </h2>
+<div class="card" id="card-engg1">
+    <h2>Engg Maths 1 <span class="live-badge" id="live-engg1">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹200 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('engg1')">  Free Demo </button>
+         {% endif %}
+             
        
-        <div class="price-box">
-       <p>₹10,000 (15 Hours)</p>
-        </div>
-      
-      
-      <div class="actions">
-      <button class="btn outline" onclick="bookDemo('engg1')">Free Demo</button>
-      <button class="btn secondary" onclick="enroll('engg1')">Enroll</button>
-      <button class="btn primary joinBtn" data-course="engg1" onclick="joinClass('engg1')">Join Now</button>
-      </div>
-      <button class="btn disabled">Coming Soon</button>
-      <!-- 🔥 ADD THIS -->
-      <div class="demo-timer" id="timer-engg1"></div>
-      
- </div>
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll" onclick="enroll('engg1')">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-engg1" class="btn btn-join" onclick="joinClass('engg1')">Join Now</button>
+         
+    </div>
+   <div id="msg-engg1" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-engg1"></p>
+         <div class="demo-timer" id="timer-engg1"></div>
 
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=engg1" class="faculty-link">🔐 Faculty Login</a>
+       </div>
+  </div>
 
 <!-- Engg Maths 2 -->
-<div class="card">
-     <h2>
-      Engineering Maths II
-      <span class="live-badge" id="live-engg2">🔴 LIVE</span>
-    </h2>
-    
+<div class="card" id="card-engg2">
+    <h2>Engg Maths 2 <span class="live-badge" id="live-engg2">🔴 LIVE</span></h2>
     <div class="price-box">
-     <p>₹10,000 (15 Hours)</p>
-      </div>
-    
-    <div class="actions">
-    <button class="btn outline" onclick="bookDemo('engg2')">Free Demo</button>
-    <button class="btn secondary" onclick="enroll('engg2')">Enroll</button>
-    <button class="btn primary joinBtn" data-course="engg2" onclick="joinClass('engg2')">Join Now</button>
+      <p class="price">₹200 / hour</p>
+      <p class="duration">12 Hours / Month</p>
     </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('engg2')">  Free Demo </button>
+         {% endif %}
+             
        
-     <!-- 🔥 ADD THIS -->
-      <div class="demo-timer" id="timer-engg2"></div>
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll" onclick="enroll('engg2')">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-engg2" class="btn btn-join" onclick="joinClass('engg2')">Join Now</button>
          
-</div>
+    </div>
+   <div id="msg-engg2" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-engg2"></p>
+         <div class="demo-timer" id="timer-engg2"></div>
 
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=engg2" class="faculty-link">🔐 Faculty Login</a>
+       </div>
+  </div>
 
 <!-- Engg Maths 3 -->
-<div class="card">
-     <h2>
-      Engineering Maths III
-      <span class="live-badge" id="live-engg3">🔴 LIVE</span>
-    </h2>
-    
-     <div class="price-box">
-     <p>₹10,000 (15 Hours)</p>
-      </div>
-    
-    <div class="actions">
-    <button class="btn outline" onclick="bookDemo('engg3')">Free Demo</button>
-    <button class="btn secondary" onclick="enroll('engg3')">Enroll</button>
-    <button class="btn primary joinBtn" data-course="engg3" onclick="joinClass('engg3')">Join Now</button>
+<div class="card" id="card-engg3">
+    <h2>Engg Maths 3 <span class="live-badge" id="live-engg3">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹200 / hour</p>
+      <p class="duration">12 Hours / Month</p>
     </div>
-    
-    
-     <!-- 🔥 ADD THIS -->
-      <div class="demo-timer" id="timer-engg3"></div>
- 
-</div>
-
-
-<!-- Control System (International) -->
-<div class="card">
-      <h2>
-      Control System
-       <span class="live-badge" id="live-control">🔴 LIVE</span>
-     </h2>
-      
-     <div class="price-box">
-      <p>$100 (15 hours)</p>
-     <p>Custom 1-to-1</p>
-       </div>
-     
-    
-     <div class="actions">
-     <button class="btn outline" onclick="bookDemo('control')">Free Demo</button>
-     <button class="btn secondary" onclick="enroll('control')">Enroll</button>
-     <button class="btn primary joinBtn" data-course="control" onclick="joinClass('control')">Join Now</button>
-     </div>
-     
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('engg3')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll" onclick="enroll('engg3')">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-engg3" class="btn btn-join" onclick="joinClass('engg3')">Join Now</button>
+         
+    </div>
+   <div id="msg-engg3" class="course-msg"></div>
       <div class="notice">
-      ⚠ Only limited seats available
-     </div>
-      <p class="class-time">🕒 9:00 PM</p>
-      <!-- 🔥 ADD THIS -->
-      <div class="demo-timer" id="timer-control"></div>
-    
-</div>
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-engg3"></p>
+         <div class="demo-timer" id="timer-engg3"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=engg3" class="faculty-link">🔐 Faculty Login</a>
+       </div>
+  </div>
+
+<!-- Control System  -->
+<div class="card" id="card-cbse9">
+    <h2> Control System <span class="live-badge" id="live-control">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹200 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('control')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll" onclick="enroll('control')">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-control" class="btn btn-join" onclick="joinClass('control')">Join Now</button>
+         
+    </div>
+   <div id="msg-control" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-control"></p>
+         <div class="demo-timer" id="timer-control"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=control" class="faculty-link">🔐 Faculty Login</a>
+       </div>
+  </div>
 
 
  <!-- Algebra/Geometry/Calculus -->
-<div class="card">
-       <h2>
-       USA-Algebra/Geometry/Calculus
-        <span class="live-badge" id="live-AGS">🔴 LIVE</span>
-      </h2>
-      
-      <div class="price-box">
-       <p>$20 (15 Hours)</p>
-      <p>Custom 1-to-1</p>
-        </div>
-      
-      <div class="actions">
-      <button class="btn outline" onclick="bookDemo('AGS')">Free Demo</button>
-      <button class="btn secondary" onclick="enroll('AGS')">Enroll</button>
-      <button class="btn primary joinBtn" data-course="AGS" onclick="joinClass('AGS')">Join Now</button>
-      </div>
-      
+<div class="card" id="card-AGS">
+    <h2>Algebra/Geometry/Calculus <span class="live-badge" id="live-AGS">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹200 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('AGS')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll" onclick="enroll('AGS')">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-AGS" class="btn btn-join" onclick="joinClass('AGS')">Join Now</button>
+         
+    </div>
+   <div id="msg-AGS" class="course-msg"></div>
       <div class="notice">
-       ⚠ Only limited seats available
-      </div>
-      <p class="class-time">🕒 10:00 PM</p>
-       <!-- 🔥 ADD THIS -->
-        <div class="demo-timer" id="timer-AGS"></div>
-           
-</div>
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-AGS"></p>
+         <div class="demo-timer" id="timer-AGS"></div>
 
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=AGS" class="faculty-link">🔐 Faculty Login</a>
+       </div>
+  </div>
 
 
  <!-- Maths -->
-<div class="card">
-       <h2>
-       USA-Maths
-        <span class="live-badge" id="live-Maths">🔴 LIVE</span>
-      </h2>
-      
-      <div class="price-box">
-      <p>$20 (15 Hours)</p>
-      <p>Custom 1-to-1</p>
-       </div>
-      
+<div class="card" id="card-cbse9">
+    <h2>USA maths <span class="live-badge" id="live-maths">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹200 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('maths')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll" onclick="enroll('maths')">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-cbse9" class="btn btn-join" onclick="joinClass('maths')">Join Now</button>
          
-      <div class="actions">
-      <button class="btn outline" onclick="bookDemo('Maths')">Free Demo</button>
-      <button class="btn secondary" onclick="enroll('Maths')">Enroll</button>
-      <button class="btn primary joinBtn" data-course="Maths" onclick="joinClass('Maths')">Join Now</button>
-      </div>
-     
-
+    </div>
+   <div id="msg-maths" class="course-msg"></div>
       <div class="notice">
-       ⚠ Only limited seats available
-      </div>
-      <p class="class-time">🕒 11:00 PM</p>
-      <!-- 🔥 ADD THIS -->
-      <div class="demo-timer" id="timer-Maths"></div>
-</div>
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-maths"></p>
+         <div class="demo-timer" id="timer-maths"></div>
 
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=maths" class="faculty-link">🔐 Faculty Login</a>
+       </div>
+  </div>
 
 </div>
 
