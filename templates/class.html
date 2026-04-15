@@ -190,37 +190,29 @@ body{
  
 /* CONTAINER */
 .container{
-  width: 95%;
+  width: 100%;        /* 🔥 FULL WIDTH */
   margin: auto;
   padding: 30px;
 
   display: grid;
   gap: 30px;
 
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+ grid-template-columns: repeat(autofit, minmax(260px, 1fr));
 }
-
+  
 /* CARD */
 
 .card{
-  margin-bottom:30px;
+  width: 100%;   /* 🔥 IMPORTANT */
+  padding: 30px;
+
   display:flex;
   flex-direction:column;
   justify-content:space-between;
-  position:relative;
-  min-width:0;
-  box-sizing:border-box;
-  z-index:1;
+
   background:white;
   border-radius:18px;
-
-  padding:30px;   /* थोड़ा reduce for better spacing */
-
-  flex:1 1 260px;
-  max-width:320px;
-
   box-shadow:0 10px 30px rgba(0,0,0,0.08);
-  transition:0.3s;
 }
   .card:hover{
   transform:translateY(-5px);
