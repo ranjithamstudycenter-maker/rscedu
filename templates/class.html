@@ -1326,21 +1326,28 @@ function updateUI(course) {
    ENROLL
 ====================================== */
 function enroll(course) {
+  iffunction enroll(course) {
+
   if (!studentStatus || !studentStatus.logged_in) {
-    showPhonePopup(course, "enroll");
+    showMessage("⚠️ Please login first");
     return;
   }
+
   if (!(studentStatus?.demo_done || {})[course]) {
-  showCourseMessage(course, "⚠️ Attend Free Demo first");
-  return;
-}
+    showCourseMessage(course, "⚠️ Attend Free Demo first");
+    return;
+  }
+
   const seats = (studentStatus.available_seats || {})[course];
   if (seats !== undefined && seats <= 0) {
-    showMessage("❌ Seats Full for this course.");
+    showMessage("❌ Seats Full");
     return;
   }
- 
+
   selectedCourse = course;
+  openEnrollPopup(course); // 💳 DIRECT
+}
+ 
 
   // Calculate price with discount
   const base    = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
