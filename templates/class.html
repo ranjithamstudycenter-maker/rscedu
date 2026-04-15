@@ -190,15 +190,14 @@ body{
  
 /* CONTAINER */
 .container{
-  display: flex;
   width: 95%;
-  margin:auto;
-  gap:30px;
-  justify-content:center;
-  padding:30px;
-  align-items:stretch;
-  grid-template-columns: repeat(autofit, minmax(260px, 1fr));
-  flex-wrap:nowrap;   /* 🔥 IMPORTANT */
+  margin: auto;
+  padding: 30px;
+
+  display: grid;
+  gap: 30px;
+
+  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
 }
 
 /* CARD */
