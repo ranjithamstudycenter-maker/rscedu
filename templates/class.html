@@ -187,18 +187,15 @@ body{
 /* SECTION */
 .section{padding:50px 20px;}
   
- .container{
-  width: 95%;
-  max-width: 1400px;
-  margin: auto;
-
-  display: flex;
-  gap: 30px;
-  justify-content: center;
-  padding: 40px;
-  align-items: stretch;
-  grid-template-columns: repeat(4, 1fr);
-  flex-wrap: wrap;   /* 🔥 change here */
+ 
+/* CONTAINER */
+.container{
+  display:flex;
+  gap:30px;
+  justify-content:center;
+  padding:40px;
+  align-items:stretch;
+  flex-wrap:nowrap;   /* 🔥 IMPORTANT */
 }
 
 /* CARD */
