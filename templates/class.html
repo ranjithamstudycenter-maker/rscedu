@@ -1432,7 +1432,7 @@ async function joinClass(course) {
 
    if (!(studentStatus.demo_done || {})[course] ||
       !(studentStatus.enrolled || {})[course]) {
-    showMessage("⚠️ Attend Demo & Enroll first");
+   showCourseMessage(course, "⚠️ Attend Demo & Enroll first");
     return;
   }
 
