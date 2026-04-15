@@ -203,8 +203,24 @@ body{
 /* CARD */
 
 .card{
-  flex: 1 1 260px;   /* 🔥 equal size */
-  max-width: 320px;
+  margin-bottom:30px;
+  display:flex;
+  flex-direction:column;
+  justify-content:space-between;
+  position:relative;
+  min-width:0;
+  box-sizing:border-box;
+  z-index:1;
+  background:white;
+  border-radius:18px;
+
+  padding:30px;   /* थोड़ा reduce for better spacing */
+
+  flex:1 1 260px;
+  max-width:320px;
+
+  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  transition:0.3s;
 }
   .card:hover{
   transform:translateY(-5px);
