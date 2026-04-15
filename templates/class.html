@@ -1442,18 +1442,13 @@ async function joinClass(course) {
     return;
   }
 
-  if (!(studentStatus.demo_done || {})[course]) {
-    showCourseMessage(course, "⚠️ Attend Free Demo first");
+  // 🔥 MAIN CONDITION
+  if (!(studentStatus.demo_done || {})[course] || !(studentStatus.enrolled || {})[course]) {
+    showMessage("⚠️ Attend Demo & Enroll first");
     return;
   }
 
-  if (!(studentStatus.enrolled || {})[course]) {
-    showMessage("⚠️ Please enroll first");
-    enroll(course); // 💳 open popup
-    return;
-  }
-
-  // ✅ FINAL JOIN
+  // ✅ FINAL
   const res  = await fetch("/api/join-class?course=" + course);
   const data = await res.json();
 
