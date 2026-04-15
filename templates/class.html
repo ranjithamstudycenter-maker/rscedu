@@ -192,12 +192,12 @@ body{
 .container{
   display: flex;
   width: 95%;
-  margin:0;
+  margin:auto;
   gap:30px;
   justify-content:center;
   padding:30px;
   align-items:stretch;
-  grid-template-columns: repeat(4, minmax(260px, 1fr));
+  grid-template-columns: repeat(autofit, minmax(260px, 1fr));
   flex-wrap:nowrap;   /* 🔥 IMPORTANT */
 }
 
