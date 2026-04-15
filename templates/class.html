@@ -357,9 +357,10 @@ body{
   justify-content: space-between;
   align-items: center;
   margin-bottom: 6px;
+ flex-wrap: nowrap;
 }
 
-/* MOBILE */
+ /* MOBILE */
 @media(max-width:768px){
   .hero h1{font-size:26px;}
 }
@@ -811,8 +812,10 @@ body{
     </div>
    <div id="msg-cbse9" class="course-msg"></div>
       <div class="notice">
-         <span class="seats">🎯 Available Seats: 30 </span>
-         <span class="offer">🔥 50% OFF for first 10 seats </span>
+         <div class="info-row">
+            <span class="seats">🎯 Seats: 30</span>
+            <span class="offer">🔥 First 10 Students – 50% OFF</span>
+          </div>
       </div>  
          <p class="seats-left" id="seats-cbse9"></p>
          <p class="hours-left" id="hours-cbse9"></p>
