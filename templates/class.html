@@ -191,6 +191,8 @@ body{
 /* CONTAINER */
 .container{
   display:flex;
+  width: 95%;
+  max-width: 1400px;
   gap:30px;
   justify-content:center;
   padding:40px;
@@ -201,7 +203,12 @@ body{
 /* CARD */
 .card{
   margin-bottom:30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   position: relative;
+  min-width: 0;         /* prevent overflow */
+  box-sizing: border-box;
   z-index: 1;
   background:white;
   border-radius:18px;
