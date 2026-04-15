@@ -1436,28 +1436,34 @@ async function payNow() {
    JOIN CLASS
 ====================================== */
 async function joinClass(course) {
+
   if (!studentStatus || !studentStatus.logged_in) {
-    showPhonePopup(course, "join");
+    showMessage("⚠️ Please login first");
     return;
   }
+
   if (!(studentStatus.demo_done || {})[course]) {
     showCourseMessage(course, "⚠️ Attend Free Demo first");
     return;
   }
+
   if (!(studentStatus.enrolled || {})[course]) {
-    showMessage("⚠️ Please enroll first to join the class.");
-    enroll(course); // 🔥 open enroll popup
+    showMessage("⚠️ Please enroll first");
+    enroll(course); // 💳 open popup
     return;
   }
-  try {
-    const res  = await fetch("/api/join-class?course=" + course);
-    const data = await res.json();
-    if (data.error) {
-      showMessage("❌ " + data.error);
-      await refreshStatus();
-      return;
-    }
-    window.open(data.meet_link, "_blank");
+
+  // ✅ FINAL JOIN
+  const res  = await fetch("/api/join-class?course=" + course);
+  const data = await res.json();
+
+  if (data.error) {
+    showMessage("❌ " + data.error);
+    return;
+  }
+
+  window.open(data.meet_link, "_blank");
+}
  
     const joinBtn = document.getElementById("joinBtn-" + course);
     if (joinBtn) {
