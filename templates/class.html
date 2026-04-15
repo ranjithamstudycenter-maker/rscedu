@@ -345,17 +345,19 @@ body{
 }
 
 /* NOTICE */
-.notice{
-  padding:15px;
-  border-radius:10px;
-  margin:15px 0;
-  font-weight:500;
-  color:red;
-  margin-top:10px;
-  font-size:13px;
+.notice {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 10px;
+  background: #f8fafc;
 }
-
-
+/* row layout */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+}
 
 /* MOBILE */
 @media(max-width:768px){
@@ -502,21 +504,35 @@ body{
             line-height:1.6;
         }  
 
-  .demo-timer{
-  margin-top:10px;
-  padding:8px;
-  color:#1e3a8a;
-  border-radius:8px;
-  font-weight:bold;
-  text-align:center;
-  
+  /* ⏳ timer */
+.demo-timer {
+  font-size: 12px;
+  color: #f59e0b;
+  margin-top: 4px;
 }
-  .start-time-btn{background:#eef2ff;color:#1e3a8a;border:none;padding:8px 14px;border-radius:8px;font-weight:600;font-size:13px;cursor:default;}
-/* SEATS LEFT */
-.seats-left{font-size:13px;margin-top:6px;}
- 
-/* HOURS LEFT */
-.hours-left{font-size:13px;color:#0b5394;margin-top:4px;display:none;}
+
+
+ /* start button */
+.start-time-btn {
+  background: #e0e7ff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: #1e3a8a;
+  font-weight: 500;
+}
+/* 🟢 seats left */
+.seats-left {
+  font-size: 12px;
+  color: #16a34a;
+  margin-top: 4px;
+}
+
+/* ⏱ hours */
+.hours-left {
+  font-size: 12px;
+  color: #0b5394;
+}
   
   .live-badge{
   display:none;
@@ -580,14 +596,21 @@ body{
   #enrollPopup {
   pointer-events: auto;
 }
- .seats{
-  font-weight:600;
-  color:#1e3a8a;
+/* 🎯 seats */
+.seats {
+  color: #1e40af;
+  font-size: 13px;
+  font-weight: 500;
 }
 
-.offer{
-  font-weight:bold;
-  color:red;
+/* 🔥 offer badge */
+.offer {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  color: white;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  font-weight: 600;
 }
   .disabled{
   background:gray;
@@ -636,20 +659,20 @@ body{
     width:90%;
   }
 }
-  /* FOOTER */
-.card-footer{
-  display:flex;
-  justify-content:space-between;
-  align-items:center;
-  margin-top:15px;
-  padding-top:10px;
-  border-top:1px solid #eee;
+ 
+/* footer */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
 }
 
-.faculty-link{
-  font-size:13px;
-  color:#0b5394;
-  text-decoration:none;
+/* faculty link */
+.faculty-link {
+  font-size: 13px;
+  text-decoration: none;
+  color: #0b5394;
 }
 
 /* 🔴 LIVE ANIMATION */
@@ -769,16 +792,23 @@ body{
     </div>
    <div id="msg-cbse9" class="course-msg"></div>
     <div class="notice">
-      <p class="seats">🎯 Seats: 30   🔥 First 10 Students – 50% OFF</p>
-    </div>
-    <p class="seats-left" id="seats-cbse9"></p>
-    <p class="hours-left" id="hours-cbse9"></p>
-    <div class="demo-timer" id="timer-cbse9"></div>
-   
-    <div class="card-footer">
-      <button class="start-time-btn">Starts at 7:00 PM</button>
-      <a href="/teacher-login?class=cbse9" class="faculty-link">🔐 Faculty Login</a>
-    </div>
+      <div class="notice">
+
+  <div class="info-row">
+    <span class="seats">🎯 Seats: 30</span>
+    <span class="offer">🔥 First 10 Students – 50% OFF</span>
+  </div>
+
+  <p class="seats-left" id="seats-cbse9"></p>
+  <p class="hours-left" id="hours-cbse9"></p>
+  <div class="demo-timer" id="timer-cbse9"></div>
+
+</div>
+
+<div class="card-footer">
+  <button class="start-time-btn">Starts at 7:00 PM</button>
+  <a href="/teacher-login?class=cbse9" class="faculty-link">🔐 Faculty Login</a>
+</div>
   </div>
 
  <!-- ========== CBSE 10 ========== -->
