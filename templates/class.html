@@ -187,12 +187,16 @@ body{
 /* SECTION */
 .section{padding:50px 20px;}
   
-.container{
+ .container{
   width: 90%;
   margin: auto;
-  display: grid;
-  gap: 25px;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+
+  display: flex;
+  gap: 30px;
+  justify-content: center;
+  padding: 40px;
+  align-items: stretch;
+  flex-wrap: wrap;   /* 🔥 change here */
 }
 
 /* CARD */
