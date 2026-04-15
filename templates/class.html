@@ -673,13 +673,37 @@ body{
   .search-box{width:100%;}
 }
 
-  .course-msg {
-      color: #dc2626;
-      font-size: 13px;
-      margin-top: 6px;
-      font-weight: 500;
-      align-items:center;
-    }
+ .course-msg {
+  margin-top: 8px;
+  padding: 6px 10px;
+  border-radius: 8px;
+  align-items:center;
+
+  font-size: 13px;
+  font-weight: 500;
+
+  color: #0b5394;
+
+  background: linear-gradient(135deg, #e3f2fd, #bbdefb);
+  border-left: 4px solid #0b5394;
+
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+}
+  .course-msg:hover {
+  transform: scale(1.02);
+  transition: 0.2s;
+}
+  .course-msg.success {
+  background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+  color: #2e7d32;
+  border-left: 4px solid #2e7d32;
+}
+
+.course-msg.warning {
+  background: linear-gradient(135deg, #fff3e0, #ffe0b2);
+  color: #e65100;
+  border-left: 4px solid #e65100;
+}
 
   </style>
 
