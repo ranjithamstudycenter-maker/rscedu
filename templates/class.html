@@ -1326,7 +1326,6 @@ function updateUI(course) {
    ENROLL
 ====================================== */
 function enroll(course) {
-  iffunction enroll(course) {
 
   if (!studentStatus || !studentStatus.logged_in) {
     showMessage("⚠️ Please login first");
@@ -1345,34 +1344,34 @@ function enroll(course) {
   }
 
   selectedCourse = course;
-  openEnrollPopup(course); // 💳 DIRECT
-}
- 
 
-  // Calculate price with discount
-  const base    = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
+  // 💳 OPEN POPUP
+  openEnrollPopup(course);
+
+  // 🔥 PRICE CALCULATION
+  const base = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
   const eligible = (studentStatus.discounts || {})[course];
-  const final   = eligible ? Math.floor(base * 0.5) : base;
+  const final = eligible ? Math.floor(base * 0.5) : base;
 
-  document.getElementById("courseTitle").textContent = course.toUpperCase() + " – Monthly Plan";
-  if (eligible) {
-    document.getElementById("coursePrice").innerHTML =
-      "<span style='text-decoration:line-through;color:#999;font-size:14px;'>₹" + base + "</span> " +
-      "<span style='color:#dc2626;font-size:20px;font-weight:bold;'>₹" + final + "</span> " +
-      "<span style='background:#dc2626;color:white;padding:2px 8px;border-radius:12px;font-size:12px;'>50% OFF</span><br>" +
-      "<small style='color:#666;'>(" + CLASSES_PER_MONTH + " classes/month)</small>";
-  } else {
-    document.getElementById("coursePrice").innerHTML =
-      "<span style='font-size:20px;'>₹" + final + "</span><br>" +
-      "<small style='color:#666;'>(" + CLASSES_PER_MONTH + " classes/month)</small>";
-  }
+  document.getElementById("courseTitle").textContent =
+    course.toUpperCase() + " – Monthly Plan";
+
+  document.getElementById("coursePrice").innerHTML = eligible
+    ? `<span style="text-decoration:line-through;color:#999;">₹${base}</span>
+       <span style="color:#dc2626;font-size:20px;font-weight:bold;">₹${final}</span>
+       <span style="background:#dc2626;color:white;padding:2px 8px;border-radius:12px;">50% OFF</span>`
+    : `₹${final}`;
+
   document.getElementById("studentName").value = studentStatus.name || "";
-  document.getElementById("enrollPopup").style.display = "flex";
 }
-
  
 function closeEnroll() {
   document.getElementById("enrollPopup").style.display = "none";
+}
+
+// 🔥 இதுக்கு கீழே paste பண்ணு
+function closePopup(){ 
+  document.getElementById("demoPopup").style.display = "none";
 }
  
 /* ======================================
@@ -1442,40 +1441,36 @@ async function joinClass(course) {
     return;
   }
 
-  // 🔥 MAIN CONDITION
-  if (!(studentStatus.demo_done || {})[course] || !(studentStatus.enrolled || {})[course]) {
+  if (!(studentStatus.demo_done || {})[course] ||
+      !(studentStatus.enrolled || {})[course]) {
     showMessage("⚠️ Attend Demo & Enroll first");
     return;
   }
 
-  // ✅ FINAL
-  const res  = await fetch("/api/join-class?course=" + course);
-  const data = await res.json();
+  try {
+    const res  = await fetch("/api/join-class?course=" + course);
+    const data = await res.json();
 
-  if (data.error) {
-    showMessage("❌ " + data.error);
-    return;
-  }
+    if (data.error) {
+      showMessage("❌ " + data.error);
+      return;
+    }
 
-  window.open(data.meet_link, "_blank");
-}
- 
+    window.open(data.meet_link, "_blank");
+
+    // 🔥 UI UPDATE INSIDE FUNCTION
     const joinBtn = document.getElementById("joinBtn-" + course);
     if (joinBtn) {
       joinBtn.textContent = "Joined ✓";
-      setTimeout(async () => {
+      setTimeout(() => {
         joinBtn.textContent = "Join Now";
-        await refreshStatus();
       }, 3600000);
     }
-    const liveBadge = document.getElementById("live-" + course);
-    if (liveBadge) liveBadge.style.display = "inline-block";
- 
-    showMessage("✅ Joined! " + data.hours_remaining + " classes remaining.");
-    showLivePopup(course);
+
+    showMessage("✅ Joined Successfully");
+
   } catch(e) {
     showMessage("❌ Error joining. Try again.");
-    
   }
 }
  function showPhonePopup(course, type){
