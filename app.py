@@ -1014,7 +1014,7 @@ def logout():
     session.clear()
     return redirect("/")
 
-@app.route("/privacy-policy")
+@app.route("/privacy")
 def privacy():
     return render_template("privacy.html")
 
