@@ -31,6 +31,16 @@ def init_db():
     )
     """)
 
+     # 🔥 ADD THIS NEW TABLE
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS class_links (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        course TEXT,
+        meet_link TEXT,
+        updated_at TEXT
+    )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -58,14 +68,14 @@ teachers = {
     "Balakumar": {
         "password": "M10@2026",
         "course": "cbse10",
-        "meet_link": "https://meet.google.com/sus-iead-rhq",
-        "active": True
+        "meet_link": "",
+        "active": False
     },
     "faculty2": {
         "password": "Faculty2@2026",
         "course": "cbse12",
-        "meet_link": "https://meet.google.com/sus-iead-rhq",
-        "active": True
+        "meet_link": "",
+        "active": False
     }
 }
 
@@ -528,10 +538,40 @@ def teacher_login():
                 error = "Your account is disabled"
             else:
                 session["teacher"] = username
+                session["course"] = teachers[username]["course"]
                 return redirect("/teacher-dashboard")
         else:
             error = "Invalid username or password"
-    return render_template("teacher_login.html", error=error)
+    return render_template("teacher_login.html", error="Invalid login")
+
+ return render_template("teacher_login.html")
+
+@app.route("/start-class", methods=["POST"])
+def start_class():
+    data = request.get_json()
+    link = data.get("meetLink")
+
+    username = session.get("teacher")
+
+    if not username or username not in teachers:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    teachers[username]["meet_link"] = link
+    teachers[username]["active"] = True
+
+    return jsonify({"status": "Class started"})
+
+@app.route("/end-class", methods=["POST"])
+def end_class():
+    username = session.get("teacher")
+
+    if not username or username not in teachers:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    teachers[username]["active"] = False
+    teachers[username]["meet_link"] = ""
+
+    return jsonify({"status": "Class ended"})
 
 
 @app.route("/teacher-dashboard")
