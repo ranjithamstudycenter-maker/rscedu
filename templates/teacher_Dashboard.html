@@ -73,7 +73,34 @@ body{
 </head>
 
 <body>
+<input type="text" id="meetLink" placeholder="Paste Google Meet Link">
 
+<button onclick="startClass()">▶ Start Class</button>
+<button onclick="endClass()" style="background:red;">⛔ End Class</button>
+
+<script>
+function startClass() {
+  const link = document.getElementById("meetLink").value;
+
+  fetch("/start-class", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ meetLink: link })
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert("✅ Class Started");
+  });
+}
+
+function endClass() {
+  fetch("/end-class", { method: "POST" })
+  .then(res => res.json())
+  .then(data => {
+    alert("⛔ Class Ended");
+  });
+}
+</script>
 <!-- ✅ HEADER WITH LOGO -->
 <div class="header">
   <img src="{{ url_for('static', filename='images/logo.jpg') }}">
@@ -166,6 +193,25 @@ new Chart(document.getElementById("chart"), {
 // CLASS
 function startClass(){
   window.open("{{ meet_link }}", "_blank");
+}
+</script>
+  <script>
+function startClass() {
+  const link = document.getElementById("meetLink").value;
+
+  fetch("/start-class", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({ meetLink: link })
+  })
+  .then(res => res.json())
+  .then(data => alert("✅ Class Started"));
+}
+
+function endClass() {
+  fetch("/end-class", { method: "POST" })
+  .then(res => res.json())
+  .then(data => alert("⛔ Class Ended"));
 }
 </script>
 
