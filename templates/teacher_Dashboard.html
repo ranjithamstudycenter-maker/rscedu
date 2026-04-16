@@ -189,7 +189,10 @@ new Chart(document.getElementById("chart"), {
     }]
   }
 });
+<input type="text" id="meetLink" placeholder="Paste Google Meet Link">
 
+<button onclick="startClass()">Start Class</button>
+<button onclick="endClass()" style="background:red;">End Class</button>
 // CLASS
 function startClass(){
   window.open("{{ meet_link }}", "_blank");
