@@ -447,10 +447,16 @@ def join_class_api():
     if not phone:
         return jsonify({"error": "Not logged in"}), 401
 
-    course = request.args.get("course", "cbse10")
     user = get_user(phone)
 
-    if not user["enrolled"].get(course):
+    # 🔥 find enrolled course automatically
+    course = None
+    for c, status in user["enrolled"].items():
+        if status:
+            course = c
+            break
+
+    if not course:
         return jsonify({"error": "Enroll first"}), 403
 
     hours_used = user["hours_used"].get(course, 0)
@@ -460,6 +466,17 @@ def join_class_api():
         # Auto-deactivate: mark as not enrolled
         user["enrolled"][course] = False
         return jsonify({"error": "Plan completed. Please re-enroll."}), 403
+
+     # 🔥 find active teacher class
+    meet_link = None
+
+    for t in teachers.values():
+        if t["course"] == course and t["active"]:
+            meet_link = t["meet_link"]
+            break
+
+    if not meet_link:
+        return jsonify({"error": "Class not started yet"}), 404
 
     # Increment class count
     user["hours_used"][course] = hours_used + 1
@@ -484,12 +501,10 @@ def join_class_api():
 
     return jsonify({
         "status": "ok",
-        "meet_link": CLASS_MEET_LINK,
+        "meet_link": meet_link,   # ✅ correct,
         "hours_used": user["hours_used"][course],
         "hours_remaining": max_hours - user["hours_used"][course]
     })
-
-
 
 # -------------------- STUDENT STATUS --------------------
 
