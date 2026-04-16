@@ -87,8 +87,19 @@ button{
     <input name="password" type="password" placeholder="Password" required>
     <button>Login</button>
   </form>
-
+<input type="text" id="meetLink" placeholder="Paste Google Meet Link">
+<button onclick="saveClass()">Save Class</button>
 </div>
+  <script>function saveClass() {
+  const link = document.getElementById("meetLink").value;
+
+  fetch("/save-class", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify({ meetLink: link })
+  });
+}
+  </script>
 
 </body>
 </html>
