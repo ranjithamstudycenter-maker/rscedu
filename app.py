@@ -1014,6 +1014,14 @@ def logout():
     session.clear()
     return redirect("/")
 
+@app.route("/privacy-policy")
+def privacy():
+    return render_template("privacy.html")
+
+@app.route("/terms")
+def terms():
+    return render_template("terms.html")
+
 
 @app.route("/sitemap.xml")
 def sitemap():
