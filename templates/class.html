@@ -190,30 +190,39 @@ body{
  
 /* CONTAINER */
 .container{
-  width: auto;        /* 🔥 FULL WIDTH */
+  width: 100%;
   padding: 30px;
 
   display: grid;
   gap: 30px;
+
+  grid-template-columns: repeat(4, 1fr);
+
+ 
   justify-content: start;   /* 🔥 ADD THIS */
   align-items:stretch;
-  grid-template-columns: repeat(autofit, minmax(260px, 1fr));
+ 
 
 }
   
 /* CARD */
 
 .card{
-  width: 100%;   /* 🔥 IMPORTANT */
-  padding: 30px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 
-  display:flex;
-  flex-direction:column;
-  justify-content:space-between;
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
 
-  background:white;
-  border-radius:18px;
-  box-shadow:0 10px 30px rgba(0,0,0,0.08);
+  height: 100%;   /* 🔥 முக்கியம் */
+  min-height: 420px;  /* 🔥 equal size */
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+ 
 }
   .card:hover{
   transform:translateY(-5px);
