@@ -257,7 +257,25 @@ function resetDemo(phone){
         });
     }
 }
+<button onclick="joinClass()">Join Now</button>
 
+<script>
+function joinClass() {
+  fetch("/api/join-class?course=cbse10")
+  .then(res => res.json())
+  .then(data => {
+
+    if(data.error){
+      alert(data.error);
+      return;
+    }
+
+    // 🔥 direct open
+    window.location.href = data.meet_link;
+
+  });
+}
+</script>
 </script>
 
 </body>
