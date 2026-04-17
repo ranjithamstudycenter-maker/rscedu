@@ -41,11 +41,21 @@ button{
   border-radius:8px;
   cursor:pointer;
 }
+  
+button:hover{
+  transform:scale(1.03);
+}
+
 
 .error{
   color:red;
 }
- 
+ /* Logo */
+.logo{
+  width:100px;
+  margin-bottom:15px;
+}
+
 .logo-box {
     text-align: center;
     margin-bottom: 25px;
@@ -58,23 +68,11 @@ button{
 </head>
 
 <body>
-<div style="text-align:center; margin-bottom:20px;">
-    <img src="/static/images/logo.jpg" alt="Logo" width="120">
-</div>
-  
-
-<style>
-.logo-box {
-    text-align: center;
-    margin-bottom: 25px;
-}
-.logo-box img {
-    width: 120px;
-}
-</style>
-
 <div class="box">
-  <h2 style="text-align:center;">Faculty Login</h2>
+
+  <img src="/static/images/logo.jpg" class="logo">
+
+  <h2>Faculty Login</h2>
 
   {% if error %}
     <p class="error">{{ error }}</p>
@@ -85,19 +83,9 @@ button{
     <input name="password" type="password" placeholder="Password" required>
     <button>Login</button>
   </form>
-<input type="text" id="meetLink" placeholder="Paste Google Meet Link">
-<button onclick="saveClass()">Save Class</button>
+
 </div>
-  <script>function saveClass() {
-  const link = document.getElementById("meetLink").value;
 
-  fetch("/save-class", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify({ meetLink: link })
-  });
-}
-  </script>
-
+ 
 </body>
 </html>
