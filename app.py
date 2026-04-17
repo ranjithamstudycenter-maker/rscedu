@@ -557,9 +557,9 @@ def teacher_login():
                 return redirect("/teacher-dashboard")
         else:
             error = "Invalid username or password"
-    return render_template("teacher_login.html", error="Invalid login")
+    return render_template("teacher_login.html", error=error)
 
- return render_template("teacher_login.html")
+ 
 
 @app.route("/start-class", methods=["POST"])
 def start_class():
