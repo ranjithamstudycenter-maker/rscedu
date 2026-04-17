@@ -171,12 +171,19 @@ function rate(n){
   });
 }
 
-// 🔥 START CLASS
-function startClass() {
-  const link = document.getElementById("meetLink").value;
 
+function startClass() {
+  const link = document.getElementById("meetLink").value.trim();
+
+  // ✅ validation
   if(!link){
-    alert("Enter Meet Link");
+    alert("⚠️ Please enter Google Meet link");
+    return;
+  }
+
+  // ✅ optional: basic link check
+  if(!link.includes("meet.google.com")){
+    alert("❌ Invalid Google Meet link");
     return;
   }
 
@@ -187,10 +194,27 @@ function startClass() {
   })
   .then(res => res.json())
   .then(data => {
+
+    if(data.error){
+      alert(data.error);
+      return;
+    }
+
+    // ✅ UI update
     document.getElementById("statusText").innerHTML = "🟢 Class Live";
     document.getElementById("statusText").className = "status live";
+
+    // ✅ clear input (optional)
+    document.getElementById("meetLink").value = "";
+
+    alert("✅ Class Started Successfully");
+  })
+  .catch(err => {
+    alert("⚠️ Server error");
+    console.error(err);
   });
 }
+
 
 // 🔴 END CLASS
 function endClass() {
