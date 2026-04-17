@@ -87,10 +87,6 @@ seat_data = {
     "cbse9":  {"total": 30, "booked": 0},
 }
 
-# Single Google Meet link for demo and live class
-CLASS_MEET_LINK = "https://meet.google.com/sus-iead-rhq"
-DEMO_MEET_LINK  = "https://meet.google.com/sus-iead-rhq"  # same link per requirement
-
 # Admin phone for testing (demo always available)
 ADMIN_PHONE = os.environ.get("ADMIN_PHONE", "7702616245")
 
@@ -187,6 +183,7 @@ def send_otp():
     except Exception as e:
         print("ERROR:", str(e))
         return jsonify({"status": "error", "message": "SMS failed"})
+        
 @app.route("/verify-otp", methods=["POST"])
 def verify_otp():
     data = request.json
@@ -226,10 +223,10 @@ def check_demo():
 
     # Admin always gets demo
     if is_admin_phone(phone):
-        return jsonify({"demo_done": False, "admin": True, "meet_link": DEMO_MEET_LINK})
+        return jsonify({"demo_done": False, "admin": True, "meet_link":meet_link})
 
     demo_done = user["demo_done"].get(course, False)
-    return jsonify({"demo_done": demo_done, "meet_link": DEMO_MEET_LINK})
+    return jsonify({"demo_done": demo_done, "meet_link":meet_link})
 
 
 @app.route("/api/demo-complete", methods=["POST"])
@@ -296,7 +293,7 @@ def enroll_info():
         "course": course,
         "monthly_amount": monthly,
         "classes_per_month": classes_per_month,
-        "meet_link": CLASS_MEET_LINK
+        "meet_link": meet_link
     })
 
 
@@ -544,7 +541,7 @@ def student_status():
         "hours_used": user["hours_used"],
         "max_hours": user["max_hours"],
         "available_seats": seats,
-        "meet_link": CLASS_MEET_LINK,
+        "meet_link": meet_link,
         "is_admin": False,          # Never expose admin flag to students
         "discounts": discounts      # {course: True/False} — True means 50% off
     })
