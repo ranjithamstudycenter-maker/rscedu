@@ -12,12 +12,36 @@ body {
     padding: 20px;
 }
 
+    /* Header */
+.header {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:20px;
+}
+
+
 /* Title */
 h2 {
     text-align: center;
     margin-bottom: 25px;
     color: #0b5394;
 }
+/* Join Button */
+.join-btn {
+    padding:10px 20px;
+    border:none;
+    border-radius:8px;
+    background:linear-gradient(45deg,#28a745,#5cd67c);
+    color:white;
+    font-weight:bold;
+    cursor:pointer;
+}
+
+.join-btn:hover {
+    transform:scale(1.05);
+}
+
 
 /* Cards */
 .card {
@@ -113,7 +137,11 @@ button:hover {
 
 <body>
 
-<h2>👨‍🎓 Students Dashboard</h2>
+<div class="header">
+    <h2>👨‍🎓 Students Dashboard</h2>
+    <button class="join-btn" onclick="joinClass()">🚀 Join Class</button>
+</div>
+
 
 <div class="card">
     <div style="text-align:center; margin-bottom:15px;">
@@ -261,7 +289,7 @@ function resetDemo(phone){
 
 <script>
 function joinClass() {
-  fetch("/api/join-class?course=cbse10")
+  fetch("/api/join-class")
   .then(res => res.json())
   .then(data => {
 
