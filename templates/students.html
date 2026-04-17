@@ -181,27 +181,12 @@ button:hover {
 </table>
 </div>
 
-<!-- Feedback Form -->
-<div class="card">
-  <h3>Give Feedback</h3>
-
-  <select id="rating">
-    <option value="5">⭐⭐⭐⭐⭐</option>
-    <option value="4">⭐⭐⭐⭐</option>
-    <option value="3">⭐⭐⭐</option>
-    <option value="2">⭐⭐</option>
-    <option value="1">⭐</option>
-  </select>
-
-  <input type="text" id="comment" placeholder="Your feedback">
-
-  <button onclick="submitFeedback()">Submit</button>
-</div>
-
-<!-- 🔥 PASTE HERE -->
-
 <script>
 function submitFeedback(){
+
+    const rating = document.getElementById(`rating_${course}`).value;
+  const comment = document.getElementById(`comment_${course}`).value;
+
 
  // 🔥 get saved course
   const course = localStorage.getItem("course");
@@ -223,10 +208,10 @@ function submitFeedback(){
       method:"POST",
       headers:{"Content-Type":"application/json"},
       body: JSON.stringify({
-        teacher: teacher,
+        teacher: data.teacher,
         course: course,
-        rating: document.getElementById("rating").value,
-        comment: document.getElementById("comment").value
+        rating: rating,
+        comment: comment
       })
     })
     .then(res=>res.json())
@@ -242,7 +227,7 @@ function submitFeedback(){
 
 }
 </script>
-</script>
+
 
 <script>
 
@@ -353,6 +338,12 @@ function joinClass(course) {
       alert(data.error);
       return;
     }
+      
+    // 🔥 save course
+    localStorage.setItem("course", course);
+
+    // 🔥 show feedback section
+    document.getElementById(`feedback_${course}`).style.display = "block";
 
     window.location.href = data.meet_link;
 
