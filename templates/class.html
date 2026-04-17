@@ -192,6 +192,7 @@ body{
 .container{
   width: 100%;
   padding: 30px;
+ margin: auto;
 
   display: grid;
   gap: 30px;
@@ -325,7 +326,7 @@ body{
 /* GRID */
 .grid{
   display:grid;
-  grid-template-columns:repeat(4,1fr);
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
   max-width:1200px;margin:0 auto;
   gap:20px;
 }
