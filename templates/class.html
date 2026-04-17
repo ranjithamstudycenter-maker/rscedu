@@ -828,6 +828,24 @@ body{
            <button id="joinBtn-cbse9" class="btn btn-join" onclick="joinClass('cbse9')">Join Now</button>
          
     </div>
+            <!-- 🔥 FEEDBACK (hidden initially) -->
+           <div id="feedback_cbse9" style="display:none; margin-top:15px;">
+         
+             <h4>Give Feedback</h4>
+         
+             <select id="rating_cbse10">
+               <option value="5">⭐⭐⭐⭐⭐</option>
+               <option value="4">⭐⭐⭐⭐</option>
+               <option value="3">⭐⭐⭐</option>
+               <option value="2">⭐⭐</option>
+               <option value="1">⭐</option>
+             </select>
+         
+             <input type="text" id="comment_cbse9" placeholder="Your feedback">
+         
+             <button onclick="submitFeedback('cbse9')">Submit</button>
+         
+           </div>
    <div id="msg-cbse9" class="course-msg"></div>
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
