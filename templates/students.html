@@ -181,6 +181,44 @@ button:hover {
 </table>
 </div>
 
+<!-- Feedback Form -->
+<div class="card">
+  <h3>Give Feedback</h3>
+
+  <select id="rating">
+    <option value="5">⭐⭐⭐⭐⭐</option>
+    <option value="4">⭐⭐⭐⭐</option>
+    <option value="3">⭐⭐⭐</option>
+    <option value="2">⭐⭐</option>
+    <option value="1">⭐</option>
+  </select>
+
+  <input type="text" id="comment" placeholder="Your feedback">
+
+  <button onclick="submitFeedback()">Submit</button>
+</div>
+
+<!-- 🔥 PASTE HERE -->
+<script>
+function submitFeedback(){
+
+  fetch("/submit_feedback", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({
+      teacher: "{{ teacher_name }}",
+      course: "{{ course }}",
+      rating: document.getElementById("rating").value,
+      comment: document.getElementById("comment").value
+    })
+  })
+  .then(res=>res.json())
+  .then(()=>{
+    alert("✅ Feedback Submitted");
+  });
+}
+</script>
+
 <script>
 
 const ADMIN_PHONE = "7702616245";
