@@ -199,24 +199,44 @@ button:hover {
 </div>
 
 <!-- 🔥 PASTE HERE -->
+
 <script>
 function submitFeedback(){
 
-  fetch("/submit_feedback", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({
-      teacher: "{{ teacher_name }}",
-      course: "{{ course }}",
-      rating: document.getElementById("rating").value,
-      comment: document.getElementById("comment").value
+  // 🔥 course define (temporary or dynamic)
+  const course = "cbse10";   // later dynamic panna solren
+
+  // 🔥 get teacher automatically
+  fetch(`/get-teacher?course=${course}`)
+  .then(res => res.json())
+  .then(data => {
+
+    const teacher = data.teacher;
+
+    // 🔥 send feedback
+    fetch("/submit_feedback", {
+      method:"POST",
+      headers:{"Content-Type":"application/json"},
+      body: JSON.stringify({
+        teacher: teacher,
+        course: course,
+        rating: document.getElementById("rating").value,
+        comment: document.getElementById("comment").value
+      })
     })
+    .then(res=>res.json())
+    .then(()=>{
+      alert("✅ Feedback Submitted");
+    });
+
   })
-  .then(res=>res.json())
-  .then(()=>{
-    alert("✅ Feedback Submitted");
+  .catch(err => {
+    console.error(err);
+    alert("⚠️ Error submitting feedback");
   });
+
 }
+</script>
 </script>
 
 <script>
