@@ -768,7 +768,35 @@ body{
 
   display: inline-block;
 }
+.coming-wrapper{
+  position: relative;
+  opacity: 0.8;
+}
 
+/* disable buttons look */
+.coming-wrapper .btn{
+  pointer-events: none;
+  filter: grayscale(0.4);
+}
+
+/* overlay */
+.coming-overlay{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  color: white;
+
+  padding: 8px 18px;
+  border-radius: 20px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
 
   </style>
 
@@ -1013,26 +1041,17 @@ body{
       <p class="duration">12 Hours / Month</p>
     </div>
     <p class="days">📅 Tue • Thur • Sat</p>
-    <div class="actions">
-       <!-- FREE DEMO -->
-          {% if demo_done %}
-           <button class="btn btn-demo-done">Demo Completed</button>
-         {% else %}
-          <button class="btn btn-demo" onclick="openDemoPopup('engg1')">  Free Demo </button>
-         {% endif %}
-             
-       
-          <!-- ENROLL -->
-          {% if registered %}
-            <button class="btn btn-registered">Registered</button>
-          {% else %}
-            <button class="btn btn-enroll" onclick="enroll('engg1')">Enroll</button>
-          {% endif %}
-        
-          <!-- JOIN -->
-           <button id="joinBtn-engg1" class="btn btn-join" onclick="joinClass('engg1')">Join Now</button>
-         
-    </div>
+    <div class="actions coming-wrapper">
+
+  <!-- BUTTONS (same UI, but disabled) -->
+  <button class="btn btn-demo" disabled>Free Demo</button>
+  <button class="btn btn-enroll" disabled>Enroll</button>
+  <button class="btn btn-join" disabled>Join Now</button>
+
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
    <div id="msg-engg1" class="course-msg"></div>
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
@@ -1055,26 +1074,17 @@ body{
       <p class="duration">12 Hours / Month</p>
     </div>
     <p class="days">📅 Tue • Thur • Sat</p>
-    <div class="actions">
-       <!-- FREE DEMO -->
-          {% if demo_done %}
-           <button class="btn btn-demo-done">Demo Completed</button>
-         {% else %}
-          <button class="btn btn-demo" onclick="openDemoPopup('engg2')">  Free Demo </button>
-         {% endif %}
-             
-       
-          <!-- ENROLL -->
-          {% if registered %}
-            <button class="btn btn-registered">Registered</button>
-          {% else %}
-            <button class="btn btn-enroll" onclick="enroll('engg2')">Enroll</button>
-          {% endif %}
-        
-          <!-- JOIN -->
-           <button id="joinBtn-engg2" class="btn btn-join" onclick="joinClass('engg2')">Join Now</button>
-         
-    </div>
+   <div class="actions coming-wrapper">
+
+  <!-- BUTTONS (same UI, but disabled) -->
+  <button class="btn btn-demo" disabled>Free Demo</button>
+  <button class="btn btn-enroll" disabled>Enroll</button>
+  <button class="btn btn-join" disabled>Join Now</button>
+
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
    <div id="msg-engg2" class="course-msg"></div>
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
@@ -1097,26 +1107,17 @@ body{
       <p class="duration">12 Hours / Month</p>
     </div>
     <p class="days">📅 Tue • Thur • Sat</p>
-    <div class="actions">
-       <!-- FREE DEMO -->
-          {% if demo_done %}
-           <button class="btn btn-demo-done">Demo Completed</button>
-         {% else %}
-          <button class="btn btn-demo" onclick="openDemoPopup('engg3')">  Free Demo </button>
-         {% endif %}
-             
-       
-          <!-- ENROLL -->
-          {% if registered %}
-            <button class="btn btn-registered">Registered</button>
-          {% else %}
-            <button class="btn btn-enroll" onclick="enroll('engg3')">Enroll</button>
-          {% endif %}
-        
-          <!-- JOIN -->
-           <button id="joinBtn-engg3" class="btn btn-join" onclick="joinClass('engg3')">Join Now</button>
-         
-    </div>
+    <div class="actions coming-wrapper">
+
+  <!-- BUTTONS (same UI, but disabled) -->
+  <button class="btn btn-demo" disabled>Free Demo</button>
+  <button class="btn btn-enroll" disabled>Enroll</button>
+  <button class="btn btn-join" disabled>Join Now</button>
+
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
    <div id="msg-engg3" class="course-msg"></div>
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
@@ -1139,26 +1140,17 @@ body{
       <p class="duration">12 Hours / Month</p>
     </div>
     <p class="days">📅 Tue • Thur • Sat</p>
-    <div class="actions">
-       <!-- FREE DEMO -->
-          {% if demo_done %}
-           <button class="btn btn-demo-done">Demo Completed</button>
-         {% else %}
-          <button class="btn btn-demo" onclick="openDemoPopup('control')">  Free Demo </button>
-         {% endif %}
-             
-       
-          <!-- ENROLL -->
-          {% if registered %}
-            <button class="btn btn-registered">Registered</button>
-          {% else %}
-            <button class="btn btn-enroll" onclick="enroll('control')">Enroll</button>
-          {% endif %}
-        
-          <!-- JOIN -->
-           <button id="joinBtn-control" class="btn btn-join" onclick="joinClass('control')">Join Now</button>
-         
-    </div>
+    <div class="actions coming-wrapper">
+
+  <!-- BUTTONS (same UI, but disabled) -->
+  <button class="btn btn-demo" disabled>Free Demo</button>
+  <button class="btn btn-enroll" disabled>Enroll</button>
+  <button class="btn btn-join" disabled>Join Now</button>
+
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
    <div id="msg-control" class="course-msg"></div>
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
@@ -1182,26 +1174,17 @@ body{
       <p class="duration">12 Hours / Month</p>
     </div>
     <p class="days">📅 Tue • Thur • Sat</p>
-    <div class="actions">
-       <!-- FREE DEMO -->
-          {% if demo_done %}
-           <button class="btn btn-demo-done">Demo Completed</button>
-         {% else %}
-          <button class="btn btn-demo" onclick="openDemoPopup('AGS')">  Free Demo </button>
-         {% endif %}
-             
-       
-          <!-- ENROLL -->
-          {% if registered %}
-            <button class="btn btn-registered">Registered</button>
-          {% else %}
-            <button class="btn btn-enroll" onclick="enroll('AGS')">Enroll</button>
-          {% endif %}
-        
-          <!-- JOIN -->
-           <button id="joinBtn-AGS" class="btn btn-join" onclick="joinClass('AGS')">Join Now</button>
-         
-    </div>
+    <div class="actions coming-wrapper">
+
+  <!-- BUTTONS (same UI, but disabled) -->
+  <button class="btn btn-demo" disabled>Free Demo</button>
+  <button class="btn btn-enroll" disabled>Enroll</button>
+  <button class="btn btn-join" disabled>Join Now</button>
+
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
    <div id="msg-AGS" class="course-msg"></div>
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
@@ -1225,26 +1208,17 @@ body{
       <p class="duration">12 Hours / Month</p>
     </div>
     <p class="days">📅 Tue • Thur • Sat</p>
-    <div class="actions">
-       <!-- FREE DEMO -->
-          {% if demo_done %}
-           <button class="btn btn-demo-done">Demo Completed</button>
-         {% else %}
-          <button class="btn btn-demo" onclick="openDemoPopup('maths')">  Free Demo </button>
-         {% endif %}
-             
-       
-          <!-- ENROLL -->
-          {% if registered %}
-            <button class="btn btn-registered">Registered</button>
-          {% else %}
-            <button class="btn btn-enroll" onclick="enroll('maths')">Enroll</button>
-          {% endif %}
-        
-          <!-- JOIN -->
-           <button id="joinBtn-cbse9" class="btn btn-join" onclick="joinClass('maths')">Join Now</button>
-         
-    </div>
+    <div class="actions coming-wrapper">
+
+  <!-- BUTTONS (same UI, but disabled) -->
+  <button class="btn btn-demo" disabled>Free Demo</button>
+  <button class="btn btn-enroll" disabled>Enroll</button>
+  <button class="btn btn-join" disabled>Join Now</button>
+
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
    <div id="msg-maths" class="course-msg"></div>
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
