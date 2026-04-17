@@ -588,7 +588,16 @@ def end_class():
 
     return jsonify({"status": "Class ended"})
 
+@app.route("/get-teacher")
+def get_teacher():
+    course = request.args.get("course")
 
+    for name, t in teachers.items():
+        if t["course"] == course:
+            return jsonify({"teacher": name})
+
+    return jsonify({"teacher": None})
+    
 @app.route("/teacher-dashboard")
 def teacher_dashboard():
     if "teacher" not in session:
