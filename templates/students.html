@@ -203,8 +203,13 @@ button:hover {
 <script>
 function submitFeedback(){
 
-  // 🔥 course define (temporary or dynamic)
-  const course = "cbse10";   // later dynamic panna solren
+ // 🔥 get saved course
+  const course = localStorage.getItem("course");
+
+  if(!course){
+    alert("⚠️ Join class first");
+    return;
+  }
 
   // 🔥 get teacher automatically
   fetch(`/get-teacher?course=${course}`)
