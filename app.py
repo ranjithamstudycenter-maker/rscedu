@@ -456,16 +456,28 @@ def join_class_api():
             course = c
             break
 
-    if not course:
-        return jsonify({"error": "Enroll first"}), 403
+    # 🔥 DEMO LOGIC
+    if not user["enrolled"].get(course):
 
-    hours_used = user["hours_used"].get(course, 0)
-    max_hours  = user["max_hours"].get(course, classes_per_month)
+        # demo already attended?
+        if user.get("demo_done", {}).get(course):
+            return jsonify({"error": "Demo already used. Please enroll."}), 403
+
+        # mark demo used
+        user.setdefault("demo_done", {})[course] = True
+
+    else:
+        # 🔥 PAID USER LOGIC
+        hours_used = user["hours_used"].get(course, 0)
+        max_hours  = user["max_hours"].get(course, classes_per_month)
 
     if hours_used >= max_hours:
         # Auto-deactivate: mark as not enrolled
         user["enrolled"][course] = False
         return jsonify({"error": "Plan completed. Please re-enroll."}), 403
+
+     # Increment class count
+    user["hours_used"][course] = hours_used + 1
 
      # 🔥 find active teacher class
     meet_link = None
@@ -477,9 +489,6 @@ def join_class_api():
 
     if not meet_link:
         return jsonify({"error": "Class not started yet"}), 404
-
-    # Increment class count
-    user["hours_used"][course] = hours_used + 1
 
     # AFTER increment
     conn = sqlite3.connect("students.db")
