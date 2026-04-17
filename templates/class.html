@@ -234,7 +234,23 @@ body{
   color:#1e3a8a;
   margin-bottom:10px;
 }
+@media(max-width:1200px){
+  .grid{
+    grid-template-columns: repeat(3, 1fr);
+  }
+}
 
+@media(max-width:900px){
+  .grid{
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media(max-width:500px){
+  .grid{
+    grid-template-columns: 1fr;
+  }
+}
 /* FLEX BUTTONS */
 .actions{
   display:flex;
@@ -328,7 +344,8 @@ body{
 .grid{
   display:grid;
   grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  max-width:1200px;margin:0 auto;
+  max-width:500px;
+  margin:0 auto;
   gap:20px;
 }
   /* SEARCH BAR */
