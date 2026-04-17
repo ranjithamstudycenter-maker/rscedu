@@ -69,7 +69,7 @@ teachers = {
         "password": "M10@2026",
         "course": "cbse10",
         "meet_link": "",
-        "active": False
+        "active": True
     },
     "faculty2": {
         "password": "Faculty2@2026",
