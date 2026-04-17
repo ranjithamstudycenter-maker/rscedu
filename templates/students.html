@@ -139,7 +139,6 @@ button:hover {
 
 <div class="header">
     <h2>👨‍🎓 Students Dashboard</h2>
-    <button class="join-btn" onclick="joinClass()">🚀 Join Class</button>
 </div>
 
 
@@ -195,7 +194,6 @@ fetch("/admin/students")
     allStudents = data.students;
     renderTable(allStudents);
 
-    // Seats
     let sTable = document.getElementById("seatsTable");
     sTable.innerHTML = `
     <tr>
@@ -209,6 +207,7 @@ fetch("/admin/students")
 
         let fill = Math.round((d.booked / d.total) * 100);
         let color = fill >= 80 ? "red" : (fill >= 50 ? "orange" : "green");
+
         sTable.innerHTML += `
         <tr>
             <td>${course}</td>
@@ -221,9 +220,8 @@ fetch("/admin/students")
 
 });
 
-// 🔥 RENDER FUNCTION (ONLY ONCE)
+// 🔥 RENDER
 function renderTable(students){
-
     let table = document.getElementById("studentsTableBody");
     table.innerHTML = "";
 
@@ -256,14 +254,12 @@ function renderTable(students){
     });
 }
 
-// 🔥 FILTER FUNCTION
+// 🔥 FILTER
 function filterClass(cls){
-
     if(cls === "all"){
         renderTable(allStudents);
         return;
     }
-
     let filtered = allStudents.filter(s => s.course === cls);
     renderTable(filtered);
 }
@@ -273,23 +269,20 @@ function resetDemo(phone){
     if(confirm("Reset demo for this user?")){
         fetch("/admin/reset-demo", {
             method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
+            headers: {"Content-Type": "application/json"},
             body: JSON.stringify({ phone: phone })
         })
         .then(res => res.json())
-        .then(data => {
+        .then(() => {
             alert("Demo Reset Successful ✅");
             location.reload();
         });
     }
 }
-<button onclick="joinClass()">Join Now</button>
 
-<script>
-function joinClass() {
-  fetch("/api/join-class")
+// 🔥 JOIN CLASS (FINAL)
+function joinClass(course) {
+  fetch(`/api/join-class?course=${course}`)
   .then(res => res.json())
   .then(data => {
 
@@ -298,12 +291,11 @@ function joinClass() {
       return;
     }
 
-    // 🔥 direct open
     window.location.href = data.meet_link;
 
   });
 }
-</script>
+
 </script>
 
 </body>
