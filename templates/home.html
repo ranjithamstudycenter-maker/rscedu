@@ -292,6 +292,33 @@
             background: #083b73;
         }
 
+                .home-text{
+                  text-align: left;
+                }
+                
+                /* First intro */
+                .home-intro{
+                  font-size: 18px;
+                  line-height: 1.8;
+                  margin-bottom: 20px;
+                  color:#333;
+                }
+                
+                /* Highlight word */
+                .highlight{
+                  color:#0b5394;
+                  font-weight:600;
+                }
+                
+               /* Description */
+                .home-desc{
+                  font-size:16px;
+                  line-height:1.7;
+                  color:#555;
+                }
+                
+               
+
         @media(max-width: 768px) {
             .slides img {
                 height: 240px;
@@ -877,18 +904,25 @@
                     <img src="{{ url_for('static', filename='images/welcome to rsc.png') }}" alt="center">
                 </div>
                 <div class="home-text">
-                    <p style="text-align:center; max-width:800px; margin:auto; font-size:17px; line-height:1.8;">
-                        Ranjitham Study Center is a trusted mathematics tuition center
-                        dedicated to helping students from <strong>Class 6 to Class 12</strong>
-                        build strong fundamentals, improve problem-solving skills,
-                        and gain confidence in examinations.
-                    </p>
-                    <p>We focus on building strong fundamentals, improving problem-solving skills, and developing confidence for school and board examinations.</p>
-                    <p>Our teaching approach is concept-oriented, structured, and exam-focused, ensuring every student progresses with clarity and confidence.</p>
-                    <div style="text-align:center; margin-top:30px;">
+
+                     <p class="home-intro">
+                              At <span class="highlight">Ranjitham Study Center</span>, we provide
+                              result-oriented mathematics coaching designed to help students from
+                              <strong>Class 6 to Class 12</strong> build strong fundamentals,
+                              enhance problem-solving skills, and achieve academic excellence with confidence.
+                            </p>
+                            
+                            <p class="home-desc">
+                              Our teaching methodology is <strong>concept-based and exam-focused</strong>,
+                              ensuring every student understands clearly, practices effectively,
+                              and performs confidently in school and board examinations.
+                            </p>
+                    
+                      <div class="home-btn-box">
                         <a href="{{ url_for('about') }}" class="home-btn">Know More About Us</a>
+                      </div>
+                    
                     </div>
-                </div>
             </div>
         </div>
     </section>
