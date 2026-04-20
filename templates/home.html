@@ -788,16 +788,31 @@
 .read-more:hover {
   text-decoration: underline;
 }
-      .privacy-box{
-    margin-top:20px;
-    text-align:left;   /* 🔥 center */
-    font-size:13px;
-    color:#aaa;
-    max-width:600px;
-    margin-left:auto;
-    margin-right:auto;
-    line-height:1.6;
-}  
+      .privacy-section{
+  background: #f1f5f9;   /* light clean bg */
+  padding: 30px 20px;
+  text-align: center;
+}
+
+/* 🔥 HEADING */
+.privacy-section h3{
+  text-align: center;
+  color: #0b5fa5;   /* bright blue */
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* 🔥 PARAGRAPH */
+.privacy-section p{
+  max-width: 800px;
+  margin: auto;
+
+  text-align: justify;   /* 🔥 left → right full align */
+  color: #334155;        /* dark readable */
+
+  font-size: 14px;
+  line-height: 1.6;
+}
 </style>
 </head>
 <body>
@@ -1001,12 +1016,14 @@
            </div>
         </div>
         </footer>
-  <div class="privacy-box">
-  🔒 <strong>Your Privacy Matters</strong><br>
+ <div class="privacy-section">
+  <h3>🔒 <strong>Your Privacy Matters</strong></h3><br> 
+  <p>
     We collect your name, contact number, email, and feedback solely for communication purposes. 
     This information is used to provide you with relevant educational updates and materials. 
     Your data is securely stored and will not be shared with any third parties.
-  </div>
+  </p>
+</div>
 
   
  
