@@ -1161,6 +1161,12 @@ if(slides && totalSlides > 0){
       });
 
       alert("Feedback submitted!");
+        // ✅ RESET FORM
+                document.getElementById("name").value = "";
+                document.getElementById("message").value = "";
+                document.getElementById("role").selectedIndex = 0;
+                document.getElementById("category").selectedIndex = 0;
+                document.getElementById("rating").selectedIndex = 0;
     } catch (e) {
       console.error(e);
     }
