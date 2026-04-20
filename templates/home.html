@@ -350,10 +350,10 @@
         }
 
         .features-container {
-            max-width: 1100px;
-            margin: auto;
-            text-align: left;
-        }
+    width: 95%;              /* 🔥 full stretch */
+    margin: auto;
+    text-align: center;
+}
 
         .features-container h2 {
             color: #0a3d62;
@@ -373,6 +373,7 @@
             box-shadow: 0 10px 25px rgba(0,0,0,0.08);
             text-align: center;
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            width:100%;
         }
 
         .card:hover {
@@ -391,18 +392,17 @@
             line-height: 1.6;
         }
 
-        @media(max-width:768px){
-          .cards{
-                flex-direction: column;
-                  }
-            }
+       @media(max-width:1024px){
+  .cards{
+    grid-template-columns: repeat(2, 1fr); /* tablet */
+  }
+}
 
-        @media(max-width:768px){
-          input, select, textarea, button{
-            width: 100%;
-            font-size: 16px;
-          }
-        }
+@media(max-width:600px){
+  .cards{
+    grid-template-columns: 1fr; /* mobile */
+  }
+}
 
 
                     @media(max-width:768px){
