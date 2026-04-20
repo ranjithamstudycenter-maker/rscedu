@@ -2,446 +2,248 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Classes | Ranjitham Study Center</title>
+<title>Privacy Policy | Ranjitham Study Center</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
- <style>
-        /* ==========================
-           GLOBAL STYLES
-        ========================== */
+<style>
 
-        /* Make everything flexible */
-            *{
-              box-sizing: border-box;
-            }
-            
-            body{
-              margin: 0;
-              padding: 0;
-              background: #ffffff;
-              color: #333;
-              overflow-x: hidden;
-            }
-            
-            /* Images responsive */
-            img{
-              max-width: 100%;
-              height: auto;
-            }
-            
-            
-
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-            font-family: 'Poppins', sans-serif;
-        }
-
-
-        a {
-            text-decoration: none;
-        }
-
-       
-
-        /* ==========================
-           NAVBAR
-        ========================== */
-        .navbar {
-            background: #ffffff;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 10px 20px;
-            position: relative;
-            z-index: 1000;
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
-            flex-wrap: wrap;   /* 🔥 allows wrapping */
-        }
-       
-        .nav-left {
-            display: flex;
-            align-items: center;
-            gap: 15px;
-        }
-        .nav-right {
-            display: flex;
-            align-items: center;
-        }
-
-        .logo {
-            height: 90px;
-        }
-
-        .brand-text h1 {
-            color: #0b5394;
-            font-size: 26px;
-            font-weight: 700;
-        }
-
-        .brand-text p {
-            color: #0b5394;
-            font-size: 13px;
-        }
-
-        
-        .nav-center a {
-            margin: 0 15px;
-            color: #0b5394;
-            font-weight: 600;
-        }
-
-        .nav-center a:hover {
-            text-decoration: underline;
-        }
-
-       .demo-btn {
-            background: linear-gradient(45deg, #ff2d55, #7b2cbf);
-            color: white;
-            padding: 8px 18px;
-            border-radius: 25px;
-            font-weight: 600;
-            animation: blink 2s infinite;
-        }
-        @keyframes blink {
-            50% { opacity: 0; }
-        }
-
-   @media(max-width:768px){
-  .navbar{
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* LEFT → logo + title */
-  .nav-left{
-    width: 100%;
-    display: flex;
-    align-items: center;
-    justify-content: flex-start;  /* 🔥 LEFT align */
-  }
-
-  .logo{
-    height: 55px;
-  }
-
-  .brand-text h1{
-    font-size: 18px;
-  }
-
-  .brand-text p{
-    font-size: 11px;
-  }
-
-  /* CENTER → MENU */
-  .nav-center{
-    width: 100%;
-    display: flex;
-    flex-wrap: wrap;              /* 🔥 allow 2 lines */
-    justify-content: center;
-    margin-top: 8px;
-    gap: 6px;              /* 🔥 reduce gap */
-    flex-wrap: nowrap;     /* 🔥 single line */
-  }
-
-  .nav-center a{
-    font-size: 12px;       /* 🔥 reduce text */
-    margin: 0 4px;         /* 🔥 less spacing */
-    white-space: nowrap;
-  }
-
-  /* DEMO → CENTER */
-  .nav-right{
-    width: 100%;
-    display: flex;
-    justify-content: center;   /* 🔥 CENTER */
-    margin-top: 8px;
-  }
-
-  .demo-btn{
-    font-size: 13px;
-  }
-
-
+/* ================= GLOBAL ================= */
+*{
+  margin:0;
+  padding:0;
+  box-sizing:border-box;
+  font-family:'Poppins',sans-serif;
+}
 
 body{
-  margin:0;
-  font-family: 'Poppins', sans-serif;
-  background:#f9fafb;
-  color:#111827;
+  background:#f5f7fa;
+  color:#333;
 }
 
-/* HERO */
-.hero{
-  background: linear-gradient(135deg,#1e3a8a,#6366f1);
-  color:white;
-  text-align:center;
+/* ================= NAVBAR ================= */
+.navbar{
+  background:#fff;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  padding:12px 20px;
+  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  flex-wrap:wrap;
+}
+
+.nav-left{
+  display:flex;
+  align-items:center;
+  gap:10px;
+}
+
+.logo{ height:70px; }
+
+.brand-text h1{
+  font-size:22px;
+  color:#0b5394;
+}
+
+.brand-text p{
+  font-size:12px;
+  color:#0b5394;
+}
+
+.nav-center a{
+  margin:0 12px;
+  color:#0b5394;
+  font-weight:600;
+}
+
+.demo-btn{
+  background:linear-gradient(45deg,#ff2d55,#7b2cbf);
+  color:#fff;
+  padding:8px 16px;
+  border-radius:25px;
+  font-size:13px;
+}
+
+/* ================= POLICY ================= */
+.policy-section{
   padding:60px 20px;
 }
-.hero h1{font-size:40px;}
-.hero p{font-size:18px;margin-top:10px}
-
-.container {
-    width: 85%;
-    max-width: 900px;
-    margin: 40px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
-}
-.policy-container{
-  max-width: 1000px;
-  margin: auto;
-  padding: 40px 20px;
-}    
-
-h1 {
-    text-align: center;
-    color: #0b5394;
-}
-
-h3 {
-    margin-top: 20px;
-    color: #333;
-}
-
-p, li {
-    color: #555;
-    line-height: 1.6;
-}
-
-ul {
-    padding-left: 20px;
-}
-
-    .policy-section{
-  background: #f5f7fa;
-  padding: 60px 20px;
-}
 
 .policy-container{
-  max-width: 950px;
-  margin: auto;
+  max-width:950px;
+  margin:auto;
 }
 
 .policy-container h1{
-  text-align: center;
-  color: #0b5394;
-  margin-bottom: 15px;
+  text-align:center;
+  color:#0b5394;
+  margin-bottom:10px;
 }
 
 .policy-intro{
-  text-align: center;
-  color: #666;
-  margin-bottom: 40px;
-  font-size: 15px;
+  text-align:center;
+  color:#666;
+  margin-bottom:35px;
 }
 
+/* CARD DESIGN */
 .policy-card{
-  background: #ffffff;
-  padding: 20px 25px;
-  margin-bottom: 20px;
-  border-radius: 12px;
-  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
-  transition: 0.3s;
+  background:#fff;
+  padding:22px;
+  border-radius:12px;
+  margin-bottom:20px;
+  box-shadow:0 5px 15px rgba(0,0,0,0.08);
+  transition:0.3s;
 }
 
 .policy-card:hover{
-  transform: translateY(-3px);
+  transform:translateY(-4px);
 }
 
 .policy-card h3{
-  color: #0b5394;
-  margin-bottom: 10px;
+  color:#0b5394;
+  margin-bottom:10px;
 }
 
-.policy-card p{
-  color: #555;
-  line-height: 1.6;
+.policy-card p,
+.policy-card li{
+  color:#555;
+  line-height:1.6;
 }
 
 .policy-card ul{
-  padding-left: 18px;
+  padding-left:18px;
 }
 
-.policy-card li{
-  margin-bottom: 5px;
+/* ================= CTA ================= */
+.cta-section{
+  background:linear-gradient(135deg,#ff7a00,#ff9a3c);
+  padding:70px 20px;
+  text-align:center;
+  color:#fff;
 }
 
-    /* ==========================
-           CTA
-        ========================== */
-        .cta-section {
-            padding: 70px 20px;
-            background: linear-gradient(135deg, #b31217, #e52d27);
-        }
+.cta-box h2{
+  font-size:32px;
+  margin-bottom:10px;
+}
 
-        .cta-box {
-            max-width: 1100px;
-            margin: auto;
-            color: white;
-            border-radius: 18px;
-            padding: 50px;
-            text-align: center;
-        }
+.cta-btn{
+  display:inline-block;
+  margin-top:20px;
+  background:#fff;
+  color:#ff7a00;
+  padding:12px 30px;
+  border-radius:30px;
+  font-weight:600;
+}
 
-        .cta-small {
-            font-size: 14px;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            opacity: 0.9;
-        }
+/* ================= FOOTER ================= */
+.footer{
+  background:#0b0f17;
+  color:#ccc;
+  padding:60px 20px;
+}
 
-        .cta-box h2 {
-            font-size: 36px;
-            margin-bottom: 15px;
-        }
+.footer-container{
+  max-width:1100px;
+  margin:auto;
+  display:grid;
+  grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+  gap:40px;
+}
 
-        .cta-text {
-            font-size: 16px;
-            margin-bottom: 30px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+.footer-box h3{
+  color:#fff;
+  margin-bottom:10px;
+}
 
-        .cta-btn {
-            display: inline-block;
-            background: white;
-            color: #b31217;
-            padding: 14px 35px;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
+.footer-box a{
+  display:block;
+  color:#ccc;
+  margin-bottom:6px;
+}
 
-        .cta-btn:hover {
-            background: #ffeaea;
-        }
+.footer-box a:hover{
+  color:#fff;
+}
 
-        /* ==========================
-           FOOTER
-        ========================== */
-        .footer {
-            background: #0b0f17;
-            color: #ccc;
-            padding: 60px 20px 20px;
-        }
+/* ================= PRIVACY NOTE ================= */
+.privacy-box{
+  text-align:center;
+  padding:20px;
+  font-size:13px;
+  color:#666;
+  max-width:900px;
+  margin:auto;
+}
 
-        .footer-container {
-            max-width: 1100px;
-            background: transparent;   /* 🔥 change */
-            color: #e5e7eb;
-            margin: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-        }
+/* ================= WHATSAPP ================= */
+.whatsapp{
+  position:fixed;
+  bottom:20px;
+  right:20px;
+  background:#25D366;
+  color:#fff;
+  width:55px;
+  height:55px;
+  border-radius:50%;
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  font-size:22px;
+}
 
-        .footer-box h3 {
-            color: white;
-            margin-bottom: 15px;
-        }
+/* ================= MOBILE ================= */
+@media(max-width:768px){
 
-        .footer-box p {
-            line-height: 1.6;
-        }
+  .navbar{
+    flex-direction:column;
+  }
 
-        .footer-box a {
-            display: block;
-            color: #ccc;
-            margin-bottom: 8px;
-        }
+  .nav-center{
+    margin-top:10px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
 
-        .footer-box a:hover {
-            color: white;
-        }
-
-        .footer-bottom {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 14px;
-            border-top: 1px solid #333;
-            padding-top: 15px;
-        }
-
-        /* ==========================
-           WHATSAPP FLOAT BUTTON
-        ========================== */
-        .whatsapp {
-            position: fixed;
-            bottom: 25px;
-            right: 25px;
-            width: 56px;
-            height: 56px;
-            background: #25D366;
-            color: white;
-            border-radius: 50%;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            font-size: 26px;
-            text-decoration: none;
-            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
-            z-index: 1000;
-            transition: transform 0.3s, box-shadow 0.3s;
-        }
-
-        .whatsapp:hover {
-            transform: scale(1.1);
-            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
-        }
-          .privacy-box{
-            margin-top:20px;
-            text-align:center;   /* 🔥 center */
-            font-size:13px;
-            color:#aaa;
-            max-width:600px;
-            margin-left:auto;
-            margin-right:auto;
-            line-height:1.6;
-        }  
+}
 
 </style>
 </head>
 
 <body>
-<!-- ==========================
-         NAVBAR
-    ========================== -->
-    <nav class="navbar"> 
-        <div class="nav-left"> 
-            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo"> 
-            <div class="brand-text"> 
-                <h1>RANJITHAM STUDY CENTER</h1> 
-                <p>Learn • Practice • Excel in Mathematics</p> 
-            </div>
-        </div>
-        <div class="nav-center"> 
-            <a href="{{ url_for('home') }}">Home</a> 
-            <a href="{{ url_for('about') }}">About</a> 
-            <a href="{{ url_for('courses') }}">Class</a> 
-            <a href="{{ url_for('materials') }}">Materials</a>
-            <a href="{{ url_for('contact') }}">Contact</a> 
-        </div> 
-        <div class="nav-right">
-        <a href="/contact" class="demo-btn">Free demo class</a>
-        </div>
-    </nav>
-<!-- HERO REMOVE → NEW CLEAN SECTION -->
-<section class="policy-section">
 
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-left">
+    <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo">
+    <div class="brand-text">
+      <h1>RANJITHAM STUDY CENTER</h1>
+      <p>Learn • Practice • Excel in Mathematics</p>
+    </div>
+  </div>
+
+  <div class="nav-center">
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/courses">Class</a>
+    <a href="/materials">Materials</a>
+    <a href="/contact">Contact</a>
+  </div>
+
+  <a href="/contact" class="demo-btn">Free demo class</a>
+</nav>
+
+<!-- POLICY -->
+<section class="policy-section">
   <div class="policy-container">
 
     <h1>Privacy Policy</h1>
-
     <p class="policy-intro">
-      Your privacy is important to us. This policy explains how we collect,
-      use, and protect your information.
+      Your privacy is important to us. This policy explains how we collect and protect your information.
     </p>
 
     <div class="policy-card">
@@ -451,105 +253,94 @@ ul {
         <li>Phone Number</li>
         <li>Email Address</li>
         <li>Academic Details</li>
-        <li>Payment Information (for transactions only)</li>
       </ul>
     </div>
 
     <div class="policy-card">
       <h3>2. Use of Information</h3>
-      <p>We use your data to provide classes, manage enrollments, and send updates.</p>
+      <p>Used for classes, communication, and updates.</p>
     </div>
 
     <div class="policy-card">
       <h3>3. Data Protection</h3>
-      <p>Your data is securely stored and protected.</p>
+      <p>Your data is securely stored.</p>
     </div>
 
     <div class="policy-card">
       <h3>4. Data Sharing</h3>
-      <p>We do not share your data except for legal or payment purposes.</p>
+      <p>We do not share your data.</p>
     </div>
 
     <div class="policy-card">
       <h3>5. Cookies</h3>
-      <p>We may use cookies to improve your experience.</p>
+      <p>Used to improve experience.</p>
     </div>
 
     <div class="policy-card">
       <h3>6. Student Safety</h3>
-      <p>Student data is used strictly for educational purposes.</p>
+      <p>Used only for educational purposes.</p>
     </div>
 
     <div class="policy-card">
       <h3>7. User Rights</h3>
       <ul>
-        <li>Update your data</li>
+        <li>Update data</li>
         <li>Request deletion</li>
       </ul>
     </div>
 
     <div class="policy-card">
-      <h3>8. Policy Updates</h3>
-      <p>This policy may be updated anytime.</p>
+      <h3>8. Updates</h3>
+      <p>Policy may change anytime.</p>
     </div>
 
     <div class="policy-card">
       <h3>9. Contact</h3>
-      <p>Reach us through our official website or email.</p>
+      <p>Email: ranjithamstudycenter@gmail.com</p>
     </div>
 
   </div>
 </section>
-<!-- ==========================
-         CTA SECTION
-    ========================== -->
-    <section class="cta-section">
-        <div class="cta-box">
-            <p class="cta-small">Best Maths Tuition in Medavakkam </p>
-            <h2>Ready to improve your Maths?</h2>
-            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with good guidance.</p>
-            <a href="/contact" class="cta-btn">Enroll Now</a>
-        </div>
-    </section>
 
-    <!-- ==========================
-         CONTACT & FOOTER
-    ========================== -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-box">
-                <h3>RANJITHAM STUDY CENTER</h3>
-                <p>Focused maths coaching for Class 6–12 students</p>
-            </div>
-            <div class="footer-box">
-                <h3>Quick Links</h3>
-                <a href="/">Home</a>
-                <a href="/about">About</a>
-                <a href="/courses">Courses</a>
-                <a href="/materials">Materials</a>
-                <a href="/contact">Contact</a>
-                <a href="/admin">Admin</a>
-                <a href="/privacy">Privacy policy</a>
-                <a href="/terms">Terms and Conditions</a>
-            </div>
-            <div class="footer-box">
-                <h3>Contact Details</h3>
-                <p>📞 7702616245</p>
-                <p>📧 ranjithamstudycenter@gmail.com</p>
-           </div>
-        </div>
-        </footer>
-  <div class="privacy-box">
-  🔒 <strong>Your Privacy Matters</strong><br>
-    We collect your name, contact number, email, and feedback solely for communication purposes. 
-    This information is used to provide you with relevant educational updates and materials. 
-    Your data is securely stored and will not be shared with any third parties.
+<!-- CTA -->
+<section class="cta-section">
+  <div class="cta-box">
+    <h2>Ready to improve your Maths?</h2>
+    <p>Join Ranjitham Study Center today</p>
+    <a href="/contact" class="cta-btn">Enroll Now</a>
   </div>
+</section>
 
-  
-    <!-- ==========================
-         WHATSAPP FLOAT BUTTON
-    ========================== -->
-    <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
+<!-- FOOTER -->
+<footer class="footer">
+  <div class="footer-container">
+    <div class="footer-box">
+      <h3>RANJITHAM STUDY CENTER</h3>
+      <p>Focused maths coaching for Class 6–12 students</p>
+    </div>
+
+    <div class="footer-box">
+      <h3>Quick Links</h3>
+      <a href="/">Home</a>
+      <a href="/about">About</a>
+      <a href="/courses">Courses</a>
+      <a href="/materials">Materials</a>
+      <a href="/privacy">Privacy policy</a>
+    </div>
+
+    <div class="footer-box">
+      <h3>Contact</h3>
+      <p>📞 7702616245</p>
+      <p>📧 ranjithamstudycenter@gmail.com</p>
+    </div>
+  </div>
+</footer>
+
+<div class="privacy-box">
+  🔒 Your data is safe with us. We never share your information.
+</div>
+
+<a class="whatsapp" href="https://wa.me/917702616245">💬</a>
+
 </body>
 </html>
