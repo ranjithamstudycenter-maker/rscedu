@@ -1,98 +1,533 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Terms & Conditions - Ranjitham Tuition Center</title>
+    <meta charset="UTF-8">
+    <title>RANJITHAM STUDY CENTER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Maths tuition with personalized coaching, worksheets, practice tests and exam preparation.">
+    <meta name="keywords" content="Maths Tuition, Maths Notes, Ranjitham Study Center">
 
-<style>
-body {
-    font-family: 'Poppins', sans-serif;
-    background: #f5f7fa;
-    margin: 0;
-    padding: 0;
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+
+    <style>
+        /* ==========================
+           GLOBAL STYLES
+        ========================== */
+
+        /* Make everything flexible */
+            *{
+              box-sizing: border-box;
+            }
+            
+            body{
+              margin: 0;
+              padding: 0;
+              background: #ffffff;
+              color: #333;
+              overflow-x: hidden;
+            }
+            
+            /* Images responsive */
+            img{
+              max-width: 100%;
+              height: auto;
+            }
+            
+            /* Container width */
+            .container{
+              width: 90%;
+              margin: auto;
+            }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+       
+
+        /* ==========================
+           NAVBAR
+        ========================== */
+        .navbar {
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;   /* 🔥 allows wrapping */
+        }
+       
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 90px;
+        }
+
+        .brand-text h1 {
+            color: #0b5394;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .brand-text p {
+            color: #0b5394;
+            font-size: 13px;
+        }
+
+        
+        .nav-center a {
+            margin: 0 15px;
+            color: #0b5394;
+            font-weight: 600;
+        }
+
+        .nav-center a:hover {
+            text-decoration: underline;
+        }
+
+       .demo-btn {
+            background: linear-gradient(45deg, #ff2d55, #7b2cbf);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 600;
+            animation: blink 2s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+   @media(max-width:768px){
+  .navbar{
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* LEFT → logo + title */
+  .nav-left{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;  /* 🔥 LEFT align */
+  }
+
+  .logo{
+    height: 55px;
+  }
+
+  .brand-text h1{
+    font-size: 18px;
+  }
+
+  .brand-text p{
+    font-size: 11px;
+  }
+
+  /* CENTER → MENU */
+  .nav-center{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;              /* 🔥 allow 2 lines */
+    justify-content: center;
+    margin-top: 8px;
+    gap: 6px;              /* 🔥 reduce gap */
+    flex-wrap: nowrap;     /* 🔥 single line */
+  }
+
+  .nav-center a{
+    font-size: 12px;       /* 🔥 reduce text */
+    margin: 0 4px;         /* 🔥 less spacing */
+    white-space: nowrap;
+  }
+
+  /* DEMO → CENTER */
+  .nav-right{
+    width: 100%;
+    display: flex;
+    justify-content: center;   /* 🔥 CENTER */
+    margin-top: 8px;
+  }
+
+  .demo-btn{
+    font-size: 13px;
+  }
+
+}
+        .hero{
+  width:100%;
+  padding:30px 20px;
+  background: linear-gradient(135deg, #0b5394, #00c6ff);
+  text-align:center;
 }
 
-.container {
-    width: 85%;
-    max-width: 900px;
-    margin: 40px auto;
-    background: white;
-    padding: 30px;
-    border-radius: 12px;
-    box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+ .hero h1{
+  color:white;
+  font-size:32px;
+  margin-bottom:8px;
 }
 
-h1 {
+.hero p{
+  color:#eaf6ff;
+  font-size:14px;
+}       
+ /* ==========================
+   CTA (NEW PREMIUM STYLE)
+========================== */
+.cta-section {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #1e3a8a, #6d28d9); /* 🔥 blue + purple */
+}
+
+.cta-box {
+    max-width: 1100px;
+    margin: auto;
+    color: white;
+    border-radius: 20px;
+    padding: 60px 40px;
     text-align: center;
-    color: #0b5394;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
 }
 
-h3 {
-    margin-top: 20px;
-    color: #333;
+.cta-small {
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    opacity: 0.8;
 }
 
-p, li {
-    color: #555;
-    line-height: 1.6;
+.cta-box h2 {
+    font-size: 38px;
+    margin-bottom: 15px;
+    font-weight: 700;
 }
 
-ul {
-    padding-left: 20px;
+.cta-text {
+    font-size: 16px;
+    margin-bottom: 35px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+}
+
+/* 🔥 BUTTON UPGRADE */
+.cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #facc15, #f59e0b); /* GOLD */
+    color: #1e3a8a;
+    padding: 14px 40px;
+    border-radius: 40px;
+    font-weight: 600;
+    transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.cta-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+}
+      
+       /* ==========================
+   FOOTER (NEW STYLE)
+========================== */
+.footer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #cbd5e1;
+    padding: 70px 20px 25px;
+}
+
+.footer-container {
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 50px;
+}
+
+.footer-box h3 {
+    color: white;
+    margin-bottom: 18px;
+    font-size: 18px;
+}
+
+.footer-box p {
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.footer-box a {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+.footer-box a:hover {
+    color: #facc15; /* 🔥 gold hover */
+    transform: translateX(5px);
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 13px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    color: #94a3b8;
+}
+
+         /* ==========================
+           WHATSAPP FLOAT BUTTON
+        ========================== */
+        .whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 56px;
+            height: 56px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            z-index: 1000;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .whatsapp:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        }
+
+
+
+/* ================= MOBILE ================= */
+@media(max-width:768px){
+
+  .navbar{
+    flex-direction:column;
+  }
+
+  .nav-center{
+    margin-top:10px;
+    display:flex;
+    flex-wrap:wrap;
+    justify-content:center;
+  }
+
+}
+ .privacy-section{
+  background: #f1f5f9;   /* light clean bg */
+  padding: 30px 20px;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* 🔥 HEADING */
+.privacy-section h3{
+  text-align: center;
+  color: #0b5fa5;   /* bright blue */
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* 🔥 PARAGRAPH */
+.privacy-section p{
+    width: 100%;              /* 🔥 full width */
+  text-align: justify;      /* left → right fill */
+
+  color:red;        /* dark readable */
+
+  font-size: 14px;
+  line-height: 1.6;
 }
 </style>
 </head>
 
 <body>
 
-<div class="container">
+<!-- NAVBAR -->
+<nav class="navbar">
+  <div class="nav-left">
+    <img src="{{ url_for('static', filename='images/logo.jpg') }}" class="logo">
+    <div class="brand-text">
+      <h1>RANJITHAM STUDY CENTER</h1>
+      <p>Learn • Practice • Excel in Mathematics</p>
+    </div>
+  </div>
 
-<h1>Terms & Conditions</h1>
+  <div class="nav-center">
+    <a href="/">Home</a>
+    <a href="/about">About</a>
+    <a href="/courses">Class</a>
+    <a href="/materials">Materials</a>
+    <a href="/contact">Contact</a>
+  </div>
 
-<h3>1. Acceptance of Terms</h3>
-<p>By using our platform, you agree to follow all the terms and conditions mentioned below.</p>
+  <a href="/contact" class="demo-btn">Free demo class</a>
+</nav>
+<section class="hero">
+  <h1>Terms & Conditions</h1>
+  <p>Please read these terms carefully before using our services.</p>
+</section>
 
-<h3>2. Services Offered</h3>
-<p>We provide online and offline tuition classes, demo sessions, and academic support.</p>
+<section class="policy-content">
 
-<h3>3. Enrollment Policy</h3>
-<ul>
-<li>Students must attend demo before enrollment (if required).</li>
-<li>Enrollment is confirmed only after payment.</li>
-<li>Access is given only to registered students.</li>
-</ul>
+  <h2>Terms & Conditions for Ranjitham Study Center</h2>
 
-<h3>4. Payment & Fees</h3>
-<ul>
-<li>Fees must be paid in advance.</li>
-<li>Fees are non-refundable unless approved.</li>
-<li>Offers apply only for selected students.</li>
-</ul>
+  <p>
+    By accessing and using our website (https://rscedu.in), you agree to comply with
+    the following terms and conditions. If you do not agree, please do not use our services.
+  </p>
 
-<h3>5. User Responsibilities</h3>
-<ul>
-<li>Maintain discipline during classes.</li>
-<li>Do not share login or materials.</li>
-<li>Misuse leads to suspension.</li>
-</ul>
+  <h3><strong>1. Services Offered</strong></h3>
+  <p>
+    Ranjitham Study Center provides mathematics coaching for students from Class 6 to Class 12,
+    including online classes, offline classes, demo sessions, and study materials (including paid PDFs).
+  </p>
 
-<h3>6. Demo Policy</h3>
-<p>Demo classes are allowed only once per course.</p>
+  <h3><strong>2. Enrollment Policy</strong></h3>
+  <ul>
+    <li>Students may be required to attend a demo class before enrollment.</li>
+    <li>Enrollment is confirmed only after successful payment.</li>
+    <li>Access to classes and materials is provided only to registered students.</li>
+  </ul>
 
-<h3>7. Intellectual Property</h3>
-<p>All materials belong to the academy and must not be shared.</p>
+  <h3><strong>3. Payment & Fees</strong></h3>
+  <ul>
+    <li>All fees must be paid in advance.</li>
+    <li>Fees are generally non-refundable unless approved under special circumstances.</li>
+    <li>Discounts or offers are applicable only for selected batches or limited seats.</li>
+  </ul>
 
-<h3>8. Conduct</h3>
-<p>Improper behavior may result in removal without refund.</p>
+  <h3><strong>4. Online Classes & Access</strong></h3>
+  <ul>
+    <li>Students must join classes using their registered details only.</li>
+    <li>Class links should not be shared with others.</li>
+    <li>Misuse of access may lead to suspension without refund.</li>
+  </ul>
 
-<h3>9. Changes</h3>
-<p>We may update terms anytime. Continued use means acceptance.</p>
+  <h3><strong>5. Study Materials & Paid PDFs</strong></h3>
+  <ul>
+    <li>All materials (PDFs, notes, recordings) are for personal use only.</li>
+    <li>Sharing, copying, or reselling materials is strictly prohibited.</li>
+    <li>Paid materials are non-refundable once accessed.</li>
+  </ul>
 
-<h3>10. Contact</h3>
-<p>Contact us through official website for queries.</p>
+  <h3><strong>6. User Responsibilities</strong></h3>
+  <ul>
+    <li>Maintain discipline during classes.</li>
+    <li>Respect faculty and other students.</li>
+    <li>Provide accurate information during registration.</li>
+  </ul>
 
+  <h3><strong>7. Demo Class Policy</strong></h3>
+  <p>
+    Demo classes are provided only once per course. Repeated demo access may be restricted.
+  </p>
+
+  <h3><strong>8. Intellectual Property</strong></h3>
+  <p>
+    All content, materials, and teaching resources belong to Ranjitham Study Center.
+    Unauthorized use or distribution is strictly prohibited.
+  </p>
+
+  <h3><strong>9. Code of Conduct</strong></h3>
+  <p>
+    Any inappropriate behavior, misuse of platform, or violation of rules may result in
+    immediate removal without refund.
+  </p>
+
+  <h3><strong>10. Modifications</strong></h3>
+  <p>
+    Ranjitham Study Center reserves the right to update these terms at any time.
+    Continued use of the platform indicates acceptance of the updated terms.
+  </p>
+
+  <h3><strong>11. Contact Information</strong></h3>
+  <p>
+    For any queries, please contact us at:<br>
+    📧 ranjithamstudycenter@gmail.com <br>
+    📞 7702616245
+  </p>
+
+</section>
+    <!-- ==========================
+         CTA SECTION
+    ========================== -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <p class="cta-small">Best Maths Tuition in Medavakkam </p>
+            <h2>Ready to improve your Maths?</h2>
+            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with good guidance.</p>
+            <a href="/contact" class="cta-btn">Enroll Now</a>
+        </div>
+    </section>
+
+    <!-- ==========================
+         CONTACT & FOOTER
+    ========================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>RANJITHAM STUDY CENTER</h3>
+                <p>Focused maths coaching for Class 6–12 students</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/courses">Courses</a>
+                <a href="/materials">Materials</a>
+                <a href="/contact">Contact</a>
+                <a href="/admin">Admin</a>
+                <a href="/privacy">Privacy policy</a>
+                <a href="/terms">Terms and Conditions</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact Details</h3>
+                <p>📞 7702616245</p>
+                <p>📧 ranjithamstudycenter@gmail.com</p>
+           </div>
+        </div>
+                    <div class="footer-bottom">
+                      © 2026 Ranjitham Study Center. All Rights Reserved. | Designed for Quality Education
+                    </div>
+        </footer>
+ <div class="privacy-section">
+  <h3>🔒 <strong>Your Privacy </strong></h3><br> 
+  <p>
+    We collect your name, contact number, email, and feedback solely for communication purposes. 
+    This information is used to provide you with relevant educational updates and materials. 
+    Your data is securely stored and will not be shared with any third parties.
+  </p>
 </div>
+
+<a class="whatsapp" href="https://wa.me/917702616245">💬</a>
 
 </body>
 </html>
+
