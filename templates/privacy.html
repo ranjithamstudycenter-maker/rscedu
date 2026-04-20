@@ -193,6 +193,11 @@ body{
     border-radius: 12px;
     box-shadow: 0 5px 15px rgba(0,0,0,0.1);
 }
+.policy-container{
+  max-width: 1000px;
+  margin: auto;
+  padding: 40px 20px;
+}    
 
 h1 {
     text-align: center;
@@ -211,6 +216,60 @@ p, li {
 
 ul {
     padding-left: 20px;
+}
+
+    .policy-section{
+  background: #f5f7fa;
+  padding: 60px 20px;
+}
+
+.policy-container{
+  max-width: 950px;
+  margin: auto;
+}
+
+.policy-container h1{
+  text-align: center;
+  color: #0b5394;
+  margin-bottom: 15px;
+}
+
+.policy-intro{
+  text-align: center;
+  color: #666;
+  margin-bottom: 40px;
+  font-size: 15px;
+}
+
+.policy-card{
+  background: #ffffff;
+  padding: 20px 25px;
+  margin-bottom: 20px;
+  border-radius: 12px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.policy-card:hover{
+  transform: translateY(-3px);
+}
+
+.policy-card h3{
+  color: #0b5394;
+  margin-bottom: 10px;
+}
+
+.policy-card p{
+  color: #555;
+  line-height: 1.6;
+}
+
+.policy-card ul{
+  padding-left: 18px;
+}
+
+.policy-card li{
+  margin-bottom: 5px;
 }
 
     /* ==========================
@@ -373,51 +432,74 @@ ul {
         <a href="/contact" class="demo-btn">Free demo class</a>
         </div>
     </nav>
-<!-- HERO -->
-<section class="hero">
- 
-<div class="container">
+<!-- HERO REMOVE → NEW CLEAN SECTION -->
+<section class="policy-section">
 
-<h1>Privacy Policy</h1>
+  <div class="policy-container">
 
-<h3>1. Information We Collect</h3>
-<ul>
-<li>Name</li>
-<li>Phone number</li>
-<li>Email</li>
-<li>Academic details</li>
-<li>Payment info (for transactions only)</li>
-</ul>
+    <h1>Privacy Policy</h1>
 
-<h3>2. Use of Information</h3>
-<p>We use data to provide classes, manage enrollment, and send updates.</p>
+    <p class="policy-intro">
+      Your privacy is important to us. This policy explains how we collect,
+      use, and protect your information.
+    </p>
 
-<h3>3. Data Protection</h3>
-<p>Your data is stored securely and not misused.</p>
+    <div class="policy-card">
+      <h3>1. Information We Collect</h3>
+      <ul>
+        <li>Name</li>
+        <li>Phone Number</li>
+        <li>Email Address</li>
+        <li>Academic Details</li>
+        <li>Payment Information (for transactions only)</li>
+      </ul>
+    </div>
 
-<h3>4. Sharing</h3>
-<p>We do not share your data except for legal or payment purposes.</p>
+    <div class="policy-card">
+      <h3>2. Use of Information</h3>
+      <p>We use your data to provide classes, manage enrollments, and send updates.</p>
+    </div>
 
-<h3>5. Cookies</h3>
-<p>We may use cookies to improve experience.</p>
+    <div class="policy-card">
+      <h3>3. Data Protection</h3>
+      <p>Your data is securely stored and protected.</p>
+    </div>
 
-<h3>6. Student Safety</h3>
-<p>Student data is used only for educational purposes.</p>
+    <div class="policy-card">
+      <h3>4. Data Sharing</h3>
+      <p>We do not share your data except for legal or payment purposes.</p>
+    </div>
 
-<h3>7. User Rights</h3>
-<ul>
-<li>Update your data</li>
-<li>Request deletion</li>
-</ul>
+    <div class="policy-card">
+      <h3>5. Cookies</h3>
+      <p>We may use cookies to improve your experience.</p>
+    </div>
 
-<h3>8. Updates</h3>
-<p>Policy may change anytime.</p>
+    <div class="policy-card">
+      <h3>6. Student Safety</h3>
+      <p>Student data is used strictly for educational purposes.</p>
+    </div>
 
-<h3>9. Contact</h3>
-<p>Reach us through official website.</p>
+    <div class="policy-card">
+      <h3>7. User Rights</h3>
+      <ul>
+        <li>Update your data</li>
+        <li>Request deletion</li>
+      </ul>
+    </div>
 
-</div>
- </section>
+    <div class="policy-card">
+      <h3>8. Policy Updates</h3>
+      <p>This policy may be updated anytime.</p>
+    </div>
+
+    <div class="policy-card">
+      <h3>9. Contact</h3>
+      <p>Reach us through our official website or email.</p>
+    </div>
+
+  </div>
+</section>
 <!-- ==========================
          CTA SECTION
     ========================== -->
