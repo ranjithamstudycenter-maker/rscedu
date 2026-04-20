@@ -790,16 +790,28 @@
       box-shadow: none;
 }
 .feedback-btn{
-  background:orange;
+  background: linear-gradient(135deg, #ff7a00, #ffb347);
   color: white;
-  padding: 10px 20px;
+  padding: 12px 28px;
   border: none;
-  border-radius: 6px;
+  border-radius: 30px;
   cursor: pointer;
+  font-weight: 600;
+  font-size: 15px;
+
+  box-shadow: 0 6px 15px rgba(255,122,0,0.4);
+  transition: all 0.3s ease;
 }
 
+/* Hover */
 .feedback-btn:hover{
-  background: #0056b3;
+  transform: translateY(-2px) scale(1.05);
+  box-shadow: 0 10px 25px rgba(255,122,0,0.6);
+}
+
+/* Click effect */
+.feedback-btn:active{
+  transform: scale(0.97);
 }
 
 .msg {
@@ -1018,7 +1030,7 @@
 
     <textarea id="message" maxlength="1000" placeholder="Your Feedback"></textarea>
 
-   <button id="feedbackBtn" type="button">Share your feedback</button>
+   <button class="feedback-btn">🚀 Share your feedback</button>
   </div>
 
 </section>
