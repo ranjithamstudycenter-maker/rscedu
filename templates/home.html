@@ -473,49 +473,54 @@
         /* ==========================
            FOOTER
         ========================== */
-        .footer {
-            background: #0b0f17;
-            color: #ccc;
-            padding: 60px 20px 20px;
-        }
+       /* ==========================
+   FOOTER (NEW STYLE)
+========================== */
+.footer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #cbd5e1;
+    padding: 70px 20px 25px;
+}
 
-        .footer-container {
-            max-width: 1100px;
-            background: transparent;   /* 🔥 change */
-            color: #e5e7eb;
-            margin: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-        }
+.footer-container {
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 50px;
+}
 
-        .footer-box h3 {
-            color: white;
-            margin-bottom: 15px;
-        }
+.footer-box h3 {
+    color: white;
+    margin-bottom: 18px;
+    font-size: 18px;
+}
 
-        .footer-box p {
-            line-height: 1.6;
-        }
+.footer-box p {
+    line-height: 1.7;
+    font-size: 14px;
+}
 
-        .footer-box a {
-            display: block;
-            color: #ccc;
-            margin-bottom: 8px;
-        }
+.footer-box a {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
 
-        .footer-box a:hover {
-            color: white;
-        }
+.footer-box a:hover {
+    color: #facc15; /* 🔥 gold hover */
+    transform: translateX(5px);
+}
 
-        .footer-bottom {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 14px;
-            border-top: 1px solid #333;
-            padding-top: 15px;
-        }
-
+.footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 13px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    color: #94a3b8;
+}
         /* ==========================
            WHATSAPP FLOAT BUTTON
         ========================== */
