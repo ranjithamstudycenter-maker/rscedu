@@ -172,28 +172,33 @@
   }
 
 }
-        .hero {
-            width: 100%;
-            height: 100%;
-            position: relative;
-            overflow: hidden;
-            background: linear-gradient(135deg, #0b5394, #00c6ff);
-        }
+        .hero{
+  width:100%;
+  padding:30px 20px;
+  background: linear-gradient(135deg, #0b5394, #00c6ff);
+  text-align:center;
+}
+
+ .hero h1{
+  color:white;
+  font-size:32px;
+  margin-bottom:8px;
+}
+
+.hero p{
+  color:#eaf6ff;
+  font-size:14px;
+}       
 
 /* ================= POLICY ================= */
 .policy-section{
   padding:60px 20px;
+  background:#f5f7fa;
 }
 
 .policy-container{
   max-width:950px;
   margin:auto;
-}
-
-.policy-container h1{
-  text-align:center;
-  color:#0b5394;
-  margin-bottom:10px;
 }
 
 .policy-intro{
@@ -204,14 +209,15 @@
 
 /* CARD DESIGN */
 .policy-card{
-  background:#fff;
-  padding:22px;
-  border-radius:12px;
-  margin-bottom:20px;
-  box-shadow:0 5px 15px rgba(0,0,0,0.08);
-  transition:0.3s;
-}
+  background:#ffffff;
+  padding:24px;
+  border-radius:14px;
+  margin-bottom:25px;
 
+  box-shadow:0 8px 25px rgba(0,0,0,0.08);
+  transition:0.3s;
+  border-left:4px solid #0b5394;  /* 🔥 highlight */
+}
 .policy-card:hover{
   transform:translateY(-4px);
 }
@@ -432,16 +438,10 @@
   <a href="/contact" class="demo-btn">Free demo class</a>
 </nav>
 <section class="hero">
-  <h1>>Privacy Policy</h1>
+  <h1>Privacy Policy</h1>
+  <p>Your privacy is important to us. This policy explains how we collect and protect your information.</p>
 </section>
     
-  <div class="policy-container">
-
-  
-    <p class="policy-intro">
-      Your privacy is important to us. This policy explains how we collect and protect your information.
-    </p>
-
     <div class="policy-card">
       <h3>1. Information We Collect</h3>
       <ul>
