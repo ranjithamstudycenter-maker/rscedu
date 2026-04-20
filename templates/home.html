@@ -263,7 +263,7 @@
             display: grid;
             grid-template-columns: 1fr 1fr;
             gap: 50px;
-            align-items: center;
+            align-items: left;
         }
 
         .home-image img {
@@ -287,6 +287,13 @@
             font-weight: 600;
             transition: 0.3s;
         }
+        /* Right side button center */
+                .home-action{
+                  display:flex;
+                  justify-content:center;
+                  align-items:center;
+                }
+
 
         .home-btn:hover {
             background: #083b73;
@@ -923,7 +930,7 @@
                               and performs confidently in school and board examinations.
                             </p>
                     
-                      <div class="home-btn-box">
+                      <div class="home-action">
                         <a href="{{ url_for('about') }}" class="home-btn">Know More About Us</a>
                       </div>
                     
