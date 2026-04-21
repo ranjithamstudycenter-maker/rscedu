@@ -230,16 +230,18 @@ h2{
             display: grid;
             grid-template-columns: 0.9fr 1.3fr;  /* 🔥 TEXT bigger */
             gap: 50px;
-            align-items: left;
-        }
+            align-items: center;
+  }
 
-        .home-image img {
-            border-radius: 18px;
-            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-             align-items: center;
+        .home-image{
+          display:flex;
+          justify-content:center;
+          box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+          border-radius: 18px;
+          align-items:center;
         }
-
-        .home-text p {
+      
+         .home-text p {
             font-size: 16px;
             line-height: 1.8;
             margin-bottom: 18px;
