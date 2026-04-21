@@ -579,7 +579,7 @@ h2{
         </p>
     
 <!-- ENGLISH -->
-<div id="english">
+<div id="english" class="lang-content">
 <section class="section">
   <div class="container">
 
@@ -734,7 +734,7 @@ h2{
 </div>
     
 <!-- TAMIL -->
-<div id="tamil" style="display:none">
+<div id="tamil" class="lang-content" style="display:none;">
 <section class="section">
   <div class="container">
 
@@ -895,7 +895,7 @@ h2{
 </section>
 </div>
 
-<div id="hindi"style="display:none">
+<div id="hindi" class="lang-content" style="display:none;">
 <section class="section">
   <div class="container">
 
@@ -1055,7 +1055,7 @@ h2{
 </section>
 </div>
 
-<div id="telugu"style="display:none">
+<div id="telugu" class="lang-content" style="display:none;">
 <section class="section">
   <div class="container">
 
@@ -1212,7 +1212,7 @@ h2{
 </section>
 </div>
 
-<div id="kannada"style="display:none">
+<div id="kannada" class="lang-content" style="display:none;">
 <section class="section">
   <div class="container">
 
@@ -1370,7 +1370,7 @@ h2{
 </section>
 </div>
    
-<div id="malayalam" style="display:none">
+<div id="malayalam" class="lang-content" style="display:none;">
 <section class="section">
   <div class="container">
 
@@ -1587,170 +1587,33 @@ h2{
     <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
 
 
- <script>
+<script>
 function changeLanguage() {
   const selected = document.getElementById("languageSelect").value;
+
+  // Save selected language
   localStorage.setItem("lang", selected);
 
-  const languages = ["english", "tamil", "hindi", "telugu", "kannada", "malayalam"];
-  languages.forEach(lang => {
-    document.getElementById(lang).style.display = "none";
-  });
+  // Hide all sections
+  const sections = document.querySelectorAll(".lang-content");
+  sections.forEach(sec => sec.style.display = "none");
 
-  document.getElementById(selected).style.display = "block";
+  // Show selected section
+  const active = document.getElementById(selected);
+  if(active){
+    active.style.display = "block";
+  }
 }
 
+// Load saved language on page load
 window.onload = function(){
   const savedLang = localStorage.getItem("lang") || "english";
   document.getElementById("languageSelect").value = savedLang;
   changeLanguage();
-}
+};
 </script>
     
-
 </body>
 </html>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
