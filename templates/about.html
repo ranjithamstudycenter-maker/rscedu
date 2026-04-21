@@ -574,16 +574,32 @@ h2{
   }
 }        
 
+/* wrapper */
+.top-section{
+  max-width:1000px;
+  margin:20px auto;
+  padding:0 10px;
+}
+
+/* dropdown align right */
+.lang-switch{
+  display:flex;
+  justify-content:flex-end;
+  margin-bottom:10px;
+}
+
+/* dropdown styling */
 .lang-switch select{
   padding:8px 12px;
   border-radius:8px;
   border:1px solid #ccc;
   font-size:14px;
   cursor:pointer;
-}    
- .lang-switch select:hover{
+}
+
+.lang-switch select:hover{
   background:#f0f7ff;
-}       
+} 
 </style>
 </head>
 <body>
@@ -613,19 +629,22 @@ h2{
         </div>
     </nav>
 
-<div class="lang-switch">
-      <select id="languageSelect" onchange="changeLanguage()">
-        <option value="english">English</option>
-        <option value="tamil">தமிழ்</option>
-        <option value="hindi">हिंदी</option>
-        <option value="telugu">తెలుగు</option>
-        <option value="kannada">ಕನ್ನಡ</option>
-        <option value="malayalam">മലയാളം</option>
-      </select>
-</div>
-<div class="lang-banner">
-  
-  <div class="lang-text">
+<div class="top-section">
+
+  <div class="lang-switch">
+    <select id="languageSelect" onchange="changeLanguage()">
+      <option value="english">English</option>
+      <option value="tamil">தமிழ்</option>
+      <option value="hindi">हिंदी</option>
+      <option value="telugu">తెలుగు</option>
+      <option value="kannada">ಕನ್ನಡ</option>
+      <option value="malayalam">മലയാളം</option>
+    </select>
+  </div>
+
+  <div class="lang-banner">
+      
+   <div class="lang-text">
     <p>
       At Ranjitham Study Center, we believe that every parent should clearly understand their child’s education. 
       To support this, our content is available in multiple languages, making it easier for both students and parents 
@@ -638,6 +657,7 @@ h2{
     <a href="/courses" class="lang-btn">Explore Courses</a>
   </div>
 
+</div>
 </div>
     
 <!-- ENGLISH -->
