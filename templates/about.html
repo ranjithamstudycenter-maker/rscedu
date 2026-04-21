@@ -1561,12 +1561,10 @@ h2{
 function changeLanguage() {
   const selected = document.getElementById("languageSelect").value;
 
-  // Save selected language
-  localStorage.setItem("lang", selected);
-
   // Hide all sections
-  const sections = document.querySelectorAll(".lang-content");
-  sections.forEach(sec => sec.style.display = "none");
+  document.querySelectorAll(".lang-content").forEach(sec => {
+    sec.style.display = "none";
+  });
 
   // Show selected section
   const active = document.getElementById(selected);
@@ -1575,10 +1573,12 @@ function changeLanguage() {
   }
 }
 
-// Load saved language on page load
+// Always load English by default
 window.onload = function(){
-  const savedLang = localStorage.getItem("lang") || "english";
-  document.getElementById("languageSelect").value = savedLang;
+  const dropdown = document.getElementById("languageSelect");
+  if(dropdown){
+    dropdown.value = "english";
+  }
   changeLanguage();
 };
 </script>
