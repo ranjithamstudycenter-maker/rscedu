@@ -206,59 +206,114 @@ h2{
     font-size: 16px;
     text-align:justify;
 }
+/* ==========================
+           HOME SECTION
+        ========================== */
+        .home-section {
+            padding: 70px 20px;
+            background: #ffffff;
+        }
 
-/* FOUNDER SECTION */
-.FOUNDER {
-  width: 100%;
-  
-  margin: 0 auto;          /* reduce top & bottom gap */
-  padding: 0 40px;
-  display: grid;
-  grid-template-columns: 1.5fr 1.5fr;  /* better balance */
-  
- 
-}
+        .home-container {
+            max-width: 1100px;
+            margin: auto;
+        }
 
-/* IMAGE */
-.founder-img {
-  display: flex;
-}
+        .home-title {
+            text-align: center;
+            font-size: 32px;
+            color: #0b5394;
+            margin-bottom: 50px;
+        }
 
-.founder-img img {
-  width: 100%;
-  max-width: 600px;           /* ⭐ controls image size */
-  height: auto;
-  display: block;
-  border-radius: 10px;
-    
-}
+        .home-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 50px;
+            align-items: left;
+        }
 
-/* TEXT */
-.founder-content {
-    font-size: 16px;        /* 👈 px was missing */
-  line-height: 1.6;
-  color: #333;
-    align-items: right;
-  text-align: justify;    /* 👈 justify alignment */
-    
-    
-}
+        .home-image img {
+            border-radius: 18px;
+            box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+        }
 
-/* MOBILE */
-@media (max-width: 768px) {
-  .FOUNDER {
-    flex-direction: column;
-    text-align: center;
-  }
+        .home-text p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 18px;
+        }
 
-  .founder-content {
-    text-align: justify;
-  }
+        .home-btn {
+            display: inline-block;
+            margin-top: 20px;
+            background: #0b5394;
+            color: white;
+            padding: 14px 35px;
+            border-radius: 30px;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+        /* Right side button center */
+                .home-action{
+                  display:flex;
+                  justify-content:center;
+                  align-items:center;
+                }
 
-  .founder-image img {
-    width: 100%;
-  }
-}
+
+        .home-btn:hover {
+            background: #083b73;
+        }
+
+                .home-text{
+                  text-align: justify;
+                }
+                
+                /* First intro */
+                .home-intro{
+                  font-size: 18px;
+                  line-height: 1.8;
+                  margin-bottom: 20px;
+                  color:#333;
+                }
+                
+                /* Highlight word */
+                .highlight{
+                  color:#0b5394;
+                  font-weight:600;
+                }
+                
+               /* Description */
+                .home-desc{
+                  font-size:16px;
+                  line-height:1.7;
+                  color:#555;
+                }
+                
+               
+
+        @media(max-width: 768px) {
+            .slides img {
+                height: 240px;
+            }
+
+            .slider {
+                max-height: 240px;
+            }
+
+            .home-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 600px) {
+            h1 { font-size: 24px; }
+            h2 { font-size: 20px; }
+            p { font-size: 14px; }
+        }
+
+
 
 /* VISION & MISSION */
 .vision-mission-section{
@@ -739,15 +794,15 @@ h2{
 
 </section>
 
-
-<section class="section">
-<div class="FOUNDER">
-  <div class="founder-img">
-    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="Founder Balakumar">
-  </div>
-
-  <div class="founder-content">
-    <p>
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">Our Director</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
           
         Ranjitham Study Center offers high-quality educational services with a strong focus on academic excellence 
         and result-oriented teaching. Structured coaching is provided through a concept-based and student-focused 
@@ -756,14 +811,15 @@ h2{
         postgraduate studies at Thiagarajar College of Engineering, and is currently pursuing a PhD at VIT Chennai.
         </p>
         
-        <p>
+       <p class="home-desc">
+
         With a deep commitment to teaching, he focuses on strengthening students’ fundamentals in both 
         school-level and engineering mathematics through clear and structured explanations.In addition to regular coaching, specialized academic support is provided for students with backlogs 
         or arrears in Electrical and Electronics Engineering subjects. This support helps students build confidence, 
         clear their examinations successfully, and achieve consistent academic progress.
-       
-    </p>
+        </p>
   </div>
+</div>                
 </div>
 </section>
 
@@ -889,14 +945,15 @@ h2{
    
 
 <!-- FOUNDER SECTION -->
-<section class="section">
-<div class="FOUNDER">
-  <div class="founder-img">
-    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="Founder Balakumar">
-  </div>
-
-  <div class="founder-content">
-    <p>
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">Our Director</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
           
         ரஞ்சிதம் ஸ்டடி சென்டர் உயர்தரமான கல்விச் சேவைகளை வழங்குகிறது, கல்வி சிறப்பிற்கும் 
         முடிவை மையப்படுத்திய கற்பித்தலுக்கும் முக்கியத்துவம் அளிக்கிறது. 
@@ -907,16 +964,19 @@ h2{
         பின்னர் Thiagarajar College of Engineering இல் முதுகலைப் படிப்பை முடித்துள்ளார், மேலும் தற்போது VIT Chennai இல் PhD மேற்கொண்டு வருகிறார்.
     </p>
         
-    <p>
+   <p class="home-desc">
+
         கற்பித்தலின் மீது ஆழமான அர்ப்பணிப்புடன், அவர் பள்ளி நிலை மற்றும் பொறியியல் கணிதத்தில் 
         மாணவர்களின் அடிப்படை அறிவை தெளிவான மற்றும் கட்டமைக்கப்பட்ட விளக்கங்களின் மூலம் வலுப்படுத்துவதில் கவனம் செலுத்துகிறார். 
         வழக்கமான பயிற்சிகளுக்கு கூடுதலாக, Electrical and Electronics Engineering பாடங்களில் 
         நிலுவையில் உள்ள (arrears) மாணவர்களுக்கு சிறப்பு கல்வி ஆதரவும் வழங்கப்படுகிறது. 
         இந்த ஆதரவு மாணவர்கள் நம்பிக்கையை வளர்க்க, தேர்வுகளை வெற்றிகரமாக முடிக்க, மற்றும் தொடர்ச்சியான கல்வி முன்னேற்றத்தை அடைய உதவுகிறது.
-    </p>
+   </p>
   </div>
+</div>                
 </div>
 </section>
+
  
 <!-- VISION & MISSION -->
 <section class="section vision-mission">
@@ -1047,14 +1107,15 @@ h2{
 
 </section>
 
-<section class="section">
-<div class="FOUNDER">
-  <div class="founder-img">
-    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="Founder Balakumar">
-  </div>
-
-  <div class="founder-content">
-    <p>
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">Our Director</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
           
         रंजीथम स्टडी सेंटर उच्च गुणवत्ता वाली शैक्षणिक सेवाएं प्रदान करता है, जिसमें शैक्षणिक उत्कृष्टता 
         और परिणाम-उन्मुख शिक्षण पर विशेष ध्यान दिया जाता है। संरचित कोचिंग एक कॉन्सेप्ट-आधारित और 
@@ -1064,16 +1125,19 @@ h2{
         इसके बाद Thiagarajar College of Engineering से स्नातकोत्तर किया, और वर्तमान में VIT Chennai में PhD कर रहे हैं।
     </p>
         
-    <p>
+   <p class="home-desc">
+
         शिक्षण के प्रति गहरी प्रतिबद्धता के साथ, वे स्कूल स्तर और इंजीनियरिंग गणित दोनों में 
         छात्रों की मूलभूत समझ को स्पष्ट और संरचित व्याख्या के माध्यम से मजबूत बनाने पर ध्यान केंद्रित करते हैं। 
         नियमित कोचिंग के अलावा, Electrical and Electronics Engineering विषयों में बैकलॉग या एरियर वाले छात्रों के लिए 
         विशेष शैक्षणिक सहायता भी प्रदान की जाती है। यह सहायता छात्रों को आत्मविश्वास बढ़ाने, 
         परीक्षाओं को सफलतापूर्वक पास करने और निरंतर शैक्षणिक प्रगति प्राप्त करने में मदद करती है।
-    </p>
+   </p>
   </div>
+</div>                
 </div>
 </section>
+
 
 <section class="section vision-mission">
   <div class="vision-mission-wrapper">
@@ -1201,14 +1265,15 @@ h2{
 </section>
     
 
-<section class="section">
-<div class="FOUNDER">
-  <div class="founder-img">
-    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="Founder Balakumar">
-  </div>
-
-  <div class="founder-content">
-    <p>
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">Our Director</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
           
         రంజితం స్టడీ సెంటర్ ఉన్నతమైన విద్యా సేవలను అందిస్తుంది, ఇందులో విద్యా ప్రతిభకు మరియు ఫలితాలపై ఆధారిత బోధనకు ప్రత్యేక ప్రాధాన్యత ఇవ్వబడుతుంది. 
         నిర్మితమైన కోచింగ్ కాన్సెప్ట్ ఆధారిత మరియు విద్యార్థి-కేంద్రిత విధానంలో మా వ్యవస్థాపకుడు శ్రీ బాలకుమార్ మార్గదర్శకత్వంలో అందించబడుతుంది. 
@@ -1217,16 +1282,19 @@ h2{
         అనంతరం Thiagarajar College of Engineering లో పోస్ట్‌గ్రాడ్యుయేషన్ పూర్తి చేశారు, ప్రస్తుతం VIT Chennai లో PhD కొనసాగిస్తున్నారు.
     </p>
         
-    <p>
+   <p class="home-desc">
+
         బోధనపై గాఢమైన నిబద్ధతతో, ఆయన పాఠశాల స్థాయి మరియు ఇంజినీరింగ్ గణితంలో విద్యార్థుల పునాది అవగాహనను 
         స్పష్టమైన మరియు క్రమబద్ధమైన వివరణల ద్వారా బలోపేతం చేయడంపై దృష్టి సారిస్తున్నారు. 
         సాధారణ కోచింగ్‌కు అదనంగా, Electrical and Electronics Engineering విషయాలలో బ్యాక్‌లాగ్ లేదా ఎరియర్స్ ఉన్న విద్యార్థులకు 
         ప్రత్యేక అకాడెమిక్ సహాయం కూడా అందించబడుతుంది. ఈ సహాయం విద్యార్థులు ఆత్మవిశ్వాసాన్ని పెంపొందించుకోవడానికి, 
         పరీక్షలను విజయవంతంగా పూర్తి చేయడానికి మరియు నిరంతర విద్యా పురోగతిని సాధించడానికి సహాయపడుతుంది.
-    </p>
+   </p>
   </div>
+</div>                
 </div>
 </section>
+
 
 <section class="section vision-mission">
   <div class="vision-mission-wrapper">
@@ -1353,14 +1421,15 @@ h2{
 
 </section>
 
-<section class="section">
-<div class="FOUNDER">
-  <div class="founder-img">
-    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="Founder Balakumar">
-  </div>
-
-  <div class="founder-content">
-    <p>
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">Our Director</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
           
         ರಂಜಿತಂ ಸ್ಟಡಿ ಸೆಂಟರ್ ಉನ್ನತ ಗುಣಮಟ್ಟದ ಶೈಕ್ಷಣಿಕ ಸೇವೆಗಳನ್ನು ಒದಗಿಸುತ್ತದೆ, ಇದರಲ್ಲಿ ಶೈಕ್ಷಣಿಕ ಮೆರುಗು 
         ಮತ್ತು ಫಲಿತಾಂಶ ಕೇಂದ್ರೀಕೃತ ಬೋಧನೆಗೆ ಹೆಚ್ಚಿನ ಒತ್ತು ನೀಡಲಾಗಿದೆ. ರಚಿತವಾದ ಕೋಚಿಂಗ್ ಅನ್ನು ಸಂकल्पನೆ ಆಧಾರಿತ 
@@ -1370,7 +1439,7 @@ h2{
         ನಂತರ Thiagarajar College of Engineering ನಲ್ಲಿ ಸ್ನಾತಕೋತ್ತರ ಪೂರ್ಣಗೊಳಿಸಿದ್ದಾರೆ ಮತ್ತು ಪ್ರಸ್ತುತ VIT Chennai ನಲ್ಲಿ PhD ಮಾಡುತ್ತಿದ್ದಾರೆ.
     </p>
         
-    <p>
+    <p class="home-desc">
         ಬೋಧನೆಯ ಮೇಲಿನ ಗಾಢ ನಿಷ್ಠೆಯೊಂದಿಗೆ, ಅವರು ಶಾಲಾ ಮಟ್ಟ ಮತ್ತು ಇಂಜಿನಿಯರಿಂಗ್ ಗಣಿತದಲ್ಲಿ ವಿದ್ಯಾರ್ಥಿಗಳ ಮೂಲಭೂತ ಅರಿವನ್ನು 
         ಸ್ಪಷ್ಟ ಮತ್ತು ರಚಿತ ವಿವರಣೆಗಳ ಮೂಲಕ ಬಲಪಡಿಸುವುದರಲ್ಲಿ ಗಮನ ಹರಿಸುತ್ತಾರೆ. ನಿಯಮಿತ ಕೋಚಿಂಗ್ ಜೊತೆಗೆ, 
         Electrical and Electronics Engineering ವಿಷಯಗಳಲ್ಲಿ ಬ್ಯಾಕ್‌ಲಾಗ್ ಅಥವಾ ಅರೆರ್ ಇರುವ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ 
@@ -1378,8 +1447,10 @@ h2{
         ಪರೀಕ್ಷೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಉತ್ತೀರ್ಣರಾಗಲು ಮತ್ತು ನಿರಂತರ ಶೈಕ್ಷಣಿಕ ಪ್ರಗತಿ ಸಾಧಿಸಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ.
     </p>
   </div>
+</div>                
 </div>
 </section>
+
 
 <section class="section vision-mission">
   <div class="vision-mission-wrapper">
@@ -1506,14 +1577,15 @@ h2{
 
 </section>
 
-<section class="section">
-<div class="FOUNDER">
-  <div class="founder-img">
-    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="Founder Balakumar">
-  </div>
-
-  <div class="founder-content">
-    <p>
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">Our Director</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
           
         രഞ്ജിതം സ്റ്റഡി സെന്റർ ഉയർന്ന നിലവാരമുള്ള വിദ്യാഭ്യാസ സേവനങ്ങൾ നൽകുന്നു, 
         ഇതിൽ അക്കാദമിക് മികവും ഫലം കേന്ദ്രീകൃതമായ അധ്യാപനവും പ്രത്യേക പ്രാധാന്യമർഹിക്കുന്നു. 
@@ -1525,17 +1597,20 @@ h2{
         ഇപ്പോൾ VIT Chennai ൽ PhD തുടരുന്നു.
     </p>
         
-    <p>
+    <p class="home-desc">
+
         അധ്യാപനത്തോടുള്ള ആഴത്തിലുള്ള പ്രതിബദ്ധതയോടെ, അദ്ദേഹം സ്കൂൾ തലത്തിലും എഞ്ചിനിയറിംഗ് ഗണിതത്തിലും 
         വിദ്യാർത്ഥികളുടെ അടിസ്ഥാന അറിവ് വ്യക്തവും ക്രമബദ്ധവുമായ വിശദീകരണങ്ങളിലൂടെ ശക്തിപ്പെടുത്തുന്നതിൽ ശ്രദ്ധ കേന്ദ്രീകരിക്കുന്നു. 
         സ്ഥിരമായ കോച്ചിംഗിനൊപ്പം, Electrical and Electronics Engineering വിഷയങ്ങളിൽ ബാക്ക്‌ലോഗ് അല്ലെങ്കിൽ 
         അരിയേഴ്‌സ് ഉള്ള വിദ്യാർത്ഥികൾക്ക് പ്രത്യേക അക്കാദമിക് പിന്തുണയും നൽകുന്നു. 
         ഈ പിന്തുണ വിദ്യാർത്ഥികൾക്ക് ആത്മവിശ്വാസം വർധിപ്പിക്കാൻ, പരീക്ഷകൾ വിജയകരമായി പാസാക്കാൻ, 
         തുടർച്ചയായ അക്കാദമിക് പുരോഗതി കൈവരിക്കാൻ സഹായിക്കുന്നു.
-    </p>
+       </p>
   </div>
+</div>                
 </div>
-</section>    
+</section>
+
   <section class="section vision-mission">
   <div class="vision-mission-wrapper">
       
