@@ -228,18 +228,22 @@ h2{
 
         .home-content {
             display: grid;
-            grid-template-columns: 0.9fr 1.3fr;  /* 🔥 TEXT bigger */
+            grid-template-columns: 1fr 1.8fr;  /* 🔥 TEXT bigger */
             gap: 50px;
             align-items: center;
+           
   }
 
         .home-image{
           display:flex;
+          width:100%;
+          max-width:550px;   /* 🔥 increase from 480 → 550 */
           justify-content:center;
           box-shadow: 0 12px 30px rgba(0,0,0,0.15);
-          border-radius: 100px;
+          border-radius: 18px;
           align-items:center;
-        }
+             
+         }
       
          .home-text p {
             font-size: 16px;
