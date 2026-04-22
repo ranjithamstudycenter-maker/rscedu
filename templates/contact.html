@@ -225,6 +225,25 @@ iframe{
   font-size: 14px;
   text-align: center;
 }
+  .whatsapp-section {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 14px;
+  color: #555;
+}
+
+.whatsapp-link {
+  color: #25D366; /* WhatsApp green */
+  font-weight: 600;
+  border-bottom: 2px solid #25D366; /* underline effect */
+  cursor: pointer;
+  transition: all 0.3s ease;
+}
+
+.whatsapp-link:hover {
+  color: #128C7E;
+  border-bottom: 2px solid #128C7E;
+}
  
 </style>
 </head>
@@ -354,6 +373,16 @@ iframe{
   
       <button onclick="openWhatsApp()">Chat on WhatsApp</button>
 
+      <!-- WHATSAPP SECTION -->
+      <div class="whatsapp-section">
+        <p>
+          Need instant help?  
+          <span onclick="openWhatsApp()" class="whatsapp-link">
+            Chat on WhatsApp
+          </span>
+        </p>
+      </div>
+      
       <script>
       function openWhatsApp(){
         let msg = "Hi, I want details about your classes";
