@@ -1077,6 +1077,7 @@ def about():
 def courses():
     return render_template("class.html")
 
+
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
@@ -1085,7 +1086,6 @@ def contact():
         phone = request.form["phone"]
         message = request.form["message"]
 
-        # Email content
         body = f"""
 New Enquiry:
 
@@ -1100,21 +1100,25 @@ Message: {message}
         msg["From"] = "ranjithamstudycenter@gmail.com"
         msg["To"] = "ranjithamstudycenter@gmail.com"
 
-        # Gmail SMTP
-        server = smtplib.SMTP("smtp.gmail.com", 587)
-        server.starttls()
-        server.login("ranjithamstudycenter@gmail.com", "EMAIL_PASS")
-        server.send_message(msg)
-        server.quit()
+        try:
+            server = smtplib.SMTP("smtp.gmail.com", 587)
+            server.starttls()
+            server.login(
+                "ranjithamstudycenter@gmail.com",
+                os.environ.get("EMAIL_PASS")   # ✅ correct
+            )
+
+            server.send_message(msg)
+            server.quit()
+
+            print("Mail sent successfully")
+
+        except Exception as e:
+            print("Error:", e)
 
         return render_template("contact.html", success=True)
 
     return render_template("contact.html", success=False)
-
-server.login(
-    "ranjithamstudycenter@gmail.com",
-    os.environ.get("imwf zljp xees huiz")
-)
 
 @app.route("/logout")
 def logout():
