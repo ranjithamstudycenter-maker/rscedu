@@ -169,7 +169,7 @@
 
 /* CONTAINER */
 .container{
-  max-width: 1000px;
+  max-width: 1200px;   /* 🔥 increase */
   margin: auto;
    width: 90%;
   padding: 40px 20px;
@@ -191,16 +191,22 @@ h1{
 /* CARD STYLE */
 .card{
   background: transparent;   /* ✅ */
+  display: flex;
+  justify-content: space-between;
   padding:0;
   border-radius:12px;
   box-shadow:none;
   margin-bottom:10px;
+  flex: 1;
+  min-width: 280px;
+  max-width: 350px;
 }
 
 /* CONTACT DETAILS */
 .contact-info p{
   margin:10px 0;
   font-size:15px;
+  line-height: 1.6;   /* more breathing space */
 }
 
 /* MAP */
