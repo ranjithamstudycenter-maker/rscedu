@@ -8,6 +8,8 @@ import sqlite3
 import csv
 import random
 import requests
+import smtplib
+from email.mime.text import MIMEText
 from datetime import datetime, timedelta
 from email.message import EmailMessage
 
@@ -1075,7 +1077,6 @@ def about():
 def courses():
     return render_template("class.html")
 
-
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
@@ -1084,10 +1085,29 @@ def contact():
         phone = request.form["phone"]
         message = request.form["message"]
 
-        # WhatsApp message format
-        whatsapp_msg = f"New Contact:\nName: {name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}"
+        # Email content
+        body = f"""
+New Enquiry:
 
-        return render_template("contact.html", success=True, whatsapp_msg=whatsapp_msg)
+Name: {name}
+Email: {email}
+Phone: {phone}
+Message: {message}
+"""
+
+        msg = MIMEText(body)
+        msg["Subject"] = "New Enquiry from Website - RSC"
+        msg["From"] = "ranjithamstudycenter@gmail.com"
+        msg["To"] = "ranjithamstudycenter@gmail.com"
+
+        # Gmail SMTP
+        server = smtplib.SMTP("smtp.gmail.com", 587)
+        server.starttls()
+        server.login("ranjithamstudycenter@gmail.com", "yqsm lzip dazp eoce")
+        server.send_message(msg)
+        server.quit()
+
+        return render_template("contact.html", success=True)
 
     return render_template("contact.html", success=False)
 
