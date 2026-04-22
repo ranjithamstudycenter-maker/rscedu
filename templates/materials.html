@@ -778,6 +778,64 @@
   background: #20b358;
 }
 
+
+
+.chat-toggle {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  background: #25d366;
+  color: white;
+  padding: 12px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+.chat-container {
+  position: fixed;
+  bottom: 70px;
+  right: 20px;
+  width: 260px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+  display: none;
+}
+
+.chat-header {
+  background: #25d366;
+  color: white;
+  padding: 10px;
+  border-radius: 10px 10px 0 0;
+  font-weight: bold;
+}
+
+.chat-body {
+  padding: 10px;
+}
+
+.chat-body button {
+  display: block;
+  width: 100%;
+  margin: 5px 0;
+  padding: 6px;
+  border: none;
+  border-radius: 5px;
+  background: #f1f1f1;
+  cursor: pointer;
+}
+
+.bot {
+  background: #f1f1f1;
+  padding: 6px;
+  border-radius: 6px;
+  margin-bottom: 6px;
+}
+
+
+
+     
 </style>
 
   <script type="module">
@@ -1173,34 +1231,45 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
     ========================== -->
     <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
 
- <div class="chat-box">
-  <p><strong>🤖 RSC Assistant</strong></p>
+ <!-- FLOAT BUTTON -->
+<div class="chat-toggle" onclick="toggleChat()">💬</div>
 
-  <button onclick="reply('materials')">📘 Materials Details</button>
-  <button onclick="reply('class')">🎓 Class Info</button>
-  <button onclick="reply('fees')">💰 Fees</button>
+<!-- CHAT BOX -->
+<div class="chat-container" id="chatBox">
+  <div class="chat-header">🤖 RSC Assistant</div>
 
-  <p id="response"></p>
+  <div class="chat-body">
+    <p class="bot">Hi 👋 Welcome! How can I help you?</p>
+
+    <button onclick="reply('materials')">📘 Materials</button>
+    <button onclick="reply('class')">🎓 Classes</button>
+    <button onclick="reply('fees')">💰 Fees</button>
+
+    <p id="response" class="bot"></p>
+  </div>
 </div>
-
+  
+ </body>
 <script>
+function toggleChat(){
+  let box = document.getElementById("chatBox");
+  box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+
 function reply(type){
   let res = document.getElementById("response");
 
   if(type === "materials"){
-    res.innerHTML = "📘 We provide important problems only. View access for 6 months.";
+    res.innerHTML = "📘 Important problems only. 6 months access.";
   }
   else if(type === "class"){
-    res.innerHTML = "🎓 Online & offline classes available with full concept teaching.";
+    res.innerHTML = "🎓 Online & offline classes available.";
   }
   else if(type === "fees"){
-    res.innerHTML = "💰 Fees vary by course. Contact us on WhatsApp for details.";
+    res.innerHTML = "💰 Contact us on WhatsApp for fees.";
   }
 }
 </script>
-  
- </body>
-
 <script>
 
 /* ================= SEARCH ================= */
