@@ -110,48 +110,48 @@ button:hover{
   color: darkred;
 }
 
-  .contact-wrapper{
-  max-width: 700px;
-  margin: 40px auto;
-  padding: 20px;
-  background: #f9fafc;
-  border-radius: 15px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
-}
-
-/* each row */
-.contact-card{
+.contact-row{
   display: flex;
-  align-items: flex-start;
-  gap: 15px;
-  margin-bottom: 25px;
-}
-
-/* icon circle */
-.icon{
-  width: 45px;
-  height: 45px;
-  background: #e3f2fd;
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
   justify-content: center;
-  font-size: 20px;
+  gap: 20px;
+  flex-wrap: wrap; /* mobile support */
+  margin-top: 30px;
 }
 
-/* headings */
-.contact-card h3{
-  margin: 0;
-  font-size: 18px;
+.contact-box{
+  width: 240px;
+  padding: 20px;
+  border-radius: 12px;
+  background: linear-gradient(135deg, #f8fbff, #eef5ff);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.08);
+  text-align: center;
+  transition: 0.3s;
+}
+
+.contact-box:hover{
+  transform: translateY(-5px);
+  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+}
+
+.icon{
+  font-size: 24px;
+  margin-bottom: 10px;
+}
+
+.contact-box h3{
+  margin: 5px 0;
+  font-size: 16px;
   color: #1e3a8a;
 }
 
-/* text */
-.contact-card p{
-  margin: 5px 0 0;
+.contact-box p{
   font-size: 14px;
   color: #555;
-  line-height: 1.6;
+  line-height: 1.5;
+}
+
+  .contact-box:nth-child(2){
+  border: 2px solid #4caf50;
 }
 </style>
 </head>
@@ -163,45 +163,39 @@ button:hover{
   <h1>📞 Contact Us</h1>
   <p class="subtitle">Get in touch for demo classes and enquiries</p>
 
- <div class="contact-wrapper">
+ <div class="contact-row">
 
-  <!-- Address -->
-  <div class="contact-card">
+  <div class="contact-box">
     <div class="icon">📍</div>
-    <div>
-      <h3>Address</h3>
-      <p>
-        Ranjitham Study Center,<br>
+    <h3>Address</h3>
+    <p>
+        Ranjitham Study Center(Annai illam),<br>
         11/128, Munusamy Nagar,<br>
         3rd Cross Street,<br>
         Opp. Lissome Gents Stay,<br>
-        Medavakkam, Chennai – 600100
-      </p>
-    </div>
+        Medavakkam, Chennai – 600100.
+    </p>
   </div>
 
-  <!-- Contact -->
-  <div class="contact-card">
+  <div class="contact-box">
     <div class="icon">📞</div>
-    <div>
-      <h3>Contact</h3>
-      <p>
-        Mobile: <a href="tel:+917702616245">+91 7702616245</a> <br>
-        Email: <a href="mailto:ranjithamstudycenter@gmail.com">Email Us</a>
-      </p>
-    </div>
+    <h3>Contact</h3>
+    <p>
+      Mobile: <a href="tel:+917702616245">+91 7702616245 </a> <br>
+      Email: <a href="mailto:ranjithamstudycenter@gmail.com"> ranjithamstudycenter@gmail.com </a>
+    </p>
   </div>
 
-  <!-- Hours -->
-  <div class="contact-card">
+  <div class="contact-box">
     <div class="icon">🕒</div>
-    <div>
-      <h3>Working Hours</h3>
-      <p>
-        Monday - Friday: 6:00 PM – 10:00 PM
-      </p>
-    </div>
+    <h3>Working Hours (Tentative)</h3>
+    <p>
+      Monday - Friday: 6:00 PM – 10:00 PM 
+     
+    </p>
   </div>
+
+</div>
 
 </div>
 
