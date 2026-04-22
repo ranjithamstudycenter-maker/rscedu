@@ -380,5 +380,16 @@ function showSuccess(e){
   document.getElementById("successMsg").style.display = "block";
   form.reset();
 }
+
+<script>
+setTimeout(function(){
+  let msg = document.querySelector(".success-msg");
+  if(msg){
+    msg.style.transition = "opacity 0.5s";
+    msg.style.opacity = "0";
+    setTimeout(() => msg.style.display = "none", 500);
+  }
+}, 3000);
+</script>
 </script>
 </html>
