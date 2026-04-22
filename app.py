@@ -1103,7 +1103,7 @@ Message: {message}
         # Gmail SMTP
         server = smtplib.SMTP("smtp.gmail.com", 587)
         server.starttls()
-        server.login("ranjithamstudycenter@gmail.com", "yqsm lzip dazp eoce")
+        server.login("ranjithamstudycenter@gmail.com", "EMAIL_PASS")
         server.send_message(msg)
         server.quit()
 
@@ -1111,6 +1111,10 @@ Message: {message}
 
     return render_template("contact.html", success=False)
 
+server.login(
+    "ranjithamstudycenter@gmail.com",
+    os.environ.get("imwf zljp xees huiz")
+)
 
 @app.route("/logout")
 def logout():
