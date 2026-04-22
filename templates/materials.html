@@ -1315,9 +1315,22 @@ document.addEventListener("dragstart", function (e) {
     }
 });
 
-
-
-
+ /* Block Ctrl+P and try detecting PrintScreen */
+ // Block Ctrl+P
+window.addEventListener("keydown", function (e) {
+    if (e.ctrlKey && (e.key === "p" || e.key === "P")) {
+        e.preventDefault();
+        alert("Printing is not allowed");
+    }
+});
+// Block PrintScreen (best effort)
+window.addEventListener("keyup", function(e){
+    if(e.key === "PrintScreen"){
+        navigator.clipboard.writeText('');
+        alert("Screenshot disabled");
+    }
+});
+ 
 /* Blur page when tab hidden */
 document.addEventListener("visibilitychange", function () {
     if (document.hidden) {
