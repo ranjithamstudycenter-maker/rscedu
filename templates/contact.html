@@ -225,6 +225,13 @@ iframe{
   font-size: 14px;
   text-align: center;
 }
+  input:invalid{
+  border-color: red;
+}
+
+input:valid{
+  border-color: #4caf50;
+}
 </style>
 </head>
 
@@ -327,7 +334,8 @@ iframe{
     </div>
 
     <div class="input-group">
-      <input type="email" name="email" required>
+      <input type="email" name="email" required 
+      placeholder="example@gmail.com">
       <label>Your Email</label>
     </div>
 
@@ -362,12 +370,16 @@ iframe{
 </body>
   <script>
 function showSuccess(e){
-  e.preventDefault(); // stop reload
+  let form = e.target;
+
+  if(!form.checkValidity()){
+    return; // ❌ invalidனா submit ஆகாது
+  }
+
+  e.preventDefault(); // only validனா stop
 
   document.getElementById("successMsg").style.display = "block";
-
-  // optional: clear form
-  e.target.reset();
+  form.reset();
 }
 </script>
 </html>
