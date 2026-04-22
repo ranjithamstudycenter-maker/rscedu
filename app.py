@@ -267,6 +267,10 @@ def demo_complete():
     return jsonify({"status": "saved"})
     
 
+@app.before_request
+def force_https():
+    if request.headers.get('X-Forwarded-Proto') == 'http':
+        return redirect(request.url.replace('http://', 'https://'))
 
 @app.route("/api/seat-count")
 def seat_count():
