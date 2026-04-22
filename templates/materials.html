@@ -1093,7 +1093,21 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
        data-pdf-url="{{ url_for('secure_view', product_id=open) }}">
            </div>
                             
-    
+    <div class="pdf-actions">
+      
+           {% if access.get(pid, {}).get("download") %}
+            <button onclick="location.href='{{ url_for('download', product_id=open) }}'">
+            
+            </button>
+           {% else %}
+            <button onclick="location.href='{{ url_for('pay',
+                product=open,
+                mode='download',
+                board=active_board,
+                cls=active_class) }}'">
+            
+            </button>
+
 
             <div class="feedback-section">
                    <p class="info-sub">
@@ -1107,7 +1121,7 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
              </div> 
            {% endif %}
    
-    
+    </div>
          
      
  </div> 
