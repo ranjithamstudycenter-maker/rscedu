@@ -398,104 +398,115 @@ body{
   }
 }
 
-    /* ==========================
-           CTA
-        ========================== */
-        .cta-section {
-            padding: 70px 20px;
-            background: linear-gradient(135deg, #b31217, #e52d27);
-        }
+  /* ==========================
+   CTA (NEW PREMIUM STYLE)
+========================== */
+.cta-section {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #1e3a8a, #6d28d9); /* 🔥 blue + purple */
+}
 
-        .cta-box {
-            max-width: 1100px;
-            margin: auto;
-            color: white;
-            border-radius: 18px;
-            padding: 50px;
-            text-align: center;
-        }
+.cta-box {
+    max-width: 1100px;
+    margin: auto;
+    color: white;
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
 
-        .cta-small {
-            font-size: 14px;
-            letter-spacing: 1px;
-            margin-bottom: 10px;
-            opacity: 0.9;
-        }
+.cta-small {
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
 
-        .cta-box h2 {
-            font-size: 36px;
-            margin-bottom: 15px;
-        }
+.cta-box h2 {
+    font-size: 38px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
 
-        .cta-text {
-            font-size: 16px;
-            margin-bottom: 30px;
-            max-width: 600px;
-            margin-left: auto;
-            margin-right: auto;
-        }
+.cta-text {
+    font-size: 16px;
+    margin-bottom: 35px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+}
 
-        .cta-btn {
-            display: inline-block;
-            background: white;
-            color: #b31217;
-            padding: 14px 35px;
-            border-radius: 30px;
-            font-weight: 600;
-            transition: 0.3s;
-        }
+/* 🔥 BUTTON UPGRADE */
+.cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #facc15, #f59e0b); /* GOLD */
+    color: #1e3a8a;
+    padding: 14px 40px;
+    border-radius: 40px;
+    font-weight: 600;
+    transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
 
-        .cta-btn:hover {
-            background: #ffeaea;
-        }
-
+.cta-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+}
         /* ==========================
            FOOTER
         ========================== */
-        .footer {
-            background: #0b0f17;
-            color: #ccc;
-            padding: 60px 20px 20px;
-        }
+       /* ==========================
+   FOOTER (NEW STYLE)
+========================== */
+.footer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #cbd5e1;
+    padding: 70px 20px 25px;
+}
 
-        .footer-container {
-            max-width: 1100px;
-            background: transparent;   /* 🔥 change */
-            color: #e5e7eb;
-            margin: auto;
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 40px;
-        }
+.footer-container {
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 50px;
+}
 
-        .footer-box h3 {
-            color: white;
-            margin-bottom: 15px;
-        }
+.footer-box h3 {
+    color: white;
+    margin-bottom: 18px;
+    font-size: 18px;
+}
 
-        .footer-box p {
-            line-height: 1.6;
-        }
+.footer-box p {
+    line-height: 1.7;
+    font-size: 14px;
+}
 
-        .footer-box a {
-            display: block;
-            color: #ccc;
-            margin-bottom: 8px;
-        }
+.footer-box a {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
 
-        .footer-box a:hover {
-            color: white;
-        }
+.footer-box a:hover {
+    color: #facc15; /* 🔥 gold hover */
+    transform: translateX(5px);
+}
 
-        .footer-bottom {
-            text-align: center;
-            margin-top: 40px;
-            font-size: 14px;
-            border-top: 1px solid #333;
-            padding-top: 15px;
-        }
+.footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 13px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    color: #94a3b8;
+}
 
-        /* ==========================
+         /* ==========================
            WHATSAPP FLOAT BUTTON
         ========================== */
         .whatsapp {
@@ -521,17 +532,33 @@ body{
             transform: scale(1.1);
             box-shadow: 0 10px 25px rgba(0,0,0,0.35);
         }
-          .privacy-box{
-            margin-top:20px;
-            text-align:center;   /* 🔥 center */
-            font-size:13px;
-            color:#aaa;
-            max-width:600px;
-            margin-left:auto;
-            margin-right:auto;
-            line-height:1.6;
-        }  
 
+
+  .privacy-section{
+  background: #f1f5f9;   /* light clean bg */
+  padding: 30px 20px;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* 🔥 HEADING */
+.privacy-section h3{
+  text-align: center;
+  color: #0b5fa5;   /* bright blue */
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* 🔥 PARAGRAPH */
+.privacy-section p{
+    width: 100%;              /* 🔥 full width */
+  text-align: justify;      /* left → right fill */
+
+  color:red;        /* dark readable */
+
+  font-size: 14px;
+  line-height: 1.6;
+}
   /* ⏳ timer */
 .demo-timer {
   font-size: 12px;
@@ -1241,7 +1268,7 @@ body{
 </div>
 </section>
 
-<!-- ==========================
+ <!-- ==========================
          CTA SECTION
     ========================== -->
     <section class="cta-section">
@@ -1279,13 +1306,18 @@ body{
                 <p>📧 ranjithamstudycenter@gmail.com</p>
            </div>
         </div>
+                    <div class="footer-bottom">
+                      © 2026 Ranjitham Study Center. All Rights Reserved. | Designed for Quality Education
+                    </div>
         </footer>
-  <div class="privacy-box">
-  🔒 <strong>Your Privacy Matters</strong><br>
+ <div class="privacy-section">
+  <h3>🔒 <strong>Your Privacy </strong></h3><br> 
+  <p>
     We collect your name, contact number, email, and feedback solely for communication purposes. 
     This information is used to provide you with relevant educational updates and materials. 
     Your data is securely stored and will not be shared with any third parties.
-  </div>
+  </p>
+</div>
 
   
  
