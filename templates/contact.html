@@ -320,7 +320,7 @@ iframe{
   <h3>📝 Get in Touch</h3>
   <p class="form-subtitle">We’ll respond quickly to your queries</p>
 
-  <form method="post" onsubmit="showSuccess(event)">
+     <form method="post" action="/contact">
 
     <div class="input-group">
       <input type="text" name="name" required
@@ -346,10 +346,11 @@ iframe{
 
   </form>
 
-  <!-- SUCCESS MESSAGE -->
-  <div class="success-msg" id="successMsg" style="display:none;">
-    ✅ Message sent successfully!
-  </div>
+      {% if success %}
+    <div class="success-msg">
+      ✅ Message sent successfully!
+    </div>
+    {% endif %}
 
   <!-- WHATSAPP -->
   <p style="text-align:center; margin-top:10px; font-size:13px;">
