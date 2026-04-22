@@ -92,41 +92,51 @@ body{
   margin-bottom:20px;
 }
 
-.materials-info {
-  max-width: 800px;
-  margin: 30px auto;
-  padding: 20px;
+.materials-section {
   text-align: center;
+  padding: 30px 20px;
 }
 
-.materials-info h2 {
+.materials-section h2 {
   color: #0b5394;
-  margin-bottom: 15px;
+  margin-bottom: 5px;
 }
 
-.highlight-line {
-  font-size: 16px;
-  font-weight: 600;
-  color: #2e7d32;
-  margin-bottom: 15px;
-}
-
-.materials-info p {
-  font-size: 15px;
-  color: #444;
-  line-height: 1.7;
-  margin-bottom: 12px;
-}
-
-.validity {
-  font-weight: 600;
-  color: #d32f2f;
-}
-
-.note {
-  color: #555;
+.sub-text {
+  color: #777;
+  margin-bottom: 25px;
   font-size: 14px;
 }
+
+.material-card {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap: 15px;
+  max-width: 900px;
+  margin: auto;
+}
+
+.point {
+  background: #f8f9fa;
+  padding: 15px;
+  border-radius: 10px;
+  font-size: 14px;
+  color: #333;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.08);
+  transition: 0.3s;
+}
+
+.point:hover {
+  transform: translateY(-5px);
+}
+
+.highlight-box {
+  margin-top: 25px;
+  font-size: 15px;
+  font-weight: 600;
+  color: #2e7d32;
+}
+  
 .board-toggle{
   display:flex;
   justify-content:center;
@@ -693,39 +703,38 @@ body{
 
 <h2 class="page-title">HAND WRITTEN NOTES</h2>
 
- <section class="materials-info">
+ <section class="materials-section">
 
-  <h2>📘 Smart Learning Materials</h2>
+  <h2>📘 Premium Study Materials</h2>
+  <p class="sub-text">Focused Learning • Smart Preparation • Exam Success</p>
 
-  <p class="highlight-line">
-    Focus on most <strong>Important Problems Only</strong>
-  </p>
+  <div class="material-card">
 
-  <p>
-    We are providing selected <strong>important problems</strong> 
-    from each chapter to help students concentrate on exam-relevant concepts. 
-    Instead of overwhelming content, we ensure <strong>focused and effective preparation</strong>.
-  </p>
+    <div class="point">🎯 <strong>Important Problems Only</strong><br>
+      Focus only on exam-relevant questions — no unnecessary content.
+    </div>
 
-  <p>
-    📄 Materials are available in <strong>view-only format</strong>  
-    This helps students learn in a guided way while protecting the quality of our content.
-  </p>
+    <div class="point">📄 <strong>View-Only Access</strong><br>
+      Materials are protected and accessible anytime for learning.
+    </div>
 
-  <p>
-    🎯 Full concepts, detailed explanations, and remaining problems will be covered 
-    in our <strong>online or offline classes</strong> for complete understanding.
-  </p>
+    <div class="point">📚 <strong>Concepts via Classes</strong><br>
+      Complete explanations are covered in our online classes.
+    </div>
 
-  <p class="validity">
-    ⏳ Access Validity: <strong>6 Months</strong> from the date of purchase
-  </p>
+    <div class="point">⏳ <strong>6 Months Validity</strong><br>
+      Revise and refer anytime within your access period.
+    </div>
 
-  <p class="note">
-    💡 If you have doubts, you can refer to the material anytime within the validity period.
-  </p>
+  </div>
+
+  <div class="highlight-box">
+    💡 Designed for serious students who want focused preparation and better results.
+  </div>
 
 </section>
+
+
 
  <!-- BOARD -->
 <div class="board-toggle">
