@@ -57,39 +57,82 @@ iframe{
   border-radius:10px;
 }
 
-/* FORM */
-form{
-  display:flex;
-  flex-direction:column;
-  gap:12px;
+.contact-form-box{
+  max-width: 420px;
+  margin: 40px auto;
+  padding: 25px;
+  border-radius: 15px;
+  background: #ffffff;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
 }
 
-input, textarea{
-  padding:12px;
-  border-radius:8px;
-  border:1px solid #ccc;
-  font-size:15px;
+.contact-form-box h3{
+  margin-bottom: 5px;
+  font-size: 20px;
 }
 
-input:focus, textarea:focus{
-  border-color:#0b5394;
-  outline:none;
+.form-subtitle{
+  font-size: 13px;
+  color: #777;
+  margin-bottom: 20px;
 }
 
-/* BUTTON */
-button{
-  background: linear-gradient(45deg, #ff2d55, #7b2cbf);
-  color:white;
-  padding:12px;
-  border:none;
-  border-radius:8px;
-  font-size:16px;
-  cursor:pointer;
-  transition:0.3s;
+/* floating input */
+.input-group{
+  position: relative;
+  margin-bottom: 20px;
 }
 
-button:hover{
-  transform:scale(1.03);
+.input-group input,
+.input-group textarea{
+  width: 100%;
+  padding: 12px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  outline: none;
+  font-size: 14px;
+  background: transparent;
+}
+
+/* label */
+.input-group label{
+  position: absolute;
+  top: 50%;
+  left: 12px;
+  transform: translateY(-50%);
+  background: white;
+  padding: 0 5px;
+  font-size: 13px;
+  color: #888;
+  transition: 0.3s;
+  pointer-events: none;
+}
+
+/* focus animation */
+.input-group input:focus + label,
+.input-group input:valid + label,
+.input-group textarea:focus + label,
+.input-group textarea:valid + label{
+  top: -8px;
+  font-size: 11px;
+  color: #1e3a8a;
+}
+
+/* button */
+.submit-btn{
+  width: 100%;
+  padding: 12px;
+  border: none;
+  border-radius: 8px;
+  background: #4caf50;
+  color: white;
+  font-size: 15px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.submit-btn:hover{
+  background: #388e3c;
 }
 
 /* RESPONSIVE */
@@ -125,12 +168,12 @@ button:hover{
   background: linear-gradient(135deg, #f8fbff, #eef5ff);
   box-shadow: 0 6px 18px rgba(0,0,0,0.08);
   text-align: center;
-  transition: 0.3s;
+ transition: all 0.3s ease;
 }
 
 .contact-box:hover{
-  transform: translateY(-5px);
-  box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+   box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+  transform: translateY(-8px) scale(1.02);
 }
 
 .icon{
@@ -152,6 +195,16 @@ button:hover{
 
   .contact-box:nth-child(2){
   border: 2px solid #4caf50;
+}
+
+  .success-msg{
+  margin-top: 15px;
+  padding: 10px;
+  border-radius: 8px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 14px;
+  text-align: center;
 }
 </style>
 </head>
@@ -196,7 +249,9 @@ button:hover{
   </div>
 
 </div>
-
+      <p style="text-align:center; margin-top:20px; color:#555;">
+      💬 Need quick help? Use our WhatsApp or chat assistant for instant support.
+      </p>
 </div>
 
   <!-- MAP -->
@@ -237,27 +292,69 @@ button:hover{
      📍 Get Directions
   </a>
 </div>
+    <div style="text-align:center; margin:20px 0;">
+      <a href="https://www.google.com/maps/dir/?api=1&destination=Annai+Illam+11%2F128+Munusamy+Nagar+Vimala+Nagar+Medavakkam+Chennai+Tamil+Nadu+600100"
+         target="_blank"
+         class="direction-link">
+         📍 Get Directions
+      </a>
+    </div>
+  
 </a>
-  <!-- FORM -->
-  <div class="card">
-    <h3>📝 Send Us a Message</h3>
+ <!-- FORM -->
+<div class="contact-form-box">
 
-    <form method="post">
+  <h3>📝 Get in Touch</h3>
+  <p class="form-subtitle">We’ll respond quickly to your queries</p>
 
-      <input type="text" name="name" placeholder="Your Name" required>
+  <form method="post" onsubmit="showSuccess(event)">
 
-      <input type="email" name="email" placeholder="Your Email" required>
+    <div class="input-group">
+      <input type="text" name="name" required>
+      <label>Your Name</label>
+    </div>
 
-      <input type="text" name="phone" placeholder="Your Phone Number">
+    <div class="input-group">
+      <input type="email" name="email" required>
+      <label>Your Email</label>
+    </div>
 
-      <textarea name="message" rows="5" placeholder="Your Message" required></textarea>
+    <div class="input-group">
+      <input type="text" name="phone">
+      <label>Your Phone Number</label>
+    </div>
 
-      <button type="submit">Submit</button>
+    <div class="input-group">
+      <textarea name="message" rows="4" required></textarea>
+      <label>Your Message</label>
+    </div>
 
-    </form>
+    <button type="submit" class="submit-btn">Send Message</button>
+
+  </form>
+
+  <!-- SUCCESS MESSAGE -->
+  <div class="success-msg" id="successMsg" style="display:none;">
+    ✅ Message sent successfully!
   </div>
+
+  <!-- WHATSAPP -->
+  <p style="text-align:center; margin-top:10px; font-size:13px;">
+    Or chat instantly on 
+    <a href="https://wa.me/917702616245" target="_blank">WhatsApp</a>
+  </p>
 
 </div>
 
 </body>
+  <script>
+function showSuccess(e){
+  e.preventDefault(); // stop reload
+
+  document.getElementById("successMsg").style.display = "block";
+
+  // optional: clear form
+  e.target.reset();
+}
+</script>
 </html>
