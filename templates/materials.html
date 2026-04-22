@@ -1252,12 +1252,11 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
   </p>
 </div>
 
-  
-   <!-- FLOAT BUTTON -->
+  <!-- FLOAT BUTTON -->
 <div class="chat-toggle" onclick="toggleChat()">💬</div>
 
 <!-- CHAT BOX -->
-<div class="chat-container" id="chatBox">
+<div class="chat-container" id="chatBox" style="display:none;">
 
   <div class="chat-header">🤖 RSC Assistant</div>
 
@@ -1271,17 +1270,18 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
   </div>
 
 </div>
-  
- </body>
+
 <script>
+// 🔹 Toggle chat
 function toggleChat(){
   let box = document.getElementById("chatBox");
   box.style.display = (box.style.display === "block") ? "none" : "block";
 }
 
+// 🔹 Send message
 function sendMsg(){
   let input = document.getElementById("userInput");
-  let msg = input.value;
+  let msg = input.value.trim();
 
   if(!msg) return;
 
@@ -1306,10 +1306,47 @@ function sendMsg(){
   chatArea.innerHTML += `<div class="bot-msg">${reply}</div>`;
 
   input.value = "";
+  chatArea.scrollTop = chatArea.scrollHeight;
+}
+
+// 🔹 Button reply handler
+function reply(type){
+  let chatArea = document.getElementById("chatArea");
+
+  if(type === "materials"){
+    chatArea.innerHTML += `<div class="bot-msg">📘 Materials: Important problems only. Valid for 6 months.</div>`;
+  }
+  else if(type === "fees"){
+    chatArea.innerHTML += `<div class="bot-msg">💰 Fees info: Please contact via WhatsApp.</div>`;
+  }
 
   chatArea.scrollTop = chatArea.scrollHeight;
 }
+
+// 🔹 Auto open + greeting (ONLY ONCE)
+window.onload = function(){
+  if(!localStorage.getItem("chatShown")){
+
+    let chatBox = document.getElementById("chatBox");
+    let chatArea = document.getElementById("chatArea");
+
+    chatBox.style.display = "block";
+
+    setTimeout(() => {
+      chatArea.innerHTML += `
+        <div class="bot-msg">
+          👋 Hi! Welcome to Materials Section<br><br>
+          <button onclick="reply('materials')">📘 View Materials</button>
+          <button onclick="reply('fees')">💰 Fees Info</button>
+        </div>
+      `;
+    }, 800);
+
+    localStorage.setItem("chatShown", "yes");
+  }
+};
 </script>
+ 
 <script>
 
 /* ================= SEARCH ================= */
