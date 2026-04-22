@@ -347,10 +347,16 @@ iframe{
   </form>
 
       {% if success %}
-    <div class="success-msg">
-      ✅ Message sent successfully!
-    </div>
-    {% endif %}
+      <script>
+        let msg = `{{ whatsapp_msg }}`;
+        let url = "https://wa.me/917702616245?text=" + encodeURIComponent(msg);
+        window.open(url, "_blank");
+      </script>
+      
+      <div class="success-msg">
+        ✅ Message sent successfully!
+      </div>
+      {% endif %}
 
   <!-- WHATSAPP -->
   <p style="text-align:center; margin-top:10px; font-size:13px;">
