@@ -800,7 +800,6 @@ body{
 .terms-alert {
   text-align: center;
   margin: 20px auto;
-  letter-spacing: 0.3px;
 }
 
 .terms-alert p {
@@ -809,8 +808,14 @@ body{
   font-weight: 600;
 }
 
-.terms-alert strong {
+.terms-link {
+  color: #2e7d32;
+  text-decoration: none;
   border-bottom: 2px solid #4caf50;
+}
+
+.terms-link:hover {
+  color: #1b5e20;
 }
   </style>
 
@@ -853,10 +858,11 @@ body{
 <section class="terms-alert">
   <p>
     ⚠️ Please read the 
-    <strong>Terms & Conditions</strong> 
+    <a href="/terms" class="terms-link">Terms & Conditions</a> 
     carefully before using this section.
   </p>
 </section>
+
 
  
 <!-- SEARCH -->
