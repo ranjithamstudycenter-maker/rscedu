@@ -92,8 +92,15 @@ iframe{
   outline: none;
   font-size: 14px;
   background: transparent;
+  box-sizing: border-box;
+}
+.input-group input{
+  height: 44px;
 }
 
+.input-group textarea{
+  height: auto;
+}
 /* label */
 .input-group label{
   position: absolute;
@@ -325,9 +332,10 @@ iframe{
     </div>
 
     <div class="input-group">
-      <input type="text" name="phone">
-      <label>Your Phone Number</label>
-    </div>
+      <input type="text" name="phone" maxlength="10"
+      oninput="this.value = this.value.replace(/[^0-9]/g, '')"
+      placeholder="10 digit mobile number">
+          </div>
 
     <div class="input-group">
       <textarea name="message" rows="4" required></textarea>
