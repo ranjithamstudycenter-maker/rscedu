@@ -1,26 +1,177 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>Contact Us | Ranjitham Study Center</title>
-<meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta charset="UTF-8">
+    <title>RANJITHAM STUDY CENTER</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Maths tuition with personalized coaching, worksheets, practice tests and exam preparation.">
+    <meta name="keywords" content="Maths Tuition, Maths Notes, Ranjitham Study Center">
 
-<style>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
 
-html {
-  scroll-behavior: smooth;
-}
+    <style>
+        /* ==========================
+           GLOBAL STYLES
+        ========================== */
 
-body{
-  margin:0;
-  font-family:'Poppins', sans-serif;
-  background: #f5f7fa;
+        /* Make everything flexible */
+            *{
+              box-sizing: border-box;
+            }
+            
+            body{
+              margin: 0;
+              padding: 0;
+              background: #ffffff;
+              color: #333;
+              overflow-x: hidden;
+            }
+            
+            /* Images responsive */
+            img{
+              max-width: 100%;
+              height: auto;
+            }
+            
+            * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+       
+
+        /* ==========================
+           NAVBAR
+        ========================== */
+        .navbar {
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;   /* 🔥 allows wrapping */
+        }
+       
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 90px;
+        }
+
+        .brand-text h1 {
+            color: #0b5394;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .brand-text p {
+            color: #0b5394;
+            font-size: 13px;
+        }
+
+        
+        .nav-center a {
+            margin: 0 15px;
+            color: #0b5394;
+            font-weight: 600;
+        }
+
+        .nav-center a:hover {
+            text-decoration: underline;
+        }
+
+       .demo-btn {
+            background: linear-gradient(45deg, #ff2d55, #7b2cbf);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 600;
+            animation: blink 2s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+   @media(max-width:768px){
+  .navbar{
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* LEFT → logo + title */
+  .nav-left{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;  /* 🔥 LEFT align */
+  }
+
+  .logo{
+    height: 55px;
+  }
+
+  .brand-text h1{
+    font-size: 18px;
+  }
+
+  .brand-text p{
+    font-size: 11px;
+  }
+
+  /* CENTER → MENU */
+  .nav-center{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;              /* 🔥 allow 2 lines */
+    justify-content: center;
+    margin-top: 8px;
+    gap: 6px;              /* 🔥 reduce gap */
+    flex-wrap: nowrap;     /* 🔥 single line */
+  }
+
+  .nav-center a{
+    font-size: 12px;       /* 🔥 reduce text */
+    margin: 0 4px;         /* 🔥 less spacing */
+    white-space: nowrap;
+  }
+
+  /* DEMO → CENTER */
+  .nav-right{
+    width: 100%;
+    display: flex;
+    justify-content: center;   /* 🔥 CENTER */
+    margin-top: 8px;
+  }
+
+  .demo-btn{
+    font-size: 13px;
+  }
+
 }
 
 /* CONTAINER */
 .container{
   max-width: 1000px;
   margin: auto;
+   width: 90%;
   padding: 40px 20px;
 }
 
@@ -256,10 +407,141 @@ iframe{
   height: 350px;
   border: none;
 } 
+      /* ==========================
+   CTA (NEW PREMIUM STYLE)
+========================== */
+.cta-section {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #1e3a8a, #6d28d9); /* 🔥 blue + purple */
+}
+
+.cta-box {
+    max-width: 1100px;
+    margin: auto;
+    color: white;
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.cta-small {
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.cta-box h2 {
+    font-size: 38px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.cta-text {
+    font-size: 16px;
+    margin-bottom: 35px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+}
+
+/* 🔥 BUTTON UPGRADE */
+.cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #facc15, #f59e0b); /* GOLD */
+    color: #1e3a8a;
+    padding: 14px 40px;
+    border-radius: 40px;
+    font-weight: 600;
+    transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.cta-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+}
+        /* ==========================
+           FOOTER
+        ========================== */
+       /* ==========================
+   FOOTER (NEW STYLE)
+========================== */
+.footer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #cbd5e1;
+    padding: 70px 20px 25px;
+}
+
+.footer-container {
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 50px;
+}
+
+.footer-box h3 {
+    color: white;
+    margin-bottom: 18px;
+    font-size: 18px;
+}
+
+.footer-box p {
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.footer-box a {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+.footer-box a:hover {
+    color: #facc15; /* 🔥 gold hover */
+    transform: translateX(5px);
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 13px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    color: #94a3b8;
+}
+
 </style>
 </head>
 
 <body>
+ <!-- ==========================
+         NAVBAR
+    ========================== -->
+    <nav class="navbar"> 
+        <div class="nav-left"> 
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo"> 
+            <div class="brand-text"> 
+                <h1>RANJITHAM STUDY CENTER</h1> 
+                <p>Learn • Practice • Excel in Mathematics</p> 
+            </div>
+        </div>
+        <div class="nav-center"> 
+            <a href="{{ url_for('home') }}">Home</a> 
+            <a href="{{ url_for('about') }}">About</a> 
+            <a href="{{ url_for('courses') }}">Class</a> 
+            <a href="{{ url_for('materials') }}">Materials</a>
+            <a href="{{ url_for('contact') }}">Contact</a> 
+        </div> 
+        <div class="nav-right">
+        <a href="/contact" class="demo-btn">Free demo class</a>
+        </div>
+    </nav>
+
 
 <div class="container">
 
@@ -386,14 +668,57 @@ iframe{
           </span>
         </p>
       </div>
-      
-      <script>
-      function openWhatsApp(){
-        let msg = "Hi, I want details about your classes";
-        let url = "https://wa.me/917702616245?text=" + encodeURIComponent(msg);
-        window.open(url, "_blank");
-      }
-      </script>
+      <!-- ==========================
+         CTA SECTION
+    ========================== -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <p class="cta-small">Best Maths Tuition in Medavakkam </p>
+            <h2>Ready to improve your Maths?</h2>
+            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with good guidance.</p>
+            <a href="/contact" class="cta-btn">Enroll Now</a>
+        </div>
+    </section>
+
+    <!-- ==========================
+         CONTACT & FOOTER
+    ========================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>RANJITHAM STUDY CENTER</h3>
+                <p>Focused maths coaching for Class 6–12 students</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/courses">Courses</a>
+                <a href="/materials">Materials</a>
+                <a href="/contact">Contact</a>
+                <a href="/admin">Admin</a>
+                <a href="/privacy">Privacy policy</a>
+                <a href="/terms">Terms and Conditions</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact Details</h3>
+                <p>📞 7702616245</p>
+                <p>📧 ranjithamstudycenter@gmail.com</p>
+           </div>
+        </div>
+                    <div class="footer-bottom">
+                      © 2026 Ranjitham Study Center. All Rights Reserved. | Designed for Quality Education
+                    </div>
+        </footer>
+
+
+<script>
+function openWhatsApp(){
+  let msg = "Hi, I want details about your classes";
+  let url = "https://wa.me/917702616245?text=" + encodeURIComponent(msg);
+  window.open(url, "_blank");
+}
+</script>
 
 </div>
 
