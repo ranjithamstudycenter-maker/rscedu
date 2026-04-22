@@ -1078,16 +1078,16 @@ def courses():
 
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
-    print("ROUTE HIT")   # 👈 add this
     if request.method == "POST":
         name = request.form["name"]
         email = request.form["email"]
         phone = request.form["phone"]
         message = request.form["message"]
 
-        print(name, email, phone, message)
+        # WhatsApp message format
+        whatsapp_msg = f"New Contact:\nName: {name}\nEmail: {email}\nPhone: {phone}\nMessage: {message}"
 
-        return render_template("contact.html", success=True)
+        return render_template("contact.html", success=True, whatsapp_msg=whatsapp_msg)
 
     return render_template("contact.html", success=False)
 
