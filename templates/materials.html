@@ -832,6 +832,21 @@
   font-size: 13px;
 }
 
+     .bot-msg button{
+  width: 100%;
+  padding: 10px;
+  margin: 5px 0;
+  border-radius: 8px;
+  border: none;
+  background: #f1f1f1;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.bot-msg button:hover{
+  background: #e0e0e0;
+}
+
 .user-msg {
   background: #25d366;
   color: white;
@@ -1252,7 +1267,7 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
   </p>
 </div>
 
-  <!-- FLOAT BUTTON -->
+<!-- FLOAT BUTTON -->
 <div class="chat-toggle" onclick="toggleChat()">💬</div>
 
 <!-- CHAT BOX -->
@@ -1260,9 +1275,8 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
 
   <div class="chat-header">🤖 RSC Assistant</div>
 
-  <div class="chat-body" id="chatArea">
-    <div class="bot-msg">👋 Hi! Welcome! How can I help you?</div>
-  </div>
+  <!-- ❗ Empty initially (no duplicate welcome) -->
+  <div class="chat-body" id="chatArea"></div>
 
   <div class="chat-input">
     <input type="text" id="userInput" placeholder="Type message...">
@@ -1272,10 +1286,28 @@ class="class-content {% if active_class != '12' %}hidden{% endif %}">
 </div>
 
 <script>
+
 // 🔹 Toggle chat
 function toggleChat(){
   let box = document.getElementById("chatBox");
   box.style.display = (box.style.display === "block") ? "none" : "block";
+}
+
+// 🔹 Typing effect
+function botTyping(replyText){
+  let chatArea = document.getElementById("chatArea");
+
+  let typing = document.createElement("div");
+  typing.className = "bot-msg";
+  typing.innerHTML = "Typing...";
+  chatArea.appendChild(typing);
+
+  chatArea.scrollTop = chatArea.scrollHeight;
+
+  setTimeout(() => {
+    typing.innerHTML = replyText;
+    chatArea.scrollTop = chatArea.scrollHeight;
+  }, 800);
 }
 
 // 🔹 Send message
@@ -1302,29 +1334,29 @@ function sendMsg(){
     reply = "👉 Please contact us on WhatsApp.";
   }
 
-  // BOT REPLY
-  chatArea.innerHTML += `<div class="bot-msg">${reply}</div>`;
-
   input.value = "";
+
+  // BOT RESPONSE (typing effect)
+  botTyping(reply);
+
   chatArea.scrollTop = chatArea.scrollHeight;
 }
 
-// 🔹 Button reply handler
+// 🔹 Button reply
 function reply(type){
   let chatArea = document.getElementById("chatArea");
 
   if(type === "materials"){
-    chatArea.innerHTML += `<div class="bot-msg">📘 Materials: Important problems only. Valid for 6 months.</div>`;
+    botTyping("📘 Materials: Important problems only. Valid for 6 months.");
   }
   else if(type === "fees"){
-    chatArea.innerHTML += `<div class="bot-msg">💰 Fees info: Please contact via WhatsApp.</div>`;
+    botTyping("💰 Fees info: Please contact via WhatsApp.");
   }
-
-  chatArea.scrollTop = chatArea.scrollHeight;
 }
 
-// 🔹 Auto open + greeting (ONLY ONCE)
+// 🔹 Auto open (ONLY ONCE)
 window.onload = function(){
+
   if(!localStorage.getItem("chatShown")){
 
     let chatBox = document.getElementById("chatBox");
@@ -1332,19 +1364,26 @@ window.onload = function(){
 
     chatBox.style.display = "block";
 
+    // Step 1: greeting
     setTimeout(() => {
-      chatArea.innerHTML += `
-        <div class="bot-msg">
-          👋 Hi! Welcome to Materials Section<br><br>
-          <button onclick="reply('materials')">📘 View Materials</button>
-          <button onclick="reply('fees')">💰 Fees Info</button>
-        </div>
-      `;
-    }, 800);
+      botTyping("👋 Hi! Welcome to Materials Section");
+
+      // Step 2: buttons
+      setTimeout(() => {
+        chatArea.innerHTML += `
+          <div class="bot-msg">
+            <button onclick="reply('materials')">📘 View Materials</button><br><br>
+            <button onclick="reply('fees')">💰 Fees Info</button>
+          </div>
+        `;
+      }, 1200);
+
+    }, 500);
 
     localStorage.setItem("chatShown", "yes");
   }
 };
+
 </script>
  
 <script>
