@@ -1079,8 +1079,16 @@ def courses():
 @app.route("/contact", methods=["GET", "POST"])
 def contact():
     if request.method == "POST":
-        print(request.form)
-    return render_template("contact.html")
+        name = request.form["name"]
+        email = request.form["email"]
+        phone = request.form["phone"]
+        message = request.form["message"]
+
+        print(name, email, phone, message)
+
+        return render_template("contact.html", success=True)
+
+    return render_template("contact.html", success=False)
 
 
 @app.route("/logout")
