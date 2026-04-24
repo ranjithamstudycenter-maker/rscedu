@@ -109,7 +109,11 @@
         @keyframes blink {
             50% { opacity: 0; }
         }
-
+ @media(max-width:768px){
+  .navbar{
+    flex-direction: column;
+    align-items: center;
+  }
     /* LEFT → logo + title */
   .nav-left{
     width: 100%;
@@ -376,13 +380,6 @@ body{
   min-width: 0;
 }
 
-/* OPTIONAL NAVBAR */
-@media(max-width:800px){
-  .navbar{
-    flex-direction: column;
-    align-items: center;
-  }
-}
   /* ==========================
    CTA (NEW PREMIUM STYLE)
 ========================== */
