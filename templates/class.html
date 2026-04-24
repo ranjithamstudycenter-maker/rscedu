@@ -357,21 +357,32 @@ body{
  flex-wrap: nowrap;
 }
 
- /* MOBILE */
-@media(max-width:768px){
-  .hero h1{font-size:26px;}
-}
-
   @media(max-width:768px){
   .course-container{
     flex-wrap:wrap;   /* mobile la vertical */
   }
 }
-/* HERO */
+  /* MOBILE */
 @media(max-width:768px){
   .hero h1{
     font-size:26px;
   }
+
+  .grid{
+    grid-template-columns: 1fr;
+  }
+
+  .card{
+    padding: 20px;
+  }
+}
+/* GLOBAL FIX */
+html, body{
+  overflow-x: hidden;
+}
+
+*{
+  box-sizing: border-box;
 }
 
 /* SAFETY FIX */
