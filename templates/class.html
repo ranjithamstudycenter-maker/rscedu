@@ -187,24 +187,12 @@ body{
 /* SECTION */
 .section{padding:50px 20px;}
   
- 
-/* CONTAINER */
 .container{
   width: 95%;
-  padding: 30px;
- margin: auto;
+  margin: auto;
+  padding: 20px 10px;   /* reduce */
+} 
 
-  display: grid;
-  gap: 30px;
-
- grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-
- 
-  justify-content: start;   /* 🔥 ADD THIS */
-  align-items:stretch;
- 
-
-}
   
 /* CARD */
 
@@ -224,7 +212,6 @@ body{
 }
 
  
-}
   .card:hover{
   transform:translateY(-5px);
   box-shadow:0 15px 40px rgba(0,0,0,0.12);
@@ -233,21 +220,15 @@ body{
   color:#1e3a8a;
   margin-bottom:10px;
 }
-@media(max-width:1200px){
-  .grid{
-    grid-template-columns: repeat(3, 1fr);
-  }
-}
 
-@media(max-width:900px){
+ @media(max-width:768px){
   .grid{
-    grid-template-columns: repeat(2, 1fr);
+    grid-template-columns: 1fr;   /* 🔥 single column */
   }
-}
 
-@media(max-width:500px){
-  .grid{
-    grid-template-columns: 1fr;
+  .card{
+    width: 100%;
+    min-width: 0;   /* 🔥 important */
   }
 }
 /* FLEX BUTTONS */
@@ -339,14 +320,15 @@ body{
   transform:scale(1.05);
 }
 
-/* GRID */
+
 .grid{
-  display:grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  max-width:1500px;
-  margin:auto;
-  gap:20px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); /* 🔥 reduce */
+  gap: 15px;
+  max-width: 1200px;
+  margin: auto;
 }
+  
   /* SEARCH BAR */
 .search-box{
   max-width:500px;
