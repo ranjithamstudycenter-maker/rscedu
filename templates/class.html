@@ -110,13 +110,7 @@
             50% { opacity: 0; }
         }
 
-   @media(max-width:768px){
-  .navbar{
-    flex-direction: column;
-    align-items: center;
-  }
-
-  /* LEFT → logo + title */
+    /* LEFT → logo + title */
   .nav-left{
     width: 100%;
     display: flex;
@@ -221,16 +215,6 @@ body{
   margin-bottom:10px;
 }
 
- @media(max-width:900px){
-  .grid{
-    grid-template-columns: 1fr;   /* 🔥 single column */
-  }
-
-  .card{
-    width: 100%;
-    min-width: 0;   /* 🔥 important */
-  }
-}
 /* FLEX BUTTONS */
 .actions{
   display:flex;
@@ -379,7 +363,26 @@ body{
     flex-wrap:wrap;   /* mobile la vertical */
   }
 }
+/* HERO */
+@media(max-width:768px){
+  .hero h1{
+    font-size:26px;
+  }
+}
 
+/* SAFETY FIX */
+.card{
+  width: 100%;
+  min-width: 0;
+}
+
+/* OPTIONAL NAVBAR */
+@media(max-width:600px){
+  .navbar{
+    flex-direction: column;
+    align-items: center;
+  }
+}
   /* ==========================
    CTA (NEW PREMIUM STYLE)
 ========================== */
