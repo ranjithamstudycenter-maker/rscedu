@@ -169,7 +169,7 @@ def check_demo():
 
     # Admin always gets demo
     if is_admin_phone(phone):
-        return jsonify({"demo_done": False, "admin": True, "meet_link":meet_link})
+        return jsonify({"demo_done": True, "admin": True, "meet_link":meet_link})
 
     demo_done = user["demo_done"].get(course, False)
     return jsonify({"demo_done": demo_done, "meet_link":meet_link})
