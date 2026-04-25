@@ -1322,6 +1322,18 @@ html, body{
 
 <!-- ========== RAZORPAY ========== -->
 <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js"></script>
+
+<script>
+const firebaseConfig = {
+  apiKey: "YOUR_API_KEY",
+  authDomain: "rscedu.firebaseapp.com",
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+</script>
  
 <!-- ========== MAIN SCRIPT ========== -->
 <script>
@@ -1774,98 +1786,38 @@ async function handleOTP(){
   // STEP 1 → SEND OTP
   if(step === 1){
 
-    if(!/^[6-9]\d{9}$/.test(phone)){
-      msg.innerHTML = "⚠️ Enter valid mobile number";
-      msg.style.color = "red";
-      return;
-    }
+    const appVerifier = window.recaptchaVerifier;
+    const phoneNumber = "+91" + phone;
 
-    btn.textContent = "Sending...";
-    btn.disabled = true;
+    try{
+      const confirmationResult =
+        await auth.signInWithPhoneNumber(phoneNumber, appVerifier);
 
-    try {
-      const res = await fetch("/send-otp", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({phone})
-      });
+      window.confirmationResult = confirmationResult;
 
-      // 🔥 CHECK HTTP STATUS FIRST
-      if(!res.ok){
-        throw new Error("Server error");
-      }
-
-      const data = await res.json();
-      console.log("SEND OTP RESPONSE:", data); // 🔥 DEBUG
-
-      if(data.status !== "sent"){
-        msg.innerHTML = "❌ Failed to send OTP";
-        msg.style.color = "red";
-        btn.textContent = "Send OTP";
-        btn.disabled = false;
-        return;
-      }
-           
-      // SUCCESS
       document.getElementById("otpInput").style.display = "block";
-      document.getElementById("otpInput").focus();
 
       btn.textContent = "Verify OTP";
-      btn.style.background = "#0b5394";
-      btn.style.color = "white";
       btn.disabled = false;
 
       msg.innerHTML = "📱 OTP sent";
       msg.style.color = "green";
-            
 
       step = 2;
-           // ADD THIS 👇
-      setTimeout(()=>{
-         document.getElementById("resendBtn").style.display = "block";
-       }, 30000);
-      startTimer();
 
     } catch(e){
-      console.error("SEND OTP ERROR:", e); // 🔥 DEBUG
-      msg.innerHTML = "❌ Failed to send OTP (Server issue)";
+      msg.innerHTML = "❌ Failed to send OTP";
       msg.style.color = "red";
       btn.textContent = "Send OTP";
       btn.disabled = false;
     }
   }
 
- // STEP 2 → VERIFY OTP
-else if(step === 2){
+  // STEP 2 → VERIFY OTP
+  else if(step === 2){
 
-  if(otpTimer <= 0){
-    msg.innerHTML = "❌ OTP expired. Please resend.";
-    msg.style.color = "red";
-    btn.textContent = "Send OTP";
-    btn.disabled = false;
-    step = 1;
-    return;
-  }
-
-  if(!otp){
-    msg.innerHTML = "⚠️ Enter OTP";
-    msg.style.color = "red";
-    return;
-  }
-
-  btn.textContent = "Verifying...";
-  btn.disabled = true;
-
-  try {
-    const res = await fetch("/verify-otp", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({phone, otp})
-    });
-
-    const data = await res.json();
-
-    if(data.status === "ok"){
+    try{
+      await window.confirmationResult.confirm(otp);
 
       msg.innerHTML = "✅ Verified ✔";
       msg.style.color = "green";
@@ -1876,29 +1828,23 @@ else if(step === 2){
 
       step = 3;
 
-    } else {
+      // SAVE SESSION
+      await fetch("/save-user", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ phone })
+      });
+
+    } catch(e){
       msg.innerHTML = "❌ Wrong OTP";
       msg.style.color = "red";
       btn.textContent = "Verify OTP";
       btn.disabled = false;
     }
-
-  } catch(e){
-    msg.innerHTML = "❌ Verification failed";
-    msg.style.color = "red";
-    btn.textContent = "Verify OTP";
-    btn.disabled = false;
   }
-}
 
-  // STEP 3 → START DEMO
+  // STEP 3
   else if(step === 3){
-
-    if(!currentCourse){
-      showMessage("❌ Course not selected");
-      return;
-    }
-
     document.getElementById("demoPopup").style.display = "none";
     startDemoSession(currentCourse);
   }
@@ -1993,6 +1939,9 @@ function openDemoPopup(course){
   document.getElementById("demoPopup").style.display = "flex";
 }
 window.openDemoPopup = openDemoPopup;
+ window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('mainBtn', {
+  size: 'invisible'
+});
 
  function updateSeats(course, seats){
 
