@@ -1663,14 +1663,30 @@ async function payNow() {
 ====================================== */
 async function joinClass(course) {
 
-   if (!(studentStatus.demo_done || {})[course] ||
-      !(studentStatus.enrolled || {})[course]) {
-   showCourseMessage(course, "⚠️ Attend Demo & Enroll first");
+  const demoDone = (studentStatus?.demo_done || {})[course];
+  const enrolled = (studentStatus?.enrolled || {})[course];
+
+  // ❌ both இல்லை
+  if (!demoDone && !enrolled) {
+    showCourseMessage(course, "⚠️ Attend Demo & Enroll first");
     return;
   }
 
+  // ❌ only demo இல்லை
+  if (!demoDone) {
+    showCourseMessage(course, "⚠️ Attend Demo first");
+    return;
+  }
+
+  // ❌ only enroll இல்லை
+  if (!enrolled) {
+    showCourseMessage(course, "⚠️ Enroll first");
+    return;
+  }
+
+  // ✅ correct case
   try {
-    const res  = await fetch("/api/join-class?course=" + course);
+    const res = await fetch("/api/join-class?course=" + course);
     const data = await res.json();
 
     if (data.error) {
@@ -1679,20 +1695,10 @@ async function joinClass(course) {
     }
 
     window.open(data.meet_link, "_blank");
-
-    // 🔥 UI UPDATE INSIDE FUNCTION
-    const joinBtn = document.getElementById("joinBtn-" + course);
-    if (joinBtn) {
-      joinBtn.textContent = "Joined ✓";
-      setTimeout(() => {
-        joinBtn.textContent = "Join Now";
-      }, 3600000);
-    }
-
     showMessage("✅ Joined Successfully");
 
   } catch(e) {
-    showMessage("❌ Error joining. Try again.");
+    showMessage("❌ Error joining");
   }
 }
  function showPhonePopup(course, type){
@@ -1843,6 +1849,9 @@ async function handleOTP(){
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({ phone })
       });
+  
+     // 🔥 ADD THIS
+     await refreshStatus();
 
     } catch(e){
       msg.innerHTML = "❌ Wrong OTP";
@@ -1935,6 +1944,13 @@ function startTimer(){
 function openDemoPopup(course){
   currentCourse = course;
   step = 1;
+
+ // 🔥 ADD THIS BLOCK
+  if ((studentStatus?.demo_done || {})[course]) {
+    showCourseMessage(course, "✅ Demo already completed");
+    return;
+  }
+ 
   if (!window.recaptchaVerifier) {
   window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
     size: 'invisible'
