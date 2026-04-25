@@ -1814,6 +1814,7 @@ async function handleOTP(){
       step = 2;
 
     } catch(e){
+      console.error(e);   // 🔥 ADD THIS
       msg.innerHTML = "❌ Failed to send OTP";
       msg.style.color = "red";
       btn.textContent = "Send OTP";
