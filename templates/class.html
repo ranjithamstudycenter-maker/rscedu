@@ -1790,8 +1790,8 @@ async function handleOTP(){
 
     try{
       const confirmationResult =
-        await auth.signInWithPhoneNumber(phoneNumber, appVerifier);
-
+        await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
+   
       window.confirmationResult = confirmationResult;
 
       document.getElementById("otpInput").style.display = "block";
