@@ -1567,7 +1567,7 @@ function enroll(course) {
   let el = document.getElementById("msg-" + course);
   if(el) el.innerHTML = "";
 
-  if (!(studentStatus?.demo_done || {})[course]) {
+  if (!studentStatus.admin && !(studentStatus?.demo_done || {})[course]) {
     showCourseMessage(course, "⚠️ Attend Free Demo first");
     return;
   }
