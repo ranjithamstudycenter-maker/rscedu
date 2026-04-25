@@ -1424,6 +1424,9 @@ function updateDiscountDisplays(discounts) {
  
 /* ---- UPDATE ALL COURSE UIs ---- */
 function updateAllCourseUI() {
+   document.querySelectorAll("[id^='msg-']").forEach(el => {
+    el.innerHTML = "";
+  });
   const allCourses = ["cbse9","cbse10","cbse11","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
   allCourses.forEach(updateUI);
 }
@@ -1502,7 +1505,30 @@ function updateUI(course) {
     }
   }
 }
- 
+ /* ---- MESSAGE LOGIC (ADD THIS) ---- */
+const msgEl = document.getElementById("msg-" + course);
+
+if (msgEl) {
+
+  let demo = demoDone;
+  let enroll = enrolled;
+
+  // 🔥 ADMIN FIX
+  if (studentStatus?.admin) {
+    demo = true;
+  }
+
+  if (!demo) {
+    msgEl.innerHTML = "⚠️ Attend Free Demo first";
+  }
+  else if (demo && !enroll) {
+    msgEl.innerHTML = "✅ Demo Completed – Please Enroll";
+  }
+  else if (enroll) {
+    msgEl.innerHTML = "🎉 You are enrolled!";
+  }
+
+}
 /* ======================================
    FREE DEMO — Phone OTP always required
 ====================================== */
