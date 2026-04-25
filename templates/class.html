@@ -1782,6 +1782,12 @@ async function handleOTP(){
   const btn   = document.getElementById("mainBtn");
   const msg   = document.getElementById("statusMsg");
 
+ if(phone.length !== 10){
+  msg.innerHTML = "❌ Enter valid 10 digit number";
+  msg.style.color = "red";
+  return;
+}
+
   // STEP 1 → SEND OTP
   if(step === 1){
 
@@ -1909,7 +1915,13 @@ function startTimer(){
 
   step = 1;
 
-   handleOTP();
+  // 🔥 reset recaptcha
+  if(window.recaptchaVerifier){
+    window.recaptchaVerifier.clear();
+    window.recaptchaVerifier = null;
+  }
+
+  openDemoPopup(currentCourse);  // recreate fresh
 }
  function closePopup(){
   document.getElementById("demoPopup").style.display = "none";
@@ -1922,9 +1934,11 @@ function startTimer(){
 function openDemoPopup(course){
   currentCourse = course;
   step = 1;
-   window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('mainBtn', {
-  size: 'invisible'
+  if (!window.recaptchaVerifier) {
+  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+    size: 'invisible'
   });
+}
   clearInterval(timerInterval); // 🔥 important
 
   document.getElementById("phoneInput").value = "";
@@ -2098,6 +2112,8 @@ window.openDemoPopup = openDemoPopup;
 
   </div>
 </div>
+
+ <div id="recaptcha-container"></div>
 </body>
 </html>
 
