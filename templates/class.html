@@ -1803,6 +1803,9 @@ async function handleOTP(){
       msg.innerHTML = "📱 OTP sent";
       msg.style.color = "green";
 
+      document.getElementById("resendBtn").style.display = "block";  // 🔥 ADD HERE
+
+      startTimer();   // 🔥 ADD THIS 
       step = 2;
 
     } catch(e){
@@ -1920,7 +1923,9 @@ function startTimer(){
 function openDemoPopup(course){
   currentCourse = course;
   step = 1;
-
+   window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('mainBtn', {
+    size: 'invisible'
+  });
   clearInterval(timerInterval); // 🔥 important
 
   document.getElementById("phoneInput").value = "";
@@ -1939,9 +1944,7 @@ function openDemoPopup(course){
   document.getElementById("demoPopup").style.display = "flex";
 }
 window.openDemoPopup = openDemoPopup;
- window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('mainBtn', {
-  size: 'invisible'
-});
+
 
  function updateSeats(course, seats){
 
