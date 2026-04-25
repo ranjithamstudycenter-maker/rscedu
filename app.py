@@ -167,10 +167,6 @@ def check_demo():
     course = request.args.get("course", "cbse10")
     user = get_user(phone)
 
-    # Admin always gets demo
-    if is_admin_phone(phone):
-        return jsonify({"demo_done": {course: True for course in seat_data}, "admin": True, "meet_link":meet_link})
-
     demo_done = user["demo_done"].get(course, False)
     return jsonify({"demo_done": demo_done, "meet_link":meet_link})
 
@@ -185,7 +181,7 @@ def demo_complete():
     user = get_user(phone)
 
     # Admin phone: don't mark as done (so they can demo again)
-    if not is_admin_phone(phone):
+    
         user["demo_done"][course] = True
 
         conn = sqlite3.connect("students.db")
