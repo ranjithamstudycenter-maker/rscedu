@@ -164,7 +164,10 @@ def check_demo():
     if not phone:
         return jsonify({"error": "Unauthorized"}), 401
 
-    course = request.args.get("course", "cbse10")
+    course = request.json.get("course")
+
+    if not course:
+        return jsonify({"error": "Course missing"}), 400
     user = get_user(phone)
 
     demo_done = user["demo_done"].get(course, False)
@@ -177,37 +180,38 @@ def demo_complete():
     if not phone:
         return jsonify({"error": "Unauthorized"}), 401
 
-    course = request.json.get("course", "cbse10")
+    course = request.json.get("course")
+
+    if not course:
+        return jsonify({"error": "Course missing"}), 400
     user = get_user(phone)
-
-    # Admin phone: don't mark as done (so they can demo again)
     
-        user["demo_done"][course] = True
+    user["demo_done"][course] = True
 
-        conn = sqlite3.connect("students.db")
-        c = conn.cursor()
-        
-        c.execute("""
-        INSERT OR REPLACE INTO students 
-        (phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            phone,
-            course,
-            user.get("name", ""),
-            1,
-            int(user["enrolled"].get(course, False)),
-            user["hours_used"].get(course, 0),
-            user["max_hours"].get(course, 0),
-            0,
-            datetime.now().strftime("%Y-%m-%d %H:%M")
-        ))
-        
-        conn.commit()
-        conn.close()
-
-    return jsonify({"status": "saved"})
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
     
+    c.execute("""
+    INSERT OR REPLACE INTO students 
+    (phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        phone,
+        course,
+        user.get("name", ""),
+        1,
+        int(user["enrolled"].get(course, False)),
+        user["hours_used"].get(course, 0),
+        user["max_hours"].get(course, 0),
+        0,
+        datetime.now().strftime("%Y-%m-%d %H:%M")
+    ))
+    
+    conn.commit()
+    conn.close()
+
+return jsonify({"status": "saved"})
+
 
 @app.before_request
 def force_https():
