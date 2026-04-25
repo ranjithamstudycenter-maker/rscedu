@@ -164,7 +164,7 @@ def check_demo():
     if not phone:
         return jsonify({"error": "Unauthorized"}), 401
 
-    course = request.json.get("course")
+    course = request.args.get("course")   ✅
 
     if not course:
         return jsonify({"error": "Course missing"}), 400
@@ -181,11 +181,10 @@ def demo_complete():
         return jsonify({"error": "Unauthorized"}), 401
 
     course = request.json.get("course")
-
     if not course:
         return jsonify({"error": "Course missing"}), 400
+        
     user = get_user(phone)
-    
     user["demo_done"][course] = True
 
     conn = sqlite3.connect("students.db")
@@ -210,7 +209,7 @@ def demo_complete():
     conn.commit()
     conn.close()
 
-return jsonify({"status": "saved"})
+    return jsonify({"status": "saved"})
 
 
 @app.before_request
