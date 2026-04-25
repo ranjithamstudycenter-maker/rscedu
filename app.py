@@ -164,10 +164,11 @@ def check_demo():
     if not phone:
         return jsonify({"error": "Unauthorized"}), 401
 
-    course = request.args.get("course")   ✅
+    course = request.args.get("course")   
 
     if not course:
         return jsonify({"error": "Course missing"}), 400
+        
     user = get_user(phone)
 
     demo_done = user["demo_done"].get(course, False)
