@@ -466,36 +466,42 @@ def join_class_api():
 
 @app.route("/api/student-status")
 def student_status():
-    """Return full status for a phone number."""
-    phone = session.get("phone")
-    if not phone:
+    try:
+        phone = session.get("phone")
+
+        if not phone:
+            return jsonify({"logged_in": False})
+
+        user = get_user(phone) or {}
+
+        # Seats
+        seats = {}
+        for course in seat_data:
+            seats[course] = available_seats(course)
+
+        # Discounts
+        discounts = {}
+        for course, d in seat_data.items():
+            booked = d.get("booked", 0)
+            discounts[course] = booked < 10
+
+        return jsonify({
+            "logged_in": True,
+            "phone": phone,
+            "name": user.get("name", ""),
+            "demo_done": user.get("demo_done", {}),
+            "enrolled": user.get("enrolled", {}),
+            "hours_used": user.get("hours_used", 0),
+            "max_hours": user.get("max_hours", 0),
+            "available_seats": seats,
+            "meet_link": meet_link,
+            "is_admin": False,
+            "discounts": discounts
+        })
+
+    except Exception as e:
+        print("🔥 ERROR in student-status:", str(e))
         return jsonify({"logged_in": False})
-
-    user = get_user(phone)
-    seats = {}
-    for course in seat_data:
-        seats[course] = available_seats(course)
-
-    # Calculate discount per course (first 10 students get 50% off)
-    discounts = {}
-    for course, d in seat_data.items():
-        booked = d["booked"]
-        discounts[course] = booked < 10  # True = eligible for 50% off
-
-    return jsonify({
-        "logged_in": True,
-        "phone": phone,
-        "name": user.get("name", ""),
-        "demo_done": user["demo_done"],
-        "enrolled": user["enrolled"],
-        "hours_used": user["hours_used"],
-        "max_hours": user["max_hours"],
-        "available_seats": seats,
-        "meet_link": meet_link,
-        "is_admin": False,          # Never expose admin flag to students
-        "discounts": discounts      # {course: True/False} — True means 50% off
-    })
-
 # -------------------- TEACHER --------------------
 
 @app.route("/teacher-login", methods=["GET", "POST"])
