@@ -1513,11 +1513,6 @@ if (msgEl) {
   let demo = demoDone;
   let enroll = enrolled;
 
-  // 🔥 ADMIN FIX
-  if (studentStatus?.admin) {
-    demo = true;
-  }
-
   if (!demo) {
     msgEl.innerHTML = "⚠️ Attend Free Demo first";
   }
@@ -1596,7 +1591,7 @@ function enroll(course) {
   let el = document.getElementById("msg-" + course);
   if(el) el.innerHTML = "";
 
-  if (!studentStatus.admin && !(studentStatus?.demo_done || {})[course]) {
+  if (!(studentStatus?.demo_done || {})[course]) {
     showCourseMessage(course, "⚠️ Attend Free Demo first");
     return;
   }
