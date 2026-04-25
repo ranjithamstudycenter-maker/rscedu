@@ -1548,6 +1548,9 @@ function updateUI(course) {
             body:    JSON.stringify({course: course})
           });
           await refreshStatus();
+
+          // 🔥 ADD THIS
+          updateAllCourseUI();
           showMessage("✅ Demo done! Click Enroll to join.");
         } catch(e) { console.error(e); }
       
@@ -1559,6 +1562,10 @@ function updateUI(course) {
    ENROLL
 ====================================== */
 function enroll(course) {
+
+ // 🔥 CLEAR OLD MESSAGE
+  let el = document.getElementById("msg-" + course);
+  if(el) el.innerHTML = "";
 
   if (!(studentStatus?.demo_done || {})[course]) {
     showCourseMessage(course, "⚠️ Attend Free Demo first");
@@ -1852,6 +1859,11 @@ async function handleOTP(){
   
      // 🔥 ADD THIS
      await refreshStatus();
+     
+     // 🔥 ADD THIS
+     setTimeout(() => {
+       updateAllCourseUI();
+     }, 300);
 
     } catch(e){
       msg.innerHTML = "❌ Wrong OTP";
