@@ -197,7 +197,8 @@ def demo_complete():
 
     phone = data.get("phone") or session.get("phone")
     course = data.get("course")
-
+    demo_stage = data.get("demo")  # 🔥 new
+    
     if not phone:
         return jsonify({"error": "Unauthorized"}), 401
     
@@ -213,27 +214,84 @@ def demo_complete():
 
     conn = sqlite3.connect("students.db")
     c = conn.cursor()
-    
-    c.execute("""
-INSERT OR REPLACE INTO students 
-(phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
-VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-""", (
-    phone,
-    course,
-    user.get("name", ""),
-    1,   # ✅ demo complete
-    0,   # not enrolled
-    0,
-    0,
-    0,
-    datetime.now().strftime("%Y-%m-%d %H:%M")
-))
- 
-    conn.commit()
-    conn.close()
 
-    return jsonify({"status": "saved"})
+    # 🔍 check existing record
+    c.execute("SELECT demo_done FROM students WHERE phone=? AND course=?", (phone, course))
+    row = c.fetchone()
+
+    # =====================================================
+    # 🔥 1. FREE DEMO CLICK → INSERT (NO)
+    # =====================================================
+    if demo_stage == "start":
+
+        if row:
+            # already exists → do nothing
+            return jsonify({"status": "exists"})
+
+        c.execute("""
+        INSERT INTO students 
+        (phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            phone,
+            course,
+            "",
+            0,   # ❌ demo not completed
+            0,
+            0,
+            0,
+            0,
+            datetime.now().strftime("%Y-%m-%d %H:%M")
+        ))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"status": "started"})
+
+    # =====================================================
+    # 🔥 2. DEMO COMPLETE → UPDATE (YES)
+    # =====================================================
+    else:
+
+        if row:
+            # already completed?
+            if row[0] == 1:
+                return jsonify({"error": "Already completed"}), 400
+
+            # update to YES
+            c.execute("""
+            UPDATE students 
+            SET demo_done = 1, last_updated = ?
+            WHERE phone = ? AND course = ?
+            """, (
+                datetime.now().strftime("%Y-%m-%d %H:%M"),
+                phone,
+                course
+            ))
+
+        else:
+            # row இல்லனா direct insert as completed
+            c.execute("""
+            INSERT INTO students 
+            (phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                phone,
+                course,
+                "",
+                1,   # ✅ completed
+                0,
+                0,
+                0,
+                0,
+                datetime.now().strftime("%Y-%m-%d %H:%M")
+            ))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({"status": "completed"})
 
 
 @app.before_request
