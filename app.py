@@ -246,7 +246,7 @@ def enroll_info():
         "course": course,
         "monthly_amount": monthly,
         "classes_per_month": classes_per_month,
-        "meet_link": meet_link
+        
     })
 
 
@@ -384,7 +384,6 @@ def payment_success_api():
     return jsonify({
         "status": "success",
         "enrolled": True,
-        "meet_link": CLASS_MEET_LINK,
         "hours_remaining": user["max_hours"][course]
     })
 
@@ -392,77 +391,65 @@ def payment_success_api():
 
 @app.route("/api/join-class")
 def join_class_api():
-    """Check if student can join and return meet link."""
+
     phone = session.get("phone")
     if not phone:
         return jsonify({"error": "Not logged in"}), 401
 
+    course = request.args.get("course")
+    if not course:
+        return jsonify({"error": "Course missing"}), 400
+
     user = get_user(phone)
 
-    # 🔥 find enrolled course automatically
-    course = None
-    for c, status in user["enrolled"].items():
-        if status:
-            course = c
-            break
+    demo_done = user["demo_done"].get(course, False)
+    enrolled  = user["enrolled"].get(course, False)
 
-    # 🔥 DEMO LOGIC
-    if not user["enrolled"].get(course):
+    # ❌ demo not done
+    if not demo_done:
+        return jsonify({"error": "Attend demo first"}), 403
 
-        # demo already attended?
-        if user.get("demo_done", {}).get(course):
-            return jsonify({"error": "Demo already used. Please enroll."}), 403
-
-        # mark demo used
-        user.setdefault("demo_done", {})[course] = True
-
-    else:
-        # 🔥 PAID USER LOGIC
+    # ✅ enrolled users → check usage
+    if enrolled:
         hours_used = user["hours_used"].get(course, 0)
         max_hours  = user["max_hours"].get(course, classes_per_month)
 
-    if hours_used >= max_hours:
-        # Auto-deactivate: mark as not enrolled
-        user["enrolled"][course] = False
-        return jsonify({"error": "Plan completed. Please re-enroll."}), 403
+        if hours_used >= max_hours:
+            user["enrolled"][course] = False
+            return jsonify({"error": "Plan completed. Please re-enroll."}), 403
 
-     # Increment class count
-    user["hours_used"][course] = hours_used + 1
+        # increment usage
+        user["hours_used"][course] = hours_used + 1
 
-     # 🔥 find active teacher class
-    meet_link = None
+        # DB update
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
 
-    for t in teachers.values():
-        if t["course"] == course and t["active"]:
-            meet_link = t["meet_link"]
-            break
+        c.execute("""
+        UPDATE students 
+        SET hours_used=?, last_updated=? 
+        WHERE phone=? AND course=?
+        """, (
+            user["hours_used"][course],
+            datetime.now().strftime("%Y-%m-%d %H:%M"),
+            phone,
+            course
+        ))
+
+        conn.commit()
+        conn.close()
+
+    # 🔥 SAME LINK for demo + join
+    meet_link = get_active_meet_link(course)
 
     if not meet_link:
         return jsonify({"error": "Class not started yet"}), 404
 
-    # AFTER increment
-    conn = sqlite3.connect("students.db")
-    c = conn.cursor()
-    
-    c.execute("""
-    UPDATE students 
-    SET hours_used=?, last_updated=? 
-    WHERE phone=? AND course=?
-    """, (
-        user["hours_used"][course],
-        datetime.now().strftime("%Y-%m-%d %H:%M"),
-        phone,
-        course
-    ))
-    
-    conn.commit()
-    conn.close()
-
     return jsonify({
         "status": "ok",
-        "meet_link": meet_link,   # ✅ correct,
-        "hours_used": user["hours_used"][course],
-        "hours_remaining": max_hours - user["hours_used"][course]
+        "meet_link": meet_link,
+        "hours_used": user["hours_used"].get(course, 0),
+        "hours_remaining": user["max_hours"].get(course, classes_per_month) - user["hours_used"].get(course, 0)
     })
 
 # -------------------- STUDENT STATUS --------------------
@@ -497,8 +484,6 @@ def student_status():
             "hours_used": user.get("hours_used", {}),
             "max_hours": user.get("max_hours", {}),
             "available_seats": seats,
-            "meet_link": meet_link,
-            "is_admin": False,
             "discounts": discounts
         })
 
