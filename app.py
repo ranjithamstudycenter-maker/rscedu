@@ -169,9 +169,9 @@ def save_user():
 
 @app.route("/api/check-demo")
 def check_demo():
-    phone = request.args.get("phone") or session.get("phone")
+    phone = request.args.get("phone") 
     if not phone:
-        return jsonify({"error": "Unauthorized"}), 401
+        return jsonify({"error": "Phone required"}), 401
 
     course = request.args.get("course")   
 
@@ -183,8 +183,10 @@ def check_demo():
     # 🔥 GET SAME LINK
     meet_link = get_active_meet_link(course)
 
-    demo_done = user["demo_done"].get(course, False)
-    return jsonify({"demo_done": demo_done, "meet_link": meet_link})
+    return jsonify({
+        "demo_done": user["demo_done"].get(course, False),
+        "meet_link": meet_link
+    })
 
 
 @app.route("/api/demo-complete", methods=["POST"])
