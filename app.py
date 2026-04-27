@@ -170,10 +170,10 @@ def save_user():
 @app.route("/api/check-demo")
 def check_demo():
     phone = request.args.get("phone") 
+    course = request.args.get("course")
+    
     if not phone:
         return jsonify({"error": "Phone required"}), 401
-
-    course = request.args.get("course")   
 
     if not course:
         return jsonify({"error": "Course missing"}), 400
@@ -183,23 +183,37 @@ def check_demo():
     # 🔥 GET SAME LINK
     meet_link = get_active_meet_link(course)
 
+     # 🔥 BLOCK HERE
+    if user["demo_done"].get(course):
+        return jsonify({
+            "error": "Demo already completed",
+            "demo_done": True
+        }), 403
+
     return jsonify({
-        "demo_done": user["demo_done"].get(course, False),
+        "demo_done": False,
         "meet_link": meet_link
     })
 
 
 @app.route("/api/demo-complete", methods=["POST"])
 def demo_complete():
-    phone = session.get("phone")
+    data = request.json
+
+    phone = data.get("phone") or session.get("phone")
+    course = data.get("course")
+
     if not phone:
         return jsonify({"error": "Unauthorized"}), 401
-
-    course = request.json.get("course")
+    
     if not course:
         return jsonify({"error": "Course missing"}), 400
         
     user = get_user(phone)
+    # 🔥 DOUBLE PROTECTION
+    if user["demo_done"].get(course):
+        return jsonify({"error": "Already completed"}), 400
+
     user["demo_done"][course] = True
 
     conn = sqlite3.connect("students.db")
