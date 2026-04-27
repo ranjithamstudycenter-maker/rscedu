@@ -1621,11 +1621,14 @@ function updateUI(course) {
       localStorage.removeItem(key);   // 🔥 IMPORTANT FIX
 
       try {
-        await fetch("/api/demo-complete", {
-          method: "POST",
-          headers: {"Content-Type":"application/json"},
-          body: JSON.stringify({course})
-        });
+         await fetch("/api/demo-complete", {
+         method: "POST",
+         headers: {"Content-Type":"application/json"},
+         body: JSON.stringify({
+           course: course,
+           phone: studentStatus?.phone   // 🔥 ADD THIS
+         })
+       });
 
         await refreshStatus();
         updateAllCourseUI();
