@@ -1603,7 +1603,7 @@ function startDemoSession(course) {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
-        phone: phone,
+        phone: studentStatus?.phone,
         course: course,
         demo: "start"
       })
@@ -1656,7 +1656,7 @@ function startDemoSession(course) {
             method: "POST",
             headers: {"Content-Type":"application/json"},
             body: JSON.stringify({
-              phone: phone,
+              phone: studentStatus?.phone,
               course: course
             })
           });
