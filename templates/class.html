@@ -1625,8 +1625,9 @@ function updateUI(course) {
          method: "POST",
          headers: {"Content-Type":"application/json"},
          body: JSON.stringify({
-               phone: phone,
+               phone: studentStatus?.phone,   
                course: currentCourse
+         
          })
        });
 
