@@ -116,27 +116,24 @@ button {
 
 <script>
 
+<script>
+
 let allStudents = [];
 
-// 🔥 FETCH DATA
+// 🔥 FETCH ONCE ONLY
 fetch("/admin/students")
 .then(res => res.json())
 .then(data => {
 
-    // 🔥 ONLY STUDENTS (no admin filter needed now)
     allStudents = data.students;
-
     renderTable(allStudents);
 
-    // 🔥 SEATS TABLE
     let sTable = document.getElementById("seatsTable");
     sTable.innerHTML = `
     <tr>
         <th>Course</th>
-        <th>Total</th>
-        <th>Booked</th>
         <th>Available</th>
-        <th>Fill %</th>
+        <th>Total</th>
     </tr>`;
 
     for (let course in data.seats){
@@ -161,27 +158,26 @@ fetch("/admin/students")
 // 🔥 RENDER TABLE
 function renderTable(students){
 
-    const table = document.getElementById("studentsTableBody");
+    let table = document.getElementById("Students History");
     table.innerHTML = "";
 
     if (students.length === 0){
         table.innerHTML = `
         <tr>
-            <td colspan="7" class="empty">🚫 No students yet</td>
+            <td colspan="6" class="empty">🚫 No students yet</td>
         </tr>`;
         return;
     }
 
     students.forEach(s => {
 
-        let demo = s.demo_done ? "Yes" : "No";
-        let enrolled = s.enrolled ? "Yes" : "No";
+        let demo = (s.demo_done == 1 || s.demo_done === true) ? "Yes" : "No";
+        let enrolled = (s.enrolled == 1 || s.enrolled === true) ? "Yes" : "No";
 
-        let row = `
+        table.innerHTML += `
         <tr>
-            <td>${s.name || "-"}</td>
             <td>${s.phone}</td>
-            <td>${s.course}</td>
+            <td>${s.name || "-"}</td>
 
             <td>
               <span class="badge ${demo=='Yes'?'yes':'no'}">${demo}</span>
@@ -194,12 +190,14 @@ function renderTable(students){
             <td>${s.hours_used || 0}</td>
 
             <td>
-                <button class="reset-btn" onclick="resetDemo('${s.phone}')">Reset</button>
-                <button class="delete-btn" onclick="deleteStudent('${s.phone}','${s.course}')">Delete</button>
+                <button class="reset-btn" onclick="resetDemo('${s.phone}')">🔄 Reset</button>
+
+                <button class="delete-btn" 
+                onclick="deleteStudent('${s.phone}','${s.course}')">
+                🗑 Delete
+                </button>
             </td>
         </tr>`;
-
-        table.innerHTML += row;
     });
 }
 
@@ -216,6 +214,22 @@ function filterClass(cls){
 }
 
 
+// 🔥 DELETE FUNCTION
+function deleteStudent(phone, course){
+    if(confirm("Delete this student?")){
+        fetch("/admin/delete-student", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ phone, course })
+        })
+        .then(res => res.json())
+        .then(() => {
+            alert("Deleted successfully");
+            location.reload();
+        });
+    }
+}
+
 // 🔥 RESET DEMO
 function resetDemo(phone){
     if(confirm("Reset demo?")){
@@ -223,19 +237,6 @@ function resetDemo(phone){
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({ phone: phone })
-        })
-        .then(()=> location.reload());
-    }
-}
-
-
-// 🔥 DELETE STUDENT
-function deleteStudent(phone, course){
-    if(confirm("Delete student?")){
-        fetch("/admin/delete-student", {
-            method: "POST",
-            headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ phone, course })
         })
         .then(()=> location.reload());
     }
