@@ -1601,6 +1601,7 @@ function startDemoSession(course) {
     // 🔥 INSERT INITIAL STUDENT (Demo = NO)
     fetch("/api/demo-complete", {
       method: "POST",
+      headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
       phone: studentStatus?.phone,
       course: course,
