@@ -359,12 +359,12 @@ def payment_success_api():
     """, (
         phone,
         course,
-        user.get("name", ""),
-        int(user["demo_done"].get(course, False)),
-        1,
+        "",       # name later வரும்
+        1,        # ✅ demo completed
+        0,        # not enrolled
         0,
-        classes_per_month,
-        price_per_hour.get(course, 0) * classes_per_month,
+        0,
+        0,
         datetime.now().strftime("%Y-%m-%d %H:%M")
     ))
     
