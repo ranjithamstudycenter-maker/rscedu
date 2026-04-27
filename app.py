@@ -108,37 +108,34 @@ classes_per_month = 12  # 3 days/week * 4 weeks
 # -------------------- HELPERS --------------------
 
 def get_user(phone):
-    if phone not in demo_users:
-        demo_users[phone] = {
-            "name": "",
-            "phone": phone,
-            "demo_done": {},
-            "enrolled": {},
-            "hours_used": {},
-            "max_hours": {},
-        }
 
-        # 🔥 LOAD FROM DB
-        conn = sqlite3.connect("students.db")
-        c = conn.cursor()
+    user = {
+        "name": "",
+        "phone": phone,
+        "demo_done": {},
+        "enrolled": {},
+        "hours_used": {},
+        "max_hours": {},
+    }
 
-        c.execute("SELECT * FROM students WHERE phone=?", (phone,))
-        rows = c.fetchall()
+    # 🔥 ALWAYS LOAD FROM DB
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
 
-        for r in rows:
-            course = r[1]
-            demo_users[phone]["demo_done"][course] = bool(r[3])
-            demo_users[phone]["enrolled"][course] = bool(r[4])
-            demo_users[phone]["hours_used"][course] = r[5]
-            demo_users[phone]["max_hours"][course] = r[6]
+    c.execute("SELECT * FROM students WHERE phone=?", (phone,))
+    rows = c.fetchall()
 
-        conn.close()
+    for r in rows:
+        course = r[1]
+        user["demo_done"][course] = bool(r[3])
+        user["enrolled"][course] = bool(r[4])
+        user["hours_used"][course] = r[5]
+        user["max_hours"][course] = r[6]
 
-    return demo_users[phone]
+    conn.close()
 
-def is_admin_phone(phone):
-    """Admin phone always gets demo access for testing."""
-    return phone == ADMIN_PHONE
+    return user
+
 
 def available_seats(course):
     d = seat_data.get(course, {"total": 30, "booked": 0})
@@ -152,7 +149,19 @@ def save_user():
     phone = data.get("phone")
 
     session["phone"] = phone
-    get_user(phone)
+    user = get_user(phone)
+
+    # 🔥 INSERT BASE RECORD (if not exists)
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+
+    c.execute("""
+    INSERT OR IGNORE INTO students (phone, course, demo_done, enrolled)
+    VALUES (?, ?, ?, ?)
+    """, (phone, "init", 0, 0))
+
+    conn.commit()
+    conn.close()
 
     return jsonify({"status": "ok"})
 
