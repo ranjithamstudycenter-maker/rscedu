@@ -1731,7 +1731,7 @@ function enroll(course) {
 function closeEnroll() {
   document.getElementById("enrollPopup").style.display = "none";
 }
-
+          
 
 /* ======================================
    PAYMENT
@@ -2313,7 +2313,7 @@ async function openDemoPopup(course){
   </div>
 </div>
 
- <div id="enrollPopup" style="
+  <div id="enrollPopup" style="
   display:none;
   position:fixed;
   top:0;left:0;
@@ -2326,6 +2326,7 @@ async function openDemoPopup(course){
 
   <div style="background:white;padding:25px;border-radius:12px;width:320px;text-align:center;position:relative;">
 
+    <!-- CLOSE -->
     <button onclick="closeEnroll()" style="
       position:absolute;
       top:10px;
@@ -2339,11 +2340,13 @@ async function openDemoPopup(course){
     ">❌</button>
 
     <h3 id="courseTitle"></h3>
-    <p id="coursePrice"></p>
+        <p id="coursePrice"></p>
+        
+        <input id="studentName" placeholder="Enter your name"
+        style="width:100%;padding:10px;margin-top:10px;">
+    <h4 style="color:#0b5394;">₹ Payment</h4>
 
-    <input id="studentName" placeholder="Enter your name"
-      style="width:100%;padding:10px;margin-top:10px;">
-
+    <!-- PAYMENT OPTIONS -->
     <button onclick="payNow()" style="
       width:100%;
       padding:10px;
@@ -2351,17 +2354,29 @@ async function openDemoPopup(course){
       color:white;
       border:none;
       border-radius:6px;
-      margin-top:15px;
+      margin-top:10px;
     ">
-      💳 Pay & Enroll
+      💳 Pay Now
+    </button>
+
+    <button onclick="markPaid()" style="
+      width:100%;
+      padding:10px;
+      background:#0b5394;
+      color:white;
+      border:none;
+      border-radius:6px;
+      margin-top:10px;
+    ">
+      ✅ I Have Paid (Manual)
     </button>
 
     <p id="enrollMsg" style="margin-top:10px;"></p>
-<div id="recaptcha-container"></div>
+
   </div>
 </div>
-
-   
+<div id="recaptcha-container"></div>
+    
 </body>
 </html>
 
