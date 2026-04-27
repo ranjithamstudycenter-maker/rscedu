@@ -1860,12 +1860,8 @@ async function handleOTP(){
   
      // 🔥 ADD THIS
      await refreshStatus();
+     updateAllCourseUI();   // 🔥 immediate
      
-     // 🔥 ADD THIS
-     setTimeout(() => {
-       updateAllCourseUI();
-     }, 300);
-
     } catch(e){
       msg.innerHTML = "❌ Wrong OTP";
       msg.style.color = "red";
