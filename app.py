@@ -519,7 +519,6 @@ def teacher_login():
     return render_template("teacher_login.html", error=error)
 
  
-
 @app.route("/start-class", methods=["POST"])
 def start_class():
     data = request.get_json()
