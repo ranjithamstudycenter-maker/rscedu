@@ -12,38 +12,12 @@ body {
     padding: 20px;
 }
 
-    /* Header */
-.header {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:20px;
-}
-
-
-/* Title */
 h2 {
     text-align: center;
     margin-bottom: 25px;
     color: #0b5394;
 }
-/* Join Button */
-.join-btn {
-    padding:10px 20px;
-    border:none;
-    border-radius:8px;
-    background:linear-gradient(45deg,#28a745,#5cd67c);
-    color:white;
-    font-weight:bold;
-    cursor:pointer;
-}
 
-.join-btn:hover {
-    transform:scale(1.05);
-}
-
-
-/* Cards */
 .card {
     background: white;
     padding: 20px;
@@ -52,18 +26,14 @@ h2 {
     margin-bottom: 25px;
 }
 
-/* Tables */
 table {
     width: 100%;
     border-collapse: collapse;
-    overflow: hidden;
 }
 
 th {
     background: linear-gradient(90deg,#0b5394,#1f7ae0);
     color: white;
-    position: sticky;
-    top: 0;
 }
 
 th, td {
@@ -71,15 +41,6 @@ th, td {
     text-align: center;
 }
 
-tr {
-    transition: 0.2s;
-}
-
-tr:hover {
-    background: #f1f7ff;
-}
-
-/* Badges */
 .badge {
     padding: 5px 12px;
     border-radius: 20px;
@@ -90,36 +51,13 @@ tr:hover {
 .yes { background: #d4edda; color: green; }
 .no  { background: #f8d7da; color: red; }
 
-/* Button */
-.reset-btn {
-    background: linear-gradient(45deg,#e74c3c,#ff6b5c);
-    color: white;
-    border: none;
-    padding: 6px 12px;
-    border-radius: 6px;
-    cursor: pointer;
-    transition: 0.2s;
-}
-
-.reset-btn:hover {
-    transform: scale(1.05);
-}
-
-/* Empty */
 .empty {
     text-align: center;
     padding: 20px;
     color: #888;
-    font-size: 14px;
 }
 
-/* Section title */
-h3 {
-    margin-bottom: 15px;
-    color: #333;
-    text-align: center;
-}
-    button {
+button {
   padding:8px 14px;
   margin:5px;
   border:none;
@@ -129,144 +67,76 @@ h3 {
   cursor:pointer;
 }
 
-button:hover {
-  background:#1f7ae0;
-}
-
-    .reset-btn{
-  background: #3b82f6;   /* blue */
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
+.reset-btn{
+  background:#3b82f6;
 }
 
 .delete-btn{
-  background: #ef4444;   /* red */
-  color: white;
-  border: none;
-  padding: 6px 10px;
-  border-radius: 6px;
-  cursor: pointer;
-  margin-left: 6px;
+  background:#ef4444;
 }
 </style>
 </head>
 
 <body>
 
-<div class="header">
-    <h2>👨‍🎓 Students Dashboard</h2>
-</div>
-
+<h2>👨‍🎓 Students Dashboard</h2>
 
 <div class="card">
-    <div style="text-align:center; margin-bottom:15px;">
+
+<div style="text-align:center; margin-bottom:15px;">
   <button onclick="filterClass('all')">All</button>
   <button onclick="filterClass('cbse9')">Class 9</button>
   <button onclick="filterClass('cbse10')">Class 10</button>
   <button onclick="filterClass('cbse11')">Class 11</button>
   <button onclick="filterClass('cbse12')">Class 12</button>
 </div>
+
 <table>
 <thead>
 <tr>
-
 <th>Name</th>
 <th>Phone</th>
-<th>Attended Demo</th>
+<th>Course</th>
+<th>Demo</th>
 <th>Registered</th>
 <th>Hours</th>
 <th>Action</th>
 </tr>
 </thead>
 
-<tbody id="Students History"></tbody>
-
+<tbody id="studentsTableBody"></tbody>
 </table>
+
 </div>
 
 <div class="card">
 <h3>📊 Seats Info</h3>
-<table id="seatsTable">
-<tr>
-<th>Course</th>
-<th>Total Seats</th>
-<th>Booked</th>
-<th>Available</th>
-<th>Fill %</th>
-</tr>
-</table>
+<table id="seatsTable"></table>
 </div>
 
 <script>
-function submitFeedback(){
 
-  const rating = document.getElementById(`rating_${course}`).value;
-  const comment = document.getElementById(`comment_${course}`).value;
-
-
- // 🔥 get saved course
-  const course = localStorage.getItem("course");
-
-  if(!course){
-    alert("⚠️ Join class first");
-    return;
-  }
-
-  // 🔥 get teacher automatically
-  fetch(`/get-teacher?course=${course}`)
-  .then(res => res.json())
-  .then(data => {
-
-    const teacher = data.teacher;
-
-    // 🔥 send feedback
-    fetch("/submit_feedback", {
-      method:"POST",
-      headers:{"Content-Type":"application/json"},
-      body: JSON.stringify({
-        teacher: data.teacher,
-        course: course,
-        rating: rating,
-        comment: comment
-      })
-    })
-    .then(res=>res.json())
-    .then(()=>{
-      alert("✅ Feedback Submitted");
-    });
-
-  })
-  .catch(err => {
-    console.error(err);
-    alert("⚠️ Error submitting feedback");
-  });
-
-}
-</script>
-
-
-<script>
-
-const ADMIN_PHONE = "7702616245";
 let allStudents = [];
 
-// 🔥 FETCH ONCE ONLY
+// 🔥 FETCH DATA
 fetch("/admin/students")
 .then(res => res.json())
 .then(data => {
 
+    // 🔥 ONLY STUDENTS (no admin filter needed now)
     allStudents = data.students;
+
     renderTable(allStudents);
 
+    // 🔥 SEATS TABLE
     let sTable = document.getElementById("seatsTable");
     sTable.innerHTML = `
     <tr>
         <th>Course</th>
-        <th>Available</th>
         <th>Total</th>
+        <th>Booked</th>
+        <th>Available</th>
+        <th>Fill %</th>
     </tr>`;
 
     for (let course in data.seats){
@@ -287,66 +157,52 @@ fetch("/admin/students")
 
 });
 
-// 🔥 RENDER
+
+// 🔥 RENDER TABLE
 function renderTable(students){
-    let table = document.getElementById("Students History");
+
+    const table = document.getElementById("studentsTableBody");
     table.innerHTML = "";
 
     if (students.length === 0){
         table.innerHTML = `
         <tr>
-            <td colspan="6" class="empty">🚫 No students yet</td>
+            <td colspan="7" class="empty">🚫 No students yet</td>
         </tr>`;
         return;
     }
 
-function renderStudents(students){
+    students.forEach(s => {
 
-  const tableBody = document.getElementById("studentsTableBody");
-  tableBody.innerHTML = ""; // 🔥 clear before render
+        let demo = s.demo_done ? "Yes" : "No";
+        let enrolled = s.enrolled ? "Yes" : "No";
 
-  students.forEach(s => {
+        let row = `
+        <tr>
+            <td>${s.name || "-"}</td>
+            <td>${s.phone}</td>
+            <td>${s.course}</td>
 
-    let demo = s.demo_done ? "Yes" : "No";
-    let enrolled = s.enrolled ? "Yes" : "No";
+            <td>
+              <span class="badge ${demo=='Yes'?'yes':'no'}">${demo}</span>
+            </td>
 
-    let row = `
-      <tr id="row-${s.phone}-${s.course}">
-        <td>${s.phone}</td>
-        <td>${s.course}</td>
-        <td>${s.name || "-"}</td>
+            <td>
+              <span class="badge ${enrolled=='Yes'?'yes':'no'}">${enrolled}</span>
+            </td>
 
-        <td>
-          <span class="badge ${demo=='Yes'?'yes':'no'}">
-            ${demo}
-          </span>
-        </td>
+            <td>${s.hours_used || 0}</td>
 
-        <td>
-          <span class="badge ${enrolled=='Yes'?'yes':'no'}">
-            ${enrolled}
-          </span>
-        </td>
+            <td>
+                <button class="reset-btn" onclick="resetDemo('${s.phone}')">Reset</button>
+                <button class="delete-btn" onclick="deleteStudent('${s.phone}','${s.course}')">Delete</button>
+            </td>
+        </tr>`;
 
-        <td>${s.hours_used || 0}</td>
-
-        <td>
-          <button class="reset-btn"
-            onclick="resetDemo('${s.phone}')">
-            🔄 Reset
-          </button>
-
-          <button class="delete-btn"
-            onclick="deleteStudent('${s.phone}','${s.course}')">
-            🗑 Delete
-          </button>
-        </td>
-      </tr>
-    `;
-
-    tableBody.innerHTML += row;
-  });
+        table.innerHTML += row;
+    });
 }
+
 
 // 🔥 FILTER
 function filterClass(cls){
@@ -354,48 +210,36 @@ function filterClass(cls){
         renderTable(allStudents);
         return;
     }
+
     let filtered = allStudents.filter(s => s.course === cls);
     renderTable(filtered);
 }
 
-// 🔥 RESET
+
+// 🔥 RESET DEMO
 function resetDemo(phone){
-    if(confirm("Reset demo for this user?")){
+    if(confirm("Reset demo?")){
         fetch("/admin/reset-demo", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: JSON.stringify({ phone: phone })
         })
-        .then(res => res.json())
-        .then(() => {
-            alert("Demo Reset Successful ✅");
-            location.reload();
-        });
+        .then(()=> location.reload());
     }
 }
 
-// 🔥 JOIN CLASS (FINAL)
-function joinClass(course) {
-  fetch(`/api/join-class?course=${course}`)
-  .then(res => res.json())
-  .then(data => {
 
-    if(data.error){
-      alert(data.error);
-      return;
+// 🔥 DELETE STUDENT
+function deleteStudent(phone, course){
+    if(confirm("Delete student?")){
+        fetch("/admin/delete-student", {
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: JSON.stringify({ phone, course })
+        })
+        .then(()=> location.reload());
     }
-      
-    // 🔥 save course
-    localStorage.setItem("course", course);
-
-    // 🔥 show feedback section
-    document.getElementById(`feedback_${course}`).style.display = "block";
-
-    window.location.href = data.meet_link;
-
-  });
 }
-
 
 </script>
 
