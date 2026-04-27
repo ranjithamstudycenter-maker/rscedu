@@ -1602,7 +1602,7 @@ function startDemoSession(course) {
     fetch("/api/demo-complete", {
       method: "POST",
       body: JSON.stringify({
-      phone: phone,
+      phone: studentStatus?.phone,
       course: course,
       demo: "start"
      })
