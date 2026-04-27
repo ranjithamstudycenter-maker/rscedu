@@ -1853,14 +1853,20 @@ async function handleOTP(){
   // STEP 1 → SEND OTP
   if(step === 1){
 
-    const res = await fetch("/api/check-demo?course=" + currentCourse + "&phone=" + phone);
+    const res = await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
     const data = await res.json();
- 
-    if(data.demo_done){
-     msg.innerHTML = "⚠️ Demo already completed";
-     msg.style.color = "red";
-     return;
-   }
+    
+    if(data.status === "completed"){
+      msg.innerHTML = "⚠️ Demo already completed";
+      msg.style.color = "red";
+      return;
+    }
+    
+    if(data.status === "running"){
+      msg.innerHTML = "⏳ Demo already running";
+      msg.style.color = "green";
+      return;
+    }
 
     const appVerifier = window.recaptchaVerifier;
     const phoneNumber = "+91" + phone;
@@ -2121,6 +2127,36 @@ async function openDemoPopup(course){
     alert("Deleted successfully");
     location.reload();
   });
+}
+
+ async function loadDemo(course, phone){
+
+  const res = await fetch(`/api/check-demo?course=${course}&phone=${phone}`);
+  const data = await res.json();
+
+  if(data.status === "running"){
+
+    let remaining = data.remaining;
+
+    const interval = setInterval(() => {
+      remaining--;
+
+      document.getElementById("timer-"+course).textContent =
+        "⏳ Demo: " + remaining + " sec";
+
+      if(remaining <= 0){
+        clearInterval(interval);
+        document.getElementById("timer-"+course).textContent =
+          "✅ Demo Completed – Please Enroll";
+      }
+
+    },1000);
+  }
+
+  if(data.status === "completed"){
+    document.getElementById("timer-"+course).textContent =
+      "✅ Demo Completed – Please Enroll";
+  }
 }
   
  </script>
