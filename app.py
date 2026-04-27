@@ -777,26 +777,36 @@ def students_view():
     
 @app.route("/admin/reset-demo", methods=["POST"])
 def admin_reset_demo():
-    if not session.get("admin"):
-        return jsonify({"error": "Unauthorized"}), 403
+    phone = request.json.get("phone")
 
-    # 🔥 extra protection (optional)
-    if session.get("admin") != True:
-        return jsonify({"error": "Access Denied"}), 403
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
 
-    data = request.get_json()
+    # 🔥 UPDATE ALL ROWS
+    c.execute("""
+    UPDATE students
+    SET demo_done = 0
+    WHERE phone = ?
+    """, (phone,))
 
-    phone  = data.get("phone")
-    course = data.get("course")
-
-    if phone in demo_users:
-        if course:
-            demo_users[phone]["demo_done"].pop(course, None)
-        else:
-            demo_users[phone]["demo_done"] = {}
+    conn.commit()
+    conn.close()
 
     return jsonify({"status": "reset"})
 
+@app.route("/admin/delete-student", methods=["POST"])
+def delete_student():
+    phone = request.json.get("phone")
+
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+
+    c.execute("DELETE FROM students WHERE phone=?", (phone,))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({"status": "deleted"})
 
 @app.route("/manage-feedback")
 def manage_feedback():
