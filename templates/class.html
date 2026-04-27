@@ -1601,15 +1601,14 @@ function startDemoSession(course) {
     // 🔥 INSERT INITIAL STUDENT (Demo = NO)
     fetch("/api/demo-complete", {
       method: "POST",
-      headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
-        phone: studentStatus?.phone,
-        course: course,
-        demo: "start"
-      })
-    });
+      phone: phone,
+      course: course,
+      demo: "start"
+     })
+   });
 
-    // 🔥 START TIMER
+     // 🔥 START TIMER
     const startTime = Date.now();
     localStorage.setItem(key, startTime);
 
@@ -1652,15 +1651,13 @@ function startDemoSession(course) {
 
         try {
           // 🔥 DEMO COMPLETE → YES
-          await fetch("/api/demo-complete", {
+            fetch("/api/demo-complete", {
             method: "POST",
-            headers: {"Content-Type":"application/json"},
             body: JSON.stringify({
-              phone: studentStatus?.phone,
-              course: course
-            })
-          });
-
+            phone: phone,
+            course: course
+           })
+         });
           await refreshStatus();
           updateAllCourseUI();
 
