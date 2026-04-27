@@ -1684,9 +1684,9 @@ function startDemoSession(course) {
 /* ======================================
    ENROLL
 ====================================== */
-function enroll(course) {
+let selectedCourse = "";
+ function enroll(course) {
 
- // 🔥 CLEAR OLD MESSAGE
   let el = document.getElementById("msg-" + course);
   if(el) el.innerHTML = "";
 
@@ -1703,96 +1703,95 @@ function enroll(course) {
 
   selectedCourse = course;
 
-  // 🔥 get price
   fetch(`/api/enroll-info?course=${course}`)
     .then(res => res.json())
     .then(data => {
 
-      // 🔥 OPEN POPUP
       openEnrollPopup(course, data.monthly_amount);
 
-  // 🔥 PRICE CALCULATION
-  const base = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
-  const eligible = (studentStatus.discounts || {})[course];
-  const final = eligible ? Math.floor(base * 0.5) : base;
+      // 🔥 PRICE DISPLAY
+      const base = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
+      const eligible = (studentStatus.discounts || {})[course];
+      const final = eligible ? Math.floor(base * 0.5) : base;
 
-  document.getElementById("courseTitle").textContent =
-    course.toUpperCase() + " – Monthly Plan";
+      document.getElementById("courseTitle").textContent =
+        course.toUpperCase() + " – Monthly Plan";
 
-  document.getElementById("coursePrice").innerHTML = eligible
-    ? `<span style="text-decoration:line-through;color:#999;">₹${base}</span>
-       <span style="color:#dc2626;font-size:20px;font-weight:bold;">₹${final}</span>
-       <span style="background:#dc2626;color:white;padding:2px 8px;border-radius:12px;">50% OFF</span>`
-    : `₹${final}`;
+      document.getElementById("coursePrice").innerHTML = eligible
+        ? `<span style="text-decoration:line-through;color:#999;">₹${base}</span>
+           <span style="color:#dc2626;font-size:20px;font-weight:bold;">₹${final}</span>
+           <span style="background:#dc2626;color:white;padding:2px 8px;border-radius:12px;">50% OFF</span>`
+        : `₹${final}`;
 
-  document.getElementById("studentName").value = studentStatus.name || "";
+      document.getElementById("studentName").value = studentStatus.name || "";
+    });
 }
- 
-function closeEnroll() {
+ function openEnrollPopup(course){
+  document.getElementById("enrollPopup").style.display = "block";
+}
+
+function closeEnroll(){
   document.getElementById("enrollPopup").style.display = "none";
 }
+ async function payNow() {
 
-
-/* ======================================
-   PAYMENT
-====================================== */
-async function payNow() {
   const name = document.getElementById("studentName").value.trim();
+
   if (!name) {
-    showMessage("⚠️ Please enter your name to continue.");
-    document.getElementById("studentName").focus();
+    showMessage("⚠️ Enter your name");
     return;
   }
+
   try {
-    const res  = await fetch("/api/create-order", {
-      method:  "POST",
+
+    const res = await fetch("/api/create-order", {
+      method: "POST",
       headers: {"Content-Type":"application/json"},
-      body:    JSON.stringify({course: selectedCourse, name: name})
+      body: JSON.stringify({
+        course: selectedCourse,
+        name: name
+      })
     });
+
     const data = await res.json();
-    if (data.error) { showMessage("❌ " + data.error); return; }
- 
+
+    if (data.error) {
+      showMessage("❌ " + data.error);
+      return;
+    }
+
     const options = {
-      key:         data.razorpay_key,
-      amount:      data.amount,
-      currency:    "INR",
-      name:        "Ranjitham Study Center",
-      description: selectedCourse.toUpperCase() + " Monthly Fee" + (data.discount_applied ? " (50% OFF)" : ""),
-      order_id:    data.order_id,
-      prefill:     {name: data.name, contact: studentStatus.phone || ""},
-      theme:       {color: "#1e3a8a"},
-      handler: async function(response) {
-        const sRes  = await fetch("/api/payment-success", {
-          method:  "POST",
+      key: data.razorpay_key,
+      amount: data.amount,
+      currency: "INR",
+      name: "Ranjitham Study Center",
+      description: selectedCourse,
+      order_id: data.order_id,
+
+      handler: async function () {
+
+        await fetch("/api/payment-success", {
+          method: "POST",
           headers: {"Content-Type":"application/json"},
-          body:    JSON.stringify({
-            course:     selectedCourse,
-            order_id:   response.razorpay_order_id,
-            payment_id: response.razorpay_payment_id
+          body: JSON.stringify({
+            course: selectedCourse
           })
         });
-        const sData = await sRes.json();
-        if (sData.status === "success") {
-          showMessage("🎉 Payment Successful! You are now Registered.");
-          closeEnroll();
-          await refreshStatus();
-        } else {
-          showMessage("⚠️ Payment done but enrollment failed. Contact support.");
-        }
+
+        showMessage("🎉 Enrolled Successfully");
+        closeEnroll();
+        await refreshStatus();
       }
     };
+
     const rzp = new Razorpay(options);
-    rzp.on("payment.failed", r => showMessage("❌ Payment failed: " + r.error.description));
     rzp.open();
-  } catch(e) {
-    showMessage("❌ Error starting payment. Try again.");
+
+  } catch (e) {
     console.error(e);
+    showMessage("❌ Payment error");
   }
 }
- function markPaid(){
-  showMessage("📌 Payment marked. Admin will verify.");
-  closeEnroll();
-} 
 /* ======================================
    JOIN CLASS
 ====================================== */
@@ -2326,7 +2325,6 @@ async function openDemoPopup(course){
 
   <div style="background:white;padding:25px;border-radius:12px;width:320px;text-align:center;position:relative;">
 
-    <!-- CLOSE -->
     <button onclick="closeEnroll()" style="
       position:absolute;
       top:10px;
@@ -2340,13 +2338,11 @@ async function openDemoPopup(course){
     ">❌</button>
 
     <h3 id="courseTitle"></h3>
-        <p id="coursePrice"></p>
-        
-        <input id="studentName" placeholder="Enter your name"
-        style="width:100%;padding:10px;margin-top:10px;">
-    <h4 style="color:#0b5394;">₹ Payment</h4>
+    <p id="coursePrice"></p>
 
-    <!-- PAYMENT OPTIONS -->
+    <input id="studentName" placeholder="Enter your name"
+      style="width:100%;padding:10px;margin-top:10px;">
+
     <button onclick="payNow()" style="
       width:100%;
       padding:10px;
@@ -2354,21 +2350,9 @@ async function openDemoPopup(course){
       color:white;
       border:none;
       border-radius:6px;
-      margin-top:10px;
+      margin-top:15px;
     ">
       💳 Pay & Enroll
-    </button>
-
-    <button onclick="markPaid()" style="
-      width:100%;
-      padding:10px;
-      background:#0b5394;
-      color:white;
-      border:none;
-      border-radius:6px;
-      margin-top:10px;
-    ">
-      ✅ Registered
     </button>
 
     <p id="enrollMsg" style="margin-top:10px;"></p>
@@ -2376,7 +2360,7 @@ async function openDemoPopup(course){
   </div>
 </div>
 
- <div id="recaptcha-container"></div>
+   <div id="recaptcha-container"></div>
 </body>
 </html>
 
