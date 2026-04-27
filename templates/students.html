@@ -203,7 +203,7 @@ button:hover {
 <script>
 function submitFeedback(){
 
-    const rating = document.getElementById(`rating_${course}`).value;
+  const rating = document.getElementById(`rating_${course}`).value;
   const comment = document.getElementById(`comment_${course}`).value;
 
 
@@ -300,26 +300,52 @@ function renderTable(students){
         return;
     }
 
-    students.forEach(s => {
+function renderStudents(students){
 
-        let demo = s.demo_done ? "Yes" : "No";
-        let enrolled = s.enrolled ? "Yes" : "No";
+  const tableBody = document.getElementById("studentsTableBody");
+  tableBody.innerHTML = ""; // 🔥 clear before render
 
-       let actionBtn = `
-              <button class="reset-btn" onclick="resetDemo('${s.phone}')">🔄 Reset</button>
-              <button class="delete-btn" onclick="deleteStudent('${s.phone}','${s.course}')">🗑 Delete</button>
-            `;
+  students.forEach(s => {
 
-        table.innerHTML += `
-        <tr>
-            <td>${s.phone}</td>
-            <td>${s.name || "-"}</td>
-            <td><span class="badge ${demo=='Yes'?'yes':'no'}">${demo}</span></td>
-            <td><span class="badge ${enrolled=='Yes'?'yes':'no'}">${enrolled}</span></td>
-            <td>${s.hours_used || 0}</td>
-            <td>${actionBtn}</td>
-        </tr>`;
-    });
+    let demo = s.demo_done ? "Yes" : "No";
+    let enrolled = s.enrolled ? "Yes" : "No";
+
+    let row = `
+      <tr id="row-${s.phone}-${s.course}">
+        <td>${s.phone}</td>
+        <td>${s.course}</td>
+        <td>${s.name || "-"}</td>
+
+        <td>
+          <span class="badge ${demo=='Yes'?'yes':'no'}">
+            ${demo}
+          </span>
+        </td>
+
+        <td>
+          <span class="badge ${enrolled=='Yes'?'yes':'no'}">
+            ${enrolled}
+          </span>
+        </td>
+
+        <td>${s.hours_used || 0}</td>
+
+        <td>
+          <button class="reset-btn"
+            onclick="resetDemo('${s.phone}')">
+            🔄 Reset
+          </button>
+
+          <button class="delete-btn"
+            onclick="deleteStudent('${s.phone}','${s.course}')">
+            🗑 Delete
+          </button>
+        </td>
+      </tr>
+    `;
+
+    tableBody.innerHTML += row;
+  });
 }
 
 // 🔥 FILTER
@@ -370,14 +396,26 @@ function joinClass(course) {
   });
 }
 
-async function deleteStudent(phone){
-  await fetch("/admin/delete-student", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ phone })
+async function deleteStudent(phone, course){
+
+  if(!confirm("Are you sure to delete this student?")) return;
+
+  const res = await fetch("/delete-student", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({phone, course})
   });
 
-  location.reload(); // 🔥 MUST
+  const data = await res.json();
+
+  if(data.status === "deleted"){
+    
+    // 🔥 REMOVE ROW FROM UI
+    const row = document.getElementById(`row-${phone}-${course}`);
+    if(row) row.remove();
+
+    showMessage("🗑 Deleted successfully");
+  }
 }
  function deleteStudent(phone, course){
 
