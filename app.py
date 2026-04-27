@@ -215,19 +215,14 @@ def demo_complete():
     c = conn.cursor()
     
     c.execute("""
-    INSERT OR IGNORE INTO students 
-    (phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+    UPDATE students
+    SET demo_done = 1,
+        last_updated = ?
+    WHERE phone = ? AND course = ?
     """, (
+        datetime.now().strftime("%Y-%m-%d %H:%M"),
         phone,
-        course,
-        "",
-        0,   # ❌ demo இன்னும் complete ஆகல
-        0,
-        0,
-        0,
-        0,
-        datetime.now().strftime("%Y-%m-%d %H:%M")
+        course
     ))
  
     conn.commit()
