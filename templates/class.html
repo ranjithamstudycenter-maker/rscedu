@@ -1604,7 +1604,7 @@ function startDemoSession(course) {
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
         phone: phone,
-        course: course,
+        course: selectedCourse,
         demo: "start"
       })
     });
@@ -1657,7 +1657,7 @@ function startDemoSession(course) {
             headers: {"Content-Type":"application/json"},
             body: JSON.stringify({
               phone: phone,
-              course: course
+              course: selectedCourse
             })
           });
 
