@@ -155,11 +155,6 @@ def save_user():
     conn = sqlite3.connect("students.db")
     c = conn.cursor()
 
-    c.execute("""
-    INSERT OR IGNORE INTO students (phone, course, demo_done, enrolled)
-    VALUES (?, ?, ?, ?)
-    """, (phone, "init", 0, 0))
-
     conn.commit()
     conn.close()
 
