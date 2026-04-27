@@ -396,43 +396,6 @@ function joinClass(course) {
   });
 }
 
-async function deleteStudent(phone, course){
-
-  if(!confirm("Are you sure to delete this student?")) return;
-
-  const res = await fetch("/delete-student", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({phone, course})
-  });
-
-  const data = await res.json();
-
-  if(data.status === "deleted"){
-    
-    // 🔥 REMOVE ROW FROM UI
-    const row = document.getElementById(`row-${phone}-${course}`);
-    if(row) row.remove();
-
-    showMessage("🗑 Deleted successfully");
-  }
-}
- function deleteStudent(phone, course){
-
-  if(!confirm("Are you sure to delete?")) return;
-
-  fetch("/admin/delete-student", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({phone, course})
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert("Deleted successfully");
-    location.reload();
-  });
-}
-  
 
 </script>
 
