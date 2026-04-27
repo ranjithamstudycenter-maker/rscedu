@@ -173,8 +173,8 @@ function renderTable(students){
 
     students.forEach(s => {
 
-        let demo = Number(s.demo_done) === 1 || s.demo_done === true ? "Yes" : "No";
-        let enrolled = Number(s.enrolled) === 1 || s.enrolled === true ? "Yes" : "No";
+        let demo = s.demo_done ? "Yes" : "No";
+        let enrolled = s.enrolled ? "Yes" : "No";
       
         let row = `
         <tr>
