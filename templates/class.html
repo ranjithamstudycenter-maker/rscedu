@@ -1805,6 +1805,15 @@ async function handleOTP(){
   // STEP 1 → SEND OTP
   if(step === 1){
 
+    const res = await fetch("/api/check-demo?course=" + currentCourse + "&phone=" + phone);
+    const data = await res.json();
+ 
+    if(data.demo_done){
+     msg.innerHTML = "⚠️ Demo already completed";
+     msg.style.color = "red";
+     return;
+   }
+
     const appVerifier = window.recaptchaVerifier;
     const phoneNumber = "+91" + phone;
 
@@ -1950,22 +1959,32 @@ function startTimer(){
   let currentCourse = "";
   let step = 1;
 
-function openDemoPopup(course){
+async function openDemoPopup(course){
   currentCourse = course;
   step = 1;
 
- // 🔥 ADD THIS BLOCK
-  if ((studentStatus?.demo_done || {})[course]) {
-    showCourseMessage(course, "✅ Demo already completed");
-    return;
+  try {
+    // 🔥 BACKEND CHECK
+    const res = await fetch("/api/check-demo?course=" + course);
+    const data = await res.json();
+
+    if(data.demo_done){
+      showCourseMessage(course, "⚠️ Demo already completed");
+      return;
+    }
+
+  } catch(e){
+    console.log("API error:", e);
   }
- 
+
+  // 🔥 EXISTING CODE (unchanged)
   if (!window.recaptchaVerifier) {
-  window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
-    size: 'invisible'
-  });
-}
-  clearInterval(timerInterval); // 🔥 important
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      size: 'invisible'
+    });
+  }
+
+  clearInterval(timerInterval);
 
   document.getElementById("phoneInput").value = "";
   document.getElementById("otpInput").value = "";
@@ -1982,8 +2001,6 @@ function openDemoPopup(course){
 
   document.getElementById("demoPopup").style.display = "flex";
 }
-window.openDemoPopup = openDemoPopup;
-
 
  function updateSeats(course, seats){
 
