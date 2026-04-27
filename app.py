@@ -169,7 +169,7 @@ def save_user():
 
 @app.route("/api/check-demo")
 def check_demo():
-    phone = session.get("phone")
+    phone = request.args.get("phone") or session.get("phone")
     if not phone:
         return jsonify({"error": "Unauthorized"}), 401
 
