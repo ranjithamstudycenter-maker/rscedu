@@ -1556,98 +1556,130 @@ function updateUI(course) {
 <!-- ALL HTML ABOVE -->
 
 
- function startDemoSession(course) {
+function startDemoSession(course) {
 
   const phone = document.getElementById("phoneInput")?.value 
-             || studentStatus?.phone;
+             || studentStatus?.phone 
+             || localStorage.getItem("phone");
+
+  if (!phone) {
+    showMessage("⚠️ Enter phone number");
+    return;
+  }
+
+  // 🔥 save phone
+  localStorage.setItem("phone", phone);
 
   const key = "demo_running_" + course;
 
-  // 🔥 already running
-  if(localStorage.getItem(key)){
+  // 🔥 already running block
+  if (localStorage.getItem(key)) {
     showMessage("⏳ Demo already running...");
     return;
   }
 
-  const timerDiv  = document.getElementById("timer-" + course);
-  const liveBadge = document.getElementById("live-" + course);
-
-  if (!timerDiv) return;
-
-  timerDiv.dataset.running = "true";
-
-  // 🔥 save start time
-  const startTime = Date.now();
-  localStorage.setItem(key, startTime);
-
-  if (liveBadge) liveBadge.style.display = "inline-block";
-  showLivePopup(course);
-
-  // 🔥 GET LINK FROM BACKEND (IMPORTANT)
+  // 🔥 already completed check
   fetch(`/api/check-demo?course=${course}&phone=${phone}`)
     .then(res => res.json())
     .then(data => {
 
-      if(data.demo_done){
+      if (data.demo_done) {
         showMessage("⚠️ Demo already completed");
         return;
       }
 
-      if(!data.meet_link){
-        showMessage("⚠️ Class not started yet");
+      startDemoFlow(); // ✅ continue only if allowed
+    });
+
+  function startDemoFlow() {
+
+    const timerDiv  = document.getElementById("timer-" + course);
+    const liveBadge = document.getElementById("live-" + course);
+
+    if (!timerDiv) return;
+
+    // 🔥 INSERT INITIAL STUDENT (Demo = NO)
+    fetch("/api/demo-complete", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+        phone: phone,
+        course: course,
+        demo: "start"
+      })
+    });
+
+    // 🔥 START TIMER
+    const startTime = Date.now();
+    localStorage.setItem(key, startTime);
+
+    timerDiv.dataset.running = "true";
+
+    if (liveBadge) liveBadge.style.display = "inline-block";
+
+    showLivePopup(course);
+
+    // 🔥 OPEN CLASS LINK
+    fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+      .then(res => res.json())
+      .then(data => {
+
+        if (!data.meet_link) {
+          showMessage("⚠️ Class not started yet");
+          return;
+        }
+
+        window.open(data.meet_link, "_blank");
+      });
+
+    const duration = 60;
+
+    const interval = setInterval(async () => {
+
+      const savedStart = parseInt(localStorage.getItem(key));
+      const elapsed = Math.floor((Date.now() - savedStart)/1000);
+      const remaining = duration - elapsed;
+
+      if (remaining < 0) {
+
+        clearInterval(interval);
+
+        timerDiv.textContent = "✅ Demo Completed — Please Enroll";
+        if (liveBadge) liveBadge.style.display = "none";
+
+        timerDiv.dataset.running = "false";
+        localStorage.removeItem(key);
+
+        try {
+          // 🔥 DEMO COMPLETE → YES
+          await fetch("/api/demo-complete", {
+            method: "POST",
+            headers: {"Content-Type":"application/json"},
+            body: JSON.stringify({
+              phone: phone,
+              course: course
+            })
+          });
+
+          await refreshStatus();
+          updateAllCourseUI();
+
+          showMessage("✅ Demo done! Click Enroll");
+
+        } catch (e) {
+          console.error(e);
+        }
+
         return;
       }
 
-      window.open(data.meet_link, "_blank"); // ✅ ONLY THIS
+      const m = String(Math.floor(remaining/60)).padStart(2,"0");
+      const s = String(remaining%60).padStart(2,"0");
 
-    });
+      timerDiv.textContent = "⏳ Demo: " + m + ":" + s + " remaining";
 
-  const duration = 60; // seconds
-
-  const interval = setInterval(async () => {
-
-    const savedStart = parseInt(localStorage.getItem(key));
-    const elapsed = Math.floor((Date.now() - savedStart)/1000);
-    const remaining = duration - elapsed;
-
-    if(remaining < 0){
-
-      clearInterval(interval);
-
-      timerDiv.textContent = "✅ Demo Completed — Please Enroll";
-      if (liveBadge) liveBadge.style.display = "none";
-
-      timerDiv.dataset.running = "false";
-      localStorage.removeItem(key);   // 🔥 IMPORTANT FIX
-
-      try {
-         await fetch("/api/demo-complete", {
-         method: "POST",
-         headers: {"Content-Type":"application/json"},
-         body: JSON.stringify({
-               phone: localStorage.getItem("phone"),  // 🔥 FIX
-               course: course         
-         })
-       });
-
-        await refreshStatus();
-        updateAllCourseUI();
-
-        showMessage("✅ Demo done! Click Enroll");
-
-      } catch(e){
-        console.error(e);
-      }
-
-      return;
-    }
-
-    const m = String(Math.floor(remaining/60)).padStart(2,"0");
-    const s = String(remaining%60).padStart(2,"0");
-
-    timerDiv.textContent = "⏳ Demo: " + m + ":" + s + " remaining";
-
-  }, 1000);
+    }, 1000);
+  }
 }
  
 /* ======================================
