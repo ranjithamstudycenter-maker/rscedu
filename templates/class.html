@@ -2001,7 +2001,24 @@ window.openDemoPopup = openDemoPopup;
     el.style.display = "none";
   }
 }
- 
+ async function resetStudent(phone){
+  await fetch("/admin/reset-demo", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ phone })
+  });
+
+  location.reload(); // 🔥 MUST
+}
+ async function deleteStudent(phone){
+  await fetch("/admin/delete-student", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ phone })
+  });
+
+  location.reload(); // 🔥 MUST
+}
   
  </script>
 
