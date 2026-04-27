@@ -1898,19 +1898,21 @@ async function handleOTP(){
 
     const res = await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
     const data = await res.json();
+
+    // 🔥 running check
+    const key = "demo_running_" + currentCourse;
+    if(localStorage.getItem(key)){
+      msg.innerHTML = "⏳ Demo already running";
+      msg.style.color = "orange";
+      return;
+    }
     
-    if(data.status === "completed"){
+    // 🔥 completed check
+    if(data.demo_done){
       msg.innerHTML = "⚠️ Demo already completed";
       msg.style.color = "red";
       return;
     }
-    
-    if(data.status === "running"){
-      msg.innerHTML = "⏳ Demo already running";
-      msg.style.color = "green";
-      return;
-    }
-
     const appVerifier = window.recaptchaVerifier;
     const phoneNumber = "+91" + phone;
 
