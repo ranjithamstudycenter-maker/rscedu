@@ -1848,6 +1848,16 @@ async function handleOTP(){
   // STEP 2 → VERIFY OTP
   else if(step === 2){
 
+         // inside STEP 2 (after verify)
+      const res = await fetch("/api/check-demo?course=" + currentCourse + "&phone=" + phone);
+      const data = await res.json();
+      
+      if(data.demo_done){
+        msg.innerHTML = "⚠️ Demo already completed";
+        msg.style.color = "red";
+        return;
+      }
+
     try{
       await window.confirmationResult.confirm(otp);
 
