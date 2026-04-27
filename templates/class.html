@@ -1654,6 +1654,7 @@ function startDemoSession(course) {
           // 🔥 DEMO COMPLETE → YES
             fetch("/api/demo-complete", {
             method: "POST",
+            headers: {"Content-Type":"application/json"},
             body: JSON.stringify({
             phone: phone,
             course: course
