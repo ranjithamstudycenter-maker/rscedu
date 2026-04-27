@@ -1625,7 +1625,7 @@ function updateUI(course) {
          method: "POST",
          headers: {"Content-Type":"application/json"},
          body: JSON.stringify({
-               phone: studentStatus?.phone,
+               phone: localStorage.getItem("phone"),  // 🔥 FIX
                course: course         
          })
        });
