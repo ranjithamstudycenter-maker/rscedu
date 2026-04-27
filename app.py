@@ -796,12 +796,14 @@ def admin_reset_demo():
 
 @app.route("/admin/delete-student", methods=["POST"])
 def delete_student():
-    phone = request.json.get("phone")
+    data = request.json
+    phone = data.get("phone")
+    course = data.get("course")
 
     conn = sqlite3.connect("students.db")
     c = conn.cursor()
 
-    c.execute("DELETE FROM students WHERE phone=?", (phone,))
+    c.execute("DELETE FROM students WHERE phone=? AND course=?", (phone, course))
 
     conn.commit()
     conn.close()
