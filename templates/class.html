@@ -1513,12 +1513,43 @@ function updateUI(course) {
     const startTime = localStorage.getItem(key);
 
     if(startTime){
-      startDemoSession(course); // 🔥 resume
+      resumeDemo(course, parseInt(startTime));
     }
 
   });
 
 });
+
+ function resumeDemo(course, savedStart){
+
+  const timerDiv  = document.getElementById("timer-" + course);
+  const liveBadge = document.getElementById("live-" + course);
+
+  if (!timerDiv) return;
+
+  if (liveBadge) liveBadge.style.display = "inline-block";
+
+  const duration = 60;
+
+  const interval = setInterval(async () => {
+
+    const elapsed = Math.floor((Date.now() - savedStart)/1000);
+    const remaining = duration - elapsed;
+
+    if(remaining < 0){
+      clearInterval(interval);
+      localStorage.removeItem("demo_running_" + course);
+      timerDiv.textContent = "✅ Demo Completed — Please Enroll";
+      return;
+    }
+
+    const m = String(Math.floor(remaining/60)).padStart(2,"0");
+    const s = String(remaining%60).padStart(2,"0");
+
+    timerDiv.textContent = "⏳ Demo: " + m + ":" + s;
+
+  }, 1000);
+}
 /* ======================================
    FREE DEMO — Phone OTP always required
 ====================================== */
@@ -1527,9 +1558,12 @@ function updateUI(course) {
 
  function startDemoSession(course) {
 
+  const phone = document.getElementById("phoneInput")?.value 
+             || studentStatus?.phone;
+
   const key = "demo_running_" + course;
 
-  // 🔥 already running check
+  // 🔥 already running
   if(localStorage.getItem(key)){
     showMessage("⏳ Demo already running...");
     return;
@@ -1542,23 +1576,29 @@ function updateUI(course) {
 
   timerDiv.dataset.running = "true";
 
-  // 🔥 store start time (IMPORTANT)
+  // 🔥 save start time
   const startTime = Date.now();
   localStorage.setItem(key, startTime);
 
   if (liveBadge) liveBadge.style.display = "inline-block";
   showLivePopup(course);
 
-  // 🔥 get link from backend (NO hardcode)
-  fetch("/api/check-demo?course=" + course)
+  // 🔥 GET LINK FROM BACKEND (IMPORTANT)
+  fetch(`/api/check-demo?course=${course}&phone=${phone}`)
     .then(res => res.json())
     .then(data => {
+
+      if(data.demo_done){
+        showMessage("⚠️ Demo already completed");
+        return;
+      }
+
       if(!data.meet_link){
         showMessage("⚠️ Class not started yet");
         return;
       }
-     const meetLink = (studentStatus && studentStatus.meet_link) || "https://meet.google.com/sus-iead-rhq";
-     window.open(meetLink, "_blank");
+
+      window.open(data.meet_link, "_blank"); // ✅ ONLY THIS
 
     });
 
@@ -1578,7 +1618,7 @@ function updateUI(course) {
       if (liveBadge) liveBadge.style.display = "none";
 
       timerDiv.dataset.running = "false";
-      localStorage.removeItem(key);
+      localStorage.removeItem(key);   // 🔥 IMPORTANT FIX
 
       try {
         await fetch("/api/demo-complete", {
