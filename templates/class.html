@@ -2085,31 +2085,7 @@ async function openDemoPopup(course){
 
   location.reload(); // 🔥 MUST
 }
- async function deleteStudent(phone){
-  await fetch("/admin/delete-student", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({ phone })
-  });
 
-  location.reload(); // 🔥 MUST
-}
- function deleteStudent(phone, course){
-
-  if(!confirm("Are you sure to delete?")) return;
-
-  fetch("/admin/delete-student", {
-    method:"POST",
-    headers:{"Content-Type":"application/json"},
-    body: JSON.stringify({phone, course})
-  })
-  .then(res => res.json())
-  .then(data => {
-    alert("Deleted successfully");
-    location.reload();
-  });
-}
-  
  </script>
 
  
