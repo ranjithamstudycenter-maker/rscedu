@@ -132,6 +132,25 @@ h3 {
 button:hover {
   background:#1f7ae0;
 }
+
+    .reset-btn{
+  background: #3b82f6;   /* blue */
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.delete-btn{
+  background: #ef4444;   /* red */
+  color: white;
+  border: none;
+  padding: 6px 10px;
+  border-radius: 6px;
+  cursor: pointer;
+  margin-left: 6px;
+}
 </style>
 </head>
 
@@ -286,9 +305,10 @@ function renderTable(students){
         let demo = s.demo_done ? "Yes" : "No";
         let enrolled = s.enrolled ? "Yes" : "No";
 
-        let actionBtn = (s.phone === ADMIN_PHONE) ? 
-        `<button class="reset-btn" onclick="resetDemo('${s.phone}')">🔄 Reset</button>` 
-        : `-`;
+       let actionBtn = `
+              <button class="reset-btn" onclick="resetDemo('${s.phone}')">🔄 Reset</button>
+              <button class="delete-btn" onclick="deleteStudent('${s.phone}','${s.course}')">🗑 Delete</button>
+            `;
 
         table.innerHTML += `
         <tr>
