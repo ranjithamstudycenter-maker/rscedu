@@ -172,7 +172,7 @@ def check_demo():
     user = get_user(phone)
 
     demo_done = user["demo_done"].get(course, False)
-    return jsonify({"demo_done": demo_done, "meet_link":meet_link})
+    return jsonify({"demo_done": demo_done, "meet_link":MEET_LINK})
 
 
 @app.route("/api/demo-complete", methods=["POST"])
