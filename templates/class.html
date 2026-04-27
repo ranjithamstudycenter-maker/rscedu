@@ -1505,26 +1505,6 @@ function updateUI(course) {
     }
   }
 
-/* ---- MESSAGE LOGIC (ADD THIS) ---- */
-const msgEl = document.getElementById("msg-" + course);
-
-if (msgEl) {
-
-  let demo = demoDone;
-  let enroll = enrolled;
-
-  if (!demo) {
-    msgEl.innerHTML = "⚠️ Attend Free Demo first";
-  }
-  else if (demo && !enroll) {
-    msgEl.innerHTML = "✅ Demo Completed – Please Enroll";
-  }
-  else if (enroll) {
-    msgEl.innerHTML = "🎉 You are enrolled!";
-  }
-
-}
- 
 }
  
 /* ======================================
