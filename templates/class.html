@@ -1503,7 +1503,22 @@ function updateUI(course) {
   }
 
 }
- 
+ window.addEventListener("load", () => {
+
+  const courses = ["cbse9","cbse10","cbse11","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
+
+  courses.forEach(course => {
+
+    const key = "demo_running_" + course;
+    const startTime = localStorage.getItem(key);
+
+    if(startTime){
+      startDemoSession(course); // 🔥 resume
+    }
+
+  });
+
+});
 /* ======================================
    FREE DEMO — Phone OTP always required
 ====================================== */
@@ -1511,51 +1526,84 @@ function updateUI(course) {
 
 
  function startDemoSession(course) {
-  const timerDiv  = document.getElementById("timer-" + course);
-  const liveBadge = document.getElementById("live-" + course);
- 
-  if (!timerDiv) return;
-  if (timerDiv.dataset.running === "true") {
+
+  const key = "demo_running_" + course;
+
+  // 🔥 already running check
+  if(localStorage.getItem(key)){
     showMessage("⏳ Demo already running...");
     return;
   }
+
+  const timerDiv  = document.getElementById("timer-" + course);
+  const liveBadge = document.getElementById("live-" + course);
+
+  if (!timerDiv) return;
+
   timerDiv.dataset.running = "true";
- 
+
+  // 🔥 store start time (IMPORTANT)
+  const startTime = Date.now();
+  localStorage.setItem(key, startTime);
+
   if (liveBadge) liveBadge.style.display = "inline-block";
   showLivePopup(course);
- 
-  const meetLink = (studentStatus && studentStatus.meet_link) || "https://meet.google.com/sus-iead-rhq";
-  window.open(meetLink, "_blank");
- 
-  let duration = 60; // 1 hour
- 
+
+  // 🔥 get link from backend (NO hardcode)
+  fetch("/api/check-demo?course=" + course)
+    .then(res => res.json())
+    .then(data => {
+      if(!data.meet_link){
+        showMessage("⚠️ Class not started yet");
+        return;
+      }
+     const meetLink = (studentStatus && studentStatus.meet_link) || "https://meet.google.com/sus-iead-rhq";
+     window.open(meetLink, "_blank");
+
+    });
+
+  const duration = 60; // seconds
+
   const interval = setInterval(async () => {
-    const m = String(Math.floor(duration / 60)).padStart(2,"0");
-    const s = String(duration % 60).padStart(2,"0");
-    timerDiv.textContent = "⏳ Demo: " + m + ":" + s + " remaining";
-    duration--;
- 
-    if (duration < 0) {
+
+    const savedStart = parseInt(localStorage.getItem(key));
+    const elapsed = Math.floor((Date.now() - savedStart)/1000);
+    const remaining = duration - elapsed;
+
+    if(remaining < 0){
+
       clearInterval(interval);
+
       timerDiv.textContent = "✅ Demo Completed — Please Enroll";
       if (liveBadge) liveBadge.style.display = "none";
-      timerDiv.dataset.running = "false";
- 
-    
-        try {
-          await fetch("/api/demo-complete", {
-            method:  "POST",
-            headers: {"Content-Type":"application/json"},
-            body:    JSON.stringify({course: course})
-          });
-          await refreshStatus();
 
-          // 🔥 ADD THIS
-          updateAllCourseUI();
-          showMessage("✅ Demo done! Click Enroll to join.");
-        } catch(e) { console.error(e); }
-      
+      timerDiv.dataset.running = "false";
+      localStorage.removeItem(key);
+
+      try {
+        await fetch("/api/demo-complete", {
+          method: "POST",
+          headers: {"Content-Type":"application/json"},
+          body: JSON.stringify({course})
+        });
+
+        await refreshStatus();
+        updateAllCourseUI();
+
+        showMessage("✅ Demo done! Click Enroll");
+
+      } catch(e){
+        console.error(e);
+      }
+
+      return;
     }
+
+    const m = String(Math.floor(remaining/60)).padStart(2,"0");
+    const s = String(remaining%60).padStart(2,"0");
+
+    timerDiv.textContent = "⏳ Demo: " + m + ":" + s + " remaining";
+
   }, 1000);
 }
  
