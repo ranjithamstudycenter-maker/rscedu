@@ -171,8 +171,11 @@ def check_demo():
         
     user = get_user(phone)
 
+    # 🔥 GET SAME LINK
+    meet_link = get_active_meet_link(course)
+
     demo_done = user["demo_done"].get(course, False)
-    return jsonify({"demo_done": demo_done, "meet_link":MEET_LINK})
+    return jsonify({"demo_done": demo_done, "meet_link": meet_link})
 
 
 @app.route("/api/demo-complete", methods=["POST"])
@@ -537,6 +540,12 @@ def start_class():
     teachers[username]["active"] = True
 
     return jsonify({"status": "Class started"})
+
+def get_active_meet_link(course):
+    for t in teachers.values():
+        if t["course"] == course and t["active"]:
+            return t["meet_link"]
+    return None
 
 @app.route("/end-class", methods=["POST"])
 def end_class():
