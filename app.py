@@ -215,15 +215,20 @@ def demo_complete():
     c = conn.cursor()
     
     c.execute("""
-    UPDATE students
-    SET demo_done = 1,
-        last_updated = ?
-    WHERE phone = ? AND course = ?
-    """, (
-        datetime.now().strftime("%Y-%m-%d %H:%M"),
-        phone,
-        course
-    ))
+INSERT OR REPLACE INTO students 
+(phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
+VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
+""", (
+    phone,
+    course,
+    user.get("name", ""),
+    1,   # ✅ demo complete
+    0,   # not enrolled
+    0,
+    0,
+    0,
+    datetime.now().strftime("%Y-%m-%d %H:%M")
+))
  
     conn.commit()
     conn.close()
@@ -359,15 +364,15 @@ def payment_success_api():
     """, (
         phone,
         course,
-        "",       # name later வரும்
-        1,        # ✅ demo completed
-        0,        # not enrolled
+        user.get("name", ""),
+        1,   # demo done
+        1,   # ✅ enrolled TRUE
         0,
-        0,
-        0,
+        classes_per_month,
+        amount,
         datetime.now().strftime("%Y-%m-%d %H:%M")
     ))
-    
+        
     conn.commit()
     conn.close()
 
