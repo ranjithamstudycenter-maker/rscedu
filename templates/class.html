@@ -1951,6 +1951,122 @@ function showMessage(msg) {
 }
 </script>
 <script>
+async function handleOTP(){
+
+  const phone = document.getElementById("phoneInput").value.trim();
+  const otp   = document.getElementById("otpInput").value.trim();
+  const btn   = document.getElementById("mainBtn");
+  const msg   = document.getElementById("statusMsg");
+
+ if(phone.length !== 10){
+  msg.innerHTML = "❌ Enter valid 10 digit number";
+  msg.style.color = "red";
+  return;
+}
+
+  // STEP 1 → SEND OTP
+  if(step === 1){
+
+    const res = await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
+    const data = await res.json();
+
+    // 🔥 running check
+    const key = "demo_running_" + currentCourse;
+    if(localStorage.getItem(key)){
+      msg.innerHTML = "⏳ Demo already running";
+      msg.style.color = "orange";
+      return;
+    }
+    
+    // 🔥 completed check
+    if(data.demo_done){
+      msg.innerHTML = "⚠️ Demo already completed";
+      msg.style.color = "red";
+      return;
+    }
+    const appVerifier = window.recaptchaVerifier;
+    const phoneNumber = "+91" + phone;
+
+    try{
+      const confirmationResult =
+        await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
+   
+      window.confirmationResult = confirmationResult;
+
+      document.getElementById("otpInput").style.display = "block";
+
+      btn.textContent = "Verify OTP";
+      btn.disabled = false;
+
+      msg.innerHTML = "📱 OTP sent";
+      msg.style.color = "green";
+
+      document.getElementById("resendBtn").style.display = "block";  // 🔥 ADD HERE
+
+      startTimer();   // 🔥 ADD THIS 
+      step = 2;
+
+    } catch(e){
+      console.error(e);   // 🔥 ADD THIS
+      msg.innerHTML = "❌ Failed to send OTP";
+      msg.style.color = "red";
+      btn.textContent = "Send OTP";
+      btn.disabled = false;
+    }
+  }
+
+  // STEP 2 → VERIFY OTP
+  else if(step === 2){
+
+         // inside STEP 2 (after verify)
+      const res = await fetch("/api/check-demo?course=" + currentCourse + "&phone=" + phone);
+      const data = await res.json();
+      
+      if(data.demo_done){
+        msg.innerHTML = "⚠️ Demo already completed";
+        msg.style.color = "red";
+        return;
+      }
+
+    try{
+      await window.confirmationResult.confirm(otp);
+
+      msg.innerHTML = "✅ Verified ✔";
+      msg.style.color = "green";
+
+      btn.textContent = "Proceed for Demo";
+      btn.style.background = "green";
+      btn.disabled = false;
+
+      step = 3;
+
+      // SAVE SESSION
+      await fetch("/save-user", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ phone })
+      });
+  
+     // 🔥 ADD THIS
+     await refreshStatus();
+     updateAllCourseUI();   // 🔥 immediate
+     
+    } catch(e){
+      msg.innerHTML = "❌ Wrong OTP";
+      msg.style.color = "red";
+      btn.textContent = "Verify OTP";
+      btn.disabled = false;
+    }
+  }
+
+  // STEP 3
+  else if(step === 3){
+    document.getElementById("demoPopup").style.display = "none";
+    startDemoSession(currentCourse);
+  }
+}
+</script> 
+<script>
  // 🔒 Only numbers allowed
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -1970,9 +2086,8 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
-</script>
-<script>
-let otpTimer = 300;
+
+ let otpTimer = 300;
 let timerInterval;
 
 function startTimer(){
@@ -1981,11 +2096,6 @@ function startTimer(){
 
   clearInterval(timerInterval);
 
-  const timerEl = document.getElementById("timer");
-  const resendBtn = document.getElementById("resendBtn");
-
-  resendBtn.style.display = "none";   // 🔥 STARTல hide
-
   timerInterval = setInterval(()=>{
 
     otpTimer--;
@@ -1993,16 +2103,12 @@ function startTimer(){
     let min = Math.floor(otpTimer/60);
     let sec = otpTimer % 60;
 
-    timerEl.innerHTML =
+    document.getElementById("timer").innerHTML =
       `⏳ ${min}:${sec<10?'0'+sec:sec}`;
 
     if(otpTimer <= 0){
       clearInterval(timerInterval);
-
-      timerEl.innerHTML = "❌ OTP Expired";
-
-      resendBtn.style.display = "block"; // 🔥 NOW show resend
-
+      document.getElementById("timer").innerHTML = "❌ OTP Expired";
       step = 1;
     }
 
@@ -2032,8 +2138,7 @@ function startTimer(){
 
   let currentCourse = "";
   let step = 1;
-</script>
- <script>
+
 async function openDemoPopup(course){
   currentCourse = course;
   step = 1;
@@ -2306,124 +2411,11 @@ async function openDemoPopup(course){
   </div>
 </div>
 <div id="recaptcha-container"></div>
-     <script>
-async function handleOTP(){
-
-  const phone = document.getElementById("phoneInput").value.trim();
-  const otp   = document.getElementById("otpInput").value.trim();
-  const btn   = document.getElementById("mainBtn");
-  const msg   = document.getElementById("statusMsg");
-
- if(phone.length !== 10){
-  msg.innerHTML = "❌ Enter valid 10 digit number";
-  msg.style.color = "red";
-  return;
-}
-
-  // STEP 1 → SEND OTP
-  if(step === 1){
-
-    const res = await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
-    const data = await res.json();
-
-    // 🔥 running check
-    const key = "demo_running_" + currentCourse;
-    if(localStorage.getItem(key)){
-      msg.innerHTML = "⏳ Demo already running";
-      msg.style.color = "orange";
-      return;
-    }
     
-    // 🔥 completed check
-    if(data.demo_done){
-      msg.innerHTML = "⚠️ Demo already completed";
-      msg.style.color = "red";
-      return;
-    }
-    const appVerifier = window.recaptchaVerifier;
-    const phoneNumber = "+91" + phone;
-
-    try{
-      const confirmationResult =
-        await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
-   
-      window.confirmationResult = confirmationResult;
-
-      document.getElementById("otpInput").style.display = "block";
-
-      btn.textContent = "Verify OTP";
-      btn.disabled = false;
-
-      msg.innerHTML = "📱 OTP sent";
-      msg.style.color = "green";
-
-      document.getElementById("resendBtn").style.display = "block";  // 🔥 ADD HERE
-
-      startTimer();   // 🔥 ADD THIS 
-      step = 2;
-
-    } catch(e){
-      console.error(e);   // 🔥 ADD THIS
-      msg.innerHTML = "❌ Failed to send OTP";
-      msg.style.color = "red";
-      btn.textContent = "Send OTP";
-      btn.disabled = false;
-    }
-  }
-
-  // STEP 2 → VERIFY OTP
-  else if(step === 2){
-
-         // inside STEP 2 (after verify)
-      const res = await fetch("/api/check-demo?course=" + currentCourse + "&phone=" + phone);
-      const data = await res.json();
-      
-      if(data.demo_done){
-        msg.innerHTML = "⚠️ Demo already completed";
-        msg.style.color = "red";
-        return;
-      }
-
-    try{
-      await window.confirmationResult.confirm(otp);
-
-      msg.innerHTML = "✅ Verified ✔";
-      msg.style.color = "green";
-
-      btn.textContent = "Proceed for Demo";
-      btn.style.background = "green";
-      btn.disabled = false;
-
-      step = 3;
-
-      // SAVE SESSION
-      await fetch("/save-user", {
-        method:"POST",
-        headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ phone })
-      });
-  
-     // 🔥 ADD THIS
-     await refreshStatus();
-     updateAllCourseUI();   // 🔥 immediate
-     
-    } catch(e){
-      msg.innerHTML = "❌ Wrong OTP";
-      msg.style.color = "red";
-      btn.textContent = "Verify OTP";
-      btn.disabled = false;
-    }
-  }
-
-  // STEP 3
-  else if(step === 3){
-    document.getElementById("demoPopup").style.display = "none";
-    startDemoSession(currentCourse);
-  }
-}
-</script> 
 </body>
 </html>
+
+
 
  
 
