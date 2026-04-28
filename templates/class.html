@@ -1716,11 +1716,7 @@ function startDemoSession(course) {
 ====================================== */
 function enroll(course) {
 
-  console.log("Enroll Click:", course);
-  console.log("Demo Done:", studentStatus?.demo_done);
-  console.log("Local:", localStorage.getItem("demo_done_" + course));
-
- // 🔥 CLEAR OLD MESSAGE
+   // 🔥 CLEAR OLD MESSAGE
   let el = document.getElementById("msg-" + course);
   if(el) el.innerHTML = "";
 
