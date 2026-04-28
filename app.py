@@ -94,8 +94,8 @@ ADMIN_PHONE = os.environ.get("ADMIN_PHONE", "7702616245")
 
 # -------------------- PRICE CONFIG --------------------
 price_per_hour = {
-    "cbse9":  2000,
-    "cbse10": 1,
+    "cbse9":  1,
+    "cbse10": 300,
     "cbse11": 350,
     "cbse12": 400,
     "engg1":  700,
