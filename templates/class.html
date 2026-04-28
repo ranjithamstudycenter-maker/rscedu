@@ -1941,6 +1941,12 @@ async function handleOTP(){
   // STEP 1 → SEND OTP
   if(step === 1){
 
+    // 🔥 TEST MODE BYPASS
+  if(phone === "7702616245"){
+    msg.innerHTML = "✅ Verified (Test Mode)";
+    msg.style.color = "green";
+
+
     const res = await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
     const data = await res.json();
 
