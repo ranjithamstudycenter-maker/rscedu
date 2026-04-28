@@ -2014,12 +2014,6 @@ async function handleOTP(){
 
       step = 3;
 
-          // 🔥 TEST MODE BYPASS
-     if(phone === "7702616245"){
-       msg.innerHTML = "✅ Verified (Test Mode)";
-       msg.style.color = "green";
-
-
       // SAVE SESSION
       await fetch("/save-user", {
         method:"POST",
