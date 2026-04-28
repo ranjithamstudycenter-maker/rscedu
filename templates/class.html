@@ -1631,7 +1631,7 @@ function startDemoSession(course) {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
-      phone: studentStatus?.phone,
+      phone: localStorage.getItem("phone"),
       course: course,
       demo: "start"
      })
@@ -1648,7 +1648,7 @@ function startDemoSession(course) {
     showLivePopup(course);
 
     // 🔥 OPEN CLASS LINK
-    fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+    fetch(`/api/get-meet-link?course=${course}`)
       .then(res => res.json())
       .then(data => {
 
@@ -1656,8 +1656,9 @@ function startDemoSession(course) {
           showMessage("⚠️ Class not started yet");
           return;
         }
-
+    
         window.open(data.meet_link, "_blank");
+    
       });
 
     const duration = 60;
