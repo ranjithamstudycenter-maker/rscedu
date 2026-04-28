@@ -1680,10 +1680,12 @@ function startDemoSession(course) {
     }, 1000);
   }
 }
- 
+
 /* ======================================
    ENROLL
 ====================================== */
+
+let selectedCourse = ""; 
 function enroll(course) {
 
   console.log("Enroll Click:", course); // 🔍 debug
@@ -1743,8 +1745,6 @@ function enroll(course) {
 /* ======================================
    POPUP OPEN (🔥 MUST HAVE)
 ====================================== */
-
-let selectedCourse = "";
 
 function openEnrollPopup(course, amount){
 
