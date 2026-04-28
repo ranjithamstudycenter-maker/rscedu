@@ -2137,7 +2137,8 @@ async function openDemoPopup(course){
       size: 'invisible'
     });
   }
-
+  window.recaptchaVerifier.render(); // 🔥 MUST
+  }
   clearInterval(timerInterval);
 
   document.getElementById("phoneInput").value = "";
