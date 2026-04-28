@@ -1550,33 +1550,6 @@ function updateUI(course) {
 
   }, 1000);
 }
-
- function updateCourseUI(course){
-
-  const msgEl = document.getElementById("msg-" + course);
-
-  if(!msgEl) return;
-
-  const demoDone = (studentStatus.demo_done || {})[course];
-  const enrolled = (studentStatus.enrolled || {})[course];
-
-  // ✅ CASE 1: enrolled → remove message
-  if(enrolled){
-    msgEl.innerHTML = "";
-    return;
-  }
-
-  // ✅ CASE 2: demo completed → show
-  if(demoDone){
-    msgEl.innerHTML = "✅ Demo Completed – Please Enroll";
-    msgEl.style.color = "green";
-    return;
-  }
-
-  // ✅ CASE 3: default → clear
-  msgEl.innerHTML = "";
-}
- 
 /* ======================================
    FREE DEMO — Phone OTP always required
 ====================================== */
@@ -1606,7 +1579,6 @@ function startDemoSession(course) {
   }
 
   // 🔥 already completed check
-  const phone = localStorage.getItem("phone");
   fetch(`/api/check-demo?course=${course}&phone=${phone}`)
     .then(res => res.json())
     .then(data => {
@@ -1631,7 +1603,7 @@ function startDemoSession(course) {
       method: "POST",
       headers: {"Content-Type":"application/json"},
       body: JSON.stringify({
-      phone: localStorage.getItem("phone"),
+      phone: studentStatus?.phone,
       course: course,
       demo: "start"
      })
@@ -1648,7 +1620,7 @@ function startDemoSession(course) {
     showLivePopup(course);
 
     // 🔥 OPEN CLASS LINK
-    fetch(`/api/get-meet-link?course=${course}`)
+    fetch(`/api/check-demo?course=${course}&phone=${phone}`)
       .then(res => res.json())
       .then(data => {
 
@@ -1656,9 +1628,8 @@ function startDemoSession(course) {
           showMessage("⚠️ Class not started yet");
           return;
         }
-    
+
         window.open(data.meet_link, "_blank");
-    
       });
 
     const duration = 60;
@@ -1708,7 +1679,6 @@ function startDemoSession(course) {
 
     }, 1000);
   }
- localStorage.setItem("demo_done_" + course, "yes");
 }
  
 /* ======================================
@@ -1716,14 +1686,14 @@ function startDemoSession(course) {
 ====================================== */
 function enroll(course) {
 
-   // 🔥 CLEAR OLD MESSAGE
+ // 🔥 CLEAR OLD MESSAGE
   let el = document.getElementById("msg-" + course);
   if(el) el.innerHTML = "";
 
   if (!(studentStatus?.demo_done || {})[course]) {
-  showCourseMessage(course, "⚠️ Attend Free Demo first");
-  return;
-}
+    showCourseMessage(course, "⚠️ Attend Free Demo first");
+    return;
+  }
 
   const seats = (studentStatus.available_seats || {})[course];
   if (seats !== undefined && seats <= 0) {
@@ -1739,10 +1709,7 @@ function enroll(course) {
     .then(data => {
 
       // 🔥 OPEN POPUP
-      function openEnrollPopup(course, amount){
-        selectedCourse = course;
-        document.getElementById("enrollPopup").style.display = "flex"; // 🔥 fix
-        }
+      openEnrollPopup(course, data.monthly_amount);
 
   // 🔥 PRICE CALCULATION
   const base = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
@@ -1949,7 +1916,6 @@ function showMessage(msg) {
     el.innerHTML = "";
   }, 4000);
 }
-
 async function handleOTP(){
 
   const phone = document.getElementById("phoneInput").value.trim();
@@ -2064,7 +2030,8 @@ async function handleOTP(){
     startDemoSession(currentCourse);
   }
 }
-
+</script> 
+<script>
  // 🔒 Only numbers allowed
 document.addEventListener("DOMContentLoaded", () => {
 
@@ -2412,11 +2379,3 @@ async function openDemoPopup(course){
     
 </body>
 </html>
-
-
-
- 
-
-
-
-
