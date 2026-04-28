@@ -846,16 +846,17 @@ def students_view():
 @app.route("/admin/reset-demo", methods=["POST"])
 def admin_reset_demo():
     phone = request.json.get("phone")
-
+    course = request.json.get("course")
+    
     conn = sqlite3.connect("students.db")
     c = conn.cursor()
 
     # 🔥 UPDATE ALL ROWS
     c.execute("""
     UPDATE students
-    SET demo_done = 0
-    WHERE phone = ?
-    """, (phone,))
+    SET demo_done=0, enrolled=0, hours_used=0
+    WHERE phone=? AND course=?
+    """,(phone,course))
 
     conn.commit()
     conn.close()
