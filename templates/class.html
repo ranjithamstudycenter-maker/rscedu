@@ -1992,7 +1992,7 @@ async function handleOTP(){
   // STEP 2 → VERIFY OTP
   else if(step === 2){
 
-         // inside STEP 2 (after verify)
+      // inside STEP 2 (after verify)
       const res = await fetch("/api/check-demo?course=" + currentCourse + "&phone=" + phone);
       const data = await res.json();
       
@@ -2011,12 +2011,6 @@ async function handleOTP(){
       btn.textContent = "Proceed for Demo";
       btn.style.background = "green";
       btn.disabled = false;
-
-       // 🔥 TEST MODE BYPASS (FINAL FIX)
-    if(phone === "7702616245"){
-  
-      msg.innerHTML = "✅ Verified (Test Mode)";
-      msg.style.color = "green";
 
       step = 3;
 
