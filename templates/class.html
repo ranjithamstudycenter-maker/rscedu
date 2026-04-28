@@ -1606,6 +1606,7 @@ function startDemoSession(course) {
   }
 
   // 🔥 already completed check
+  const phone = localStorage.getItem("phone");
   fetch(`/api/check-demo?course=${course}&phone=${phone}`)
     .then(res => res.json())
     .then(data => {
