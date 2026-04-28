@@ -1719,9 +1719,13 @@ function enroll(course) {
   let el = document.getElementById("msg-" + course);
   if(el) el.innerHTML = "";
 
-  if (!studentStatus.demo_done || studentStatus.demo_done[course] !== true) {
-  showCourseMessage(course, "⚠️ Attend Free Demo first");
-  return;
+  const demoDone =
+  (studentStatus?.demo_done || {})[course] ||
+  localStorage.getItem("demo_done_" + course) === "yes";
+
+  if (!demoDone) {
+    showCourseMessage(course, "⚠️ Attend Free Demo first");
+    return;
   }
 
   const seats = (studentStatus.available_seats || {})[course];
