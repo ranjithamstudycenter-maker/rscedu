@@ -1720,14 +1720,10 @@ function enroll(course) {
   let el = document.getElementById("msg-" + course);
   if(el) el.innerHTML = "";
 
-  const demoDone =
-  (studentStatus?.demo_done || {})[course] ||
-  localStorage.getItem("demo_done_" + course) === "yes";
-
-  if (!demoDone) {
-    showCourseMessage(course, "⚠️ Attend Free Demo first");
-    return;
-  }
+  if (!(studentStatus?.demo_done || {})[course]) {
+  showCourseMessage(course, "⚠️ Attend Free Demo first");
+  return;
+}
 
   const seats = (studentStatus.available_seats || {})[course];
   if (seats !== undefined && seats <= 0) {
@@ -2143,7 +2139,7 @@ function startTimer(){
   openDemoPopup(currentCourse);  // recreate fresh
 }
  function closePopup(){
-  document.getElementById("demoPopup").style.display = "block";
+  document.getElementById("demoPopup").style.display = "none";
   clearInterval(timerInterval); // 🔥 add this
 }
 
