@@ -1940,7 +1940,28 @@ async function handleOTP(){
 
   // STEP 1 → SEND OTP
   if(step === 1){
-
+    // 🔥 TEST MODE DIRECT VERIFY (FINAL CORRECT)
+    if(phone === "7702616245"){
+  
+      msg.innerHTML = "✅ Verified (Test Mode)";
+      msg.style.color = "green";
+  
+      btn.textContent = "Proceed for Demo";
+      btn.style.background = "green";
+  
+      step = 3;
+  
+      await fetch("/save-user", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ phone })
+      });
+  
+      await refreshStatus();
+      updateAllCourseUI();
+  
+      return; // 🔥 VERY IMPORTANT
+    } 
     const res = await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
     const data = await res.json();
 
