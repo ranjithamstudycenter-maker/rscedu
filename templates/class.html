@@ -1684,23 +1684,17 @@ function startDemoSession(course) {
 /* ======================================
    ENROLL
 ====================================== */
-
-let selectedCourse = ""; 
 function enroll(course) {
 
-  console.log("Enroll Click:", course); // 🔍 debug
-
-  // 🔥 CLEAR OLD MESSAGE
+ // 🔥 CLEAR OLD MESSAGE
   let el = document.getElementById("msg-" + course);
   if(el) el.innerHTML = "";
 
-  // 🔥 DEMO CHECK
   if (!(studentStatus?.demo_done || {})[course]) {
     showCourseMessage(course, "⚠️ Attend Free Demo first");
     return;
   }
 
-  // 🔥 SEAT CHECK
   const seats = (studentStatus.available_seats || {})[course];
   if (seats !== undefined && seats <= 0) {
     showMessage("❌ Seats Full");
@@ -1709,38 +1703,34 @@ function enroll(course) {
 
   selectedCourse = course;
 
-  // 🔥 GET PRICE FROM BACKEND
+  // 🔥 get price
   fetch(`/api/enroll-info?course=${course}`)
     .then(res => res.json())
     .then(data => {
 
-      // 🔥 OPEN POPUP (MAIN FIX)
+      // 🔥 OPEN POPUP
       openEnrollPopup(course, data.monthly_amount);
 
-      // 🔥 PRICE CALCULATION
-      const base = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
-      const eligible = (studentStatus.discounts || {})[course];
-      const final = eligible ? Math.floor(base * 0.5) : base;
+  // 🔥 PRICE CALCULATION
+  const base = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
+  const eligible = (studentStatus.discounts || {})[course];
+  const final = eligible ? Math.floor(base * 0.5) : base;
 
-      document.getElementById("courseTitle").textContent =
-        course.toUpperCase() + " – Monthly Plan";
+  document.getElementById("courseTitle").textContent =
+    course.toUpperCase() + " – Monthly Plan";
 
-      document.getElementById("coursePrice").innerHTML = eligible
-        ? `<span style="text-decoration:line-through;color:#999;">₹${base}</span>
-           <span style="color:#dc2626;font-size:20px;font-weight:bold;">₹${final}</span>
-           <span style="background:#dc2626;color:white;padding:2px 8px;border-radius:12px;">50% OFF</span>`
-        : `₹${final}`;
+  document.getElementById("coursePrice").innerHTML = eligible
+    ? `<span style="text-decoration:line-through;color:#999;">₹${base}</span>
+       <span style="color:#dc2626;font-size:20px;font-weight:bold;">₹${final}</span>
+       <span style="background:#dc2626;color:white;padding:2px 8px;border-radius:12px;">50% OFF</span>`
+    : `₹${final}`;
 
-      document.getElementById("studentName").value =
-        studentStatus?.name || "";
-
-    })
-    .catch(err => {
-      console.error("Enroll Error:", err);
-      showMessage("❌ Failed to load price");
-    });
+  document.getElementById("studentName").value = studentStatus.name || "";
 }
-
+ )};
+function closeEnroll() {
+  document.getElementById("enrollPopup").style.display = "none";
+}
 
 /* ======================================
    POPUP OPEN (🔥 MUST HAVE)
@@ -1759,15 +1749,10 @@ function openEnrollPopup(course, amount){
   document.getElementById("enrollPopup").style.display = "flex";
 }
 
-function closeEnroll(){
-  document.getElementById("enrollPopup").style.display = "none";
-}
-
-
-<script>
 /* ======================================
    PAYMENT
 ====================================== */
+ <script>
 async function payNow() {
   const name = document.getElementById("studentName").value.trim();
   if (!name) {
