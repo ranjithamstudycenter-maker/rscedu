@@ -1741,24 +1741,6 @@ function enroll(course) {
     });
 }
 
-
-/* ======================================
-   POPUP OPEN (🔥 MUST HAVE)
-====================================== */
-function openEnrollPopup(course, amount){
-
-  selectedCourse = course;
-
-  document.getElementById("courseTitle").textContent =
-    course.toUpperCase() + " – Monthly Plan";
-
-  document.getElementById("coursePrice").innerHTML =
-    "₹" + amount;
-
-  document.getElementById("enrollPopup").style.display = "flex";
-}
-
-
 /* ======================================
    CLOSE POPUP
 ====================================== */
