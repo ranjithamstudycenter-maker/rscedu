@@ -1708,12 +1708,17 @@ function startDemoSession(course) {
 
     }, 1000);
   }
+ localStorage.setItem("demo_done_" + course, "yes");
 }
  
 /* ======================================
    ENROLL
 ====================================== */
 function enroll(course) {
+
+  console.log("Enroll Click:", course);
+  console.log("Demo Done:", studentStatus?.demo_done);
+  console.log("Local:", localStorage.getItem("demo_done_" + course));
 
  // 🔥 CLEAR OLD MESSAGE
   let el = document.getElementById("msg-" + course);
