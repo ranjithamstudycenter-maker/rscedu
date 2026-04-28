@@ -1735,7 +1735,12 @@ function enroll(course) {
     "Monthly Fee: ₹" + amount;
 
   document.getElementById("enrollPopup").style.display = "flex";
-}         
+}      
+ 
+function closeEnroll(){
+  document.getElementById("enrollPopup").style.display = "none";
+}
+ 
 /* ======================================
    PAYMENT
 ====================================== */
