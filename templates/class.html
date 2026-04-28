@@ -1550,6 +1550,33 @@ function updateUI(course) {
 
   }, 1000);
 }
+
+ function updateCourseUI(course){
+
+  const msgEl = document.getElementById("msg-" + course);
+
+  if(!msgEl) return;
+
+  const demoDone = (studentStatus.demo_done || {})[course];
+  const enrolled = (studentStatus.enrolled || {})[course];
+
+  // ✅ CASE 1: enrolled → remove message
+  if(enrolled){
+    msgEl.innerHTML = "";
+    return;
+  }
+
+  // ✅ CASE 2: demo completed → show
+  if(demoDone){
+    msgEl.innerHTML = "✅ Demo Completed – Please Enroll";
+    msgEl.style.color = "green";
+    return;
+  }
+
+  // ✅ CASE 3: default → clear
+  msgEl.innerHTML = "";
+}
+ 
 /* ======================================
    FREE DEMO — Phone OTP always required
 ====================================== */
