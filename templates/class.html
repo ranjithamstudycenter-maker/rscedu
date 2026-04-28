@@ -1690,9 +1690,9 @@ function enroll(course) {
   let el = document.getElementById("msg-" + course);
   if(el) el.innerHTML = "";
 
-  if (!(studentStatus?.demo_done || {})[course]) {
-    showCourseMessage(course, "⚠️ Attend Free Demo first");
-    return;
+  if (!studentStatus.demo_done || studentStatus.demo_done[course] !== true) {
+  showCourseMessage(course, "⚠️ Attend Free Demo first");
+  return;
   }
 
   const seats = (studentStatus.available_seats || {})[course];
@@ -1709,7 +1709,10 @@ function enroll(course) {
     .then(data => {
 
       // 🔥 OPEN POPUP
-      openEnrollPopup(course, data.monthly_amount);
+      function openEnrollPopup(course, amount){
+        selectedCourse = course;
+        document.getElementById("enrollPopup").style.display = "flex"; // 🔥 fix
+        }
 
   // 🔥 PRICE CALCULATION
   const base = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
@@ -2061,6 +2064,11 @@ function startTimer(){
 
   clearInterval(timerInterval);
 
+  const timerEl = document.getElementById("timer");
+  const resendBtn = document.getElementById("resendBtn");
+
+  resendBtn.style.display = "none";   // 🔥 STARTல hide
+
   timerInterval = setInterval(()=>{
 
     otpTimer--;
@@ -2068,12 +2076,16 @@ function startTimer(){
     let min = Math.floor(otpTimer/60);
     let sec = otpTimer % 60;
 
-    document.getElementById("timer").innerHTML =
+    timerEl.innerHTML =
       `⏳ ${min}:${sec<10?'0'+sec:sec}`;
 
     if(otpTimer <= 0){
       clearInterval(timerInterval);
-      document.getElementById("timer").innerHTML = "❌ OTP Expired";
+
+      timerEl.innerHTML = "❌ OTP Expired";
+
+      resendBtn.style.display = "block"; // 🔥 NOW show resend
+
       step = 1;
     }
 
