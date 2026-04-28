@@ -1684,24 +1684,6 @@ function startDemoSession(course) {
 /* ======================================
    ENROLL
 ====================================== */
-let selectedCourse = "";
-
-function openEnrollPopup(course, amount){
-  selectedCourse = course;
-
-  document.getElementById("courseTitle").textContent =
-    course.toUpperCase() + " – Monthly Plan";
-
-  document.getElementById("coursePrice").innerText =
-    "Monthly Fee: ₹" + amount;
-
-  document.getElementById("enrollPopup").style.display = "flex";
-}
- 
-function closeEnroll() {
-  document.getElementById("enrollPopup").style.display = "none";
-}
- 
 function enroll(course) {
 
  // 🔥 CLEAR OLD MESSAGE
@@ -1746,7 +1728,9 @@ function enroll(course) {
   document.getElementById("studentName").value = studentStatus.name || "";
 });
 }
-
+function closeEnroll() {
+  document.getElementById("enrollPopup").style.display = "none";
+}
           
 /* ======================================
    PAYMENT
