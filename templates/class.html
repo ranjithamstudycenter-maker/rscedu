@@ -2757,13 +2757,13 @@ modeButtons.forEach(btn => {
 });
 </script>
 
- <script>
+<script>
 const modeButtons = document.querySelectorAll(".mode-tabs button");
 const categoryButtons = document.querySelectorAll(".tabs button");
 const cards = document.querySelectorAll(".card");
+
 const abroadMsg = document.getElementById("abroadMessage");
 const courseSection = document.getElementById("courseSection");
-
 
 let currentMode = "india";
 let currentCategory = "all";
@@ -2772,30 +2772,32 @@ let currentCategory = "all";
 modeButtons.forEach(btn => {
   btn.addEventListener("click", () => {
 
+    const selectedMode = btn.getAttribute("data-mode");
+
+    // 🔥 SAME MODE CLICK → IGNORE
+    if (currentMode === selectedMode) {
+      return;
+    }
+
     modeButtons.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    currentMode = btn.getAttribute("data-mode");
+    currentMode = selectedMode;
 
     if (currentMode === "abroad") {
-      // ❌ hide cards
-      cards.forEach(c => c.style.display = "none");
-
-      // ✅ show message
+      courseSection.style.display = "none";
       abroadMsg.style.display = "block";
     } else {
-       // ✅ show courses again
-        courseSection.style.display = "block";
-
-      // ✅ show cards
+      courseSection.style.display = "block";
       abroadMsg.style.display = "none";
 
-      filterCards(); // apply category filter also
+      // 🔥 IMPORTANT: DO NOT RESET CATEGORY
+      filterCards();
     }
   });
 });
 
-/* CATEGORY SWITCH */
+/* CATEGORY FILTER */
 categoryButtons.forEach(btn => {
   btn.addEventListener("click", () => {
 
@@ -2804,13 +2806,11 @@ categoryButtons.forEach(btn => {
 
     currentCategory = btn.getAttribute("data-cat");
 
-    if (currentMode === "india") {
-      filterCards();
-    }
+    filterCards();
   });
 });
 
-/* FILTER FUNCTION */
+/* FILTER */
 function filterCards() {
   cards.forEach(card => {
     const cat = card.getAttribute("data-category");
@@ -2823,7 +2823,7 @@ function filterCards() {
   });
 }
 
-/* DEFAULT LOAD */
+/* DEFAULT */
 filterCards();
 </script>
  
