@@ -876,37 +876,69 @@ html, body{
   box-shadow: 0 4px 12px rgba(0,0,0,0.15);
 }
 
-  .course-overview {
+ /* SECTION BACKGROUND */
+.course-section {
+  background: #f5f7fb;
+  padding: 50px 20px;
+}
+
+/* INNER CONTAINER */
+.course-container {
+  max-width: 1100px;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 35px 25px;
+  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
   text-align: center;
-  margin: 30px 0;
 }
 
-.course-overview h2 {
-  font-size: 24px;
-  margin-bottom: 20px;
+/* TITLE */
+.course-title {
+  font-size: 26px;
+  margin-bottom: 5px;
 }
 
+/* SUBTITLE */
+.course-subtitle {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* GRID */
 .course-categories {
   display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 20px;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
 }
 
+/* EACH BOX */
 .course-box {
-  background: #f9f9f9;
+  background: #f9fafc;
   padding: 18px;
   border-radius: 12px;
-  transition: 0.3s;
+  transition: all 0.3s ease;
   cursor: pointer;
 }
 
+/* HOVER EFFECT */
 .course-box:hover {
-  background: #eef3ff;
+  background: #eaf2ff;
   transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
 }
 
+/* TITLE INSIDE BOX */
 .course-box h3 {
   margin-bottom: 8px;
+  font-size: 16px;
+}
+
+/* TEXT */
+.course-box p {
+  font-size: 13px;
+  color: #555;
 }
 
  </style>
@@ -955,41 +987,47 @@ html, body{
   </p>
 </section>
 
-<section class="course-overview">
+<section class="course-section">
 
-  <h2>Explore Our Courses</h2>
+  <div class="course-container">
 
-  <div class="course-categories">
+    <h2 class="course-title">🎓 Explore Our Courses</h2>
+    <p class="course-subtitle">
+      Choose from a wide range of programs designed for students of all levels
+    </p>
 
-    <div class="course-box">
-      <h3>📘 School</h3>
-      <p>CBSE Maths, Primary, Secondary Education</p>
-    </div>
+    <div class="course-categories">
 
-    <div class="course-box">
-      <h3>🧸 Kids</h3>
-      <p>Abacus, Phonics, Handwriting, Calligraphy</p>
-    </div>
+      <div class="course-box">
+        <h3>📘 School</h3>
+        <p>CBSE Maths, Primary, Secondary Education</p>
+      </div>
 
-    <div class="course-box">
-      <h3>💻 Programming</h3>
-      <p>C++, Java, Tally, Computer Courses</p>
-    </div>
+      <div class="course-box">
+        <h3>🧸 Kids</h3>
+        <p>Abacus, Phonics, Handwriting, Calligraphy</p>
+      </div>
 
-    <div class="course-box">
-      <h3>🎯 Skills</h3>
-      <p>Spoken English, Career Guidance, Drawing</p>
-    </div>
+      <div class="course-box">
+        <h3>💻 Programming</h3>
+        <p>C++, Java, Tally, Computer Courses</p>
+      </div>
 
-    <div class="course-box">
-      <h3>🌍 Languages</h3>
-      <p>Foreign Languages & Communication</p>
+      <div class="course-box">
+        <h3>🎯 Skills</h3>
+        <p>Spoken English, Career Guidance, Drawing</p>
+      </div>
+
+      <div class="course-box">
+        <h3>🌍 Languages</h3>
+        <p>Foreign Languages & Communication</p>
+      </div>
+
     </div>
 
   </div>
 
 </section>
- 
 <!-- FILTER TABS -->
 <div class="tabs category">
   <button class="active" data-cat="all">All</button>
@@ -2439,6 +2477,7 @@ function showSearchBox(category) {
     document.querySelectorAll(".tabs button")[index+1].click();
   });
 });
+ 
  </script>
 
  
