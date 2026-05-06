@@ -878,19 +878,20 @@ html, body{
 
  /* SECTION BACKGROUND */
 .course-section {
-  background: #f5f7fb;
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
   padding: 50px 20px;
 }
 
 /* INNER CONTAINER */
 .course-container {
-  max-width: 1100px;
+  max-width: 1500px;
   margin: auto;
   background: #ffffff;
   border-radius: 16px;
   padding: 35px 25px;
-  box-shadow: 0 8px 25px rgba(0,0,0,0.08);
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
   text-align: center;
+ 
 }
 
 /* TITLE */
@@ -915,7 +916,7 @@ html, body{
 
 /* EACH BOX */
 .course-box {
-  background: #f9fafc;
+  background: #f1f5ff;   /* light blue tint */
   padding: 18px;
   border-radius: 12px;
   transition: all 0.3s ease;
@@ -924,9 +925,10 @@ html, body{
 
 /* HOVER EFFECT */
 .course-box:hover {
-  background: #eaf2ff;
-  transform: translateY(-5px);
-  box-shadow: 0 6px 15px rgba(0,0,0,0.1);
+  background: #e0e7ff;
+  transform: translateY(-6px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  filter: brightness(0.95);
 }
 
 /* TITLE INSIDE BOX */
@@ -934,6 +936,11 @@ html, body{
   margin-bottom: 8px;
   font-size: 16px;
 }
+.course-box:nth-child(1) { background: #e3f2fd; } /* School */
+.course-box:nth-child(2) { background: #fff3e0; } /* Kids */
+.course-box:nth-child(3) { background: #e8f5e9; } /* Programming */
+.course-box:nth-child(4) { background: #fce4ec; } /* Skills */
+.course-box:nth-child(5) { background: #ede7f6; } /* Languages */
 
 /* TEXT */
 .course-box p {
