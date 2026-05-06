@@ -1935,26 +1935,13 @@ function joinFromPopup() {
    SEARCH
 ====================================== */
 
- 
  function searchClass() {
-  const input = document.getElementById("searchInput").value.toLowerCase();
-
+  const val = document.getElementById("searchInput").value.toLowerCase();
   document.querySelectorAll(".card").forEach(card => {
-  card.style.display = card.innerText.toLowerCase().includes(val) ? "" : "none";
-    const text = card.innerText.toLowerCase();
-    const category = card.dataset.category;
-
-    const matchSearch = text.includes(input);
-    const matchCategory = selectedCategory === "all" || category === selectedCategory;
-
-    if (matchSearch && matchCategory) {
-      card.style.display = "block";
-    } else {
-      card.style.display = "none";
-    }
-
+   card.style.display = card.innerText.toLowerCase().includes(val) ? "" : "none";
   });
 }
+
 /* ======================================
    TOAST MESSAGE
 ====================================== */
