@@ -1028,6 +1028,25 @@ html, body{
   font-weight: 400;
   color: #334155;
 }
+  .mode-tabs {
+  display: flex;
+  gap: 10px;
+  margin: 20px 0;
+}
+
+.mode-tabs button {
+  flex: 1;
+  padding: 10px;
+  border-radius: 20px;
+  border: none;
+  background: #e5e7eb;
+  cursor: pointer;
+}
+
+.mode-tabs button.active {
+  background: #16a34a;
+  color: white;
+}
 
  </style>
 
@@ -1074,7 +1093,12 @@ html, body{
     carefully before using this section.
   </p>
 </section>
-
+ 
+<div class="mode-tabs">
+  <button class="active" data-mode="india">🇮🇳 India Students</button>
+  <button data-mode="abroad">🌍 Abroad (NRI Students)</button>
+</div>
+ 
 <section class="course-section">
 
   <div class="course-container">
@@ -1262,7 +1286,7 @@ html, body{
 <div class="grid">
  
 <!-- ========== CBSE 9 ========== -->
- <div class="card" id="card-cbse9" data-category="school">
+ <div class="card" id="card-cbse9" data-category="school" data-mode="both">
     <h2>CBSE Maths – Class 9 <span class="live-badge" id="live-cbse9">🔴 LIVE</span></h2>
     <div class="price-box">
       <p class="price">₹250 / hour</p>
@@ -1322,7 +1346,7 @@ html, body{
   </div>
 
  <!-- ========== CBSE 10 ========== -->
-  <div class="card" id="card-cbse10" data-category="school">
+  <div class="card" id="card-cbse10" data-category="school" data-mode="both">
     <h2>CBSE Maths – Class 10 <span class="live-badge" id="live-cbse10">🔴 LIVE</span></h2>
     <div class="price-box">
       <p class="price">₹300 / hour</p>
@@ -1366,7 +1390,7 @@ html, body{
  
  
  <!-- ========== CBSE 11 ========== -->
-  <div class="card" id="card-cbse11" data-category="school">
+  <div class="card" id="card-cbse11" data-category="school" data-mode="both">
     <h2>CBSE Maths – Class 11 <span class="live-badge" id="live-cbse11">🔴 LIVE</span></h2>
     <div class="price-box">
       <p class="price">₹350 / hour</p>
@@ -2690,7 +2714,42 @@ function showSearchBox(category) {
 });
  
  </script>
+<script>
+const modeButtons = document.querySelectorAll(".mode-tabs button");
+const cards = document.querySelectorAll(".card");
 
+modeButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+
+    // active button change
+    modeButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const mode = btn.getAttribute("data-mode");
+
+    cards.forEach(card => {
+      const cardMode = card.getAttribute("data-mode");
+
+      if (mode === "india") {
+        // show india + both
+        if (cardMode === "india" || cardMode === "both") {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      } else {
+        // abroad → only both or abroad
+        if (cardMode === "both" || cardMode === "abroad") {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      }
+    });
+
+  });
+});
+</script>
  
  <div id="demoPopup" style="
   display:none;
