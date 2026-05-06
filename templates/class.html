@@ -948,6 +948,27 @@ html, body{
   color: #555;
 }
 
+  .course-list {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  font-size: 13px;
+  color: #444;
+}
+
+.course-list li {
+  padding: 4px 0;
+  position: relative;
+}
+
+/* bullet style */
+.course-list li::before {
+  content: "•";
+  color: #4CAF50;
+  font-weight: bold;
+  margin-right: 6px;
+}
+
  </style>
 
  
@@ -1006,14 +1027,19 @@ html, body{
     <div class="course-categories">
 
       <div class="course-box">
-        <h3>📘 School</h3>
-        <p>CBSE Maths - 6 to 12 <br> 
-         CBSE Physics - 6 to 12<br> 
-         CBSE chemistry - 6 to 12<br> 
-         Matriculation Maths - 6 to 12<br> 
-         Matriculation Physics - 6 to 12<br> 
-         Matriculation Chemistry - 6 to 12</p>
-      </div>
+
+      <h3>📘 School</h3>
+    
+      <ul class="course-list">
+        <li>CBSE Maths (6–12)</li>
+        <li>CBSE Physics (6–12)</li>
+        <li>CBSE Chemistry (6–12)</li>
+        <li>Matriculation Maths (6–12)</li>
+        <li>Matriculation Physics (6–12)</li>
+        <li>Matriculation Chemistry (6–12)</li>
+      </ul>
+    
+    </div>
 
       <div class="course-box">
         <h3>🧸 Kids</h3>
