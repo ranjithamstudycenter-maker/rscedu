@@ -2762,6 +2762,8 @@ const modeButtons = document.querySelectorAll(".mode-tabs button");
 const categoryButtons = document.querySelectorAll(".tabs button");
 const cards = document.querySelectorAll(".card");
 const abroadMsg = document.getElementById("abroadMessage");
+const courseSection = document.getElementById("courseSection");
+
 
 let currentMode = "india";
 let currentCategory = "all";
@@ -2782,6 +2784,9 @@ modeButtons.forEach(btn => {
       // ✅ show message
       abroadMsg.style.display = "block";
     } else {
+       // ✅ show courses again
+        courseSection.style.display = "block";
+
       // ✅ show cards
       abroadMsg.style.display = "none";
 
