@@ -1028,26 +1028,33 @@ html, body{
   font-weight: 400;
   color: #334155;
 }
-  .mode-tabs {
+ 
+.mode-tabs {
   display: flex;
-  gap: 10px;
-  margin: 20px 0;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0 20px;
 }
 
 .mode-tabs button {
-  flex: 1;
-  padding: 10px;
+  padding: 6px 14px;
+  font-size: 13px;
   border-radius: 20px;
-  border: none;
-  background: #e5e7eb;
+  border: 1px solid #d1d5db;
+  background: white;
   cursor: pointer;
+  transition: 0.2s;
 }
 
 .mode-tabs button.active {
   background: #16a34a;
   color: white;
+  border-color: #16a34a;
 }
 
+.mode-tabs button:hover {
+  background: #f3f4f6;
+}
  </style>
 
  
