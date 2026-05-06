@@ -2296,6 +2296,9 @@ async function openDemoPopup(course){
   }
 }
  const tabs = document.querySelectorAll(".tabs button");
+const searchContainer = document.getElementById("tabSearchContainer");
+
+let selectedCategory = "all";
 
 tabs.forEach(tab => {
   tab.addEventListener("click", () => {
@@ -2303,22 +2306,49 @@ tabs.forEach(tab => {
     tabs.forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
 
-    const category = tab.dataset.cat;
+    selectedCategory = tab.dataset.cat;
 
-    // 🔥 change placeholder
-    const searchInput = document.getElementById("searchInput");
+    // 🔥 change search box based on tab
+    showSearchBox(selectedCategory);
 
-    if (category === "all") {
-      searchInput.placeholder = "🔎 Search all classes...";
-    } else {
-      searchInput.placeholder = `🔎 Search ${category}...`;
-    }
-
-    selectedCategory = category;
     filterCards();
   });
 });
-  
+
+function showSearchBox(category) {
+
+  let placeholder = "Search...";
+
+  if (category !== "all") {
+    placeholder = "Search " + category + "...";
+  }
+
+  searchContainer.innerHTML = `
+    <input type="text" id="tabSearch" placeholder="🔎 ${placeholder}">
+  `;
+
+  document.getElementById("tabSearch").addEventListener("input", filterCards);
+}
+ function filterCards() {
+
+  const searchValue = document.getElementById("tabSearch")?.value.toLowerCase() || "";
+
+  document.querySelectorAll(".card").forEach(card => {
+
+    const category = card.dataset.category;
+    const text = card.innerText.toLowerCase();
+
+    const matchCategory = selectedCategory === "all" || category === selectedCategory;
+    const matchSearch = text.includes(searchValue);
+
+    if (matchCategory && matchSearch) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+
+  });
+}
  </script>
 
  
