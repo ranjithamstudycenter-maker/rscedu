@@ -2767,6 +2767,9 @@ const courseSection = document.getElementById("courseSection");
 
 let currentMode = "india";
 let currentCategory = "all";
+ 
+document.querySelector('[data-cat="all"]').classList.add("active");
+document.querySelector('[data-mode="india"]').classList.add("active");
 
 /* MODE SWITCH */
 modeButtons.forEach(btn => {
