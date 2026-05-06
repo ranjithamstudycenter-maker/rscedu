@@ -919,29 +919,11 @@ html, body{
   <div class="last-updated">Last Updated: <span class="date"></span></div>
 </div>
  
-<!-- 👇 SEARCH WILL APPEAR HERE -->
-<div class="search-box" id="searchBoxWrapper">
-  <input type="text" id="searchInput" placeholder="🔎 Search class..." onkeyup="searchClass()">
-  <div class="last-updated">Last Updated: <span class="date"></span></div>
-</div>
- 
 <!-- COURSES -->
 <section class="section">
 <div class="container">
 
 <div class="grid">
-<h2>School Classes</h2>
-     <input type="text" class="searchBox" placeholder="Search School..." onkeyup="searchSection(this, 'school')" />
-  <h2>Kids Programs</h2>
-     <input type="text" class="searchBox" placeholder="Search Kids..." onkeyup="searchSection(this, 'kids')" />
- <h2>Programming</h2>
-    <input type="text" class="searchBox" placeholder="Search Programming..." onkeyup="searchSection(this, 'programming')" />
-  <h2>Skills</h2>
-       <input type="text" class="searchBox" placeholder="Search Skills..." onkeyup="searchSection(this, 'Skills')" />
-  <h2>Languages</h2>
-           <input type="text" class="searchBox" placeholder="Search Programming..." onkeyup="searchSection(this, 'Languages')" />
-
- 
  
 <!-- ========== CBSE 9 ========== -->
  <div class="card" id="card-cbse9" data-category="school">
@@ -1934,13 +1916,26 @@ function joinFromPopup() {
 /* ======================================
    SEARCH
 ====================================== */
+function searchClass() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
 
- function searchClass() {
-  const val = document.getElementById("searchInput").value.toLowerCase();
   document.querySelectorAll(".card").forEach(card => {
-   card.style.display = card.innerText.toLowerCase().includes(val) ? "" : "none";
+
+    const text = card.innerText.toLowerCase();
+    const category = card.dataset.category;
+
+    const matchSearch = text.includes(input);
+    const matchCategory = selectedCategory === "all" || category === selectedCategory;
+
+    if (matchSearch && matchCategory) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+
   });
 }
+ 
 
 /* ======================================
    TOAST MESSAGE
