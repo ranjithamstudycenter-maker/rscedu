@@ -1935,11 +1935,12 @@ function joinFromPopup() {
    SEARCH
 ====================================== */
 
+ 
  function searchClass() {
   const input = document.getElementById("searchInput").value.toLowerCase();
 
   document.querySelectorAll(".card").forEach(card => {
-
+  card.style.display = card.innerText.toLowerCase().includes(val) ? "" : "none";
     const text = card.innerText.toLowerCase();
     const category = card.dataset.category;
 
