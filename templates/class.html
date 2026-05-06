@@ -838,24 +838,44 @@ html, body{
   color: #1b5e20;
 }
 
- .tabs {
+.tabs {
   display: flex;
-  width: 100%;
+  gap: 12px;
+  justify-content: center;
+  padding: 10px;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  white-space: nowrap;
 }
 
+/* BUTTON STYLE */
 .tabs button {
-  flex: 1;              /* 👈 equal width */
-  padding: 12px;
+  padding: 10px 20px;
+  border-radius: 25px;
   border: none;
-  background: #eee;
-  cursor: pointer;
+  background: #f1f3f6;
+  color: #333;
   font-weight: 500;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: all 0.3s ease;
 }
 
-.tabs button.active {
-  background: #4CAF50;
-  color: white;
+/* HOVER */
+.tabs button:hover {
+  background: #e0e6ff;
+  color: #1a3cff;
+  transform: translateY(-2px);
 }
+
+/* ACTIVE TAB */
+.tabs button.active {
+  background: linear-gradient(135deg, #4CAF50, #2ecc71);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+ 
 
  </style>
 
