@@ -838,26 +838,26 @@ html, body{
   color: #1b5e20;
 }
 
-  .tabs {
+ .tabs {
   display: flex;
-  gap: 10px;
-  margin: 20px;
-  overflow-x: auto;
+  width: 100%;
 }
 
 .tabs button {
-  padding: 8px 16px;
+  flex: 1;              /* 👈 equal width */
+  padding: 12px;
   border: none;
   background: #eee;
-  border-radius: 20px;
   cursor: pointer;
+  font-weight: 500;
 }
 
 .tabs button.active {
   background: #4CAF50;
   color: white;
 }
-  </style>
+
+ </style>
 
  
 </head>
@@ -918,7 +918,13 @@ html, body{
   <input type="text" id="searchInput" placeholder="🔎 Search class..." onkeyup="searchClass()">
   <div class="last-updated">Last Updated: <span class="date"></span></div>
 </div>
-
+ 
+<!-- 👇 SEARCH WILL APPEAR HERE -->
+<div class="search-box" id="searchBoxWrapper">
+  <input type="text" id="searchInput" placeholder="🔎 Search class..." onkeyup="searchClass()">
+  <div class="last-updated">Last Updated: <span class="date"></span></div>
+</div>
+ 
 <!-- COURSES -->
 <section class="section">
 <div class="container">
@@ -2289,36 +2295,28 @@ async function openDemoPopup(course){
   }
 }
  const tabs = document.querySelectorAll(".tabs button");
-const cards = document.querySelectorAll(".card");
-
-let selectedCategory = "all";
 
 tabs.forEach(tab => {
   tab.addEventListener("click", () => {
 
-    // active highlight
     tabs.forEach(t => t.classList.remove("active"));
     tab.classList.add("active");
 
-    selectedCategory = tab.dataset.cat;
+    const category = tab.dataset.cat;
 
+    // 🔥 change placeholder
+    const searchInput = document.getElementById("searchInput");
+
+    if (category === "all") {
+      searchInput.placeholder = "🔎 Search all classes...";
+    } else {
+      searchInput.placeholder = `🔎 Search ${category}...`;
+    }
+
+    selectedCategory = category;
     filterCards();
   });
 });
-
-function filterCards() {
-  cards.forEach(card => {
-
-    const cardCategory = card.dataset.category;
-
-    if (selectedCategory === "all" || cardCategory === selectedCategory) {
-      card.style.display = "block";
-    } else {
-      card.style.display = "none";
-    }
-
-  });
-}
   
  </script>
 
