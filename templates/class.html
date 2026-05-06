@@ -2759,38 +2759,44 @@ modeButtons.forEach(btn => {
 
 <script>
 const modeButtons = document.querySelectorAll(".mode-tabs button");
-const courseSection = document.getElementById("courseSection");
+const categoryButtons = document.querySelectorAll(".tabs button");
+const cards = document.querySelectorAll(".card");
+
 const abroadMsg = document.getElementById("abroadMessage");
+const courseSection = document.getElementById("courseSection");
 
 let currentMode = "india";
+let currentCategory = "all";
+ 
+document.querySelector('[data-cat="all"]').classList.add("active");
+document.querySelector('[data-mode="india"]').classList.add("active");
 
+/* MODE SWITCH */
 modeButtons.forEach(btn => {
   btn.addEventListener("click", () => {
 
     const selectedMode = btn.getAttribute("data-mode");
 
-    if (currentMode === selectedMode) return;
-
-    currentMode = selectedMode;
+    // 🔥 SAME MODE CLICK → IGNORE
+    if (currentMode === selectedMode) {
+      return;
+    }
 
     modeButtons.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
+    currentMode = selectedMode;
+
     if (currentMode === "abroad") {
-      // 🔴 HIDE COURSES
       courseSection.style.display = "none";
-
-      // 🟢 SHOW MESSAGE
       abroadMsg.style.display = "block";
-
     } else {
-      // 🟢 SHOW COURSES
       courseSection.style.display = "block";
-
-      // 🔴 HIDE MESSAGE
       abroadMsg.style.display = "none";
-    }
 
+      // 🔥 IMPORTANT: DO NOT RESET CATEGORY
+      filterCards();
+    }
   });
 });
 
