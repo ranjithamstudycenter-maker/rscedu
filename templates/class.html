@@ -2295,21 +2295,21 @@ const searchContainer = document.getElementById("tabSearchContainer");
 
 let selectedCategory = "all";
 
-tabs.forEach(tab => {
-  tab.addEventListener("click", () => {
+// 🔹 TAB CLICK
+document.querySelectorAll(".tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
 
-    tabs.forEach(t => t.classList.remove("active"));
-    tab.classList.add("active");
+    document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
 
-    selectedCategory = tab.dataset.cat;
+    selectedCategory = btn.dataset.cat;
 
-    // 🔥 change search box based on tab
-    showSearchBox(selectedCategory);
+    // 🔥 clear search when switching tab
+    document.getElementById("searchInput").value = "";
 
     filterCards();
   });
 });
-
 function showSearchBox(category) {
 
   let placeholder = "Search...";
@@ -2326,14 +2326,17 @@ function showSearchBox(category) {
 }
  function filterCards() {
 
-  const searchValue = document.getElementById("tabSearch")?.value.toLowerCase() || "";
+  const searchValue = document.getElementById("searchInput").value.toLowerCase();
 
   document.querySelectorAll(".card").forEach(card => {
 
-    const category = card.dataset.category;
     const text = card.innerText.toLowerCase();
+    const category = card.dataset.category;
 
-    const matchCategory = selectedCategory === "all" || category === selectedCategory;
+    // 🔥 category match
+    const matchCategory = (selectedCategory === "all" || category === selectedCategory);
+
+    // 🔥 search match
     const matchSearch = text.includes(searchValue);
 
     if (matchCategory && matchSearch) {
