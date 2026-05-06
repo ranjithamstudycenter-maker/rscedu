@@ -2756,6 +2756,71 @@ modeButtons.forEach(btn => {
   });
 });
 </script>
+
+ <script>
+const modeButtons = document.querySelectorAll(".mode-tabs button");
+const categoryButtons = document.querySelectorAll(".tabs button");
+const cards = document.querySelectorAll(".card");
+const abroadMsg = document.getElementById("abroadMessage");
+
+let currentMode = "india";
+let currentCategory = "all";
+
+/* MODE SWITCH */
+modeButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+
+    modeButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    currentMode = btn.getAttribute("data-mode");
+
+    if (currentMode === "abroad") {
+      // ❌ hide cards
+      cards.forEach(c => c.style.display = "none");
+
+      // ✅ show message
+      abroadMsg.style.display = "block";
+    } else {
+      // ✅ show cards
+      abroadMsg.style.display = "none";
+
+      filterCards(); // apply category filter also
+    }
+  });
+});
+
+/* CATEGORY SWITCH */
+categoryButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+
+    categoryButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    currentCategory = btn.getAttribute("data-cat");
+
+    if (currentMode === "india") {
+      filterCards();
+    }
+  });
+});
+
+/* FILTER FUNCTION */
+function filterCards() {
+  cards.forEach(card => {
+    const cat = card.getAttribute("data-category");
+
+    if (currentCategory === "all" || cat === currentCategory) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+  });
+}
+
+/* DEFAULT LOAD */
+filterCards();
+</script>
  
  <div id="demoPopup" style="
   display:none;
