@@ -2772,99 +2772,129 @@ modeButtons.forEach(btn => {
   });
 });
 </script>
+
 <script>
 
-const modeBtns = document.querySelectorAll(".mode-tabs button");
+document.addEventListener("DOMContentLoaded", () => {
 
-const abroadMsg    = document.getElementById("abroadMessage");
-const courseSection = document.getElementById("courseSection");
+  /* MODE BUTTONS */
+  const modeButtons = document.querySelectorAll(".mode-tabs button");
 
-const tabsSection   = document.querySelector(".tabs.category");
-const searchSection = document.querySelector(".search-box");
-const cardsSection  = document.querySelector(".section");
-const categoryButtons = document.querySelectorAll(".tabs button");
-const cards = document.querySelectorAll(".card");
+  /* CATEGORY BUTTONS */
+  const categoryButtons = document.querySelectorAll(".tabs button");
 
-let currentCategory = "all";
+  /* ELEMENTS */
+  const abroadMsg = document.getElementById("abroadMessage");
+  const courseSection = document.getElementById("courseSection");
 
-modeBtns.forEach(btn => {
+  const cardsSection = document.querySelector(".section");
+  const tabsSection = document.querySelector(".tabs");
+  const searchSection = document.querySelector(".search-box");
 
-  btn.addEventListener("click", () => {
+  const cards = document.querySelectorAll(".card");
 
-    // active button
-    modeBtns.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
+  /* DEFAULT CATEGORY */
+  let currentCategory = "all";
 
-    const mode = btn.dataset.mode;
 
-    // 🌍 ABROAD
-    if(mode === "abroad"){
+  /* =========================
+        MODE SWITCH
+  ========================== */
 
-      abroadMsg.style.display = "block";
+  modeButtons.forEach(btn => {
 
-      courseSection.style.display = "none";
-      tabsSection.style.display   = "none";
-      searchSection.style.display = "none";
-      cardsSection.style.display  = "none";
+    btn.addEventListener("click", () => {
 
-    }
+      modeButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
 
-    // 🇮🇳 INDIA
-    else{
+      const mode = btn.dataset.mode;
 
-      abroadMsg.style.display = "none";
+      /* 🌍 ABROAD */
+      if(mode === "abroad") {
 
-      courseSection.style.display = "block";
-      tabsSection.style.display   = "flex";
-      searchSection.style.display = "block";
-      cardsSection.style.display  = "block";
+        abroadMsg.style.display = "block";
 
-    }
+        courseSection.style.display = "none";
+        tabsSection.style.display = "none";
+        searchSection.style.display = "none";
+        cardsSection.style.display = "none";
+
+      }
+
+      /* 🇮🇳 INDIA */
+      else {
+
+        abroadMsg.style.display = "none";
+
+        courseSection.style.display = "block";
+        tabsSection.style.display = "flex";
+        searchSection.style.display = "block";
+        cardsSection.style.display = "block";
+
+        filterCards();
+
+      }
+
+    });
 
   });
+
+
+
+  /* =========================
+        CATEGORY FILTER
+  ========================== */
+
+  categoryButtons.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      categoryButtons.forEach(b => b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      currentCategory = btn.dataset.cat;
+
+      filterCards();
+
+    });
+
+  });
+
+
+
+  /* =========================
+        FILTER FUNCTION
+  ========================== */
+
+  function filterCards() {
+
+    cards.forEach(card => {
+
+      const cat = card.dataset.category;
+
+      if(currentCategory === "all" || cat === currentCategory) {
+
+        card.style.display = "block";
+
+      } else {
+
+        card.style.display = "none";
+
+      }
+
+    });
+
+  }
+
+
+  /* DEFAULT LOAD */
+  filterCards();
 
 });
-
-/* CATEGORY FILTER */
-categoryButtons.forEach(btn => {
-
-  btn.addEventListener("click", () => {
-
-    categoryButtons.forEach(b => b.classList.remove("active"));
-    btn.classList.add("active");
-
-    currentCategory = btn.dataset.cat;
-
-    filterCards();
-
-  });
-
-});
-
-
-/* FILTER FUNCTION */
-function filterCards() {
-
-  cards.forEach(card => {
-
-    const cat = card.dataset.category;
-
-    if(currentCategory === "all" || cat === currentCategory){
-      card.style.display = "block";
-    } else {
-      card.style.display = "none";
-    }
-
-  });
-
-}
-
-
-/* DEFAULT */
-filterCards();
 
 </script>
-
  
  <div id="demoPopup" style="
   display:none;
