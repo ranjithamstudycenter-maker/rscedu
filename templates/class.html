@@ -2771,8 +2771,8 @@ modeButtons.forEach(btn => {
   });
 });
 </script>
-
 <script>
+
 const modeButtons = document.querySelectorAll(".mode-tabs button");
 
 const abroadMsg = document.getElementById("abroadMessage");
@@ -2782,14 +2782,19 @@ const cardsSection = document.querySelector(".section");
 const tabsSection = document.querySelector(".tabs");
 const searchSection = document.querySelector(".search-box");
 
+/* CATEGORY */
+const categoryButtons = document.querySelectorAll(".tabs button");
+const cards = document.querySelectorAll(".card");
+
+let currentCategory = "all";
+
+
+/* MODE SWITCH */
 modeButtons.forEach(btn => {
 
   btn.addEventListener("click", () => {
 
-    // active remove
     modeButtons.forEach(b => b.classList.remove("active"));
-
-    // active add
     btn.classList.add("active");
 
     const mode = btn.dataset.mode;
@@ -2812,41 +2817,55 @@ modeButtons.forEach(btn => {
       tabsSection.style.display = "flex";
       searchSection.style.display = "block";
 
+      filterCards();
+
     }
 
   });
 
 });
 
+
 /* CATEGORY FILTER */
 categoryButtons.forEach(btn => {
+
   btn.addEventListener("click", () => {
 
     categoryButtons.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
-    currentCategory = btn.getAttribute("data-cat");
+    currentCategory = btn.dataset.cat;
 
     filterCards();
+
   });
+
 });
 
-/* FILTER */
-function filterCards() {
-  cards.forEach(card => {
-    const cat = card.getAttribute("data-category");
 
-    if (currentCategory === "all" || cat === currentCategory) {
+/* FILTER FUNCTION */
+function filterCards() {
+
+  cards.forEach(card => {
+
+    const cat = card.dataset.category;
+
+    if(currentCategory === "all" || cat === currentCategory){
       card.style.display = "block";
     } else {
       card.style.display = "none";
     }
+
   });
+
 }
+
 
 /* DEFAULT */
 filterCards();
+
 </script>
+
  
  <div id="demoPopup" style="
   display:none;
