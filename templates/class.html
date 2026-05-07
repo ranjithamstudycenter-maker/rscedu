@@ -1105,7 +1105,22 @@ html, body{
   <button data-mode="abroad">🌍 Indians in Abroad </button>
 </div>
  
-<section class="course-section">
+ <div id="abroadMessage" style="display:none; text-align:center; padding:60px 20px;">
+  
+  <h2 style="color:#1e3a8a; margin-bottom:15px;">
+    🌍 Courses for Indians Abroad
+  </h2>
+
+  <p style="color:#555; font-size:16px;">
+    International courses are currently under planning.
+  </p>
+
+  <p style="margin-top:10px; color:#ef4444; font-weight:600;">
+    🚧 Coming Soon
+  </p>
+
+</div>
+<section class="course-section" id="courseSection">
 
   <div class="course-container">
 
@@ -2788,15 +2803,25 @@ modeButtons.forEach(btn => {
     currentMode = selectedMode;
 
     if (currentMode === "abroad") {
-      courseSection.style.display = "none";
-      abroadMsg.style.display = "block";
-    } else {
-      courseSection.style.display = "block";
-      abroadMsg.style.display = "none";
 
-      // 🔥 IMPORTANT: DO NOT RESET CATEGORY
-      filterCards();
-    }
+       courseSection.style.display = "none";
+       abroadMsg.style.display = "block";
+     
+       document.querySelector(".section").style.display = "none";
+       document.querySelector(".tabs").style.display = "none";
+       document.querySelector(".search-box").style.display = "none";
+     
+     } else {
+     
+       courseSection.style.display = "block";
+       abroadMsg.style.display = "none";
+     
+       document.querySelector(".section").style.display = "block";
+       document.querySelector(".tabs").style.display = "flex";
+       document.querySelector(".search-box").style.display = "block";
+     
+       filterCards();
+     }
   });
 });
 
