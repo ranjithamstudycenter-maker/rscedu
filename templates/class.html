@@ -1103,7 +1103,8 @@ html, body{
  <div class="mode-tabs">
       <button class="active" data-mode="india">for Indian Students</button>
       <button data-mode="abroad">🌍 Indians in Abroad </button>
-         
+ </div>  
+ 
      <div id="abroadMessage" style="display:none; text-align:center; padding:60px 20px;">
       
       <h2 style="color:#1e3a8a; margin-bottom:15px;">
@@ -1119,7 +1120,7 @@ html, body{
       </p>
     
     </div>
-</div>
+
 <section class="course-section" id="courseSection">
  
   <div class="course-container">
@@ -2773,58 +2774,54 @@ modeButtons.forEach(btn => {
 </script>
 <script>
 
-const modeButtons = document.querySelectorAll(".mode-tabs button");
+<script>
 
-const abroadMsg = document.getElementById("abroadMessage");
+const modeBtns = document.querySelectorAll(".mode-tabs button");
+
+const abroadMsg    = document.getElementById("abroadMessage");
 const courseSection = document.getElementById("courseSection");
 
-const cardsSection = document.querySelector(".section");
-const tabsSection = document.querySelector(".tabs");
+const tabsSection   = document.querySelector(".tabs.category");
 const searchSection = document.querySelector(".search-box");
+const cardsSection  = document.querySelector(".section");
 
-/* CATEGORY */
-const categoryButtons = document.querySelectorAll(".tabs button");
-const cards = document.querySelectorAll(".card");
-
-let currentCategory = "all";
-
-
-/* MODE SWITCH */
-modeButtons.forEach(btn => {
+modeBtns.forEach(btn => {
 
   btn.addEventListener("click", () => {
 
-    modeButtons.forEach(b => b.classList.remove("active"));
+    // active button
+    modeBtns.forEach(b => b.classList.remove("active"));
     btn.classList.add("active");
 
     const mode = btn.dataset.mode;
 
+    // 🌍 ABROAD
     if(mode === "abroad"){
 
       abroadMsg.style.display = "block";
 
       courseSection.style.display = "none";
-      cardsSection.style.display = "none";
-      tabsSection.style.display = "none";
+      tabsSection.style.display   = "none";
       searchSection.style.display = "none";
+      cardsSection.style.display  = "none";
 
-    } else {
+    }
+
+    // 🇮🇳 INDIA
+    else{
 
       abroadMsg.style.display = "none";
 
       courseSection.style.display = "block";
-      cardsSection.style.display = "block";
-      tabsSection.style.display = "flex";
+      tabsSection.style.display   = "flex";
       searchSection.style.display = "block";
-
-      filterCards();
+      cardsSection.style.display  = "block";
 
     }
 
   });
 
 });
-
 
 /* CATEGORY FILTER */
 categoryButtons.forEach(btn => {
