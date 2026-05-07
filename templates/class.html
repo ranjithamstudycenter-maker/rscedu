@@ -2774,55 +2774,48 @@ modeButtons.forEach(btn => {
 
 <script>
 const modeButtons = document.querySelectorAll(".mode-tabs button");
-const categoryButtons = document.querySelectorAll(".tabs button");
-const cards = document.querySelectorAll(".card");
 
 const abroadMsg = document.getElementById("abroadMessage");
 const courseSection = document.getElementById("courseSection");
 
-let currentMode = "india";
-let currentCategory = "all";
- 
-document.querySelector('[data-cat="all"]').classList.add("active");
-document.querySelector('[data-mode="india"]').classList.add("active");
+const cardsSection = document.querySelector(".section");
+const tabsSection = document.querySelector(".tabs");
+const searchSection = document.querySelector(".search-box");
 
-/* MODE SWITCH */
 modeButtons.forEach(btn => {
+
   btn.addEventListener("click", () => {
 
-    const selectedMode = btn.getAttribute("data-mode");
-
-    // 🔥 SAME MODE CLICK → IGNORE
-    if (currentMode === selectedMode) {
-      return;
-    }
-
+    // active remove
     modeButtons.forEach(b => b.classList.remove("active"));
+
+    // active add
     btn.classList.add("active");
 
-    currentMode = selectedMode;
+    const mode = btn.dataset.mode;
 
-    if (currentMode === "abroad") {
+    if(mode === "abroad"){
 
-       courseSection.style.display = "none";
-       abroadMsg.style.display = "block";
-     
-       document.querySelector(".section").style.display = "none";
-       document.querySelector(".tabs").style.display = "none";
-       document.querySelector(".search-box").style.display = "none";
-     
-     } else {
-     
-       courseSection.style.display = "block";
-       abroadMsg.style.display = "none";
-     
-       document.querySelector(".section").style.display = "block";
-       document.querySelector(".tabs").style.display = "flex";
-       document.querySelector(".search-box").style.display = "block";
-     
-       filterCards();
-     }
+      abroadMsg.style.display = "block";
+
+      courseSection.style.display = "none";
+      cardsSection.style.display = "none";
+      tabsSection.style.display = "none";
+      searchSection.style.display = "none";
+
+    } else {
+
+      abroadMsg.style.display = "none";
+
+      courseSection.style.display = "block";
+      cardsSection.style.display = "block";
+      tabsSection.style.display = "flex";
+      searchSection.style.display = "block";
+
+    }
+
   });
+
 });
 
 /* CATEGORY FILTER */
