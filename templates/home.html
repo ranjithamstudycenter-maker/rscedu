@@ -171,44 +171,40 @@
   }
 
 }
-        .announcement-bar {
-                  width: 100%;
-                  overflow: hidden;
-                  white-space: nowrap;
-                  padding: 8px 0;
-                  background: transparent;
-                  border-bottom: 1px solid #eee;
-                }
-                
-                .announcement-text {
-                  display: inline-block;
-                  padding-left: 100%;
-                  color: #dc2626;
-                  font-size: 15px;
-                  font-weight: 600;
-                  animation: scrollText 18s linear infinite;
-                }
-                
-                @keyframes scrollText {
-                  0% {
-                    transform: translateX(0%);
-                  }
-                
-                  100% {
-                    transform: translateX(-100%);
-                  }
-                }
-        .blink-text {
-          animation: hiringBlink 1.5s infinite;
-          color: green;
-          font-weight: bold;
-        }
-        
-        @keyframes hiringBlink {
-          50% {
-            opacity: 0;
-          }
-        }
+       .announcement-bar {
+  width: 100%;
+  overflow: hidden;
+  white-space: nowrap;
+  padding: 6px 0;
+  background: #fff;
+  border-bottom: 1px solid #eee;
+  position: relative;
+}
+
+.announcement-text {
+  display: inline-block;
+  color: #dc2626;
+  font-size: 15px;
+  font-weight: 600;
+  padding-left: 100%;
+  animation: marqueeMove 28s linear infinite;
+}
+
+@keyframes marqueeMove {
+  from {
+    transform: translateX(0);
+  }
+
+  to {
+    transform: translateX(-100%);
+  }
+}
+
+.blink-text {
+  color: #16a34a;
+  font-weight: 700;
+  margin-right: 10px;
+}
         /* ==========================
            HERO / SLIDER
         ========================== */
