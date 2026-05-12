@@ -172,7 +172,31 @@
 
 }
      
-   
+   .announcement-bar{
+    width:100%;
+    background:#fff;
+    border-bottom:1px solid #eee;
+    padding:6px 0;
+    overflow:hidden;
+}
+
+.announcement-bar marquee{
+    color:#dc2626;
+    font-size:15px;
+    font-weight:600;
+}
+
+.blink-text{
+    color:green;
+    font-weight:bold;
+    animation:hiringBlink 1s infinite;
+}
+
+@keyframes hiringBlink{
+    50%{
+        opacity:0;
+    }
+}
         /* ==========================
            HERO / SLIDER
         ========================== */
