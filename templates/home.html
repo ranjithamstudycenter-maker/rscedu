@@ -172,18 +172,24 @@
 
 }
      
-   .announcement-bar{
+ .announcement-bar{
     width:100%;
+    height:38px;
+    overflow:hidden;
+    position:relative;
     background:#fff;
     border-bottom:1px solid #eee;
-    padding:6px 0;
-    overflow:hidden;
+    display:flex;
+    align-items:center;
 }
 
-.announcement-bar marquee{
+.announcement-text{
+    position:absolute;
+    white-space:nowrap;
     color:#dc2626;
     font-size:15px;
     font-weight:600;
+
     animation: marqueeMove 22s linear infinite;
 }
 
