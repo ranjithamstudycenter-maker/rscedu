@@ -1739,12 +1739,19 @@ html, body{
 <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
 <script>
 const firebaseConfig = {
-  apiKey: "AIzaSyDLR3ThMxYNFMqLhYYTH_d7i6LvMkGTMZ0",
-  authDomain: "rscedu.firebaseapp.com",
+  apiKey: "AIzaSyApsAgXKfNbe3-u2sO2jG_JfkMpmE0tCd0",
+    authDomain: "rscedu-45e74.firebaseapp.com",
+    projectId: "rscedu-45e74",
+    storageBucket: "rscedu-45e74.firebasestorage.app",
+    messagingSenderId: "127790699547",
+    appId: "1:127790699547:web:2fc02df876a7549b86d4be",
+    measurementId: "G-VZLPGY58ZL"
 };
 
 firebase.initializeApp(firebaseConfig);
 const auth = firebase.auth();
+const app = initializeApp(firebaseConfig);
+const analytics = getAnalytics(app);
 </script>
  
 <!-- ========== MAIN SCRIPT ========== -->
