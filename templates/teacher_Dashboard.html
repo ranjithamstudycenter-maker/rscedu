@@ -95,12 +95,111 @@ input{
 .star.active{
   color:gold;
 }
+
+  /* 📌 INSTRUCTIONS */
+.instructions{
+  background:#fff8e1;
+  border-left:6px solid #ff9800;
+  padding:20px;
+  border-radius:12px;
+  max-height:400px;
+  overflow-y:auto;
+  line-height:1.8;
+}
+
+.instructions h3{
+  margin-top:15px;
+  color:#0b5394;
+}
+
+.instructions ul{
+  padding-left:20px;
+}
+
+.instructions li{
+  margin-bottom:8px;
+}
+
+.warning{
+  color:#d32f2f;
+  font-weight:bold;
+}
+  
 </style>
 </head>
 
 <body>
 <div class="container">
+<!-- 📌 FACULTY INSTRUCTIONS -->
+<div class="card instructions">
 
+<h2>📌 Faculty Guidelines & Instructions</h2>
+
+<h3>1. Device Requirement</h3>
+<ul>
+  <li>Writing pad / pen tablet is mandatory for taking classes.</li>
+  <li>Mobile-only teaching is not allowed.</li>
+  <li>Stable internet connection and proper audio quality must be maintained.</li>
+</ul>
+
+<h3>2. Teaching Quality Policy</h3>
+<ul>
+  <li>Student feedback will be monitored regularly.</li>
+  <li>Initial low ratings (below 3 stars) may be tolerated up to the first 10 feedbacks.</li>
+  <li>Continuous poor ratings after 10 feedbacks may lead to temporary block or permanent deactivation.</li>
+  <li>Admin will receive notifications regarding repeated poor feedback.</li>
+</ul>
+
+<h3>3. Class Conduct</h3>
+<ul>
+  <li>Faculty should join classes on time.</li>
+  <li>Proper explanation and doubt clarification are mandatory.</li>
+  <li>Repeated absenteeism or last-minute cancellations are not accepted.</li>
+  <li>Maintain respectful communication with students and parents.</li>
+</ul>
+
+<h3>4. Assessment Requirement</h3>
+<ul>
+  <li>Monthly assessments/tests must be conducted during the last class session of every month.</li>
+  <li>Faculty should upload marks/performance to admin dashboard.</li>
+</ul>
+
+<h3>5. Payment Policy</h3>
+<ul>
+  <li>Payment will be credited based on completed teaching hours.</li>
+  <li>Fake attendance or incomplete sessions will not be counted.</li>
+  <li>Payment cycle will be processed weekly/monthly by admin.</li>
+</ul>
+
+<h3>6. Content Responsibility</h3>
+<ul>
+  <li>Do not share personal tuition contacts or promotional content with students.</li>
+  <li>Class materials should be syllabus-oriented and educational.</li>
+</ul>
+
+<h3>7. Demo Performance Monitoring</h3>
+<ul>
+  <li>Initial demo classes will be monitored by admin.</li>
+  <li>Continuation depends on teaching quality and student engagement.</li>
+</ul>
+
+<h3>8. Camera & Mic Rules</h3>
+<ul>
+  <li>Mic clarity is mandatory.</li>
+  <li>Background noise should be avoided.</li>
+</ul>
+
+<h3>9. Recording Notice</h3>
+<ul>
+  <li>Classes may be recorded for quality and safety purposes.</li>
+</ul>
+
+<p class="warning">
+⚠ Violation of platform policies may result in temporary suspension or permanent removal from the service.
+</p>
+
+</div>
+  
 <!-- WELCOME -->
 <div class="card">
   <h2>Welcome, {{ teacher_name }}</h2>
