@@ -624,6 +624,50 @@ def end_class():
     if not username or username not in teachers:
         return jsonify({"error": "Unauthorized"}), 403
 
+    # 🔥 ATTENDANCE CALCULATION
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+    
+    course = teachers[username]["course"]
+    
+    c.execute("""
+    SELECT phone, join_time, hours_used
+    FROM students
+    WHERE course=? AND enrolled=1
+    """, (course,))
+    
+    rows = c.fetchall()
+    
+    for row in rows:
+    
+        phone = row[0]
+        join_time = row[1]
+        hours_used = row[2] or 0
+    
+        if join_time:
+    
+            attended_minutes = (
+                datetime.now().timestamp() - join_time
+            ) / 60
+    
+            # ✅ minimum 50 mins
+            if attended_minutes >= 50:
+    
+                c.execute("""
+                UPDATE students
+                SET hours_used=?,
+                    last_updated=?
+                WHERE phone=? AND course=?
+                """, (
+                    hours_used + 1,
+                    datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    phone,
+                    course
+                ))
+    
+    conn.commit()
+    conn.close()
+
     teachers[username]["active"] = False
     teachers[username]["meet_link"] = ""
 
