@@ -1073,7 +1073,7 @@
 
     <textarea id="message" maxlength="1000" placeholder="Your Feedback"></textarea>
 
-    <button id="feedbackBtn" class="feedback-btn" type="button"> 🚀 Share your feedback </button>
+    <button id="feedbackBtn" class="feedback-btn" type="button" onclick="addFeedback()"> 🚀 Share your feedback </button>
   </div>
 
 </section>
@@ -1185,7 +1185,7 @@ if(slides && totalSlides > 0){
   const db = getFirestore(app);
 
   // ================= ADD FEEDBACK =================
- async function addFeedback() {
+ window.addFeedback = async function () {
   console.log("clicked 🔥");   // debug
     const name = document.getElementById("name").value;
     const role = document.getElementById("role").value;
