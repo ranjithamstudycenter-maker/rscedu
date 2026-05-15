@@ -16,13 +16,14 @@ body{
 
 /* HEADER */
 .header{
-  background:#0b5394;
+  background:linear-gradient(135deg,#0b5394,#2563eb);
   color:white;
-  padding:15px;
+  padding:20px;
   display:flex;
   justify-content:center;
   align-items:center;
-  gap:10px;
+  gap:12px;
+  box-shadow:0 4px 15px rgba(0,0,0,0.15);
 }
 
 .header img{
@@ -40,20 +41,26 @@ body{
 .card{
   background:white;
   padding:25px;
-  border-radius:12px;
+  border-radius:20px;
   margin-bottom:20px;
-  box-shadow:0 4px 12px rgba(0,0,0,0.08);
+  box-shadow:0 10px 25px rgba(0,0,0,0.08);
+  border:1px solid #eef2ff;
 }
 
 /* BUTTON */
 .btn{
-  background:#0b5394;
-  color:white;
-  padding:12px 20px;
+  padding:14px 24px;
   border:none;
-  border-radius:8px;
+  border-radius:12px;
+  font-weight:600;
   cursor:pointer;
+  transition:0.3s;
 }
+
+.btn:hover{
+  transform:translateY(-2px);
+}
+  
 .start-btn{
   background:linear-gradient(45deg,#28a745,#5cd67c);
   color:white;
@@ -64,9 +71,7 @@ body{
   color:white;
 }
 
-.btn:hover{
-  background:#073763;
-}
+
 /* INPUT */
 input{
   width:100%;
@@ -124,11 +129,78 @@ input{
   color:#d32f2f;
   font-weight:bold;
 }
+
+  @media(max-width:768px){
+
+  .container{
+    padding:12px;
+  }
+
+  .btn{
+    width:100%;
+  }
+
+  .card{
+    padding:18px;
+  }
+
+  h2,h3{
+    font-size:20px;
+  }
+
+}
+ .welcome-card{
+  background:linear-gradient(135deg,#0b5394,#2563eb);
+  color:white;
+}
+
+.live-card{
+  border-left:6px solid #22c55e;
+}
+
+.feedback-card{
+  border-left:6px solid #f59e0b;
+}
+
+.analytics-card{
+  border-left:6px solid #3b82f6;
+} 
+  .brand-title{
+  font-size:22px;
+  font-weight:700;
+}
+
+.brand-sub{
+  font-size:13px;
+  opacity:0.9;
+}
+ .rating-box{
+  text-align:center;
+  padding:15px;
+}
+
+.rating-number{
+  font-size:34px;
+  font-weight:700;
+  color:#2563eb;
+}
+
+.rating-stars{
+  font-size:30px;
+  color:#facc15;
+  margin-top:10px;
+}
   
 </style>
 </head>
 
 <body>
+  
+  <div>
+    <div class="brand-title">Ranjitham Study Center</div>
+    <div class="brand-sub">Teacher Management Portal</div>
+  </div>
+  
 <div class="container">
 <div class="card instructions">
 
@@ -188,11 +260,6 @@ input{
   <li>Background noise should be avoided.</li>
 </ul>
 
-<h3>9. Recording Notice</h3>
-<ul>
-  <li>Classes may be recorded for quality and safety purposes.</li>
-</ul>
-
 <p class="warning">
 ⚠ Violation of platform policies may result in temporary suspension or permanent removal from the service.
 </p>
@@ -200,24 +267,40 @@ input{
 </div>
   
 <!-- WELCOME -->
-<div class="card">
+<div class="card welcome-card">
   <h2>Welcome, {{ teacher_name }}</h2>
   <p><b>Course:</b> {{ course }}</p>
 </div>
 
 <!-- 🔥 LIVE CLASS CONTROL -->
-<div class="card">
-  <h3>Live Class Control</h3>
+<div class="card live-card">
+  <h2>🎥 Live Class Control</h2>
 
-  <input type="text" id="meetLink" placeholder="Paste Google Meet Link">
+  <input type="text"
+         id="meetLink"
+         placeholder="Paste Secure Google Meet Link">
 
-  <button class="btn start-btn" onclick="startClass()">▶ Start Class</button>
-  <button class="btn end-btn" onclick="endClass()">⛔ End Class</button>
+  <div style="display:flex;gap:15px;flex-wrap:wrap;">
 
-  <p id="statusText" class="status off">🔴 Class Not Live</p>
+    <button class="btn start-btn"
+            onclick="startClass()">
+      ▶ Start Class
+    </button>
+
+    <button class="btn end-btn"
+            onclick="endClass()">
+      ⛔ End Class
+    </button>
+
+  </div>
+  
+  <p id="statusText" class="status off">
+    🔴 Class Offline
+  </p>
 </div>
+  
 <!-- ⭐ FEEDBACK -->
-<div class="card">
+<div class="card feedback-card">
   <h3>Feedback Summary</h3>
   <p>⭐ Average Rating: {{ avg_rating }}</p>
 </div>
@@ -225,10 +308,23 @@ input{
 <!-- ⭐ STAR DISPLAY -->
 <div class="card">
   <h3>Performance</h3>
-  <p>
-    {% for i in range(avg_rating|int) %}★{% endfor %}
-    {% for i in range(5 - avg_rating|int) %}☆{% endfor %}
-  </p>
+  <div class="rating-box">
+
+  <div class="rating-number">
+    {{ avg_rating }}/5
+  </div>
+
+  <div class="rating-stars">
+    {% for i in range(avg_rating|int) %}
+      ★
+    {% endfor %}
+
+    {% for i in range(5 - avg_rating|int) %}
+      ☆
+    {% endfor %}
+  </div>
+
+</div>
 </div>
 
 <!-- ⭐ INTERACTIVE -->
@@ -244,13 +340,13 @@ input{
 </div>
 
 <!-- 📊 GRAPH -->
-<div class="card">
+<div class="card analytics-card">
   <h3>Performance Graph</h3>
   <canvas id="chart"></canvas>
 </div>
 
 <!-- FEEDBACK -->
-<div class="card">
+<div class="card feedback-card">
   <h3>Recent Feedback</h3>
   {% for f in feedbacks %}
     <p>⭐ {{ f.rating }} - "{{ f.comment }}"</p>
