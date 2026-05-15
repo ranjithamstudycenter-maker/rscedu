@@ -2309,6 +2309,34 @@ function showLivePopup(course) {
 function joinFromPopup() {
   if (currentLiveCourse) joinClass(currentLiveCourse);
 }
+
+/* ======================================
+   LIVE STATUS
+====================================== */
+
+  async function checkLiveStatus(course){
+
+  const res = await fetch(`/api/class-status?course=${course}`);
+  const data = await res.json();
+
+  const badge = document.getElementById("live-" + course);
+  const joinBtn = document.getElementById("joinBtn-" + course);
+
+  if(data.live){
+
+     badge.style.display = "inline-block";
+
+     joinBtn.style.opacity = "1";
+     joinBtn.style.pointerEvents = "auto";
+
+  } else {
+
+     badge.style.display = "none";
+
+     joinBtn.style.opacity = "0.5";
+     joinBtn.style.pointerEvents = "none";
+  }
+}  
  
 /* ======================================
    SEARCH
@@ -2643,29 +2671,7 @@ async function openDemoPopup(course){
   }
 }
 
-async function checkLiveStatus(course){
 
-  const res = await fetch(`/api/class-status?course=${course}`);
-  const data = await res.json();
-
-  const badge = document.getElementById("live-" + course);
-  const joinBtn = document.getElementById("joinBtn-" + course);
-
-  if(data.live){
-
-     badge.style.display = "inline-block";
-
-     joinBtn.style.opacity = "1";
-     joinBtn.style.pointerEvents = "auto";
-
-  } else {
-
-     badge.style.display = "none";
-
-     joinBtn.style.opacity = "0.5";
-     joinBtn.style.pointerEvents = "none";
-  }
-}
  function deleteStudent(phone, course){
 
   if(!confirm("Are you sure to delete?")) return;
