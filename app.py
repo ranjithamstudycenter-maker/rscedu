@@ -704,6 +704,35 @@ def teacher_dashboard():
         )
     else:
         avg_rating = 0
+   
+    total_feedbacks = len(feedbacks)
+
+    low_ratings = [
+        f for f in feedbacks
+        if f.get("rating", 0) < 3
+    ]
+
+    low_count = len(low_ratings)
+
+    warning_msg = ""
+
+    # ⚠️ WARNING AFTER 6 LOW FEEDBACKS
+    if low_count >= 6 and total_feedbacks < 10:
+
+        warning_msg = (
+            "⚠️ Warning: Multiple low ratings detected. "
+            "Improve teaching quality immediately."
+        )
+
+    # ❌ DEACTIVATE AFTER 10+ LOW FEEDBACKS
+    if total_feedbacks >= 10 and avg_rating < 3:
+
+        teachers[username]["active"] = False
+
+        warning_msg = (
+            "❌ Account temporarily deactivated due to "
+            "continuous poor student feedback."
+        )
 
     return render_template(
         "teacher_Dashboard.html",
