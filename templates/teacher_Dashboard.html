@@ -20,7 +20,6 @@ body{
   color:white;
   padding:20px;
   display:flex;
-  justify-content:center;
   align-items:center;
   gap:12px;
   box-shadow:0 4px 15px rgba(0,0,0,0.15);
@@ -75,10 +74,16 @@ body{
 /* INPUT */
 input{
   width:100%;
-  padding:12px;
-  margin-bottom:15px;
-  border-radius:8px;
-  border:1px solid #ccc;
+  padding:14px;
+  margin-bottom:18px;
+  border-radius:12px;
+  border:1px solid #dbeafe;
+  font-size:15px;
+}
+
+input:focus{
+  outline:none;
+  border-color:#2563eb;
 }
 
 /* STATUS */
@@ -87,8 +92,19 @@ input{
   margin-top:10px;
 }
 
-.live{ color:green; }
-.off{ color:red; }
+.live{
+  background:#dcfce7;
+  color:#15803d;
+  padding:10px 15px;
+  border-radius:10px;
+}
+
+.off{
+  background:#fee2e2;
+  color:#dc2626;
+  padding:10px 15px;
+  border-radius:10px;
+}
 
 /* STAR */
 .star{
@@ -196,10 +212,21 @@ input{
 
 <body>
   
+<div class="header">
+
+  <img src="{{ url_for('static', filename='images/logo.jpg') }}">
+
   <div>
-    <div class="brand-title">Ranjitham Study Center</div>
-    <div class="brand-sub">Teacher Management Portal</div>
+    <div class="brand-title">
+      Ranjitham Study Center
+    </div>
+
+    <div class="brand-sub">
+      Teacher Management Portal
+    </div>
   </div>
+
+</div>
   
 <div class="container">
 <div class="card instructions">
@@ -272,9 +299,23 @@ input{
   <p><b>Course:</b> {{ course }}</p>
 </div>
 
+  {% if warning_msg %}
+<div class="card"
+     style="background:#fff3cd;
+            border-left:6px solid orange;
+            color:#7a5200;">
+
+  <h3>{{ warning_msg }}</h3>
+
+</div>
+{% endif %}
+  
 <!-- 🔥 LIVE CLASS CONTROL -->
 <div class="card live-card">
   <h2>🎥 Live Class Control</h2>
+  <p style="margin-bottom:15px;color:#555;">
+      Secure live session management
+    </p>
 
   <input type="text"
          id="meetLink"
@@ -349,8 +390,24 @@ input{
 <div class="card feedback-card">
   <h3>Recent Feedback</h3>
   {% for f in feedbacks %}
-    <p>⭐ {{ f.rating }} - "{{ f.comment }}"</p>
-  {% endfor %}
+
+      <div style="
+      background:#f8fafc;
+      padding:15px;
+      border-radius:12px;
+      margin-bottom:10px;
+      border-left:5px solid #2563eb;
+      ">
+      
+        <strong>⭐ {{ f.rating }}</strong>
+      
+        <p style="margin-top:8px;">
+          "{{ f.comment }}"
+        </p>
+      
+      </div>
+
+      {% endfor %}
 </div>
 
 </div>
@@ -424,14 +481,28 @@ function endClass() {
 const ratings = {{ feedbacks | map(attribute='rating') | list | tojson }};
 
 new Chart(document.getElementById("chart"), {
+
   type: 'line',
+
   data: {
     labels: ratings.map((_,i)=>i+1),
+
     datasets: [{
-      label: "Ratings",
+      label: "Student Ratings",
       data: ratings.length ? ratings : [0],
-      borderWidth: 2
+      borderWidth: 3,
+      tension:0.4,
+      fill:true
     }]
+  },
+
+  options:{
+    responsive:true,
+    plugins:{
+      legend:{
+        display:true
+      }
+    }
   }
 });
 
