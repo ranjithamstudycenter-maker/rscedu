@@ -1928,6 +1928,13 @@ function updateUI(course) {
   const courses = ["cbse9","cbse10","cbse11","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
 
   courses.forEach(course => {
+      // first check
+    checkLiveStatus(course);
+
+    // every 5 sec check
+    setInterval(() => {
+      checkLiveStatus(course);
+    }, 5000);
 
     const key = "demo_running_" + course;
     const startTime = localStorage.getItem(key);
