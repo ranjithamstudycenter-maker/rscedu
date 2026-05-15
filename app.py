@@ -496,24 +496,32 @@ def join_class_api():
             user["enrolled"][course] = False
             return jsonify({"error": "Plan completed. Please re-enroll."}), 403
 
-        # increment usage
-        user["hours_used"][course] = hours_used + 1
-
-        # DB update
+       # 🔥 SAVE JOIN TIME ONLY
         conn = sqlite3.connect("students.db")
         c = conn.cursor()
-
+        
+        join_time = datetime.now().timestamp()
+        
+        # 🔥 add new column if needed later
+        try:
+            c.execute("""
+            ALTER TABLE students
+            ADD COLUMN join_time REAL
+            """)
+        except:
+            pass
+        
         c.execute("""
-        UPDATE students 
-        SET hours_used=?, last_updated=? 
+        UPDATE students
+        SET join_time=?, last_updated=?
         WHERE phone=? AND course=?
         """, (
-            user["hours_used"][course],
+            join_time,
             datetime.now().strftime("%Y-%m-%d %H:%M"),
             phone,
             course
         ))
-
+        
         conn.commit()
         conn.close()
 
