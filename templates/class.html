@@ -1790,6 +1790,35 @@ const CLASS_DURATION = {
   Maths   : "1.5 Hours"
 
 };
+function canStartClass(course){
+
+  const now = new Date();
+
+  const currentMinutes =
+      now.getHours() * 60 + now.getMinutes();
+
+  const classTime =
+      CLASS_TIMINGS[course];
+
+  if(!classTime) return true;
+
+  const [time, modifier] = classTime.split(" ");
+
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if(modifier === "PM" && hours !== 12){
+      hours += 12;
+  }
+
+  if(modifier === "AM" && hours === 12){
+      hours = 0;
+  }
+
+  const classMinutes =
+      hours * 60 + minutes;
+
+  return currentMinutes >= classMinutes;
+}
     
 /* ---- STATE ---- */
 let studentStatus  = null;
