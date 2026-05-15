@@ -1315,7 +1315,7 @@ html, body{
     <h2>CBSE Maths – Class 9 <span class="live-badge" id="live-cbse9">🔴 LIVE</span></h2>
     <div class="price-box">
       <p class="price">₹250 / hour</p>
-      <p class="duration">12 Hours / Month</p>
+      <p id="duration-cbse9"></p>
     </div>
     <p class="days">📅 Tue • Thur • Sat</p>
     <div class="actions">
@@ -1365,7 +1365,7 @@ html, body{
          <div class="demo-timer" id="timer-cbse9"></div>
 
          <div class="card-footer">
-         <button class="start-time-btn">Starts at 7:00 PM</button>
+           <button class="start-time-btn" id="time-cbse9"></button>
          <a href="/teacher-login?class=cbse9" class="faculty-link">🔐 Teacher Login</a>
        </div>
   </div>
@@ -1756,6 +1756,41 @@ const analytics = getAnalytics(app);
  
 <!-- ========== MAIN SCRIPT ========== -->
 <script>
+ const CLASS_TIMINGS = {
+
+  cbse9  : "6:00 PM",
+  cbse10 : "7:00 PM",
+  cbse11 : "8:00 PM",
+  cbse12 : "9:00 PM",
+
+  engg1  : "5:00 PM",
+  engg2  : "6:30 PM",
+  engg3  : "8:30 PM",
+
+  control : "10:00 AM",
+  AGS     : "11:00 AM",
+  Maths   : "7:30 PM"
+
+};
+
+
+const CLASS_DURATION = {
+
+  cbse9  : "1 Hour",
+  cbse10 : "1.5 Hours",
+  cbse11 : "2 Hours",
+  cbse12 : "1 Hour",
+
+  engg1  : "1.5 Hours",
+  engg2  : "1.5 Hours",
+  engg3  : "2 Hours",
+
+  control : "1 Hour",
+  AGS     : "1 Hour",
+  Maths   : "1.5 Hours"
+
+};
+    
 /* ---- STATE ---- */
 let studentStatus  = null;
 let selectedCourse = "";
@@ -1923,19 +1958,22 @@ function updateUI(course) {
   }
 
 }
- window.addEventListener("load", () => {
+window.addEventListener("load", () => {
 
-  const courses = ["cbse9","cbse10","cbse11","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
+  const courses = ["cbse9", "cbse10", "cbse11", "cbse12", "engg1", "engg2", "engg3", "control", "AGS", "Maths"];
 
+  // 🔥 EACH COURSE
   courses.forEach(course => {
-      // first check
+
+    // 🔴 LIVE STATUS CHECK
     checkLiveStatus(course);
 
-    // every 5 sec check
+    // 🔄 AUTO REFRESH LIVE STATUS
     setInterval(() => {
       checkLiveStatus(course);
     }, 5000);
 
+    // ⏳ RESUME DEMO TIMER
     const key = "demo_running_" + course;
     const startTime = localStorage.getItem(key);
 
@@ -1945,8 +1983,22 @@ function updateUI(course) {
 
   });
 
-});
 
+  // ⏰ CLASS TIMINGS DISPLAY
+  Object.keys(CLASS_TIMINGS).forEach(course => {
+
+    const timeBtn =
+      document.getElementById("time-" + course);
+
+    if(timeBtn){
+      timeBtn.innerHTML =
+        "Starts at " + CLASS_TIMINGS[course];
+    }
+
+  });
+
+});
+    
  function resumeDemo(course, savedStart){
 
   const timerDiv  = document.getElementById("timer-" + course);
