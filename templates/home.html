@@ -1172,14 +1172,18 @@ if(slides && totalSlides > 0){
   import { getFirestore, collection, addDoc, getDocs } from "https://www.gstatic.com/firebasejs/12.11.0/firebase-firestore.js";
 
   const firebaseConfig = {
-    apiKey: "AIzaSyDLR3ThMxYNFMqLhYYTH_d7i6LvMkGTMZ0",
-    authDomain: "rscedu-c1d9a.firebaseapp.com",
-    projectId: "rscedu-c1d9a",
-    storageBucket: "rscedu-c1d9a.firebasestorage.app",
-    messagingSenderId: "880175431213",
-    appId: "1:880175431213:web:feab33944a5790d18e42a4"
-  };
+    apiKey: "AIzaSyApsAgXKfNbe3-u2sO2jG_JfkMpmE0tCd0",
+    authDomain: "rscedu-45e74.firebaseapp.com",
+    projectId: "rscedu-45e74",
+    storageBucket: "rscedu-45e74.firebasestorage.app",
+    messagingSenderId: "127790699547",
+    appId: "1:127790699547:web:2fc02df876a7549b86d4be",
+    measurementId: "G-VZLPGY58ZL"
 
+  };
+  firebase.initializeApp(firebaseConfig);
+  const auth = firebase.auth();
+  const analytics = getAnalytics(app);
   const app = initializeApp(firebaseConfig);
   const db = getFirestore(app);
 
