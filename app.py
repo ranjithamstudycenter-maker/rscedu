@@ -888,6 +888,7 @@ def teacher_dashboard():
                 "students": 0,
                 "pending": 0,
                 "paid": 0,
+                "class_count": 0,
                 "gpay": teachers[teacher].get("gpay", "Not Added"),
                 "month": datetime.now().strftime("%B"),
                 "year": datetime.now().strftime("%Y"),
