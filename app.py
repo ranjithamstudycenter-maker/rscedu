@@ -1067,19 +1067,22 @@ def admin_dashboard():
             summary[teacher] = {
 
                 "pending": 0,
-
                 "paid": 0,
+                "students": 0,
+                "course": s["course"],
+                "class_count": s.get("class_count", 0),
+                "strength": seat_data.get(
+                    s["course"], {}
+                ).get("total", 30),
 
-                "students": 0
-
+                "gpay": teachers[teacher].get(
+                    "gpay",
+                    "Not Added"
+                ),
+                "month": datetime.now().strftime("%B"),
+                "year": datetime.now().strftime("%Y")
             }
-    active_classes = 0
     
-    for t in teachers.values():
-    
-        if t.get("active"):
-    
-            active_classes += 1
         summary[teacher]["students"] += 1
 
         if s["paid_to_faculty"]:
@@ -1089,6 +1092,14 @@ def admin_dashboard():
         else:
 
             summary[teacher]["pending"] += s["faculty_share"]
+
+active_classes = 0
+
+for t in teachers.values():
+
+    if t.get("active"):
+
+        active_classes += 1
 
     return render_template(
 
