@@ -1101,15 +1101,15 @@ for t in teachers.values():
 
         active_classes += 1
 
-    return render_template(
+return render_template(
 
-        "admin_dashboard.html",
+    "admin_dashboard.html",
 
-        summary=summary,
-        active_classes=active_classes,
-        salary_db=salary_db
+    summary=summary,
+    active_classes=active_classes,
+    salary_db=salary_db
 
-    )
+)
     
 
 from werkzeug.utils import secure_filename
