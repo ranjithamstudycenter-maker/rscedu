@@ -73,7 +73,8 @@ teachers = {
         "password": "M10@2026",
         "course": "cbse10",
         "meet_link": "",
-        "active": True
+        "active": True,
+        "gpay": teachers[teacher].get("gpay", "Not Added")
     },
     "faculty2": {
         "password": "Faculty2@2026",
@@ -859,7 +860,7 @@ def teacher_dashboard():
 
     monthly_revenue = 0
     salary_credited = 0
-    pending_salary = 0
+    
 
     # =========================
     # FACULTY SUMMARY
