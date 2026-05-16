@@ -896,7 +896,7 @@ def teacher_dashboard():
             }
 
         summary[teacher]["students"] += 1
-
+        summary[teacher]["class_count"] += s.get("class_count", 0)
         monthly_revenue += s["amount"]
 
         salary_credited += s["faculty_share"]
