@@ -1056,60 +1056,62 @@ def admin_dashboard():
     # 🔥 FACULTY SALARY SUMMARY
     # =====================================
 
-    summary = {}
+summary = {}
 
-    for s in salary_db:
+for s in salary_db:
 
-        teacher = s["teacher"]
+    teacher = s["teacher"]
 
-        if teacher not in summary:
+    if teacher not in summary:
 
-            summary[teacher] = {
+        summary[teacher] = {
 
-                "pending": 0,
-                "paid": 0,
-                "students": 0,
-                "course": s["course"],
-                "class_count": s.get("class_count", 0),
-                "strength": seat_data.get(
-                    s["course"], {}
-                ).get("total", 30),
+            "pending": 0,
+            "paid": 0,
+            "students": 0,
+            "course": s["course"],
+            "class_count": s.get("class_count", 0),
 
-                "gpay": teachers[teacher].get(
-                    "gpay",
-                    "Not Added"
-                ),
-                "month": datetime.now().strftime("%B"),
-                "year": datetime.now().strftime("%Y")
-            }
-    
-        summary[teacher]["students"] += 1
+            "strength": seat_data.get(
+                s["course"], {}
+            ).get("total", 30),
 
-        if s["paid_to_faculty"]:
+            "gpay": teachers[teacher].get(
+                "gpay",
+                "Not Added"
+            ),
 
-            summary[teacher]["paid"] += s["faculty_share"]
+            "month": datetime.now().strftime("%B"),
+            "year": datetime.now().strftime("%Y")
+        }
 
-        else:
+    summary[teacher]["students"] += 1
 
-            summary[teacher]["pending"] += s["faculty_share"]
+    if s["paid_to_faculty"]:
 
-        active_classes = 0
-        
-        for t in teachers.values():
-        
-            if t.get("active"):
-        
-                active_classes += 1
-        
-        return render_template(
-        
-            "admin_dashboard.html",
-        
-            summary=summary,
-            active_classes=active_classes,
-            salary_db=salary_db
-        
-        )
+        summary[teacher]["paid"] += s["faculty_share"]
+
+    else:
+
+        summary[teacher]["pending"] += s["faculty_share"]
+
+active_classes = 0
+
+for t in teachers.values():
+
+    if t.get("active"):
+
+        active_classes += 1
+
+return render_template(
+
+    "admin_dashboard.html",
+
+    summary=summary,
+    active_classes=active_classes,
+    salary_db=salary_db
+
+)
     
 
 from werkzeug.utils import secure_filename
