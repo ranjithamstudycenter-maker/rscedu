@@ -541,7 +541,7 @@ iframe{
     <th>Paid Salary</th>
     <th>Pending Salary</th>
     <th>gpay</th>
-    <th>Action</th>
+    <th>Payment Status</th>
    
 </tr>
 
@@ -584,26 +584,37 @@ iframe{
     <!-- Action -->
     <td>
 
-        {% if data.pending > 0 %}
+{% if (data.paid + data.pending) == 0 %}
 
-        <a href="/mark-paid/{{ teacher }}">
+    <span style="color:#666;font-weight:bold;">
+        No Salary
+    </span>
 
-            <button class="pay-btn">
-                Mark as Paid
-            </button>
+{% elif data.pending > 0 and not data.get("completed") %}
 
-        </a>
+    <span style="color:orange;font-weight:bold;">
+        Not Done
+    </span>
 
-        {% else %}
+{% elif data.pending > 0 and data.get("completed") %}
 
-        <span style="color:green;font-weight:bold;">
-            Done
-        </span>
+    <a href="/mark-paid/{{ teacher }}">
 
-        {% endif %}
+        <button class="pay-btn">
+            Mark as Paid
+        </button>
 
-    </td>
+    </a>
 
+{% else %}
+
+    <span style="color:green;font-weight:bold;">
+        Done
+    </span>
+
+{% endif %}
+
+</td>
 </tr>
 
 {% endfor %}
