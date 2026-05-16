@@ -485,16 +485,23 @@ iframe{
 
         <div class="faculty-card">
 
-            <h3>{{ teacher }}</h3>
-            <p>Course : {{ data.course }}</p>
-            <p>Students : {{ data.students }}</p>
+            <p><b>Course:</b> {{ data.course }}</p>
+
+            <p><b>Students:</b> {{ data.students }}</p>
+
+            <p><b>Month:</b> {{ data.month }} {{ data.year }}</p>
             <p>
-                Status :
+                <b>Status:</b>
                 <span style="color:green;font-weight:600;">
-               {% if data.pending >= 0 %}
+                {% if data.pending >= 0 %}
                 Active
                 {% endif %}
                 </span>
+
+                <p>
+                  <b>GPay:</b>
+                  {{ data.gpay }}
+                </p>        
                 
             </div>
     
@@ -542,12 +549,12 @@ iframe{
 
 <td>{{ data.students }}</td>
 
-<td>12</td>
+<td>{{ data.class_count if data.class_count else 0 }}</td>
 
-<td>June 2026</td>
+<td>{{ data.month }} {{ data.year }}</td>
 
-<td>
-₹{{ data.pending + data.paid }}
+<td style="color:#2563eb;font-weight:bold;">
+₹{{ data.paid + data.pending }}
 </td>
 
 <td style="color:green;font-weight:bold;">
@@ -557,8 +564,6 @@ iframe{
 <td style="color:orange;font-weight:bold;">
 ₹{{ data.pending }}
 </td>
-
-<td>{{ data.gpay }}</td>
 </p>
 <td style="color:orange;font-weight:bold;">
 Pending Salary : ₹{{ data.pending }}
@@ -582,22 +587,37 @@ Paid Salary :
 Paid Salary : ₹{{ data.paid }}
 </td>
 <td>
+<td>
+
+{% if data.pending > 0 %}
 
 <a href="/mark-paid/{{ teacher }}">
 
 <button class="pay-btn">
+
 Mark as Paid
+
 </button>
 
 </a>
 
+{% else %}
+
+<span style="color:green;font-weight:bold;">
+Done
+</span>
+
+{% endif %}
+
 </td>
+
+<td>{{ data.gpay }}</td>
 
 </tr>
 
 {% endfor %}
+    
 
-</table>
 
 </div>
 
