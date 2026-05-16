@@ -1338,24 +1338,7 @@ html, body{
            <button id="joinBtn-cbse9" class="btn btn-join" onclick="joinClass('cbse9')">Join Now</button>
          
     </div>
-            <!-- 🔥 FEEDBACK (hidden initially) -->
-           <div id="feedback_cbse9" style="display:none; margin-top:15px;">
-         
-             <h4>Give Feedback</h4>
-         
-             <select id="rating_cbse10">
-               <option value="5">⭐⭐⭐⭐⭐</option>
-               <option value="4">⭐⭐⭐⭐</option>
-               <option value="3">⭐⭐⭐</option>
-               <option value="2">⭐⭐</option>
-               <option value="1">⭐</option>
-             </select>
-         
-             <input type="text" id="comment_cbse9" placeholder="Your feedback">
-         
-             <button onclick="submitFeedback('cbse9')">Submit</button>
-         
-           </div>
+           
    <div id="msg-cbse9" class="course-msg"></div>
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
@@ -2359,7 +2342,16 @@ async function joinClass(course) {
   } catch(e) {
     showMessage("❌ Error joining");
   }
+    if(data.show_feedback){
+
+   openFeedbackPopup(course);
+
+   showMessage("📚 Monthly classes completed");
+
+   return;
 }
+}
+    
  function showPhonePopup(course, type){
   currentCourse = course;
   step = 1;
@@ -2382,6 +2374,52 @@ async function joinClass(course) {
   } else {
     btn.textContent = "Send OTP";
   }
+}
+
+    async function openFeedbackPopup(course){
+
+   const res = await fetch(`/get-teacher?course=${course}`);
+   const data = await res.json();
+
+   document.getElementById("feedbackTeacher").value =
+      data.teacher;
+
+   document.getElementById("feedbackCourse").value =
+      course;
+
+   document.getElementById("feedbackPopup").style.display =
+      "flex";
+}
+    async function submitTeacherFeedback(){
+
+   const teacher =
+      document.getElementById("feedbackTeacher").value;
+
+   const course =
+      document.getElementById("feedbackCourse").value;
+
+   const rating =
+      document.getElementById("feedbackRating").value;
+
+   const comment =
+      document.getElementById("feedbackComment").value;
+
+   const formData = new FormData();
+
+   formData.append("teacher", teacher);
+   formData.append("course", course);
+   formData.append("rating", rating);
+   formData.append("comment", comment);
+
+   await fetch("/submit-teacher-feedback", {
+      method: "POST",
+      body: formData
+   });
+
+   alert("Feedback submitted successfully");
+
+   document.getElementById("feedbackPopup").style.display =
+      "none";
 }
 /* ======================================
    LIVE POPUP
@@ -3030,7 +3068,36 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 </script>
- 
+ <div id="feedbackPopup" class="popup">
+
+  <div class="popup-content">
+
+    <h3>⭐ Give Teacher Feedback</h3>
+
+    <input type="text" id="feedbackTeacher" readonly>
+
+    <input type="text" id="feedbackCourse" readonly>
+
+    <select id="feedbackRating">
+      <option value="5">⭐⭐⭐⭐⭐</option>
+      <option value="4">⭐⭐⭐⭐</option>
+      <option value="3">⭐⭐⭐</option>
+      <option value="2">⭐⭐</option>
+      <option value="1">⭐</option>
+    </select>
+
+    <textarea
+      id="feedbackComment"
+      placeholder="Write your feedback">
+    </textarea>
+
+    <button onclick="submitTeacherFeedback()">
+      Submit Feedback
+    </button>
+
+  </div>
+
+</div>
  <div id="demoPopup" style="
   display:none;
   position:fixed;
