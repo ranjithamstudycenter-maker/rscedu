@@ -954,9 +954,51 @@ def admin():
 
 @app.route("/admin-dashboard")
 def admin_dashboard():
+
     if not session.get("admin"):
         return redirect("/admin")
-    return render_template("admin_dashboard.html")
+
+    # =====================================
+    # 🔥 FACULTY SALARY SUMMARY
+    # =====================================
+
+    summary = {}
+
+    for s in salary_db:
+
+        teacher = s["teacher"]
+
+        if teacher not in summary:
+
+            summary[teacher] = {
+
+                "pending": 0,
+
+                "paid": 0,
+
+                "students": 0
+
+            }
+
+        summary[teacher]["students"] += 1
+
+        if s["paid_to_faculty"]:
+
+            summary[teacher]["paid"] += s["faculty_share"]
+
+        else:
+
+            summary[teacher]["pending"] += s["faculty_share"]
+
+    return render_template(
+
+        "admin_dashboard.html",
+
+        summary=summary,
+
+        salary_db=salary_db
+
+    )
     
 
 from werkzeug.utils import secure_filename
