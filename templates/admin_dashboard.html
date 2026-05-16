@@ -329,27 +329,35 @@ iframe{
     width:100%;
     border-collapse:collapse;
     margin-top:20px;
+    overflow-x:auto;
+}
+
+.salary-table th,
+.salary-table td{
+    padding:16px 10px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+    vertical-align:middle;
 }
 
 .salary-table th{
     background:#2563eb;
     color:white;
-    padding:14px;
+    font-size:15px;
 }
 
 .salary-table td{
-    padding:14px;
-    text-align:center;
-    border-bottom:1px solid #eee;
+    font-size:15px;
 }
 
 .pay-btn{
     background:#10b981;
     color:white;
     border:none;
-    padding:10px 16px;
-    border-radius:10px;
+    padding:8px 14px;
+    border-radius:8px;
     cursor:pointer;
+    font-weight:600;
 }
 .section-title{
    text-align:center;
@@ -541,85 +549,64 @@ iframe{
 
 <tr>
 
-<td>{{ teacher }}</td>
+    <td>{{ teacher }}</td>
 
-<td>{{ data.course }}</td>
+    <td>{{ data.course }}</td>
 
-<td>{{ data.strength }}</td>
+    <td>{{ data.strength }}</td>
 
-<td>{{ data.students }}</td>
+    <td>{{ data.students }}</td>
 
-<td>{{ data.class_count if data.class_count else 0 }}</td>
+    <td>{{ data.class_count if data.class_count else 0 }}</td>
 
-<td>{{ data.month }} {{ data.year }}</td>
+    <td>{{ data.month }} {{ data.year }}</td>
 
-<td style="color:#2563eb;font-weight:bold;">
-₹{{ data.paid + data.pending }}
-</td>
+    <!-- Salary credited -->
+    <td style="color:#2563eb;font-weight:bold;">
+        ₹{{ data.paid + data.pending }}
+    </td>
 
-<!-- GPay -->
-<td>{{ data.gpay }}</td>
-    
-<td style="color:green;font-weight:bold;">
-₹{{ data.paid }}
-</td>
+    <!-- Paid -->
+    <td style="color:green;font-weight:bold;">
+        ₹{{ data.paid }}
+    </td>
 
-<td style="color:orange;font-weight:bold;">
-₹{{ data.pending }}
-</td>
-</p>
-<td style="color:orange;font-weight:bold;">
-Pending Salary : ₹{{ data.pending }}
-</td>
+    <!-- Pending -->
+    <td style="color:orange;font-weight:bold;">
+        ₹{{ data.pending }}
+    </td>
 
-<p>
-Pending Salary :
-<span style="color:orange;font-weight:600;">
-₹{{ data.pending }}
-</span>
-</p>
+    <!-- Gpay -->
+    <td>
+        {{ data.gpay }}
+    </td>
 
-<p>
-Paid Salary :
-<span style="color:green;font-weight:600;">
-₹{{ data.paid }}
-</span>
-</p>
-    
-<td style="color:green;font-weight:bold;">
-Paid Salary : ₹{{ data.paid }}
-</td>
-<td>
-<td>
+    <!-- Action -->
+    <td>
 
-{% if data.pending > 0 %}
+        {% if data.pending > 0 %}
 
-<a href="/mark-paid/{{ teacher }}">
+        <a href="/mark-paid/{{ teacher }}">
 
-<button class="pay-btn">
+            <button class="pay-btn">
+                Mark as Paid
+            </button>
 
-Mark as Paid
+        </a>
 
-</button>
+        {% else %}
 
-</a>
+        <span style="color:green;font-weight:bold;">
+            Done
+        </span>
 
-{% else %}
+        {% endif %}
 
-<span style="color:green;font-weight:bold;">
-Done
-</span>
-
-{% endif %}
-
-</td>
-
-<td>{{ data.gpay }}</td>
+    </td>
 
 </tr>
 
 {% endfor %}
-    
 
 
 </div>
