@@ -493,7 +493,7 @@ def payment_success_api():
         "student" : user.get("name", "Student"),
 
         "course"  : course,
-
+        
         "teacher" : teacher,
 
         "amount"  : amount,
@@ -503,6 +503,8 @@ def payment_success_api():
         "admin_share"   : admin_share,
 
         "paid_to_faculty" : False,
+
+        "class_count": 0,
 
         "date" : str(datetime.now())
 
@@ -715,6 +717,12 @@ def end_class():
                 WHERE phone=? AND course=?
                 """, (
                     hours_used + 1,
+                    # 🔥 update salary class count
+                    for s in salary_db:
+                    
+                        if s["course"] == course:
+                    
+                            s["class_count"] += 1
                     datetime.now().strftime("%Y-%m-%d %H:%M"),
                     phone,
                     course
