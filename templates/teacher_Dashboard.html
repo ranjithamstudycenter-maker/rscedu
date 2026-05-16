@@ -309,7 +309,95 @@ input:focus{
 
 </div>
 {% endif %}
-  
+
+<!-- 💰 EARNINGS -->
+
+<div class="card">
+
+  <h2>💰 Earnings Overview</h2>
+
+  <div class="grid">
+
+    <div class="metric">
+      <h1>₹{{ total_earnings }}</h1>
+      <p>Total Earnings</p>
+    </div>
+
+    <div class="metric">
+      <h1>₹{{ pending_salary }}</h1>
+      <p>Pending Salary</p>
+    </div>
+
+    <div class="metric">
+      <h1>₹{{ paid_salary }}</h1>
+      <p>Paid Salary</p>
+    </div>
+
+  </div>
+
+</div>
+
+<div class="card">
+
+<h2>📜 Payment History</h2>
+
+<table style="width:100%;border-collapse:collapse;">
+
+<tr style="background:#0b5394;color:white;">
+
+  <th style="padding:12px;">Student</th>
+
+  <th>Course</th>
+
+  <th>Total</th>
+
+  <th>Your Share</th>
+
+  <th>Status</th>
+
+</tr>
+
+{% for s in salary_records %}
+
+<tr style="text-align:center;border-bottom:1px solid #ddd;">
+
+  <td style="padding:10px;">
+    {{ s.student }}
+  </td>
+
+  <td>{{ s.course }}</td>
+
+  <td>₹{{ s.amount }}</td>
+
+  <td>₹{{ s.faculty_share }}</td>
+
+  <td>
+
+    {% if s.paid_to_faculty %}
+
+      <span style="color:green;font-weight:bold;">
+        Paid
+      </span>
+
+    {% else %}
+
+      <span style="color:orange;font-weight:bold;">
+        Pending
+      </span>
+
+    {% endif %}
+
+  </td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
+
+
 <!-- 🔥 LIVE CLASS CONTROL -->
 <div class="card live-card">
   <h2>🎥 Live Class Control</h2>
