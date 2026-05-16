@@ -194,6 +194,7 @@
 
 .logo-area h2{
    color:#1e3a8a;
+   align-items:center;
 }
 
 /* TABS */
@@ -350,12 +351,13 @@ iframe{
     border-radius:10px;
     cursor:pointer;
 }
-.admin-logo{
-   width:55px;
-   height:55px;
-   border-radius:50%;
+.section-title{
+   text-align:center;
+   margin-bottom:25px;
+   color:#1e3a8a;
 }
         
+     
 </style>
 </head>
 
@@ -386,14 +388,11 @@ iframe{
 
 
 <div class="topbar">
-
    <div class="logo-area">
-      <img src="/static/images/logo.jpg" class="admin-logo">
-      <h2>RSC Admin Dashboard</h2>
+       <h2>Admin Dashboard</h2>
    </div>
 
    <div class="admin-right">
-      <span>👨‍💼 Admin</span>
       <a href="/logout">Logout</a>
    </div>
 
@@ -416,20 +415,44 @@ iframe{
 
     <div id="dashboard" class="tab-content">
 
-    <div class="dashboard-grid">
+   <div class="dashboard-grid">
 
-        <div class="stat-card">
-            <h3>Total Faculty</h3>
-            <h1>{{ summary|length }}</h1>
-        </div>
-
-        <div class="stat-card">
-            <h3>Total Salary Records</h3>
-            <h1>{{ salary_db|length }}</h1>
-        </div>
-
+    <div class="stat-card">
+        <h3>Total Courses</h3>
+        <h1>{{ total_courses }}</h1>
     </div>
 
+    <div class="stat-card">
+        <h3>Active Classes</h3>
+        <h1>{{ active_classes }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Total Faculties</h3>
+        <h1>{{ total_faculties }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Total Students</h3>
+        <h1>{{ total_students }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Monthly Revenue</h3>
+        <h1>₹{{ monthly_revenue }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Salary Credited</h3>
+        <h1>₹{{ salary_credited }}</h1>
+    </div>
+
+    <div class="stat-card">
+        <h3>Pending Salary</h3>
+        <h1>₹{{ pending_salary }}</h1>
+    </div>
+
+</div>
 </div>
 
 <div id="uploads" class="tab-content">
@@ -454,24 +477,18 @@ iframe{
 
     <div class="faculty-box">
 
-        <h2>👨‍🏫 Faculty Management</h2>
+        <h2>👨‍🏫 HR Management</h2>
 
         {% for teacher, data in summary.items() %}
 
         <div class="faculty-card">
 
             <h3>{{ teacher }}</h3>
-
+            
+            <p>Course : {{ data.course }}</p>
             <p>Students : {{ data.students }}</p>
-
-            <p style="color:orange;">
-                Pending Salary : ₹{{ data.pending }}
-            </p>
-
-            <p style="color:green;">
-                Paid Salary : ₹{{ data.paid }}
-            </p>
-
+            <p>Status : Active</p>
+            
         </div>
 
         {% endfor %}
@@ -484,22 +501,26 @@ iframe{
 
 <div class="card">
 
-<h2>💰 Faculty Salary Management</h2>
+<h2 class="section-title">
+💰 Faculty Salary Management
+</h2>
 
 <table class="salary-table">
 
 <tr>
 
-<th>Teacher</th>
-
-<th>Students</th>
-
-<th>Pending</th>
-
-<th>Paid</th>
-
-<th>Action</th>
-
+    <th>Teacher</th>
+    <th>Class</th>
+    <th>Strength</th>
+    <th>Enrolled</th>
+    <th>Class count</th>
+    <th>Month </th>
+    <th>Salary credited</th>
+    <th>Paid</th>
+    <th>Pending</th>
+    <th>Action</th>
+    <th>Gpay number</th>
+    
 </tr>
 
 {% for teacher, data in summary.items() %}
@@ -511,11 +532,11 @@ iframe{
 <td>{{ data.students }}</td>
 
 <td style="color:orange;font-weight:bold;">
-₹{{ data.pending }}
+Pending Salary : ₹{{ data.pending }}
 </td>
 
 <td style="color:green;font-weight:bold;">
-₹{{ data.paid }}
+Paid Salary : ₹{{ data.paid }}
 </td>
 
 <td>
