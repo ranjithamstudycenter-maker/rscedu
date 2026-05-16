@@ -1093,23 +1093,23 @@ def admin_dashboard():
 
             summary[teacher]["pending"] += s["faculty_share"]
 
-active_classes = 0
-
-for t in teachers.values():
-
-    if t.get("active"):
-
-        active_classes += 1
-
-return render_template(
-
-    "admin_dashboard.html",
-
-    summary=summary,
-    active_classes=active_classes,
-    salary_db=salary_db
-
-)
+        active_classes = 0
+        
+        for t in teachers.values():
+        
+            if t.get("active"):
+        
+                active_classes += 1
+        
+        return render_template(
+        
+            "admin_dashboard.html",
+        
+            summary=summary,
+            active_classes=active_classes,
+            salary_db=salary_db
+        
+        )
     
 
 from werkzeug.utils import secure_filename
