@@ -1091,6 +1091,30 @@ def admin_dashboard():
 
             summary[teacher]["pending"] += s["faculty_share"]
 
+    # 🔥 if no salary data yet
+    if not summary:
+
+        for teacher, t in teachers.items():
+
+            summary[teacher] = {
+
+                "pending": 0,
+                "paid": 0,
+                "students": 0,
+                "course": t.get("course", "Not Assigned"),
+                "class_count": 0,
+
+                "strength": seat_data.get(
+                    t.get("course", ""),
+                    {}
+                ).get("total", 30),
+
+                "gpay": t.get("gpay", "Not Added"),
+
+                "month": datetime.now().strftime("%B"),
+                "year": datetime.now().strftime("%Y")
+            }
+
     active_classes = 0
 
     for t in teachers.values():
@@ -1108,7 +1132,6 @@ def admin_dashboard():
         salary_db=salary_db
 
     )
-    
 
 from werkzeug.utils import secure_filename
 
