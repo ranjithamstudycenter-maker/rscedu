@@ -488,11 +488,36 @@ iframe{
             <h3>{{ teacher }}</h3>
             <p>Course : {{ data.course }}</p>
             <p>Students : {{ data.students }}</p>
-            <p>Status : Active</p>
-            
-        </div>
-
-        {% endfor %}
+            <p>
+                Status :
+                <span style="color:green;font-weight:600;">
+                Active
+                </span>
+                </p>
+                <td style="color:orange;font-weight:bold;">
+                Pending Salary : ₹{{ data.pending }}
+                </td>
+                
+                <p>
+                Pending Salary :
+                <span style="color:orange;font-weight:600;">
+                ₹{{ data.pending }}
+                </span>
+                </p>
+                
+                <p>
+                Paid Salary :
+                <span style="color:green;font-weight:600;">
+                ₹{{ data.paid }}
+                </span>
+                </p>
+                    
+                <td style="color:green;font-weight:bold;">
+                Paid Salary : ₹{{ data.paid }}
+                </td>
+            </div>
+    
+            {% endfor %}
 
     </div>
 
@@ -530,24 +555,36 @@ iframe{
 
 <td>{{ teacher }}</td>
 
+<td>{{ data.course }}</td>
+
+<td>30</td>
+
 <td>{{ data.students }}</td>
 
-<td style="color:orange;font-weight:bold;">
-Pending Salary : ₹{{ data.pending }}
+<td>12</td>
+
+<td>June 2026</td>
+
+<td>
+₹{{ data.pending + data.paid }}
 </td>
 
 <td style="color:green;font-weight:bold;">
-Paid Salary : ₹{{ data.paid }}
+₹{{ data.paid }}
 </td>
+
+<td style="color:orange;font-weight:bold;">
+₹{{ data.pending }}
+</td>
+
+<td>{{ data.gpay }}</td>
 
 <td>
 
 <a href="/mark-paid/{{ teacher }}">
 
 <button class="pay-btn">
-
 Mark as Paid
-
 </button>
 
 </a>
