@@ -70,6 +70,85 @@ function loadPage(url){
 // default load
 loadPage('/upload');
 </script>
+<!-- 💰 FACULTY SALARY MANAGEMENT -->
 
+<div class="card">
+
+<h2>💰 Faculty Salary Management</h2>
+
+<table style="
+width:100%;
+border-collapse:collapse;
+margin-top:20px;
+">
+
+<tr style="
+background:#0b5394;
+color:white;
+">
+
+<th style="padding:12px;">Teacher</th>
+
+<th>Students</th>
+
+<th>Pending</th>
+
+<th>Paid</th>
+
+<th>Action</th>
+
+</tr>
+
+{% for teacher, data in summary.items() %}
+
+<tr style="
+text-align:center;
+border-bottom:1px solid #ddd;
+">
+
+<td style="padding:12px;">
+{{ teacher }}
+</td>
+
+<td>
+{{ data.students }}
+</td>
+
+<td style="color:orange;font-weight:bold;">
+₹{{ data.pending }}
+</td>
+
+<td style="color:green;font-weight:bold;">
+₹{{ data.paid }}
+</td>
+
+<td>
+
+<a href="/mark-paid/{{ teacher }}">
+
+<button style="
+background:green;
+color:white;
+border:none;
+padding:8px 14px;
+border-radius:8px;
+cursor:pointer;
+">
+
+Mark as Paid
+
+</button>
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
+</div>
 </body>
 </html>
