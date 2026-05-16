@@ -74,7 +74,7 @@ teachers = {
         "course": "cbse10",
         "meet_link": "",
         "active": True,
-        "gpay": teachers[teacher].get("gpay", "Not Added")
+        "gpay": "7702616245"
     },
     "faculty2": {
         "password": "Faculty2@2026",
