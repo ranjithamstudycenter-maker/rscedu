@@ -7,50 +7,142 @@
 <style>
 body { font-family:Poppins; margin:0; background:#f5f7fa; }
 
-.sidebar {
-    width:220px;
-    height:100vh;
-    background:#0b5394;
-    color:white;
-    position:fixed;
-    padding-top:20px;
+body{
+   margin:0;
+   font-family:Poppins;
+   background:#f4f7fb;
 }
 
-.sidebar h3 {
-    text-align:center;
+/* TOPBAR */
+
+.topbar{
+   display:flex;
+   justify-content:space-between;
+   align-items:center;
+
+   padding:18px 40px;
+
+   background:white;
+
+   box-shadow:0 4px 20px rgba(0,0,0,0.08);
 }
 
-.sidebar button {
-    width:100%;
-    padding:12px;
-    border:none;
-    background:none;
-    color:white;
-    cursor:pointer;
+.logo-area{
+   display:flex;
+   align-items:center;
+   gap:15px;
 }
 
-.sidebar button:hover {
-    background:#073763;
+.logo-area h2{
+   color:#1e3a8a;
 }
 
-.content {
-    margin-left:220px;
-    padding:20px;
+/* TABS */
+
+.tabs{
+   display:flex;
+   gap:15px;
+
+   padding:20px 30px;
+
+   background:white;
+
+   border-bottom:1px solid #ddd;
 }
 
-iframe {
-    width:100%;
-    height:85vh;
-    border:none;
-    background:white;
-    border-radius:10px;
+.tabs button{
+
+   border:none;
+
+   background:#eef2ff;
+
+   padding:12px 22px;
+
+   border-radius:12px;
+
+   cursor:pointer;
+
+   font-weight:600;
+
+   transition:0.3s;
 }
 
+.tabs button:hover{
+   background:#2563eb;
+   color:white;
+}
+
+.active-tab{
+   background:#2563eb !important;
+   color:white !important;
+}
+
+/* CONTENT */
+
+.tab-content{
+
+   display:none;
+
+   padding:30px;
+}
 </style>
 </head>
 
 <body>
+<div class="topbar">
 
+   <div class="logo-area">
+      <img src="/static/logo.png">
+      <h2>RSC Admin Dashboard</h2>
+   </div>
+
+   <div class="admin-right">
+      <span>👨‍💼 Admin</span>
+      <a href="/logout">Logout</a>
+   </div>
+
+</div>
+    <div class="tabs">
+
+   <button onclick="showTab('dashboard')">📊 Dashboard</button>
+
+   <button onclick="showTab('uploads')">📁 Uploads</button>
+
+   <button onclick="showTab('students')">🎓 Students</button>
+
+   <button onclick="showTab('feedback')">⭐ Feedback</button>
+
+   <button onclick="showTab('faculty')">👨‍🏫 Faculty</button>
+
+   <button onclick="showTab('salary')">💰 Salary</button>
+
+</div>
+
+    <div id="dashboard" class="tab-content">
+   DASHBOARD DETAILS
+</div>
+
+<div id="uploads" class="tab-content">
+   UPLOAD DETAILS
+</div>
+
+<div id="students" class="tab-content">
+   STUDENT DETAILS
+</div>
+
+<div id="feedback" class="tab-content">
+   FEEDBACK DETAILS
+</div>
+
+<div id="faculty" class="tab-content">
+   FACULTY DETAILS
+</div>
+
+<div id="salary" class="tab-content">
+   SALARY DETAILS
+</div>
+
+    
 <div class="sidebar">
     <h3>Admin</h3>
     <button onclick="loadPage('/upload')">📂 Upload</button>
@@ -69,6 +161,40 @@ function loadPage(url){
 
 // default load
 loadPage('/upload');
+</script>
+
+    <script>
+
+function showTab(tabId){
+
+   // hide all
+   document.querySelectorAll(".tab-content")
+   .forEach(tab => {
+      tab.style.display = "none";
+   });
+
+   // remove active
+   document.querySelectorAll(".tabs button")
+   .forEach(btn => {
+      btn.classList.remove("active-tab");
+   });
+
+   // show selected
+   document.getElementById(tabId)
+   .style.display = "block";
+
+   // activate button
+   event.target.classList.add("active-tab");
+}
+
+// default
+document.addEventListener("DOMContentLoaded", () => {
+
+   document.getElementById("dashboard")
+   .style.display = "block";
+
+});
+
 </script>
 <!-- 💰 FACULTY SALARY MANAGEMENT -->
 
