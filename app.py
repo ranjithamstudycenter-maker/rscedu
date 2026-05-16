@@ -478,6 +478,34 @@ def payment_success_api():
     except Exception as e:
         print("CSV error:", e)
 
+        # =========================================
+    # 🔥 FACULTY PAYMENT SPLIT
+    # =========================================
+
+    teacher = COURSE_TEACHERS.get(course, "Unknown")
+
+    faculty_share = round(amount * 0.60, 2)
+    admin_share   = round(amount * 0.40, 2)
+
+    salary_db.append({
+
+        "student" : user.get("name", "Student"),
+
+        "course"  : course,
+
+        "teacher" : teacher,
+
+        "amount"  : amount,
+
+        "faculty_share" : faculty_share,
+
+        "admin_share"   : admin_share,
+
+        "paid_to_faculty" : False,
+
+        "date" : str(datetime.now())
+
+    })
     return jsonify({
         "status": "success",
         "enrolled": True,
@@ -760,13 +788,53 @@ def teacher_dashboard():
             "continuous poor student feedback."
         )
 
+        # =====================================
+    # 🔥 FACULTY EARNINGS
+    # =====================================
+
+    teacher_salary = [
+
+        s for s in salary_db
+        if s.get("teacher") == username
+
+    ]
+
+    total_earnings = sum(
+        s.get("faculty_share", 0)
+        for s in teacher_salary
+    )
+
+    pending_salary = sum(
+
+        s.get("faculty_share", 0)
+
+        for s in teacher_salary
+
+        if not s.get("paid_to_faculty")
+
+    )
+
+    paid_salary = sum(
+
+        s.get("faculty_share", 0)
+
+        for s in teacher_salary
+
+        if s.get("paid_to_faculty")
+
+    )
     return render_template(
         "teacher_Dashboard.html",
         teacher_name=username,
         course=teacher.get("course", ""),
         meet_link=teacher.get("meet_link", ""),
         feedbacks=feedbacks,
-        avg_rating=avg_rating
+        avg_rating=avg_rating,
+        salary_records=teacher_salary,
+        total_earnings=total_earnings,
+        pending_salary=pending_salary,
+        paid_salary=paid_salary.
+        
     )
 
 @app.route("/teacher-logout")
