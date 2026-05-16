@@ -504,6 +504,8 @@ def payment_success_api():
 
         "paid_to_faculty" : False,
 
+        "completed": False,
+
         "class_count": 0,
 
         "date" : str(datetime.now())
@@ -727,6 +729,9 @@ def end_class():
                     if s["course"] == course:
                 
                         s["class_count"] += 1
+                        if s["class_count"] >= classes_per_month:
+
+                            s["completed"] = True
 
     conn.commit()
     conn.close()
