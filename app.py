@@ -717,17 +717,17 @@ def end_class():
                 WHERE phone=? AND course=?
                 """, (
                     hours_used + 1,
-                    # 🔥 update salary class count
-                    for s in salary_db:
-                    
-                        if s["course"] == course:
-                    
-                            s["class_count"] += 1
                     datetime.now().strftime("%Y-%m-%d %H:%M"),
                     phone,
                     course
                 ))
-    
+                # 🔥 update salary class count
+                for s in salary_db:
+                
+                    if s["course"] == course:
+                
+                        s["class_count"] += 1
+
     conn.commit()
     conn.close()
 
