@@ -248,6 +248,31 @@
 </head>
 
 <body>
+
+<!-- ==========================
+         NAVBAR
+    ========================== -->
+    <nav class="navbar"> 
+        <div class="nav-left"> 
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo"> 
+            <div class="brand-text"> 
+                <h1>RANJITHAM STUDY CENTER</h1> 
+                <p>Learn • Practice • Master Your Skills</p> 
+            </div>
+        </div>
+        <div class="nav-center"> 
+            <a href="{{ url_for('home') }}">Home</a> 
+            <a href="{{ url_for('about') }}">About</a> 
+            <a href="{{ url_for('courses') }}">Class</a> 
+            <a href="{{ url_for('materials') }}">Materials</a>
+            <a href="{{ url_for('contact') }}">Contact</a> 
+        </div> 
+        <div class="nav-right">
+        <a href="/contact" class="demo-btn">Free demo class</a>
+        </div>
+    </nav>
+
+
 <div class="topbar">
 
    <div class="logo-area">
