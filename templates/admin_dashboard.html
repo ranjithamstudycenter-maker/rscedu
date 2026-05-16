@@ -491,7 +491,9 @@ iframe{
             <p>
                 Status :
                 <span style="color:green;font-weight:600;">
+               {% if data.pending >= 0 %}
                 Active
+                {% endif %}
                 </span>
                 
             </div>
