@@ -837,6 +837,20 @@ def teacher_dashboard():
         
     )
 
+@app.route("/mark-paid/<teacher>")
+def mark_paid(teacher):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    for s in salary_db:
+
+        if s["teacher"] == teacher:
+
+            s["paid_to_faculty"] = True
+
+    return redirect("/admin-dashboard")
+    
 @app.route("/teacher-logout")
 def teacher_logout():
     session.pop("teacher", None)
