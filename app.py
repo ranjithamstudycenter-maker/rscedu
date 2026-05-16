@@ -59,6 +59,8 @@ otp_store = {}
 # FIX: feedback_db was never initialized — caused NameError crash
 feedback_db = {}
 
+salary_db = {}
+
 # FIX: test user had no password field — caused KeyError on login
 users = {}  # registered users: {email: {...}}
 
