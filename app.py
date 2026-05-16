@@ -823,18 +823,99 @@ def teacher_dashboard():
         if s.get("paid_to_faculty")
 
     )
+     # =========================
+    # BASIC COUNTS
+    # =========================
+
+    total_courses = len(seat_data)
+
+    active_classes = len([
+        t for t in teachers.values()
+        if t.get("active")
+    ])
+
+    total_faculties = len(teachers)
+
+    # =========================
+    # STUDENT COUNT
+    # =========================
+
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT COUNT(DISTINCT phone)
+    FROM students
+    WHERE enrolled=1
+    """)
+
+    total_students = c.fetchone()[0]
+
+    conn.close()
+
+    # =========================
+    # REVENUE
+    # =========================
+
+    monthly_revenue = 0
+    salary_credited = 0
+    pending_salary = 0
+
+    # =========================
+    # FACULTY SUMMARY
+    # =========================
+
+    summary = {}
+
+    for s in salary_db:
+
+        teacher = s["teacher"]
+
+        if teacher not in summary:
+
+            summary[teacher] = {
+
+                "course": s["course"],
+                "students": 0,
+                "pending": 0,
+                "paid": 0,
+                "gpay": "7702616245"
+
+            }
+
+        summary[teacher]["students"] += 1
+
+        monthly_revenue += s["amount"]
+
+        salary_credited += s["faculty_share"]
+
+        if s["paid_to_faculty"]:
+
+            summary[teacher]["paid"] += s["faculty_share"]
+
+        else:
+
+            summary[teacher]["pending"] += s["faculty_share"]
+            pending_salary += s["faculty_share"]
+            
     return render_template(
         "teacher_Dashboard.html",
         teacher_name=username,
         course=teacher.get("course", ""),
         meet_link=teacher.get("meet_link", ""),
+        total_courses=total_courses,
+        active_classes=active_classes,
         feedbacks=feedbacks,
-        avg_rating=avg_rating,
+        total_faculties=total_faculties,
+        total_students=total_students,
+        monthly_revenue=monthly_revenue,
+        salary_credited=salary_credited,
         salary_records=teacher_salary,
         total_earnings=total_earnings,
         pending_salary=pending_salary,
-        paid_salary=paid_salary
-        
+        paid_salary=paid_salary,
+        summary=summary
+       
     )
 
 @app.route("/mark-paid/<teacher>")
