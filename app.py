@@ -59,7 +59,7 @@ otp_store = {}
 # FIX: feedback_db was never initialized — caused NameError crash
 feedback_db = {}
 
-salary_db = {}
+salary_db = []
 
 # FIX: test user had no password field — caused KeyError on login
 users = {}  # registered users: {email: {...}}
@@ -483,7 +483,7 @@ def payment_success_api():
     # =========================================
 
     teacher = COURSE_TEACHERS.get(course, "Unknown")
-
+    amount = price_per_hour.get(course, 0) * classes_per_month
     faculty_share = round(amount * 0.60, 2)
     admin_share   = round(amount * 0.40, 2)
 
@@ -833,7 +833,7 @@ def teacher_dashboard():
         salary_records=teacher_salary,
         total_earnings=total_earnings,
         pending_salary=pending_salary,
-        paid_salary=paid_salary.
+        paid_salary=paid_salary
         
     )
 
