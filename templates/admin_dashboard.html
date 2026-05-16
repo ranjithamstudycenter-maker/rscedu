@@ -443,12 +443,12 @@ iframe{
     </div>
 
     <div class="stat-card">
-        <h3>Salary Credited</h3>
+        <h3>Salary Credited to teachers</h3>
         <h1>₹{{ salary_credited }}</h1>
     </div>
 
     <div class="stat-card">
-        <h3>Pending Salary</h3>
+        <h3>Pending Salary to teachers</h3>
         <h1>₹{{ pending_salary }}</h1>
     </div>
 
@@ -477,14 +477,15 @@ iframe{
 
     <div class="faculty-box">
 
-        <h2>👨‍🏫 HR Management</h2>
+        <h2 class="section-title">
+        👨‍🏫 HR Management
+        </h2>
 
         {% for teacher, data in summary.items() %}
 
         <div class="faculty-card">
 
             <h3>{{ teacher }}</h3>
-            
             <p>Course : {{ data.course }}</p>
             <p>Students : {{ data.students }}</p>
             <p>Status : Active</p>
@@ -516,11 +517,11 @@ iframe{
     <th>Class count</th>
     <th>Month </th>
     <th>Salary credited</th>
-    <th>Paid</th>
-    <th>Pending</th>
-    <th>Action</th>
+    <th>Paid Salary</th>
+    <th>Pending Salary</th>
     <th>Gpay number</th>
-    
+    <th>Action</th>
+   
 </tr>
 
 {% for teacher, data in summary.items() %}
