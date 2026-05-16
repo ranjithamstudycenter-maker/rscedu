@@ -368,18 +368,6 @@ input:focus{
 </div>
 </div>
 
-<!-- ⭐ INTERACTIVE -->
-<div class="card">
-  <h3>Give Demo Rating</h3>
-  <div id="stars">
-    <span class="star" onclick="rate(1)">★</span>
-    <span class="star" onclick="rate(2)">★</span>
-    <span class="star" onclick="rate(3)">★</span>
-    <span class="star" onclick="rate(4)">★</span>
-    <span class="star" onclick="rate(5)">★</span>
-  </div>
-</div>
-
 <!-- 📊 GRAPH -->
 <div class="card analytics-card">
   <h3>Performance Graph</h3>
@@ -413,15 +401,6 @@ input:focus{
 </div>
 
 <script>
-
-  // ⭐ STAR UI
-function rate(n){
-  let stars = document.querySelectorAll(".star");
-  stars.forEach((s,i)=>{
-    s.classList.toggle("active", i < n);
-  });
-}
-
 
 function startClass() {
   const link = document.getElementById("meetLink").value.trim();
