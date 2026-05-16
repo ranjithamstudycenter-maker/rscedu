@@ -493,28 +493,7 @@ iframe{
                 <span style="color:green;font-weight:600;">
                 Active
                 </span>
-                </p>
-                <td style="color:orange;font-weight:bold;">
-                Pending Salary : ₹{{ data.pending }}
-                </td>
                 
-                <p>
-                Pending Salary :
-                <span style="color:orange;font-weight:600;">
-                ₹{{ data.pending }}
-                </span>
-                </p>
-                
-                <p>
-                Paid Salary :
-                <span style="color:green;font-weight:600;">
-                ₹{{ data.paid }}
-                </span>
-                </p>
-                    
-                <td style="color:green;font-weight:bold;">
-                Paid Salary : ₹{{ data.paid }}
-                </td>
             </div>
     
             {% endfor %}
@@ -578,7 +557,28 @@ iframe{
 </td>
 
 <td>{{ data.gpay }}</td>
+</p>
+<td style="color:orange;font-weight:bold;">
+Pending Salary : ₹{{ data.pending }}
+</td>
 
+<p>
+Pending Salary :
+<span style="color:orange;font-weight:600;">
+₹{{ data.pending }}
+</span>
+</p>
+
+<p>
+Paid Salary :
+<span style="color:green;font-weight:600;">
+₹{{ data.paid }}
+</span>
+</p>
+    
+<td style="color:green;font-weight:bold;">
+Paid Salary : ₹{{ data.paid }}
+</td>
 <td>
 
 <a href="/mark-paid/{{ teacher }}">
