@@ -73,7 +73,7 @@ teachers = {
         "password": "M10@2026",
         "course": "cbse10",
         "meet_link": "",
-        "active": True,
+        "active": False,
         "gpay": "7702616245"
     },
     "faculty2": {
