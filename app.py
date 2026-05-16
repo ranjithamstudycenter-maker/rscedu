@@ -81,6 +81,23 @@ teachers = {
     }
 }
 
+COURSE_TEACHERS = {
+
+   "cbse9"  : "Balakumar",
+   "cbse10" : "Balakumar",
+   "cbse11" : "Balakumar",
+   "cbse12" : "Balakumar",
+
+   "engg1"  : "Balakumar",
+   "engg2"  : "Balakumar",
+   "engg3"  : "Balakumar",
+
+   "control" : "Balakumar",
+   "AGS"     : "Balakumar",
+   "Maths"   : "Balakumar"
+
+}
+
 # Seat tracking — shared across server (in production use DB/Redis)
 seat_data = {
     "cbse10": {"total": 30, "booked": 0},
