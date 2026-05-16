@@ -532,7 +532,7 @@ iframe{
     <th>Salary credited</th>
     <th>Paid Salary</th>
     <th>Pending Salary</th>
-    <th>Gpay number</th>
+    <th>gpay</th>
     <th>Action</th>
    
 </tr>
@@ -557,6 +557,9 @@ iframe{
 ₹{{ data.paid + data.pending }}
 </td>
 
+<!-- GPay -->
+<td>{{ data.gpay }}</td>
+    
 <td style="color:green;font-weight:bold;">
 ₹{{ data.paid }}
 </td>
