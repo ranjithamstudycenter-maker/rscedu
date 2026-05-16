@@ -493,8 +493,15 @@ def join_class_api():
         max_hours  = user["max_hours"].get(course, classes_per_month)
 
         if hours_used >= max_hours:
+
+            # 🔥 reset enrollment
             user["enrolled"][course] = False
-            return jsonify({"error": "Plan completed. Please re-enroll."}), 403
+        
+            return jsonify({
+                "completed": True,
+                "show_feedback": True,
+                "error": "Plan completed. Please re-enroll."
+            }), 403
 
        # 🔥 SAVE JOIN TIME ONLY
         conn = sqlite3.connect("students.db")
