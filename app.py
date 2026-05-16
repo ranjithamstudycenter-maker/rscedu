@@ -1073,7 +1073,13 @@ def admin_dashboard():
                 "students": 0
 
             }
-
+    active_classes = 0
+    
+    for t in teachers.values():
+    
+        if t.get("active"):
+    
+            active_classes += 1
         summary[teacher]["students"] += 1
 
         if s["paid_to_faculty"]:
@@ -1089,7 +1095,7 @@ def admin_dashboard():
         "admin_dashboard.html",
 
         summary=summary,
-
+        active_classes=active_classes,
         salary_db=salary_db
 
     )
