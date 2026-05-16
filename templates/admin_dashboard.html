@@ -244,6 +244,118 @@
 
    padding:30px;
 }
+
+body{
+    background:#f4f7fb;
+}
+
+/* ADMIN RIGHT */
+
+.admin-right{
+    display:flex;
+    align-items:center;
+    gap:20px;
+}
+
+.admin-right a{
+    text-decoration:none;
+    background:#ef4444;
+    color:white;
+    padding:10px 16px;
+    border-radius:10px;
+}
+
+/* DASHBOARD */
+
+.dashboard-grid{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
+    gap:25px;
+}
+
+.stat-card{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+}
+
+.stat-card h3{
+    color:#666;
+    margin-bottom:10px;
+}
+
+.stat-card h1{
+    color:#2563eb;
+    font-size:38px;
+}
+
+/* IFRAME */
+
+iframe{
+    width:100%;
+    height:800px;
+    border:none;
+    border-radius:20px;
+    background:white;
+}
+
+/* FACULTY */
+
+.faculty-box{
+    display:grid;
+    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
+    gap:20px;
+}
+
+.faculty-card{
+    background:white;
+    padding:25px;
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+/* SALARY */
+
+.card{
+    background:white;
+    padding:30px;
+    border-radius:20px;
+    box-shadow:0 8px 20px rgba(0,0,0,0.08);
+}
+
+.salary-table{
+    width:100%;
+    border-collapse:collapse;
+    margin-top:20px;
+}
+
+.salary-table th{
+    background:#2563eb;
+    color:white;
+    padding:14px;
+}
+
+.salary-table td{
+    padding:14px;
+    text-align:center;
+    border-bottom:1px solid #eee;
+}
+
+.pay-btn{
+    background:#10b981;
+    color:white;
+    border:none;
+    padding:10px 16px;
+    border-radius:10px;
+    cursor:pointer;
+}
+.admin-logo{
+   width:55px;
+   height:55px;
+   border-radius:50%;
+}
+        
 </style>
 </head>
 
@@ -276,7 +388,7 @@
 <div class="topbar">
 
    <div class="logo-area">
-      <img src="/static/logo.png">
+      <img src="/static/images/logo.jpg" class="admin-logo">
       <h2>RSC Admin Dashboard</h2>
    </div>
 
@@ -303,51 +415,134 @@
 </div>
 
     <div id="dashboard" class="tab-content">
-   DASHBOARD DETAILS
+
+    <div class="dashboard-grid">
+
+        <div class="stat-card">
+            <h3>Total Faculty</h3>
+            <h1>{{ summary|length }}</h1>
+        </div>
+
+        <div class="stat-card">
+            <h3>Total Salary Records</h3>
+            <h1>{{ salary_db|length }}</h1>
+        </div>
+
+    </div>
+
 </div>
 
 <div id="uploads" class="tab-content">
-   UPLOAD DETAILS
+
+    <iframe src="/upload"></iframe>
+
 </div>
 
 <div id="students" class="tab-content">
-   STUDENT DETAILS
+
+    <iframe src="/admin/students-view"></iframe>
+
 </div>
 
 <div id="feedback" class="tab-content">
-   FEEDBACK DETAILS
+
+    <iframe src="/manage-feedback"></iframe>
+
 </div>
 
 <div id="faculty" class="tab-content">
-   FACULTY DETAILS
+
+    <div class="faculty-box">
+
+        <h2>👨‍🏫 Faculty Management</h2>
+
+        {% for teacher, data in summary.items() %}
+
+        <div class="faculty-card">
+
+            <h3>{{ teacher }}</h3>
+
+            <p>Students : {{ data.students }}</p>
+
+            <p style="color:orange;">
+                Pending Salary : ₹{{ data.pending }}
+            </p>
+
+            <p style="color:green;">
+                Paid Salary : ₹{{ data.paid }}
+            </p>
+
+        </div>
+
+        {% endfor %}
+
+    </div>
+
 </div>
 
 <div id="salary" class="tab-content">
-   SALARY DETAILS
+
+<div class="card">
+
+<h2>💰 Faculty Salary Management</h2>
+
+<table class="salary-table">
+
+<tr>
+
+<th>Teacher</th>
+
+<th>Students</th>
+
+<th>Pending</th>
+
+<th>Paid</th>
+
+<th>Action</th>
+
+</tr>
+
+{% for teacher, data in summary.items() %}
+
+<tr>
+
+<td>{{ teacher }}</td>
+
+<td>{{ data.students }}</td>
+
+<td style="color:orange;font-weight:bold;">
+₹{{ data.pending }}
+</td>
+
+<td style="color:green;font-weight:bold;">
+₹{{ data.paid }}
+</td>
+
+<td>
+
+<a href="/mark-paid/{{ teacher }}">
+
+<button class="pay-btn">
+
+Mark as Paid
+
+</button>
+
+</a>
+
+</td>
+
+</tr>
+
+{% endfor %}
+
+</table>
+
 </div>
 
-    
-<div class="sidebar">
-    <h3>Admin</h3>
-    <button onclick="loadPage('/upload')">📂 Upload</button>
-    <button onclick="loadPage('/manage-feedback')">⭐ Feedback</button>
-    <button onclick="loadPage('/admin/students-view')">👨‍🎓 Students</button>
 </div>
 
-<div class="content">
-    <iframe id="frame"></iframe>
-</div>
-
-<script>
-function loadPage(url){
-    document.getElementById("frame").src = url;
-}
-
-// default load
-loadPage('/upload');
-</script>
-
-    <script>
+ <script>
 
 function showTab(tabId){
 
@@ -380,85 +575,5 @@ document.addEventListener("DOMContentLoaded", () => {
 });
 
 </script>
-<!-- 💰 FACULTY SALARY MANAGEMENT -->
-
-<div class="card">
-
-<h2>💰 Faculty Salary Management</h2>
-
-<table style="
-width:100%;
-border-collapse:collapse;
-margin-top:20px;
-">
-
-<tr style="
-background:#0b5394;
-color:white;
-">
-
-<th style="padding:12px;">Teacher</th>
-
-<th>Students</th>
-
-<th>Pending</th>
-
-<th>Paid</th>
-
-<th>Action</th>
-
-</tr>
-
-{% for teacher, data in summary.items() %}
-
-<tr style="
-text-align:center;
-border-bottom:1px solid #ddd;
-">
-
-<td style="padding:12px;">
-{{ teacher }}
-</td>
-
-<td>
-{{ data.students }}
-</td>
-
-<td style="color:orange;font-weight:bold;">
-₹{{ data.pending }}
-</td>
-
-<td style="color:green;font-weight:bold;">
-₹{{ data.paid }}
-</td>
-
-<td>
-
-<a href="/mark-paid/{{ teacher }}">
-
-<button style="
-background:green;
-color:white;
-border:none;
-padding:8px 14px;
-border-radius:8px;
-cursor:pointer;
-">
-
-Mark as Paid
-
-</button>
-
-</a>
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-
-</div>
 </body>
 </html>
