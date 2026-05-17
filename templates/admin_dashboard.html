@@ -483,37 +483,84 @@ iframe{
 
 <div id="faculty" class="tab-content">
 
-    <div class="faculty-box">
-
-        <h2 class="section-title">
+    <!-- TITLE -->
+    <h2 style="
+        text-align:center;
+        color:#1e3a8a;
+        margin-bottom:30px;
+        font-size:34px;
+        font-weight:700;
+    ">
         👨‍🏫 HR Management
-        </h2>
+    </h2>
+
+    <!-- GRID -->
+    <div class="faculty-box">
 
         {% for teacher, data in summary.items() %}
 
         <div class="faculty-card">
 
-            <p><b>Course:</b> {{ data.course }}</p>
+            <!-- HEADER -->
+            <div style="
+                display:flex;
+                justify-content:space-between;
+                align-items:center;
+                margin-bottom:18px;
+            ">
 
-            <p><b>Students:</b> {{ data.students }}</p>
+                <h3 style="
+                    color:#1e3a8a;
+                    margin:0;
+                ">
+                    {{ teacher }}
+                </h3>
 
-            <p><b>Month:</b> {{ data.month }} {{ data.year }}</p>
-            <p>
-                <b>Status:</b>
-                <span style="color:green;font-weight:600;">
-                {% if data.pending >= 0 %}
-                Active
-                {% endif %}
+                <span style="
+                    background:#dcfce7;
+                    color:#15803d;
+                    padding:6px 12px;
+                    border-radius:20px;
+                    font-size:13px;
+                    font-weight:600;
+                ">
+                    Active
                 </span>
 
-                <p>
-                  <b>GPay:</b>
-                  {{ data.gpay }}
-                </p>        
-                
             </div>
-    
-            {% endfor %}
+
+            <!-- DETAILS -->
+            <div style="
+                display:grid;
+                gap:12px;
+                font-size:15px;
+            ">
+
+                <div>
+                    <b>Course:</b>
+                    {{ data.course }}
+                </div>
+
+                <div>
+                    <b>Students:</b>
+                    {{ data.students }}
+                </div>
+
+                <div>
+                    <b>Month:</b>
+                    {{ data.month }} {{ data.year }}
+                </div>
+
+                <div>
+                    <b>GPay:</b>
+                    {{ data.gpay }}
+                </div>
+
+            </div>
+
+        </div>
+
+        {% endfor %}
 
     </div>
 
