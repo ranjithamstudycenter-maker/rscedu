@@ -522,39 +522,90 @@ iframe{
 <div id="salary" class="tab-content">
 
 <div class="card">
+<div style="
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-bottom:25px;
+    flex-wrap:wrap;
+    gap:15px;
+">
 
-<h2 class="section-title">
-💰 Faculty Salary Management
-</h2>
-<div style="margin-bottom:20px;text-align:right;">
+    <!-- LEFT EMPTY -->
+    <div></div>
 
-    <form method="GET" action="/admin-dashboard">
+    <!-- CENTER TITLE -->
+    <h2 style="
+        margin:0;
+        color:#1e3a8a;
+        font-size:38px;
+        font-weight:700;
+    ">
+        🪙 Faculty Salary Management
+    </h2>
 
-        <select name="month"
+    <!-- RIGHT CONTROLS -->
+    <div style="
+        display:flex;
+        gap:10px;
+        align-items:center;
+    ">
+
+        <!-- MONTH DROPDOWN -->
+        <form method="GET" action="/admin-dashboard">
+
+            <select
+                name="month"
                 onchange="this.form.submit()"
                 style="
-                    padding:10px;
-                    border-radius:8px;
+                    padding:10px 14px;
+                    border-radius:10px;
                     border:1px solid #ccc;
                     font-size:15px;
-                ">
+                    cursor:pointer;
+                "
+            >
 
-            <option value="">All Months</option>
+                {% for m in months %}
 
-            {% for m in months %}
+                <option
+                    value="{{ m }}"
+                    {% if selected_month == m %}selected{% endif %}
+                >
 
-            <option value="{{ m }}"
-                {% if selected_month == m %}selected{% endif %}>
-                {{ m }}
-            </option>
+                    {{ m }}
 
-            {% endfor %}
+                </option>
 
-        </select>
+                {% endfor %}
 
-    </form>
+            </select>
+
+        </form>
+
+        <!-- PDF BUTTON -->
+        <a href="/download-salary-pdf?month={{ selected_month }}">
+
+            <button style="
+                background:#dc2626;
+                color:white;
+                border:none;
+                padding:10px 16px;
+                border-radius:10px;
+                font-weight:600;
+                cursor:pointer;
+            ">
+
+                📄 Download PDF
+
+            </button>
+
+        </a>
+
+    </div>
 
 </div>
+
 <table class="salary-table">
 
 <tr>
