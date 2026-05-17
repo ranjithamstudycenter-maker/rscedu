@@ -96,6 +96,20 @@ teachers = {
             "meet_link": "",
             "active": False,
             "gpay": ""
+    },
+    "faculty3": {
+            "password": "",
+            "course": "cbse12",
+            "meet_link": "",
+            "active": False,
+            "gpay": ""
+    },
+    "faculty4": {
+            "password": "",
+            "course": "cbse12",
+            "meet_link": "",
+            "active": False,
+            "gpay": ""
     }
 }
 
