@@ -1072,10 +1072,10 @@ def admin_dashboard():
 )))
 
     for s in salary_db:
-    record_month = f"{s.get('month')} {s.get('year')}"
-
-    if selected_month and record_month != selected_month:
-        continue
+        record_month = f"{s.get('month')} {s.get('year')}"
+    
+        if selected_month and record_month != selected_month:
+            continue
 
         teacher = s["teacher"]
 
