@@ -189,7 +189,7 @@ function renderTable(students){
             <td>${s.hours_used || 0}</td>
 
             <td>
-                <button class="reset-btn" onclick="resetDemo('${s.phone}')">Reset</button>
+                <button class="reset-btn" onclick="resetDemo('${s.phone}','${s.course}')">Reset</button>
                 <button class="delete-btn" onclick="deleteStudent('${s.phone}','${s.course}')">Delete</button>
             </td>
         </tr>`;
@@ -215,12 +215,15 @@ function filterClass(cls, btn){
 
 
 // 🔥 RESET DEMO
-function resetDemo(phone){
+function resetDemo(phone, course){
     if(confirm("Reset demo?")){
         fetch("/admin/reset-demo", {
             method: "POST",
             headers: {"Content-Type": "application/json"},
-            body: JSON.stringify({ phone: phone })
+            body: JSON.stringify({
+                phone: phone,
+                course: course
+            })
         })
         .then(res => res.json())
         .then(() => {
