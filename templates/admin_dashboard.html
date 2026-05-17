@@ -738,13 +738,28 @@ iframe{
 
 <td>
 
-{% if data.pending > 0 %}
+{% if (data.paid + data.pending) == 0 %}
+
+    <button style="
+        background:#6b7280;
+        color:white;
+        border:none;
+        padding:8px 14px;
+        border-radius:8px;
+        font-weight:bold;
+    ">
+
+        No Pay
+
+    </button>
+
+{% elif data.pending > 0 %}
 
     <a href="/mark-paid/{{ teacher }}">
 
         <button class="pay-btn">
 
-            Mark Paid
+            yet to pay
 
         </button>
 
@@ -752,18 +767,22 @@ iframe{
 
 {% else %}
 
-    <span style="
-        color:green;
+    <button style="
+        background:#10b981;
+        color:white;
+        border:none;
+        padding:8px 14px;
+        border-radius:8px;
         font-weight:bold;
     ">
 
         Completed
 
-    </span>
+    </button>
 
 {% endif %}
 
-</td>    
+</td>
 </tr>
 
 {% endfor %}
