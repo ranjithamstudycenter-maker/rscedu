@@ -1061,9 +1061,21 @@ def admin_dashboard():
     if not session.get("admin"):
         return redirect("/admin")
 
+    selected_month = request.args.get("month", "")
     summary = {}
+    months = sorted(list(set(
+
+    f"{s.get('month')} {s.get('year')}"
+
+    for s in salary_db
+
+)))
 
     for s in salary_db:
+    record_month = f"{s.get('month')} {s.get('year')}"
+
+    if selected_month and record_month != selected_month:
+        continue
 
         teacher = s["teacher"]
 
@@ -1138,7 +1150,9 @@ def admin_dashboard():
 
         summary=summary,
         active_classes=active_classes,
-        salary_db=salary_db
+        salary_db=salary_db,
+        months=months,
+        selected_month=selected_month
 
     )
 
