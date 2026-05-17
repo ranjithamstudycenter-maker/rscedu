@@ -1156,6 +1156,7 @@ def admin_dashboard():
         "admin_dashboard.html",
 
         summary=summary,
+        teachers=teachers,
         active_classes=active_classes,
         salary_db=salary_db,
         months=months,
