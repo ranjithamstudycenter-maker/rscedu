@@ -80,7 +80,7 @@ teachers = {
         "password": "Faculty2@2026",
         "course": "cbse12",
         "meet_link": "",
-        "active": False
+        "active": True
     }
 }
 
