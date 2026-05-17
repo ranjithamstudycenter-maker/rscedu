@@ -658,14 +658,37 @@ iframe{
         ₹{{ data.paid + data.pending }}
     </td>
 
-    <!-- Paid -->
-    <td style="color:green;font-weight:bold;">
-        ₹{{ data.paid }}
+    <!-- Paid Salary -->
+    <td style="
+        font-weight:bold;
+        color:
+        {% if data.pending > 0 %}
+            red
+        {% else %}
+            green
+        {% endif %}
+    ">
+    
+        {% if data.pending > 0 %}
+    
+            NO
+    
+        {% else %}
+    
+            YES
+    
+        {% endif %}
+    
     </td>
-
-    <!-- Pending -->
-    <td style="color:orange;font-weight:bold;">
+    
+    <!-- Pending Salary -->
+    <td style="
+        color:orange;
+        font-weight:bold;
+    ">
+    
         ₹{{ data.pending }}
+    
     </td>
 
     <!-- Gpay -->
@@ -673,40 +696,34 @@ iframe{
         {{ data.gpay }}
     </td>
 
-    <!-- Action -->
-    <td>
-
-{% if (data.paid + data.pending) == 0 %}
-
-    <span style="color:#666;font-weight:bold;">
-        No Salary
-    </span>
-
-{% elif data.pending > 0 and not data.get("completed") %}
-
-    <span style="color:orange;font-weight:bold;">
-        Not Done
-    </span>
-
-{% elif data.pending > 0 and data.get("completed") %}
-
-    <a href="/mark-paid/{{ teacher }}">
-
-        <button class="pay-btn">
-            Mark as Paid
-        </button>
-
-    </a>
-
-{% else %}
-
-    <span style="color:green;font-weight:bold;">
-        Done
-    </span>
-
-{% endif %}
-
-</td>
+    <!-- Salary Credited Status -->
+        <td style="
+            font-weight:bold;
+        ">
+        
+            {% if (data.paid + data.pending) == 0 %}
+        
+                No Salary
+        
+            {% elif data.pending > 0 %}
+        
+                <span style="color:orange;">
+        
+                    Yet to Pay
+        
+                </span>
+        
+            {% else %}
+        
+                <span style="color:green;">
+        
+                    Done
+        
+                </span>
+        
+            {% endif %}
+        
+        </td>
 </tr>
 
 {% endfor %}
