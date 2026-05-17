@@ -516,16 +516,37 @@ iframe{
                     {{ teacher }}
                 </h3>
 
-                <span style="
-                    background:#dcfce7;
-                    color:#15803d;
-                    padding:6px 12px;
-                    border-radius:20px;
-                    font-size:13px;
-                    font-weight:600;
-                ">
-                    Active
-                </span>
+                {% if teachers[teacher]["active"] %}
+
+                    <span style="
+                        background:#dcfce7;
+                        color:#15803d;
+                        padding:6px 12px;
+                        border-radius:20px;
+                        font-size:13px;
+                        font-weight:600;
+                    ">
+                    
+                        Active
+                    
+                    </span>
+                    
+                    {% else %}
+                    
+                    <span style="
+                        background:#fee2e2;
+                        color:#dc2626;
+                        padding:6px 12px;
+                        border-radius:20px;
+                        font-size:13px;
+                        font-weight:600;
+                    ">
+                    
+                        Inactive
+                    
+                    </span>
+                    
+                    {% endif %}
 
             </div>
 
