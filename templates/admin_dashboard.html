@@ -634,6 +634,7 @@ iframe{
     <th>Pending Salary</th>
     <th>gpay</th>
     <th>Salary Credited</th>
+    <th>Action</th>
    
 </tr>
 
@@ -734,6 +735,35 @@ iframe{
             {% endif %}
         
         </td>
+
+<td>
+
+{% if data.pending > 0 %}
+
+    <a href="/mark-paid/{{ teacher }}">
+
+        <button class="pay-btn">
+
+            Mark Paid
+
+        </button>
+
+    </a>
+
+{% else %}
+
+    <span style="
+        color:green;
+        font-weight:bold;
+    ">
+
+        Completed
+
+    </span>
+
+{% endif %}
+
+</td>    
 </tr>
 
 {% endfor %}
