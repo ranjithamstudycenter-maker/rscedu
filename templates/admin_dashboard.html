@@ -659,27 +659,37 @@ iframe{
     </td>
 
     <!-- Paid Salary -->
-    <td style="
-        font-weight:bold;
-        color:
-        {% if data.pending > 0 %}
-            red
-        {% else %}
-            green
-        {% endif %}
-    ">
-    
-        {% if data.pending > 0 %}
-    
+<td style="
+    font-weight:bold;
+">
+
+    {% if (data.paid + data.pending) == 0 %}
+
+        <span style="color:red;">
+
             NO
-    
-        {% else %}
-    
+
+        </span>
+
+    {% elif data.pending > 0 %}
+
+        <span style="color:red;">
+
+            NO
+
+        </span>
+
+    {% else %}
+
+        <span style="color:green;">
+
             YES
-    
-        {% endif %}
-    
-    </td>
+
+        </span>
+
+    {% endif %}
+
+</td>
     
     <!-- Pending Salary -->
     <td style="
