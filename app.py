@@ -932,7 +932,8 @@ def teacher_dashboard():
         total_earnings=total_earnings,
         pending_salary=pending_salary,
         paid_salary=paid_salary,
-        summary=summary
+        summary=summary,
+        avg_rating=avg_rating
        
     )
 
