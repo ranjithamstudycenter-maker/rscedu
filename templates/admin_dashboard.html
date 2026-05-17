@@ -526,7 +526,35 @@ iframe{
 <h2 class="section-title">
 💰 Faculty Salary Management
 </h2>
+<div style="margin-bottom:20px;text-align:right;">
 
+    <form method="GET" action="/admin-dashboard">
+
+        <select name="month"
+                onchange="this.form.submit()"
+                style="
+                    padding:10px;
+                    border-radius:8px;
+                    border:1px solid #ccc;
+                    font-size:15px;
+                ">
+
+            <option value="">All Months</option>
+
+            {% for m in months %}
+
+            <option value="{{ m }}"
+                {% if selected_month == m %}selected{% endif %}>
+                {{ m }}
+            </option>
+
+            {% endfor %}
+
+        </select>
+
+    </form>
+
+</div>
 <table class="salary-table">
 
 <tr>
