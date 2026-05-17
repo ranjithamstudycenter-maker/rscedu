@@ -1163,6 +1163,24 @@ def admin_dashboard():
 
     )
 
+@app.route("/download-salary-pdf")
+def download_salary_pdf():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    month = request.args.get("month", "All Months")
+
+    return f"""
+
+    <h1>Salary PDF Download</h1>
+
+    <p>Month: {month}</p>
+
+    <p>PDF generation next step la add pannalam ✅</p>
+
+    """
+
 from werkzeug.utils import secure_filename
 
 @app.route("/upload", methods=["GET", "POST"])
