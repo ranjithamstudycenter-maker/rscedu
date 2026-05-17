@@ -1062,15 +1062,21 @@ def admin_dashboard():
         return redirect("/admin")
 
     selected_month = request.args.get("month", "")
+    
+    if not selected_month and months:
+
+        selected_month = months[-1]
+        
     summary = {}
-    months = sorted(list(set(
+    months = []
 
-    f"{s.get('month')} {s.get('year')}"
-
-    for s in salary_db
-
-)))
-
+    for s in salary_db:
+    
+        m = f"{s.get('month')} {s.get('year')}"
+    
+        if m not in months:
+    
+            months.append(m)
     for s in salary_db:
         record_month = f"{s.get('month')} {s.get('year')}"
     
