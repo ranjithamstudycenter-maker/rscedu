@@ -541,7 +541,7 @@ iframe{
         font-size:38px;
         font-weight:700;
     ">
-        🪙 Faculty Salary Management
+        💰 Faculty Salary Management
     </h2>
 
     <!-- RIGHT CONTROLS -->
@@ -555,32 +555,45 @@ iframe{
         <form method="GET" action="/admin-dashboard">
 
             <select
-                name="month"
-                onchange="this.form.submit()"
-                style="
-                    padding:10px 14px;
-                    border-radius:10px;
-                    border:1px solid #ccc;
-                    font-size:15px;
-                    cursor:pointer;
-                "
-            >
-
-                {% for m in months %}
-
-                <option
-                    value="{{ m }}"
-                    {% if selected_month == m %}selected{% endif %}
+                    name="month"
+                    onchange="this.form.submit()"
+                    style="
+                        padding:10px 14px;
+                        border-radius:10px;
+                        border:1px solid #ccc;
+                        font-size:15px;
+                        cursor:pointer;
+                        min-width:160px;
+                        background:white;
+                    "
                 >
-
-                    {{ m }}
-
-                </option>
-
-                {% endfor %}
-
-            </select>
-
+                
+                    {% if months %}
+                
+                        {% for m in months %}
+                
+                        <option
+                            value="{{ m }}"
+                            {% if selected_month == m %}selected{% endif %}
+                        >
+                
+                            {{ m }}
+                
+                        </option>
+                
+                        {% endfor %}
+                
+                    {% else %}
+                
+                        <option selected>
+                
+                            May 2026
+                
+                        </option>
+                
+                    {% endif %}
+                
+                </select>
         </form>
 
         <!-- PDF BUTTON -->
