@@ -508,6 +508,9 @@ def payment_success_api():
 
         "class_count": 0,
 
+        "month": datetime.now().strftime("%B"),
+        "year": datetime.now().strftime("%Y"),
+
         "date" : str(datetime.now())
 
     })
