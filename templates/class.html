@@ -2174,13 +2174,7 @@ function startDemoSession(course) {
       const m = String(Math.floor(remaining/60)).padStart(2,"0");
       const s = String(remaining%60).padStart(2,"0");
 
-      if(course === "cbse9"){
-
-           timerDiv.style.display = "none";
-        
-        }
-        else{
-        timerDiv.textContent = "⏳ Demo: " + m + ":" + s + " remaining";
+      timerDiv.textContent = "⏳ Demo: " + m + ":" + s + " remaining";
 
     }, 1000);
   }
