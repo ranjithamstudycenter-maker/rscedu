@@ -707,8 +707,8 @@ def start_class():
     if not username or username not in teachers:
         return jsonify({"error": "Unauthorized"}), 403
 
-    teachers[username]["meet_link"] = link
     teachers[username]["class_live"] = True
+    teachers[username]["meet_link"] = meet_link
 
     return jsonify({"status": "Class started"})
 
@@ -729,6 +729,25 @@ def get_active_meet_link(course):
     print("NO LINK FOUND")
 
     return None
+
+@app.route("/api/class-status")
+def class_status():
+
+    course = request.args.get("course")
+
+    for name, t in teachers.items():
+
+        if t["course"] == course:
+
+            return jsonify({
+                "live": t.get("class_live", False),
+                "meet_link": t.get("meet_link", "")
+            })
+
+    return jsonify({
+        "live": False,
+        "meet_link": ""
+    })
 
 @app.route("/end-class", methods=["POST"])
 def end_class():
