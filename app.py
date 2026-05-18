@@ -32,7 +32,14 @@ def init_db():
         last_updated TEXT
     )
     """)
-
+    try:
+        c.execute("""
+        ALTER TABLE students
+        ADD COLUMN join_time REAL
+        """)
+    except:
+        pass
+        
      # 🔥 ADD THIS NEW TABLE
     c.execute("""
     CREATE TABLE IF NOT EXISTS class_links (
