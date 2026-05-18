@@ -2155,7 +2155,7 @@ function startDemoSession(course) {
        updateClassCountdown(course);
     }, 60000);
       
-    timerDiv.textContent = "🟢 Class Started";
+    
       
     // 🔥 OPEN CLASS LINK
     fetch(`/api/check-demo?course=${course}&phone=${phone}`)
