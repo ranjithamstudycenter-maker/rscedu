@@ -1811,7 +1811,7 @@ function updateClassCountdown(course){
     document.getElementById("timer-" + course);
 
   if(!timerDiv) return;
-    timerDiv.style.display = "block";
+    timerDiv.style.display = "flex";
 
   const now = new Date();
 
@@ -2154,7 +2154,7 @@ function startDemoSession(course) {
     showLivePopup(course);
       const timerDiv =
       document.getElementById("timer-" + course);
-      timerDiv.style.display = "block";
+      timerDiv.style.display = "flex";
       
     updateClassCountdown(course);
 
