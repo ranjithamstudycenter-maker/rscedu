@@ -2096,9 +2096,29 @@ function startDemoSession(course) {
 
   // 🔥 already running block
   if (localStorage.getItem(key)) {
+
+    // ✅ SHOW MESSAGE
     showMessage("⏳ Demo already running...");
+
+    // 🔥 OPEN EXISTING CLASS AGAIN
+    fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+      .then(res => res.json())
+      .then(data => {
+
+        if(data.meet_link){
+
+            window.open(data.meet_link, "_blank");
+
+        } else {
+
+            showMessage("⚠️ Class not started yet");
+
+        }
+
+      });
+
     return;
-  }
+}
 
   // 🔥 already completed check
   fetch(`/api/check-demo?course=${course}&phone=${phone}`)
