@@ -707,7 +707,7 @@ def start_class():
     if not username or username not in teachers:
         return jsonify({"error": "Unauthorized"}), 403
 
-    meet_link = request.json.get("meet_link")
+    meet_link = request.json.get("meetLink")
     
     teachers[username]["class_live"] = True
     teachers[username]["meet_link"] = meet_link
