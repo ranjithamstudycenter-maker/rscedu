@@ -1982,15 +1982,6 @@ window.addEventListener("load", () => {
     setInterval(() => {
       checkLiveStatus(course);
     }, 5000);
-
-    // ⏳ RESUME DEMO TIMER
-    const key = "demo_running_" + course;
-    const startTime = localStorage.getItem(key);
-
-    if(startTime){
-      resumeDemo(course, parseInt(startTime));
-    }
-
   });
 
 
@@ -2009,34 +2000,7 @@ window.addEventListener("load", () => {
 
 });
     
- function resumeDemo(course, savedStart){
-
-  const timerDiv  = document.getElementById("timer-" + course);
-  const liveBadge = document.getElementById("live-" + course);
-
-  if (!timerDiv) return;
-
-  const duration = 80*60;
-
-  const interval = setInterval(async () => {
-
-    const elapsed = Math.floor((Date.now() - savedStart)/1000);
-    const remaining = duration - elapsed;
-
-    if(remaining < 0){
-      clearInterval(interval);
-      localStorage.removeItem("demo_running_" + course);
-      timerDiv.textContent = "✅ Demo Completed — Please Enroll";
-      return;
-    }
-
-    const m = String(Math.floor(remaining/60)).padStart(2,"0");
-    const s = String(remaining%60).padStart(2,"0");
-
-    timerDiv.textContent = "⏳ Demo: " + m + ":" + s;
-
-  }, 1000);
-}
+ 
 /* ======================================
    FREE DEMO — Phone OTP always required
 ====================================== */
@@ -2116,7 +2080,8 @@ function startDemoSession(course) {
     if (liveBadge) liveBadge.style.display = "none";
 
     showLivePopup(course);
-
+    timerDiv.textContent = "🟢 Class Started";
+      
     // 🔥 OPEN CLASS LINK
     fetch(`/api/check-demo?course=${course}&phone=${phone}`)
       .then(res => res.json())
@@ -2132,50 +2097,7 @@ function startDemoSession(course) {
 
    
 
-    const interval = setInterval(async () => {
-
-      const savedStart = parseInt(localStorage.getItem(key));
-      const elapsed = Math.floor((Date.now() - savedStart)/1000);
-      
-
-      if (remaining < 0) {
-
-        clearInterval(interval);
-
-        timerDiv.textContent = "✅ Demo Completed — Please Enroll";
-        if (liveBadge) liveBadge.style.display = "none";
-
-        timerDiv.dataset.running = "false";
-        localStorage.removeItem(key);
-
-        try {
-          // 🔥 DEMO COMPLETE → YES
-            fetch("/api/demo-complete", {
-            method: "POST",
-            headers: {"Content-Type":"application/json"},
-            body: JSON.stringify({
-            phone: phone,
-            course: course
-           })
-         });
-          await refreshStatus();
-          updateAllCourseUI();
-
-          showMessage("✅ Demo done! Click Enroll");
-
-        } catch (e) {
-          console.error(e);
-        }
-
-        return;
-      }
-
-      const m = String(Math.floor(remaining/60)).padStart(2,"0");
-      const s = String(remaining%60).padStart(2,"0");
-
-      timerDiv.textContent = "⏳ Demo: " + m + ":" + s + " remaining";
-
-    }, 1000);
+   
   }
 }
 
