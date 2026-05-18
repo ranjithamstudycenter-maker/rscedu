@@ -544,12 +544,34 @@ function startClass() {
 // 🔴 END CLASS
 function endClass() {
 
-  fetch("/end-class", { method: "POST" })
+  fetch("/end-class", {
+    method: "POST"
+  })
+
   .then(res => res.json())
+
   .then(data => {
 
-    document.getElementById("statusText").innerHTML = "🔴 Class Not Live";
-    document.getElementById("statusText").className = "status off";
+    if(data.error){
+      alert(data.error);
+      return;
+    }
+
+    document.getElementById("statusText").innerHTML =
+      "🔴 Class Offline";
+
+    document.getElementById("statusText").className =
+      "status off";
+
+    alert("✅ Class Ended");
+
+  })
+
+  .catch(err => {
+
+    console.error(err);
+
+    alert("⚠️ Server error");
 
   });
 
