@@ -2113,13 +2113,15 @@ function startDemoSession(course) {
       
           if(!canStartClass(course)){
 
+               updateClassCountdown(course);
+            
                showMessage(
                   "⏰ Class starts at " +
                   CLASS_TIMINGS[course]
                );
             
                return;
-              }
+            }
       
         startDemoFlow();
      });
