@@ -2043,18 +2043,13 @@ window.addEventListener("load", () => {
 
         // 🔴 LIVE STATUS CHECK
         checkLiveStatus(course);
-    
-        updateClassCountdown(course);
-    
+ 
+         
         // 🔄 AUTO REFRESH LIVE STATUS
         setInterval(() => {
           checkLiveStatus(course);
         }, 5000);
-    
-          setInterval(() => {
-           updateClassCountdown(course);
-        }, 60000);
-    
+               
   });
 
 
@@ -2153,6 +2148,12 @@ function startDemoSession(course) {
     if (liveBadge) liveBadge.style.display = "none";
 
     showLivePopup(course);
+    updateClassCountdown(course);
+
+    setInterval(() => {
+       updateClassCountdown(course);
+    }, 60000);
+      
     timerDiv.textContent = "🟢 Class Started";
       
     // 🔥 OPEN CLASS LINK
