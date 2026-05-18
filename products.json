@@ -1,0 +1,14 @@
+{
+  "math-basics": {
+    "file": "math_basics.pdf",
+    "title": "Math Basics",
+    "price": 0,
+    "course": "class5-7"
+  },
+  "class10-notes": {
+    "file": "class10_notes.pdf",
+    "title": "Class 10 Maths Notes",
+    "price": 49,
+    "course": "class8-10"
+  }
+}

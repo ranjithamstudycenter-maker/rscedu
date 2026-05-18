@@ -1,0 +1,15 @@
+<h2>Downloads – {{ course|replace('-', ' ')|title }}</h2>
+
+{% for pid, p in products.items() %}
+  <div style="margin:15px 0;padding:15px;border:1px solid #ddd">
+    <b>{{ p.title }}</b><br>
+
+    {% if p.price == 0 %}
+        <span style="color:green">FREE</span><br>
+        <a href="/download/{{ pid }}">Download</a>
+    {% else %}
+        <span style="color:red">₹{{ p.price }}</span><br>
+        <a href="/download/{{ pid }}">Pay & Download</a>
+    {% endif %}
+  </div>
+{% endfor %}
