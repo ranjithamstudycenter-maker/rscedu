@@ -563,6 +563,8 @@ html, body{
   font-weight:600;
   color:#7c3aed;
   text-align:left;
+  display:block;
+  width:100%;
 }
 
  /* start button */
@@ -1809,6 +1811,7 @@ function updateClassCountdown(course){
     document.getElementById("timer-" + course);
 
   if(!timerDiv) return;
+    timerDiv.style.display = "block";
 
   const now = new Date();
 
@@ -2149,6 +2152,10 @@ function startDemoSession(course) {
     if (liveBadge) liveBadge.style.display = "none";
 
     showLivePopup(course);
+      const timerDiv =
+      document.getElementById("timer-" + course);
+      timerDiv.style.display = "block";
+      
     updateClassCountdown(course);
 
     const countdownInterval = setInterval(() => {
