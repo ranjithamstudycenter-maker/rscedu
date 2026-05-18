@@ -69,6 +69,13 @@ demo_users = {}  # {phone: {...}}
 
 # Teacher accounts
 teachers = {
+    "Balakumar9": {
+        "password": "M10@2026",
+        "course": "cbse9",
+        "meet_link": "",
+        "active": True,
+        "gpay": "7702616245"
+    },
     "Balakumar10": {
         "password": "M10@2026",
         "course": "cbse10",
