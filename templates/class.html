@@ -1800,6 +1800,70 @@ function canStartClass(course){
 
   return currentMinutes >= classMinutes;
 }
+
+function updateClassCountdown(course){
+
+  const timerDiv =
+    document.getElementById("timer-" + course);
+
+  if(!timerDiv) return;
+
+  const now = new Date();
+
+  const currentMinutes =
+      now.getHours()*60 + now.getMinutes();
+
+  const classTime =
+      CLASS_TIMINGS[course];
+
+  if(!classTime) return;
+
+  const [time, modifier] =
+      classTime.split(" ");
+
+  let [hours, minutes] =
+      time.split(":").map(Number);
+
+  if(modifier === "PM" && hours !== 12){
+      hours += 12;
+  }
+
+  if(modifier === "AM" && hours === 12){
+      hours = 0;
+  }
+
+  const classMinutes =
+      hours*60 + minutes;
+
+  const remaining =
+      classMinutes - currentMinutes;
+
+  // 🔥 CLASS STARTED
+  if(remaining <= 0){
+
+      timerDiv.innerHTML =
+        "🟢 Demo Started";
+
+      timerDiv.style.color = "#16a34a";
+      return;
+  }
+
+  // 🔥 HOURS
+  if(remaining >= 60){
+
+      const hrs =
+        Math.floor(remaining / 60);
+
+      timerDiv.innerHTML =
+        "⏳ " + hrs + " hour remaining";
+
+      return;
+  }
+
+  // 🔥 MINUTES
+  timerDiv.innerHTML =
+      "⏳ " + remaining + " min remaining";
+}
     
 /* ---- STATE ---- */
 let studentStatus  = null;
