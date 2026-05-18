@@ -262,7 +262,7 @@ def check_demo():
     # ✅ NORMAL RESPONSE
     return jsonify({
         "demo_done": False,
-        "meet_link": meet_link
+        "redirect_url": f"/join-live/{course}"
     })
 
 
@@ -650,11 +650,21 @@ def join_class_api():
 
     return jsonify({
         "status": "ok",
-        "meet_link": meet_link,
+        "redirect_url": f"/join-live/{course}",
         "hours_used": user["hours_used"].get(course, 0),
         "hours_remaining": user["max_hours"].get(course, classes_per_month) - user["hours_used"].get(course, 0)
     })
+    
+@app.route("/join-live/<course>")
+def join_live(course):
 
+    meet_link = get_active_meet_link(course)
+
+    if not meet_link:
+        return "Class not live"
+
+    return redirect(meet_link)
+    
 # -------------------- STUDENT STATUS --------------------
 
 @app.route("/api/student-status")
