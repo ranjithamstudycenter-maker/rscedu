@@ -223,27 +223,39 @@ def save_user():
 
 @app.route("/api/check-demo")
 def check_demo():
-    phone = request.args.get("phone") 
-    course = request.args.get("course")
-    
-    if not phone:
-        return jsonify({"error": "Phone required"}), 401
 
+    phone  = request.args.get("phone")
+    course = request.args.get("course")
+
+    # ✅ COURSE CHECK
     if not course:
-        return jsonify({"error": "Course missing"}), 400
-        
+        return jsonify({
+            "error": "Course missing"
+        }), 400
+
+    # ✅ PHONE CHECK
+    if not phone:
+        return jsonify({
+            "demo_done": False,
+            "meet_link": None
+        })
+
     user = get_user(phone)
 
-    # 🔥 GET SAME LINK
+    # ✅ GET LIVE MEET LINK
     meet_link = get_active_meet_link(course)
 
-     # 🔥 BLOCK HERE
+    # ✅ IF DEMO ALREADY COMPLETED
+    # still allow reopening link
     if user["demo_done"].get(course):
+
         return jsonify({
             "error": "Demo already completed",
-            "demo_done": True
-        }), 403
+            "demo_done": True,
+            "meet_link": meet_link
+        })
 
+    # ✅ NORMAL RESPONSE
     return jsonify({
         "demo_done": False,
         "meet_link": meet_link
