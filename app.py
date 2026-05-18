@@ -714,11 +714,19 @@ def start_class():
 
 def get_active_meet_link(course):
 
-    for t in teachers.values():
+    print("COURSE =", course)
+
+    for name, t in teachers.items():
+
+        print(name, t)
 
         if t["course"] == course and t.get("class_live"):
 
+            print("FOUND LINK =", t["meet_link"])
+
             return t["meet_link"]
+
+    print("NO LINK FOUND")
 
     return None
 
