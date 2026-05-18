@@ -235,10 +235,7 @@ def check_demo():
 
     # ✅ PHONE CHECK
     if not phone:
-        return jsonify({
-            "demo_done": False,
-            "meet_link": None
-        })
+        return jsonify({"error": "Phone required"}), 401
 
     user = get_user(phone)
 
