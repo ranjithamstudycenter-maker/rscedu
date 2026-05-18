@@ -2151,12 +2151,18 @@ function startDemoSession(course) {
     showLivePopup(course);
     updateClassCountdown(course);
 
-    setInterval(() => {
+    const countdownInterval = setInterval(() => {
+    
+       if(!localStorage.getItem(key)){
+          clearInterval(countdownInterval);
+          return;
+       }
+    
        updateClassCountdown(course);
+    
     }, 60000);
       
-    
-      
+       
     // 🔥 OPEN CLASS LINK
     fetch(`/api/check-demo?course=${course}&phone=${phone}`)
       .then(res => res.json())
