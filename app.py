@@ -762,69 +762,90 @@ def class_status():
 
 @app.route("/end-class", methods=["POST"])
 def end_class():
+
     username = session.get("teacher")
 
     if not username or username not in teachers:
         return jsonify({"error": "Unauthorized"}), 403
 
-    # 🔥 ATTENDANCE CALCULATION
-    conn = sqlite3.connect("students.db")
-    c = conn.cursor()
-    
-    course = teachers[username]["course"]
-    
-    c.execute("""
-    SELECT phone, join_time, hours_used
-    FROM students
-    WHERE course=? AND enrolled=1
-    """, (course,))
-    
-    rows = c.fetchall()
-    
-    for row in rows:
-    
-        phone = row[0]
-        join_time = row[1]
-        hours_used = row[2] or 0
-    
-        if join_time:
-    
-            attended_minutes = (
-                datetime.now().timestamp() - join_time
-            ) / 60
-    
-            # ✅ minimum 50 mins
-            if attended_minutes >= 50:
-    
-                c.execute("""
-                UPDATE students
-                SET hours_used=?,
-                    last_updated=?
-                WHERE phone=? AND course=?
-                """, (
-                    hours_used + 1,
-                    datetime.now().strftime("%Y-%m-%d %H:%M"),
-                    phone,
-                    course
-                ))
-                # 🔥 update salary class count
-                for s in salary_db:
-                
-                    if s["course"] == course:
-                
-                        s["class_count"] += 1
-                        if s["class_count"] >= classes_per_month:
+    try:
 
-                            s["completed"] = True
+        # 🔥 ATTENDANCE CALCULATION
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
 
-    conn.commit()
-    conn.close()
+        course = teachers[username]["course"]
 
-    teachers[username]["class_live"] = False
-    teachers[username]["meet_link"] = ""
+        c.execute("""
+        SELECT phone, join_time, hours_used
+        FROM students
+        WHERE course=? AND enrolled=1
+        """, (course,))
 
-    return jsonify({"status": "Class ended"})
+        rows = c.fetchall()
 
+        for row in rows:
+
+            phone = row[0]
+            join_time = row[1]
+            hours_used = row[2] or 0
+
+            if join_time:
+
+                attended_minutes = (
+                    datetime.now().timestamp() - join_time
+                ) / 60
+
+                # ✅ minimum 50 mins
+                if attended_minutes >= 50:
+
+                    c.execute("""
+                    UPDATE students
+                    SET hours_used=?,
+                        last_updated=?
+                    WHERE phone=? AND course=?
+                    """, (
+                        hours_used + 1,
+                        datetime.now().strftime("%Y-%m-%d %H:%M"),
+                        phone,
+                        course
+                    ))
+
+                    # 🔥 update salary class count
+                    for s in salary_db:
+
+                        if s["course"] == course:
+
+                            s["class_count"] += 1
+
+                            # ✅ SAFE CHECK
+                            if "classes_per_month" in s:
+
+                                if s["class_count"] >= s["classes_per_month"]:
+                                    s["completed"] = True
+
+        conn.commit()
+        conn.close()
+
+        # 🔥 CLASS OFF
+        teachers[username]["class_live"] = False
+
+        # 🔥 REMOVE LINK
+        teachers[username]["meet_link"] = ""
+
+        return jsonify({
+            "success": True,
+            "live": False
+        })
+
+    except Exception as e:
+
+        print("END CLASS ERROR:", e)
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+        
 @app.route("/get-teacher")
 def get_teacher():
     course = request.args.get("course")
