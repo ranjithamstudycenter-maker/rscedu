@@ -1348,7 +1348,7 @@ html, body{
          <div class="demo-timer" id="timer-cbse9"></div>
 
          <div class="card-footer">
-           <button class="start-time-btn" id="time-cbse9"> </button>
+           <button class="start-time-btn" id="time-cbse9"> Starts at 6:00 PM </button>
          <a href="/teacher-login?class=cbse9" class="faculty-link">🔐 Teacher Login</a>
        </div>
   </div>
@@ -1739,7 +1739,7 @@ const auth = firebase.auth();
 <script>
  const CLASS_TIMINGS = {
 
-  cbse9  : "",
+  cbse9  : "6:00 PM",
   cbse10 : "7:00 PM",
   cbse11 : "8:00 PM",
   cbse12 : "9:00 PM",
@@ -2016,7 +2016,7 @@ window.addEventListener("load", () => {
 
   if (!timerDiv) return;
 
-  const duration = 60*60;
+  const duration = 80*60;
 
   const interval = setInterval(async () => {
 
