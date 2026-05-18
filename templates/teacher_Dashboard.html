@@ -491,6 +491,7 @@ input:focus{
 <script>
 
 function startClass() {
+
   const link = document.getElementById("meetLink").value.trim();
 
   // ✅ validation
@@ -499,7 +500,7 @@ function startClass() {
     return;
   }
 
-  // ✅ optional: basic link check
+  // ✅ basic link check
   if(!link.includes("meet.google.com")){
     alert("❌ Invalid Google Meet link");
     return;
@@ -522,28 +523,37 @@ function startClass() {
     document.getElementById("statusText").innerHTML = "🟢 Class Live";
     document.getElementById("statusText").className = "status live";
 
-    // ✅ clear input (optional)
+    // ✅ clear input
     document.getElementById("meetLink").value = "";
 
+    // 🔥 OPEN GOOGLE MEET FOR FACULTY
+    window.open(meet_link, "_blank");
+
     alert("✅ Class Started Successfully");
+
   })
   .catch(err => {
+
     alert("⚠️ Server error");
     console.error(err);
+
   });
 }
 
 
 // 🔴 END CLASS
 function endClass() {
+
   fetch("/end-class", { method: "POST" })
   .then(res => res.json())
   .then(data => {
+
     document.getElementById("statusText").innerHTML = "🔴 Class Not Live";
     document.getElementById("statusText").className = "status off";
-  });
-}
 
+  });
+
+}
 // 📊 GRAPH
 const ratings = {{ feedbacks | map(attribute='rating') | list | tojson }};
 
