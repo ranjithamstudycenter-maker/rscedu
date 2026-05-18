@@ -1840,31 +1840,32 @@ function updateClassCountdown(course){
   const remaining =
       classMinutes - currentMinutes;
 
-   // 🔥 CLASS STARTED
   if(remaining <= 0){
 
-      timerDiv.innerHTML =
-        "🟢 Demo Started";
+    timerDiv.innerHTML =
+      "🟢 Demo Started";
 
-      timerDiv.style.color = "#16a34a";
-      return;
-  }
+    timerDiv.style.color = "#16a34a";
 
-  // 🔥 HOURS
-  if(remaining >= 60){
+}
+else if(remaining >= 60){
 
-      const hrs =
-        Math.floor(remaining / 60);
+    const hrs =
+      Math.floor(remaining / 60);
 
-      timerDiv.innerHTML =
-        "⏳ " + hrs + " hour remaining";
+    timerDiv.innerHTML =
+      "⏳ " + hrs + " hour remaining";
 
-      return;
-  }
+    timerDiv.style.color = "#7c3aed";
 
-  // 🔥 MINUTES
-  timerDiv.innerHTML =
+}
+else{
+
+    timerDiv.innerHTML =
       "⏳ " + remaining + " min remaining";
+
+    timerDiv.style.color = "#7c3aed";
+}
 }
     
 /* ---- STATE ---- */
