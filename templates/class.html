@@ -2451,7 +2451,7 @@ function joinFromPopup() {
    LIVE STATUS
 ====================================== */
 
-  async function checkLiveStatus(course){
+ async function checkLiveStatus(course){
 
   const res = await fetch(`/api/class-status?course=${course}`);
   const data = await res.json();
@@ -2459,21 +2459,34 @@ function joinFromPopup() {
   const badge = document.getElementById("live-" + course);
   const joinBtn = document.getElementById("joinBtn-" + course);
 
-  if(data.live){
+  // 🔥 LIVE BADGE SAFE CHECK
+  if(badge){
 
-     badge.style.display = "inline-block";
+    if(data.live){
+      badge.style.display = "inline-block";
+    } else {
+      badge.style.display = "none";
+    }
 
-     joinBtn.style.opacity = "1";
-     joinBtn.style.pointerEvents = "auto";
-
-  } else {
-
-     badge.style.display = "none";
-
-     joinBtn.style.opacity = "0.5";
-     joinBtn.style.pointerEvents = "none";
   }
-}  
+
+  // 🔥 JOIN BUTTON SAFE CHECK
+  if(joinBtn){
+
+    if(data.live){
+
+      joinBtn.style.opacity = "1";
+      joinBtn.style.pointerEvents = "auto";
+
+    } else {
+
+      joinBtn.style.opacity = "0.5";
+      joinBtn.style.pointerEvents = "none";
+
+    }
+
+  }
+} 
  
 /* ======================================
    SEARCH
