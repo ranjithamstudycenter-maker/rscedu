@@ -97,7 +97,7 @@ teachers = {
         "course": "cbse12",
         "meet_link": "",
         "enabled": False,
-        "class_live": False
+        "class_live": False,
         "gpay": ""
     },
     "faculty2": {
