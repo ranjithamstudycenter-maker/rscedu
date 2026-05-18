@@ -73,14 +73,16 @@ teachers = {
         "password": "M10@2026",
         "course": "cbse9",
         "meet_link": "",
-        "active": True,
+        "enabled": True,
+        "class_live": False,
         "gpay": "7702616245"
     },
     "Balakumar10": {
         "password": "M10@2026",
         "course": "cbse10",
         "meet_link": "",
-        "active": True,
+        "enabled": True,
+        "class_live": False,
         "gpay": "7702616245"
     },
     "Balakumar12": {
@@ -94,7 +96,8 @@ teachers = {
         "password": "",
         "course": "cbse12",
         "meet_link": "",
-        "active": False,
+        "enabled": False,
+        "class_live": False
         "gpay": ""
     },
     "faculty2": {
@@ -683,7 +686,7 @@ def teacher_login():
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
         if username in teachers and teachers[username]["password"] == password:
-            if not teachers[username].get("active", True):
+            if not teachers[username].get("enabled", True):
                 error = "Your account is disabled"
             else:
                 session["teacher"] = username
@@ -705,14 +708,18 @@ def start_class():
         return jsonify({"error": "Unauthorized"}), 403
 
     teachers[username]["meet_link"] = link
-    teachers[username]["active"] = True
+    teachers[username]["class_live"] = True
 
     return jsonify({"status": "Class started"})
 
 def get_active_meet_link(course):
+
     for t in teachers.values():
-        if t["course"] == course and t["active"]:
+
+        if t["course"] == course and t.get("class_live"):
+
             return t["meet_link"]
+
     return None
 
 @app.route("/end-class", methods=["POST"])
@@ -775,7 +782,7 @@ def end_class():
     conn.commit()
     conn.close()
 
-    teachers[username]["active"] = False
+    teachers[username]["class_live"] = False
     teachers[username]["meet_link"] = ""
 
     return jsonify({"status": "Class ended"})
