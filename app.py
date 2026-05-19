@@ -20,19 +20,21 @@ def init_db():
     c = conn.cursor()
 
     c.execute("""
+    
     CREATE TABLE IF NOT EXISTS students (
+
         name TEXT,
         phone TEXT,
         course TEXT,
-        otp_verified INTEGER,
-        demo_allowed INTEGER,
-        demo_done INTEGER,
-        enrolled INTEGER,
-        hours_used INTEGER,
-        max_hours INTEGER,
-        payment_amount INTEGER,
-        last_updated TEXT  
-        
+        otp_verified INTEGER DEFAULT 0,
+        demo_allowed INTEGER DEFAULT 0,
+        demo_done INTEGER DEFAULT 0,
+        enrolled INTEGER DEFAULT 0,
+        hours_used INTEGER DEFAULT 0,
+        max_hours INTEGER DEFAULT 0,
+        payment_amount INTEGER DEFAULT 0,
+        last_updated TEXT,
+        PRIMARY KEY(phone, course)
     )
     """)
     try:
@@ -675,6 +677,38 @@ def join_class_api():
         conn = sqlite3.connect("students.db")
         c = conn.cursor()
         
+        c.execute("""
+        SELECT demo_registered
+        FROM students
+        WHERE phone=? AND course=?
+        """, (phone, course))
+        
+        row = c.fetchone()
+        
+        conn.close()
+        
+        if not row or row[0] != 1:
+            return jsonify({
+                "error": "Attend free demo registration first"
+            }), 403
+
+        c.execute("""
+        SELECT otp_verified, demo_registered
+        FROM students
+        WHERE phone=? AND course=?
+        """, (phone, course))
+        
+        row = c.fetchone()
+        
+        if not row:
+            return jsonify({"error":"Register first"}), 403
+        
+        if row[0] != 1:
+            return jsonify({"error":"OTP verification required"}), 403
+        
+        if row[1] != 1:
+            return jsonify({"error":"Demo registration required"}), 403
+    
         join_time = datetime.now().timestamp()
         
         # 🔥 add new column if needed later
@@ -1403,20 +1437,24 @@ def admin_students():
 
     # ✅ FETCH FROM DB
     conn = sqlite3.connect("students.db")
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    c.execute("SELECT phone, course, name, demo_done, enrolled, hours_used FROM students")
+    c.execute("SELECT name, phone, course, otp verified, demo_allowed, demo_done, enrolled, hours_used FROM students")
     rows = c.fetchall()
 
     students_list = []
     for r in rows:
         students_list.append({
-            "phone": r[0],
-            "course": r[1],
-            "name": r[2],
-            "demo_done": bool(r[3]),
-            "enrolled": bool(r[4]),
-            "hours_used": r[5]
+            "name": r[0],
+            "phone": r[1],
+            "course": r[2],
+            "otp_verified": bool(r[3]),
+            "demo_allowed": bool(r[4]),
+            "demo_done": bool(r[5]),
+            "enrolled": bool(r[6]),
+            "hours_used": r[7]
+
         })
 
     conn.close()
