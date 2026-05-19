@@ -891,11 +891,13 @@ def start_class():
 
     teachers[username]["class_live"] = True
     teachers[username]["meet_link"] = meet_link
-
+    
+    c.execute("""
     UPDATE live_classes
     SET class_live=1,
     meet_link=?
-    
+    """, (course,))
+        
     return jsonify({
         "status": "Class started"
     })
