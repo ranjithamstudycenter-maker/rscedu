@@ -740,7 +740,6 @@ def join_class_api():
 
     return jsonify({
         "status": "ok",
-        "redirect_url": f"/join-live/{course}",
         "hours_used": user["hours_used"].get(course, 0),
         "hours_remaining": user["max_hours"].get(course, classes_per_month) - user["hours_used"].get(course, 0)
     })
