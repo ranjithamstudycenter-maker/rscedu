@@ -899,7 +899,7 @@ def start_class():
     """, (course,))
         
     return jsonify({
-        "status": "Class started"
+        "status": "Class started",
         "success": True,
         "live": True
     })
