@@ -976,6 +976,7 @@ def teacher_dashboard():
 
     username = session["teacher"]
     teacher = teachers.get(username)
+    course = teacher.get("course", "")
 
     # 🔥 FIX: handle list properly
     if isinstance(feedback_db, list):
@@ -1133,7 +1134,46 @@ def teacher_dashboard():
 
             summary[teacher]["pending"] += s["faculty_share"]
             pending_salary += s["faculty_share"]
-            
+    
+    # =========================================
+    # 🔥 WAITING DEMO STUDENTS
+    # =========================================
+    
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+    
+    c.execute("""
+    SELECT name, phone, course,
+           otp_verified,
+           demo_allowed,
+           demo_done
+    FROM students
+    WHERE course=?
+    AND otp_verified=1
+    AND demo_allowed=1
+    AND demo_done=0
+    """, (course,))
+    
+    rows = c.fetchall()
+    
+    waiting_students = []
+    
+    for r in rows:
+    
+        waiting_students.append({
+    
+            "name": r[0],
+            "phone": r[1],
+            "course": r[2],
+    
+            "otp_verified": bool(r[3]),
+            "demo_allowed": bool(r[4]),
+            "demo_done": bool(r[5])
+    
+        })
+    
+    conn.close()
+        
     return render_template(
         "teacher_Dashboard.html",
         teacher_name=username,
@@ -1144,6 +1184,7 @@ def teacher_dashboard():
         feedbacks=feedbacks,
         total_faculties=total_faculties,
         total_students=total_students,
+        waiting_students=waiting_students,
         monthly_revenue=monthly_revenue,
         salary_credited=salary_credited,
         salary_records=teacher_salary,
