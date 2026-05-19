@@ -1885,9 +1885,23 @@ def about():
     return render_template("about.html")
 
 
-@app.route("/class")
+@app.route("/courses")
 def courses():
-    return render_template("class.html")
+
+    phone = session.get("phone")
+
+    student = {
+        "demo_done": {},
+        "enrolled": {}
+    }
+
+    if phone:
+        student = get_user(phone)
+
+    return render_template(
+        "class.html",
+        student=student
+    )
 
 
 @app.route("/contact", methods=["GET", "POST"])
