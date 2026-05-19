@@ -677,13 +677,14 @@ def join_class_api():
         
         # ✅ check registration
         c.execute("""
-        SELECT otp_verified, demo_allowed
+        SELECT otp_verified, demo_allowed, demo_done
         FROM students
         WHERE phone=? AND course=?
         """, (phone, course))
         
         row = c.fetchone()
-        
+        conn.close()
+
         # ❌ no record
         if not row:
             conn.close()
@@ -909,10 +910,10 @@ def end_class():
            
         c.execute("""
         UPDATE students
-        SET demo_completed=1,
-        demo_done=1
+        SET demo_done=1,
+        last_updated=?
         WHERE course=?
-        AND demo_registered=1
+        AND demo_allowed=1
         """, (course,))
         
         course = teachers[username]["course"]
@@ -948,7 +949,6 @@ def end_class():
                     """, (
                         hours_used + 1,
                         datetime.now().strftime("%Y-%m-%d %H:%M"),
-                        phone,
                         course
                     ))
 
