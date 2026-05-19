@@ -746,12 +746,40 @@ def join_class_api():
 @app.route("/join-live/<course>")
 def join_live(course):
 
+    phone = session.get("phone")
+
+    if not phone:
+        return "Unauthorized"
+
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT otp_verified, demo_allowed
+    FROM students
+    WHERE phone=? AND course=?
+    """, (phone, course))
+
+    row = c.fetchone()
+
+    conn.close()
+
+    if not row:
+        return "Register first"
+
+    if row[0] != 1:
+        return "OTP verification required"
+
+    if row[1] != 1:
+        return "Demo not allowed"
+
     meet_link = get_active_meet_link(course)
 
     if not meet_link:
         return "Class not live"
 
     return redirect(meet_link)
+    
     
 # -------------------- STUDENT STATUS --------------------
 
