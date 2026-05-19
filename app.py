@@ -1203,7 +1203,7 @@ def teacher_dashboard():
     conn.close()
         
     return render_template(
-        "teacher_dashboard.html",
+        "teacher_Dashboard.html",
         teacher_name=username,
         course=teacher.get("course", ""),
         meet_link=teacher.get("meet_link", ""),
