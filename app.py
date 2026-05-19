@@ -856,53 +856,57 @@ def start_class():
 
     course = teachers[username]["course"]
 
-    # =====================================
-    # 🔥 SAVE LIVE CLASS TO DB
-    # =====================================
+    try:
 
-    conn = sqlite3.connect("students.db")
-    c = conn.cursor()
+        # =====================================
+        # 🔥 SAVE LIVE CLASS TO DB
+        # =====================================
 
-    # 🔥 create table if not exists
-    c.execute("""
-    CREATE TABLE IF NOT EXISTS live_classes (
-        course TEXT PRIMARY KEY,
-        meet_link TEXT,
-        live INTEGER DEFAULT 0
-    )
-    """)
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
 
-    # 🔥 insert or update
-    c.execute("""
-    INSERT OR REPLACE INTO live_classes
-    (course, meet_link, live)
-    VALUES (?, ?, 1)
-    """, (
-        course,
-        meet_link
-    ))
+        # 🔥 create table if not exists
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS live_classes (
+            course TEXT PRIMARY KEY,
+            meet_link TEXT,
+            live INTEGER DEFAULT 0
+        )
+        """)
 
-    conn.commit()
-    conn.close()
+        # 🔥 insert or update
+        c.execute("""
+        INSERT OR REPLACE INTO live_classes
+        (course, meet_link, live)
+        VALUES (?, ?, 1)
+        """, (
+            course,
+            meet_link
+        ))
 
-    # =====================================
-    # MEMORY UPDATE
-    # =====================================
+        conn.commit()
+        conn.close()
 
-    teachers[username]["class_live"] = True
-    teachers[username]["meet_link"] = meet_link
-    
-    c.execute("""
-    UPDATE live_classes
-    SET class_live=1,
-    meet_link=?
-    """, (course,))
-        
-    return jsonify({
-        "status": "Class started",
-        "success": True,
-        "live": True
-    })
+        # =====================================
+        # 🔥 MEMORY UPDATE
+        # =====================================
+
+        teachers[username]["class_live"] = True
+        teachers[username]["meet_link"] = meet_link
+
+        return jsonify({
+            "status": "Class started",
+            "success": True,
+            "live": True
+        })
+
+    except Exception as e:
+
+        print("START CLASS ERROR:", e)
+
+        return jsonify({
+            "error": str(e)
+        }), 500
 
 
 def get_active_meet_link(course):
