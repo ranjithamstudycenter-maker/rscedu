@@ -1324,7 +1324,7 @@ html, body{
     <p class="days">📅 Tue • Thur • Sat</p>
     <div class="actions">
        <!-- FREE DEMO -->
-          {% if demo_done %}
+          {% if student.demo_done.get('cbse9') %}
            <button class="btn btn-demo-done">Demo Completed</button>
          {% else %}
           <button class="btn btn-demo" onclick="openDemoPopup('cbse9')">  Free Demo </button>
