@@ -261,11 +261,13 @@ def save_user():
         last_updated
      
     )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
+        name,
         phone,
         course,
-        name,
+        1,
+        1,
         0,
         0,
         0,
