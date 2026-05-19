@@ -31,7 +31,7 @@ def init_db():
         hours_used INTEGER,
         max_hours INTEGER,
         payment_amount INTEGER,
-        last_updated TEXT,   
+        last_updated TEXT  
         
     )
     """)
@@ -248,18 +248,18 @@ def save_user():
     c.execute("""
     INSERT OR REPLACE INTO students
     (
+        name,
         phone,
         course,
-        name,
+        otp_verified,
+        demo_registered,
         demo_done,
         enrolled,
         hours_used,
         max_hours,
         payment_amount,
-        last_updated,
-        otp_verified,
-        demo_registered,
-        demo_completed
+        last_updated
+     
     )
     VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
     """, (
