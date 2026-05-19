@@ -212,11 +212,11 @@ def get_user(phone):
     rows = c.fetchall()
 
     for r in rows:
-        course = r[1]
-        user["demo_done"][course] = bool(r[3])
-        user["enrolled"][course] = bool(r[4])
-        user["hours_used"][course] = r[5]
-        user["max_hours"][course] = r[6]
+        course = r[2]
+        user["demo_done"][course] = bool(r[5])
+        user["enrolled"][course] = bool(r[6])
+        user["hours_used"][course] = r[7]
+        user["max_hours"][course] = r[8]
 
     conn.close()
 
