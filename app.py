@@ -748,10 +748,10 @@ def join_class_api():
 @app.route("/join-live/<course>")
 def join_live(course):
 
-    phone = session.get("phone")
+    phone = request.args.get("phone") or session.get("phone")
 
     if not phone:
-        return "Unauthorized"
+        return "Phone missing"
 
     conn = sqlite3.connect("students.db")
     c = conn.cursor()
@@ -766,20 +766,25 @@ def join_live(course):
 
     conn.close()
 
+    # ❌ no record
     if not row:
-        return "Register first"
+        return "OTP verification required"
 
+    # ❌ OTP not verified
     if row[0] != 1:
         return "OTP verification required"
 
+    # ❌ demo not allowed
     if row[1] != 1:
         return "Demo not allowed"
 
+    # ✅ live meet link
     meet_link = get_active_meet_link(course)
 
     if not meet_link:
         return "Class not live"
 
+    # ✅ direct entry
     return redirect(meet_link)
     
     
