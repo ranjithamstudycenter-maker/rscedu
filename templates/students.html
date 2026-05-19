@@ -96,7 +96,9 @@ button {
 <th>Name</th>
 <th>Phone</th>
 <th>Course</th>
-<th>Demo</th>
+<th>OTP</th>
+<th>Demo Registered</th>
+<th>Demo Completed</th>
 <th>Registered</th>
 <th>Hours</th>
 <th>Action</th>
@@ -173,17 +175,27 @@ function renderTable(students){
 
     students.forEach(s => {
 
-        let demo = s.demo_done ? "Yes" : "No";
+        let otp = s.otp_verified ? "Yes" : "No";
+        let demoReg = s.demo_registered ? "Yes" : "No";
+        let demoComp = s.demo_completed ? "Yes" : "No";
         let enrolled = s.enrolled ? "Yes" : "No";
+
+        
+
+
       
         let row = `
         <tr>
             <td>${s.name || "-"}</td>
             <td>${s.phone}</td>
             <td>${s.course}</td>   <!-- 🔥 ADD THIS -->
-            
-            <td> <span class="badge ${demo=='Yes'?'yes':'no'}">${demo}</span> </td>
 
+            <td><span class="badge ${otp=='Yes'?'yes':'no'}">${otp}</span></td>
+
+            <td><span class="badge ${demoReg=='Yes'?'yes':'no'}">${demoReg}</span></td>
+
+            <td><span class="badge ${demoComp=='Yes'?'yes':'no'}">${demoComp}</span></td>
+            
             <td> <span class="badge ${enrolled=='Yes'?'yes':'no'}">${enrolled}</span> </td>
 
             <td>${s.hours_used || 0}</td>
