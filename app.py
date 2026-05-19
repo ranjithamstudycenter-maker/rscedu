@@ -1440,7 +1440,7 @@ def admin_students():
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
-    c.execute("SELECT name, phone, course, otp verified, demo_allowed, demo_done, enrolled, hours_used FROM students")
+    c.execute("SELECT name, phone, course, otp_verified, demo_allowed, demo_done, enrolled, hours_used FROM students")
     rows = c.fetchall()
 
     students_list = []
