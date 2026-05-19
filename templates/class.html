@@ -2661,7 +2661,11 @@ async function handleOTP(){
       await fetch("/save-user", {
         method:"POST",
         headers:{"Content-Type":"application/json"},
-        body: JSON.stringify({ phone })
+        body: JSON.stringify({
+            name: document.getElementById("studentName").value,
+            phone: phone,
+            course: currentCourse
+        })
       });
   
      // 🔥 ADD THIS
