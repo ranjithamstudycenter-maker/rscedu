@@ -25,7 +25,7 @@ def init_db():
         phone TEXT,
         course TEXT,
         otp_verified INTEGER,
-        demo_registered INTEGER,
+        demo_allowed INTEGER,
         demo_done INTEGER,
         enrolled INTEGER,
         hours_used INTEGER,
@@ -46,7 +46,7 @@ def init_db():
     try:
         c.execute("""
         ALTER TABLE students
-        ADD COLUMN demo_registered INTEGER DEFAULT 0
+        ADD COLUMN demo_allowed INTEGER DEFAULT 0
         """)
     except:
         pass
@@ -252,7 +252,7 @@ def save_user():
         phone,
         course,
         otp_verified,
-        demo_registered,
+        demo_allowed,
         demo_done,
         enrolled,
         hours_used,
