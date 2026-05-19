@@ -894,7 +894,7 @@ def start_class():
     
     c.execute("""
     UPDATE live_classes
-    SET class_live=1,
+    SET live=1,
     meet_link=?
     """, (course,))
         
@@ -1030,7 +1030,7 @@ def end_class():
         
         c.execute("""
         UPDATE live_classes
-        SET class_live=0,
+        SET live=0,
             meet_link=''
         WHERE course=?
         """, (course,))
