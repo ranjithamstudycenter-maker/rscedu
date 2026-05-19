@@ -2487,7 +2487,9 @@ function joinFromPopup() {
   if(data.live){
 
       // 🔴 LIVE BADGE
-      badge.style.display = "inline-block";
+      if(badge){
+         badge.style.display = "inline-block";
+      }
 
       // ✅ DEMO STARTED MESSAGE
       if(msg){
@@ -2500,7 +2502,9 @@ function joinFromPopup() {
 
   } else {
 
-      badge.style.display = "none";
+      if(badge){
+        badge.style.display = "none";
+       }
 
   }
 }
