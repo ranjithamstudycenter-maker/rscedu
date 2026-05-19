@@ -21,21 +21,40 @@ def init_db():
 
     c.execute("""
     CREATE TABLE IF NOT EXISTS students (
+        name TEXT,
         phone TEXT,
         course TEXT,
-        name TEXT,
+        otp_verified INTEGER,
+        demo_registered INTEGER,
         demo_done INTEGER,
         enrolled INTEGER,
         hours_used INTEGER,
         max_hours INTEGER,
         payment_amount INTEGER,
-        last_updated TEXT
+        last_updated TEXT,   
+        
     )
     """)
     try:
         c.execute("""
         ALTER TABLE students
         ADD COLUMN join_time REAL
+        """)
+    except:
+        pass
+
+    try:
+        c.execute("""
+        ALTER TABLE students
+        ADD COLUMN demo_registered INTEGER DEFAULT 0
+        """)
+    except:
+        pass
+
+    try:
+        c.execute("""
+        ALTER TABLE students
+        ADD COLUMN demo_done INTEGER DEFAULT 0
         """)
     except:
         pass
