@@ -80,7 +80,7 @@ teachers = {
         "password": "M10@2026",
         "course": "cbse9",
         "meet_link": "",
-        "enabled": True,
+        "active": True,
         "class_live": False,
         "gpay": "7702616245"
     },
@@ -88,7 +88,7 @@ teachers = {
         "password": "M10@2026",
         "course": "cbse10",
         "meet_link": "",
-        "enabled": True,
+        "active": True,
         "class_live": False,
         "gpay": "7702616245"
     },
@@ -103,7 +103,7 @@ teachers = {
         "password": "",
         "course": "cbse12",
         "meet_link": "",
-        "enabled": False,
+        "active": False,
         "class_live": False,
         "gpay": ""
     },
