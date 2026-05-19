@@ -2486,12 +2486,14 @@ function joinFromPopup() {
 
   if(data.live){
 
-      
       // 🔴 LIVE BADGE
       badge.style.display = "inline-block";
 
       // ✅ DEMO STARTED MESSAGE
-      msg.innerHTML = "🟢 Demo Started";
+      if(msg){
+         msg.style.color = "green";
+         msg.innerHTML = "🟢 Demo Started";
+       }
 
       // 🔥 LIVE POPUP
       showLivePopup(course);
