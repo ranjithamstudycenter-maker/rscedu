@@ -901,6 +901,15 @@ def get_active_meet_link(course):
     conn = sqlite3.connect("students.db")
     c = conn.cursor()
 
+    # 🔥 SAFETY TABLE
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS live_classes (
+        course TEXT PRIMARY KEY,
+        meet_link TEXT,
+        live INTEGER DEFAULT 0
+    )
+    """)
+
     c.execute("""
     SELECT meet_link
     FROM live_classes
@@ -910,12 +919,14 @@ def get_active_meet_link(course):
 
     row = c.fetchone()
 
+    conn.commit()
     conn.close()
 
     if row:
         return row[0]
 
     return None
+    
     
 @app.route("/api/class-status")
 def class_status():
