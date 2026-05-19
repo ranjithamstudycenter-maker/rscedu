@@ -3116,42 +3116,7 @@ document.addEventListener("DOMContentLoaded", () => {
   filterCards();
 
 });
-function showLivePopup(course){
 
-   const popup =
-   document.createElement("div");
-
-   popup.className = "live-popup";
-
-   popup.innerHTML = `
-      <div class="popup-box">
-
-         🔴 Live Class Started
-
-         <br><br>
-
-         <button onclick="joinDemo('${course}')">
-            Join Demo
-         </button>
-
-      </div>
-   `;
-
-   document.body.appendChild(popup);
-
-   popup.style.display = "block";
-
-   setTimeout(() => {
-
-      popup.remove();
-
-   }, 15000);
-}
-    function joinDemo(course){
-
-   joinClass(course);
-
-}
 </script>
  <div id="feedbackPopup" class="popup">
 
