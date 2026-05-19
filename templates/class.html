@@ -1,0 +1,3266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ranjitham Study Center | Online and offline Tuition | Courses </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ranjitham Study Center provides result-oriented  coaching for students with online and offline classes, worksheets, tests, and exam-focused preparation.">
+    <meta name="keywords" content="Tuition, CBSE Coaching, Online Classes, Class 6 to 12 Tuition, Tuition center in Medavakkam, Tuition center in chennai, Tuition center in pallikaranai, Ranjitham Study Center">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+ <style>
+        /* ==========================
+           GLOBAL STYLES
+        ========================== */
+
+        /* Make everything flexible */
+            *{
+              box-sizing: border-box;
+            }
+            
+            body{
+              margin: 0;
+              padding: 0;
+              background: #ffffff;
+              color: #333;
+              overflow-x: hidden;
+            }
+            
+            /* Images responsive */
+            img{
+              max-width: 100%;
+              height: auto;
+            }
+            
+            
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+       
+
+        /* ==========================
+           NAVBAR
+        ========================== */
+        .navbar {
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;   /* 🔥 allows wrapping */
+        }
+       
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 90px;
+        }
+
+        .brand-text h1 {
+            color: #0b5394;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .brand-text p {
+            color: #0b5394;
+            font-size: 13px;
+        }
+
+        
+        .nav-center a {
+            margin: 0 15px;
+            color: #0b5394;
+            font-weight: 600;
+        }
+
+        .nav-center a:hover {
+            text-decoration: underline;
+        }
+
+       .demo-btn {
+            background: linear-gradient(45deg, #ff2d55, #7b2cbf);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 600;
+            animation: blink 2s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+ @media(max-width:768px){
+  .navbar{
+    flex-direction: column;
+    align-items: center;
+  }
+    /* LEFT → logo + title */
+  .nav-left{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    
+  }
+
+  .logo{
+    height: 55px;
+  }
+
+  .brand-text h1{
+    font-size: 18px;
+  }
+
+  .brand-text p{
+    font-size: 11px;
+  }
+
+  /* CENTER → MENU */
+  .nav-center{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;              /* 🔥 allow 2 lines */
+    justify-content: center;
+    margin-top: 8px;
+    gap: 6px;              /* 🔥 reduce gap */
+    flex-wrap: nowrap;     /* 🔥 single line */
+  }
+
+  .nav-center a{
+    font-size: 12px;       /* 🔥 reduce text */
+    margin: 0 4px;         /* 🔥 less spacing */
+    white-space: nowrap;
+  }
+
+  /* DEMO → CENTER */
+  .nav-right{
+    width: 100%;
+    display: flex;
+    justify-content: center;   /* 🔥 CENTER */
+    margin-top: 8px;
+  }
+
+  .demo-btn{
+    font-size: 13px;
+  }
+
+   }
+
+body{
+  margin:0;
+  font-family: 'Poppins', sans-serif;
+  background:#f9fafb;
+  color:#111827;
+}
+
+/* HERO */
+.hero{
+  background: linear-gradient(135deg,#1e3a8a,#6366f1);
+  color:white;
+  text-align:center;
+  padding:60px 20px;
+}
+.hero h1{font-size:40px;}
+.hero p{font-size:18px;margin-top:10px}
+
+/* SECTION */
+.section{padding:50px 20px;}
+  
+.container{
+  width: 95%;
+  margin: auto;
+  padding: 20px 10px;   /* reduce */
+} 
+
+  
+/* CARD */
+
+.card{
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+
+  background: white;
+  border-radius: 18px;
+  padding: 25px;
+  max-width: 400px;
+  height: 100%;   /* 🔥 முக்கியம் */
+  min-height: 420px;  /* 🔥 equal size */
+
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+}
+
+ 
+  .card:hover{
+  transform:translateY(-5px);
+  box-shadow:0 15px 40px rgba(0,0,0,0.12);
+}
+  .card h2{
+  color:#1e3a8a;
+  margin-bottom:10px;
+}
+
+/* FLEX BUTTONS */
+.actions{
+  display:flex;
+  gap:15px;
+  margin-top:20px;
+  position: relative;
+  z-index: 5;
+}
+.title{
+  margin-bottom:10px;
+  color:#0b5394;
+}
+
+  /* PRICE BOX */
+.price-box{
+  background:#eef2ff;
+  border-left:5px solid #6366f1;
+  padding:15px;
+  margin:15px 0;
+  border-radius:8px;
+  display:flex;
+  justify-content:space-between;
+  margin-bottom:10px;
+}
+ 
+.price{
+  font-weight:bold;
+  color:#111;
+}
+
+
+/* BUTTONS */
+.btn{
+  flex:1;
+  text-align:center;
+  padding:12px;
+  border-radius:8px;
+  cursor:pointer;
+  text-decoration:none;
+  font-weight:600;
+  display: inline-block;
+  pointer-events: auto;
+  transition:0.3s;
+  border:none;
+  
+}
+/* FREE DEMO */
+.btn-demo{
+  background:#fff3b0;
+  color:#000;
+}
+
+.btn-demo-done{
+  background:#fbc02d;
+  color:#000;
+}
+
+/* ENROLL */
+.btn-enroll{
+  background:#bbdefb;
+  color:#000;
+}
+
+.btn-registered{
+  background:#1565c0;
+  color:white;
+}
+
+/* JOIN */
+.btn-join{
+  background:#81c784;
+  color:white;
+}
+
+.btn-joined{
+  background:#2e7d32;
+  color:white;
+}
+/* LIVE */
+  .btn.live{
+  background:red;
+  color:white;
+  width:100%;
+  animation:pulse 1s infinite;
+}
+  .btn:hover{
+  transform:scale(1.05);
+}
+
+
+.grid{
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); /* 🔥 reduce */
+  gap: 15px;
+  max-width: 1500px;
+  margin: auto;
+}
+  
+  /* SEARCH BAR */
+.search-box{
+  max-width:500px;
+  margin:20px auto;
+  text-align:center;
+}
+.search-box input{
+  width:100%;
+  padding:12px 18px;
+  border-radius:30px;
+  border:2px solid #0b5394;
+  font-size:15px;
+}
+
+/* BADGE */
+.badge{
+  background:red;
+  color:white;
+  padding:5px 10px;
+  border-radius:20px;
+  font-size:12px;
+  display:inline-block;
+}
+
+/* NOTICE */
+.notice {
+  margin: 10px 0;   /* 🔥 equal top-bottom spacing */
+  padding: 10px;
+  border-radius: 10px;
+  background: #f8fafc;
+}
+/* row layout */
+.info-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 6px;
+ flex-wrap: nowrap;
+}
+
+  @media(max-width:768px){
+  .course-container{
+    flex-wrap:wrap;   /* mobile la vertical */
+  }
+}
+  /* MOBILE */
+@media(max-width:768px){
+  .hero h1{
+    font-size:26px;
+  }
+
+  .grid{
+    grid-template-columns: 1fr;
+  }
+
+  .card{
+    padding: 5px;
+  }
+}
+/* GLOBAL FIX */
+html, body{
+  overflow-x: hidden;
+}
+
+*{
+  box-sizing: border-box;
+}
+
+/* SAFETY FIX */
+.card{
+  width: 100%;
+  min-width: 0;
+}
+
+  /* ==========================
+   CTA (NEW PREMIUM STYLE)
+========================== */
+.cta-section {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #1e3a8a, #6d28d9); /* 🔥 blue + purple */
+}
+
+.cta-box {
+    max-width: 1100px;
+    margin: auto;
+    color: white;
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.cta-small {
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.cta-box h2 {
+    font-size: 38px;
+    margin-bottom: 15px;
+    font-weight: 700;
+}
+
+.cta-text {
+    font-size: 16px;
+    margin-bottom: 35px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+}
+
+/* 🔥 BUTTON UPGRADE */
+.cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #facc15, #f59e0b); /* GOLD */
+    color: #1e3a8a;
+    padding: 14px 40px;
+    border-radius: 40px;
+    font-weight: 600;
+    transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.cta-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+}
+        /* ==========================
+           FOOTER
+        ========================== */
+       /* ==========================
+   FOOTER (NEW STYLE)
+========================== */
+.footer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #cbd5e1;
+    padding: 70px 20px 25px;
+}
+
+.footer-container {
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 50px;
+}
+
+.footer-box h3 {
+    color: white;
+    margin-bottom: 18px;
+    font-size: 18px;
+}
+
+.footer-box p {
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.footer-box a {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+.footer-box a:hover {
+    color: #facc15; /* 🔥 gold hover */
+    transform: translateX(5px);
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 13px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    color: #94a3b8;
+}
+
+         /* ==========================
+           WHATSAPP FLOAT BUTTON
+        ========================== */
+        .whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 56px;
+            height: 56px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            z-index: 1000;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .whatsapp:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        }
+
+
+  .privacy-section{
+  background: #f1f5f9;   /* light clean bg */
+  padding: 30px 20px;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* 🔥 HEADING */
+.privacy-section h3{
+  text-align: center;
+  color: #0b5fa5;   /* bright blue */
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* 🔥 PARAGRAPH */
+.privacy-section p{
+    width: 100%;              /* 🔥 full width */
+  text-align: justify;      /* left → right fill */
+
+  color:red;        /* dark readable */
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+  /* ⏳ timer */
+
+.demo-timer{
+  margin-top:8px;
+  font-size:13px;
+  font-weight:600;
+  color:#7c3aed;
+  text-align:left;
+  display:block;
+  width:100%;
+}
+
+ /* start button */
+.start-time-btn {
+  background: #e0e7ff;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 8px;
+  color: #1e3a8a;
+  font-weight: 500;
+}
+.seats-left {
+  font-size: 12px;
+  color: #16a34a;
+  margin-top: 4px;
+  display:none;
+}
+
+/* 🔥 LOW SEATS STYLE */
+.low-seats {
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 700;
+
+  color: Red;
+
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  padding: 6px 12px;
+  border-radius: 20px;
+
+  display: block;
+  margin: 10px auto;
+
+  width: fit-content;
+}
+
+/* ⏱ hours */
+.hours-left {
+  font-size: 12px;
+  color: #0b5394;
+}
+  
+  .live-badge{
+  display:none;
+  background:red;
+  color:white;
+  padding:4px 10px;
+  border-radius:15px;
+  font-size:12px;
+  margin-left:10px;
+  animation:blink 1.5s infinite;
+}
+  /* 🔴 LIVE SECTION */
+.live-section{
+  text-align:center;
+  margin-bottom:10px;
+}
+
+@keyframes blink{
+  50%{opacity:0;}
+}
+
+  .live-popup{
+  position:fixed;
+  top:20px;
+  right:20px;
+  display:none;
+  z-index:9999;
+  left:50%;
+  transform:translateX(-50%);
+  
+}
+
+.popup-box{
+  background:linear-gradient(45deg,#ff0000,#ff4d4d);
+  color:white;
+  padding:15px 20px;
+  border-radius:12px;
+  box-shadow:0 10px 30px rgba(0,0,0,0.3);
+  animation:slideIn 0.5s ease;
+
+ }
+
+.popup-box button{
+  margin-top:10px;
+  padding:8px 15px;
+  border:none;
+  border-radius:6px;
+  background:white;
+  color:red;
+  font-weight:600;
+  cursor:pointer;
+}
+
+@keyframes slideIn{
+  from{transform:translateX(100%);}
+  to{transform:translateX(0);}
+}
+  #coursePrice{
+  font-size:18px;
+}
+  #enrollPopup {
+  pointer-events: auto;
+}
+/* 🎯 seats */
+.seats {
+  color: #1e40af;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* 🔥 offer badge */
+.offer {
+  background: linear-gradient(135deg, #ef4444, #f97316);
+  color: white;
+  font-size: 12px;
+  padding: 3px 10px;
+  border-radius: 12px;
+  margin-top: 6px;
+  font-weight: 600;
+}
+  .disabled{
+  background:gray;
+  color:white;
+  pointer-events:none;
+}
+  .duration{
+  font-size:13px;
+  color:#666;
+}
+  .days{
+  font-size:14px;
+  color:#555;
+   margin-bottom:15px;
+}
+  .class-time{font-size:13px;color:#555;margin-top:8px;}
+
+  @media(max-width:768px){
+
+  .cards{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+  }
+
+ .class-card{
+  background:white;
+  border-radius:16px;
+  padding:20px;
+  width:280px;
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+  transition:0.3s;
+}
+
+.class-card:hover{
+  transform:translateY(-5px);
+}
+
+  #searchBox{
+    width:90%;
+  }
+
+}
+  @media(max-width:768px){
+  .class-card{
+    width:90%;
+  }
+}
+ 
+/* footer */
+.card-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-top: 10px;
+}
+
+  .card > * {
+  margin-top: 10px;
+}
+
+.card > *:first-child {
+  margin-top: 0;
+}
+
+/* faculty link */
+.faculty-link {
+  font-size: 13px;
+  text-decoration: none;
+  color: #0b5394;
+}
+
+/* 🔴 LIVE ANIMATION */
+@keyframes pulse{
+  0%{opacity:1;}
+  50%{opacity:0.6;}
+  100%{opacity:1;}
+}
+  /* MOBILE */
+@media(max-width:900px){.grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:600px){
+  .grid{grid-template-columns:1fr;}
+  .hero h1{font-size:26px;}
+  .navbar{flex-direction:column;align-items:center;}
+  .nav-left{width:100%;}
+  .logo{height:55px;}
+  .brand-text h1{font-size:18px;}
+  .nav-center{width:100%;display:flex;flex-wrap:nowrap;justify-content:center;margin-top:8px;gap:6px;}
+  .nav-center a{font-size:12px;margin:0 4px;white-space:nowrap;}
+  .nav-right{width:100%;display:flex;justify-content:center;margin-top:8px;}
+  .search-box{width:100%;}
+}
+
+
+  .course-msg {
+  margin-top: 10px;
+  text-align: center;
+
+  font-size: 14px;
+  font-weight: 600;
+
+  color: violet;
+
+  background:none;
+  padding: 8px 14px;
+  border-radius: 20px;
+
+  display: inline-block;
+}
+.coming-wrapper{
+  position: relative;
+  opacity: 0.8;
+}
+
+/* disable buttons look */
+.coming-wrapper .btn{
+  pointer-events: none;
+  filter: grayscale(0.4);
+}
+
+/* overlay */
+.coming-overlay{
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+
+  background: linear-gradient(135deg, #f97316, #ef4444);
+  color: blue;
+
+  padding: 8px 18px;
+  border-radius: 20px;
+
+  font-size: 13px;
+  font-weight: 600;
+
+  box-shadow: 0 6px 15px rgba(0,0,0,0.2);
+}
+.terms-alert {
+  text-align: center;
+  margin: 20px auto;
+}
+
+.terms-alert p {
+  font-size: 14px;
+  color: #1b5e20;
+  font-weight: 600;
+}
+
+.terms-link {
+  color: #2e7d32;
+  text-decoration: none;
+  border-bottom: 2px solid #4caf50;
+}
+
+.terms-link:hover {
+  color: #1b5e20;
+}
+
+.tabs {
+  display: flex;
+  gap: 12px;
+  justify-content: center;
+  padding: 10px;
+  flex-wrap: wrap;
+  overflow-x: auto;
+  white-space: nowrap;
+}
+
+/* BUTTON STYLE */
+.tabs button {
+  padding: 10px 20px;
+  border-radius: 25px;
+  border: none;
+  background: #f1f3f6;
+  color: #333;
+  font-weight: 500;
+  cursor: pointer;
+  flex: 0 0 auto;
+  transition: all 0.3s ease;
+}
+
+/* HOVER */
+.tabs button:hover {
+  background: #e0e6ff;
+  color: #1a3cff;
+  transform: translateY(-2px);
+}
+
+/* ACTIVE TAB */
+.tabs button.active {
+  background: linear-gradient(135deg, #4CAF50, #2ecc71);
+  color: white;
+  font-weight: 600;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+}
+
+ /* SECTION BACKGROUND */
+.course-section {
+  background: linear-gradient(135deg, #eef2ff, #f8fafc);
+  padding: 50px 20px;
+}
+
+
+  /* INNER CONTAINER */
+.course-container {
+  max-width: 1500px;
+  margin: auto;
+  background: #ffffff;
+  border-radius: 16px;
+  padding: 35px 25px;
+  box-shadow: 0 10px 30px rgba(0,0,0,0.08);
+  text-align: center;
+ 
+}
+/* TITLE */
+.course-title {
+  font-size: 26px;
+  margin-bottom: 5px;
+}
+
+/* SUBTITLE */
+.course-subtitle {
+  color: #666;
+  font-size: 14px;
+  margin-bottom: 25px;
+}
+
+/* GRID */
+.course-categories {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 18px;
+}
+
+/* EACH BOX */
+.course-box {
+  background: #f1f5ff;   /* light blue tint */
+  padding: 18px;
+  border-radius: 12px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  text-align: center;   /* 🔥 முக்கியம் */
+}
+
+/* HOVER EFFECT */
+.course-box:hover {
+  background: #e0e7ff;
+  transform: translateY(-6px);
+  box-shadow: 0 6px 18px rgba(0,0,0,0.1);
+  filter: brightness(0.95);
+}
+
+/* TITLE INSIDE BOX */
+.course-box h3 {
+  display: inline-block;
+  background: linear-gradient(135deg, #4facfe, #00c6ff);
+  color: white;
+  padding: 6px 14px;
+  border-radius: 20px;
+  font-size: 16px;
+  font-weight: 600;
+  margin-bottom: 12px;
+  
+}
+
+  /* SCHOOL */
+.course-box:nth-child(1) h3 {
+  background: linear-gradient(135deg, #667eea, #764ba2);
+}
+
+/* KIDS */
+.course-box:nth-child(2) h3 {
+  background: linear-gradient(135deg, #ff9a9e, #fad0c4);
+  color: #333;
+}
+
+/* PROGRAMMING */
+.course-box:nth-child(3) h3 {
+  background: linear-gradient(135deg, #43e97b, #38f9d7);
+  color: #0f172a;
+}
+
+/* SKILLS */
+.course-box:nth-child(4) h3 {
+  background: linear-gradient(135deg, #fa709a, #fee140);
+  color: #333;
+}
+
+/* LANGUAGES */
+.course-box:nth-child(5) h3 {
+  background: linear-gradient(135deg, #30cfd0, #330867);
+}
+
+/* TEXT */
+.course-box p {
+  font-size: 13px;
+  color: #555;
+}
+
+ .course-list {
+  list-style: none;
+  padding: 0;
+  margin-top: 10px;
+  font-size: 13px;
+  color: #444;
+}
+
+.course-list li {
+  position: relative;
+  text-align: left;
+  padding: 5px 0;
+}
+
+/* bullet style */
+.course-list li::before {
+  color: #4CAF50;
+  font-weight: bold;
+  margin-right: 6px;
+}
+  .course-name {
+  font-weight: 600;
+  color: #222;
+}
+
+.range {
+  font-size: 12px;
+  color: #666;
+  margin-left: 5px;
+}
+
+  * SUB HEADINGS (IMPORTANT FIX 🔥) */
+.course-list strong {
+  display: block;
+  font-size: 14px;
+  font-weight: 600;
+  color: #2563eb;   /* blue highlight */
+  margin-top: 12px;
+  margin-bottom: 6px;
+  padding-left: 6px;
+  border-left: 3px solid #2563eb;
+}
+
+/* COURSE ITEMS */
+.course-name {
+  font-size: 14px;
+  font-weight: 400;
+  color: #334155;
+}
+ 
+.mode-tabs {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+  margin: 10px 0 20px;
+}
+
+.mode-tabs button {
+  padding: 6px 16px;
+  font-size: 13px;
+  border-radius: 20px;
+  border: 1px solid #d1d5db;
+  background: #f8fafc;   /* light grey */
+  color: #334155;
+  cursor: pointer;
+  transition: none; /* ❌ no hover animation */
+}
+
+.mode-tabs button.active {
+  background: #2563eb;   /* blue */
+  color: white;
+  border-color: #2563eb;
+}
+
+
+ </style>
+
+ 
+</head>
+
+<body>
+
+<!-- ==========================
+         NAVBAR
+    ========================== -->
+    <nav class="navbar"> 
+        <div class="nav-left"> 
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo"> 
+            <div class="brand-text"> 
+                <h1>RANJITHAM STUDY CENTER</h1> 
+                <p>Learn • Practice • Master Your Skills</p> 
+            </div>
+        </div>
+        <div class="nav-center"> 
+            <a href="{{ url_for('home') }}">Home</a> 
+            <a href="{{ url_for('about') }}">About</a> 
+            <a href="{{ url_for('courses') }}">Class</a> 
+            <a href="{{ url_for('materials') }}">Materials</a>
+            <a href="{{ url_for('contact') }}">Contact</a> 
+        </div> 
+        <div class="nav-right">
+        <a href="/contact" class="demo-btn">Free demo class</a>
+        </div>
+    </nav>
+<!-- HERO -->
+<section class="hero">
+  <h1>🌍 Global Live Classes</h1>
+  <p>Online Classes Available for Students Worldwide</p>
+  <p>Special Support for Indian Students Abroad</p>
+</section>
+
+
+
+<section class="terms-alert">
+  <p>
+    ⚠️ Please read the 
+    <a href="/terms" class="terms-link">Terms & Conditions</a> 
+    carefully before using this section.
+  </p>
+</section>
+ 
+ <div class="mode-tabs">
+      <button class="active" data-mode="india">for Indian Students</button>
+      <button data-mode="abroad">🌍 Indians in Abroad </button>
+ </div>  
+ 
+     <div id="abroadMessage" style="display:none; text-align:center; padding:60px 20px;">
+      
+      <h2 style="color:#1e3a8a; margin-bottom:15px;">
+        🎓 Courses 
+      </h2>
+    
+      <p style="color:#555; font-size:16px;">
+        International courses are currently under planning.
+      </p>
+    
+      <p style="margin-top:10px; color:#ef4444; font-weight:600;">
+        🚧 Coming Soon
+      </p>
+    
+    </div>
+
+<section class="course-section" id="courseSection">
+ 
+  <div class="course-container">
+
+    <h2 class="course-title">🎓 Our Courses</h2>
+    <p class="course-subtitle">
+      Choose from a wide range of programs designed for students of all levels
+    </p>
+    
+    <div class="course-categories">
+
+      <div class="course-box">
+
+      <h3>📘 School</h3>
+    
+      <ul class="course-list">
+        <li><span class="course-name">CBSE Maths</span> <span class="range">(6–12)</span></li>
+        <li><span class="course-name">CBSE Physics</span> <span class="range">(6–12)</span></li>
+        <li><span class="course-name">CBSE Chemistry</span> <span class="range">(6–12)</span></li>
+        <li><span class="course-name">Matriculation Maths</span> <span class="range">(6–12)</span></li>
+        <li><span class="course-name">Matriculation Physics</span> <span class="range">(6–12)</span></li>
+        <li><span class="course-name">Matriculation Chemistry</span> <span class="range">(6–12)</span></li>
+        <li><span class="course-name">Hindi</span>
+        <li><span class="course-name">Science</span>
+      </ul>
+    
+    </div>
+
+      <div class="course-box">
+        <h3>🧸 Kids</h3>
+        <ul class="course-list">
+
+            <li><strong>📚 Learning Basics</strong></li>
+            <li><span class="course-name">Abacus</span></li>
+            <li><span class="course-name">Phonics</span></li>
+            <li><span class="course-name">Handwriting & Calligraphy</span></li>
+          
+            <li><strong>🎨 Creativity</strong></li>
+            <li><span class="course-name">Drawing & Coloring</span></li>
+            <li><span class="course-name">Craft & DIY</span></li>
+            <li><span class="course-name">Origami (Paper Art)</span></li>
+            <li><span class="course-name">Clay Modeling</span></li>
+          
+            <li><strong>🧠 Brain Skills</strong></li>
+            <li><span class="course-name">Vedic Maths (Basic)</span></li>
+            <li><span class="course-name">Rubik’s Cube</span></li>
+            <li><span class="course-name">Memory Techniques</span></li>
+            <li><span class="course-name">Puzzle Solving</span></li>
+          
+            <li><strong>🗣️ Communication</strong></li>
+            <li><span class="course-name">Basic Grammar</span></li>
+            <li><span class="course-name">Spoken English</span></li>
+            <li><span class="course-name">Storytelling</span></li>
+          
+            <li><strong>🎭 Activities</strong></li>
+            <li><span class="course-name">Dance (Basic)</span></li>
+            <li><span class="course-name">Drama</span></li>
+            <li><span class="course-name">Music (Basic)</span></li>
+          
+          </ul>
+       
+       </ul>
+       
+      </div>
+
+      <div class="course-box">
+        <h3>💻 Core Programming</h3>
+
+         <ul class="course-list">
+         
+           <li><strong>Beginner Level</strong></li>
+           <li><span class="course-name">C Programming (Basics)</span></li>
+           <li><span class="course-name">C++ Fundamentals</span></li>
+           <li><span class="course-name">Python Basics</span></li>
+           <li><span class="course-name">Programming Logic</span></li>
+           <li><span class="course-name">MS Office (Word, Excel, PPT)</span></li>
+           <li><span class="course-name">Typing & Internet Basics</span></li>
+           <li><span class="course-name">Tally</span></li>
+           <li><span class="course-name">Basic Computer Course</span></li>
+         
+           <li><strong>Intermediate Level</strong></li>
+           <li><span class="course-name">C++ (OOP)</span></li>
+           <li><span class="course-name">Java Programming</span></li>
+           <li><span class="course-name">Python Intermediate</span></li>
+           <li><span class="course-name">Data Structures (Basic)</span></li>
+           <li><span class="course-name">HTML, CSS & JavaScript</span></li>
+           <li><span class="course-name">Website Development</span></li>
+         
+           <li><strong>Advanced Level</strong></li>
+           <li><span class="course-name">Java Advanced</span></li>
+           <li><span class="course-name">Python Projects</span></li>
+           <li><span class="course-name">DSA</span></li>
+           <li><span class="course-name">Problem Solving</span></li>
+         
+         </ul>
+      </div>
+
+      <div class="course-box">
+        <h3>🎯 Skill Development</h3>
+
+          <ul class="course-list">
+          
+            <li><strong>🗣️ Communication Skills</strong></li>
+            <li><span class="course-name">Spoken English</span></li>
+            <li><span class="course-name">Public Speaking</span></li>
+            <li><span class="course-name">Personality Development</span></li>
+            <li><span class="course-name">Interview Skills</span></li>
+          
+            <li><strong>🎨 Creative Skills</strong></li>
+            <li><span class="course-name">Drawing</span></li>
+            <li><span class="course-name">Art & Craft</span></li>
+            <li><span class="course-name">Calligraphy</span></li>
+            <li><span class="course-name">Digital Drawing</span></li>
+          
+            <li><strong>🧠 Personal Development</strong></li>
+            <li><span class="course-name">Time Management</span></li>
+            <li><span class="course-name">Confidence Building</span></li>
+            <li><span class="course-name">Leadership Skills</span></li>
+            <li><span class="course-name">Goal Setting</span></li>
+          
+            <li><strong>💼 Career & Future Guidance</strong></li>
+            <li><span class="course-name">Career Guidance</span></li>
+            <li><span class="course-name">Career Counselling</span></li>
+            <li><span class="course-name">Resume Building</span></li>
+            <li><span class="course-name">Basic Job Skills</span></li>
+          
+            <li><strong>📚 Academic Support Skills</strong></li>
+            <li><span class="course-name">Study Techniques</span></li>
+            <li><span class="course-name">Exam Preparation Strategies</span></li>
+            <li><span class="course-name">Memory Techniques</span></li>
+          
+          </ul>
+      </div>
+
+      <div class="course-box">
+         <h3>🌍 Languages & Communication</h3>
+
+         <ul class="course-list">
+         
+           <li><strong>🗣️ English & Communication</strong></li>
+           <li><span class="course-name">Spoken English</span></li>
+           <li><span class="course-name">Basic Grammar</span></li>
+           <li><span class="course-name">Advanced English</span></li>
+           <li><span class="course-name">Business English</span></li>
+         
+           <li><strong>🌐 Foreign Languages</strong></li>
+           <li><span class="course-name">Hindi</span></li>
+           <li><span class="course-name">French</span></li>
+           <li><span class="course-name">German</span></li>
+           <li><span class="course-name">Spanish</span></li>
+         
+           <li><strong>🎯 Language Skills</strong></li>
+           <li><span class="course-name">Reading Skills</span></li>
+           <li><span class="course-name">Writing Skills</span></li>
+           <li><span class="course-name">Pronunciation Training</span></li>
+         
+         </ul>
+      </div>
+
+    </div>
+
+  </div>
+
+</section>
+<!-- FILTER TABS -->
+<div class="tabs category">
+  <button class="active" data-cat="all">All</button>
+   <button data-cat="school">School</button>
+  <button data-cat="kids">Kids</button>
+  <button data-cat="programming">Core Programming</button>
+  <button data-cat="skills">Skill Development</button>
+  <button data-cat="languages">Languages & Communication</button>
+ </div>
+ 
+<!-- SEARCH -->
+<div class="search-box">
+  <input type="text" id="searchInput" placeholder="🔎 Search class..." onkeyup="searchClass()">
+  <div class="last-updated">Last Updated: <span class="date"></span></div>
+</div>
+ 
+<!-- COURSES -->
+<section class="section">
+<div class="container">
+
+<div class="grid">
+ 
+<!-- ========== CBSE 9 ========== -->
+ <div class="card" id="card-cbse9" data-category="school" data-mode="india">
+    <h2>CBSE Maths – Class 9 <span class="live-badge" id="live-cbse9">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹250 / hour</p>
+      <p id="duration-cbse9"></p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('cbse9')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll" onclick="enroll('cbse9')">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-cbse9" class="btn btn-join" onclick="joinClass('cbse9')">Join Now</button>
+         
+    </div>
+           
+   <div id="msg-cbse9" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-cbse9"></p>
+         <div class="demo-timer" id="timer-cbse9"></div>
+
+         <div class="card-footer">
+           <button class="start-time-btn" id="time-cbse9"> Starts at 6:00 PM </button>
+         <a href="/teacher-login?class=cbse9" class="faculty-link">🔐 Teacher Login</a>
+       </div>
+  </div>
+
+ <!-- ========== CBSE 10 ========== -->
+  <div class="card" id="card-cbse10" data-category="school" data-mode="india">
+    <h2>CBSE Maths – Class 10 <span class="live-badge" id="live-cbse10">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹300 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('cbse10')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll" onclick="enroll('cbse10')">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-cbse10" class="btn btn-join" onclick="joinClass('cbse10')">Join Now</button>
+         
+    </div>
+   <div id="msg-cbse10" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-cbse10"></p>
+         <div class="demo-timer" id="timer-cbse10"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=cbse10" class="faculty-link">🔐 Teacher Login</a>
+       </div>
+  </div>
+
+ 
+ 
+ <!-- ========== CBSE 11 ========== -->
+  <div class="card" id="card-cbse11" data-category="school" data-mode="india">
+    <h2>CBSE Maths – Class 11 <span class="live-badge" id="live-cbse11">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹350 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('cbse11')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll" onclick="enroll('cbse11')">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-cbse11" class="btn btn-join" onclick="joinClass('cbse11')">Join Now</button>
+         
+    </div>
+   <div id="msg-cbse11" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-cbse11"></p>
+         <div class="demo-timer" id="timer-cbse11"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=cbse11" class="faculty-link">🔐 Teacher Login</a>
+       </div>
+  </div>
+<!-- ========== CBSE 12 ========== -->
+  <div class="card" id="card-cbse12" data-category="school" data-mode="india">
+    <h2>CBSE Maths – Class 12 <span class="live-badge" id="live-cbse12">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹400 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions">
+       <!-- FREE DEMO -->
+          {% if demo_done %}
+           <button class="btn btn-demo-done">Demo Completed</button>
+         {% else %}
+          <button class="btn btn-demo" onclick="openDemoPopup('cbse12')">  Free Demo </button>
+         {% endif %}
+             
+       
+          <!-- ENROLL -->
+          {% if registered %}
+            <button class="btn btn-registered">Registered</button>
+          {% else %}
+            <button class="btn btn-enroll" onclick="enroll('cbse12')">Enroll</button>
+          {% endif %}
+        
+          <!-- JOIN -->
+           <button id="joinBtn-cbse12" class="btn btn-join" onclick="joinClass('cbse12')">Join Now</button>
+         
+    </div>
+   <div id="msg-cbse12" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-cbse12"></p>
+         <div class="demo-timer" id="timer-cbse12"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=cbse12" class="faculty-link">🔐 Teacher Login</a>
+       </div>
+  </div>
+
+<!-- Engg Maths 1 -->
+<div class="card" id="card-engg1" data-mode="india">
+    <h2>Engg Maths 1 <span class="live-badge" id="live-engg1">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹10000 / Month</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions coming-wrapper">
+
+   <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
+   <div id="msg-engg1" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-engg1"></p>
+         <div class="demo-timer" id="timer-engg1"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=engg1" class="faculty-link">🔐 Teacher Login</a>
+       </div>
+  </div>
+
+<!-- Engg Maths 2 -->
+<div class="card" id="card-engg2" data-mode="india">
+    <h2>Engg Maths 2 <span class="live-badge" id="live-engg2">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹10000 / Month</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+   <div class="actions coming-wrapper">
+
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
+   <div id="msg-engg2" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-engg2"></p>
+         <div class="demo-timer" id="timer-engg2"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=engg2" class="faculty-link">🔐 Teacher Login</a>
+       </div>
+  </div>
+
+<!-- Engg Maths 3 -->
+<div class="card" id="card-engg3" data-mode="india">
+    <h2>Engg Maths 3 <span class="live-badge" id="live-engg3">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">₹10000/ Month</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions coming-wrapper">
+
+ 
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
+   <div id="msg-engg3" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-engg3"></p>
+         <div class="demo-timer" id="timer-engg3"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=engg3" class="faculty-link">🔐 Teacher Login</a>
+       </div>
+  </div>
+
+<!-- Control System  -->
+<div class="card" id="card-control" data-mode="india">
+    <h2> Control System <span class="live-badge" id="live-control">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">$20 / hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions coming-wrapper">
+
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
+   <div id="msg-control" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-control"></p>
+         <div class="demo-timer" id="timer-control"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=control" class="faculty-link">🔐 Teacher Login</a>
+       </div>
+  </div>
+
+
+ <!-- Algebra/Geometry/Calculus -->
+<div class="card" id="card-AGS" data-mode="india">
+    <h2>Algebra/Geometry/Calculus <span class="live-badge" id="live-AGS">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">$20/ hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions coming-wrapper">
+
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
+   <div id="msg-AGS" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-AGS"></p>
+         <div class="demo-timer" id="timer-AGS"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=AGS" class="faculty-link">🔐 Teacher Login</a>
+       </div>
+  </div>
+
+
+ <!-- Maths -->
+<div class="card" id="card-maths" data-mode="india">
+    <h2>USA maths <span class="live-badge" id="live-maths">🔴 LIVE</span></h2>
+    <div class="price-box">
+      <p class="price">$20/ hour</p>
+      <p class="duration">12 Hours / Month</p>
+    </div>
+    <p class="days">📅 Tue • Thur • Sat</p>
+    <div class="actions coming-wrapper">
+
+  
+  <!-- COMING SOON OVERLAY -->
+  <div class="coming-overlay">🚧 Coming Soon</div>
+
+</div>
+   <div id="msg-maths" class="course-msg"></div>
+      <div class="notice">
+            <p class="seats">🎯 Available Seats: 30</p>
+            <p class="offer">🔥 50% OFF for first 10 seats</p>
+      </div>  
+         <p class="hours-left" id="hours-maths"></p>
+         <div class="demo-timer" id="timer-maths"></div>
+
+         <div class="card-footer">
+         <button class="start-time-btn">Starts at 7:00 PM</button>
+         <a href="/teacher-login?class=maths" class="faculty-link">🔐 Teacher Login</a>
+       </div>
+  </div>
+
+</div>
+
+</div>
+</section>
+
+ <!-- ==========================
+         CTA SECTION
+    ========================== -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <p class="cta-small">Best Maths Tuition in Medavakkam </p>
+            <h2>Ready to improve your Maths?</h2>
+            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with good guidance.</p>
+            <a href="/contact" class="cta-btn">Enroll Now</a>
+        </div>
+    </section>
+
+    <!-- ==========================
+         CONTACT & FOOTER
+    ========================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>RANJITHAM STUDY CENTER</h3>
+                <p>Focused maths coaching for Class 6th to 12th standard students including 20+ Courses for Students, Kids, Programming & Skill Development</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/courses">Courses</a>
+                <a href="/materials">Materials</a>
+                <a href="/contact">Contact</a>
+                <a href="/admin">Admin</a>
+                <a href="/privacy">Privacy policy</a>
+                <a href="/terms">Terms and Conditions</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact Details</h3>
+                <p>📞 7702616245</p>
+                <p>📧 ranjithamstudycenter@gmail.com</p>
+           </div>
+        </div>
+                    <div class="footer-bottom">
+                      © 2026 Ranjitham Study Center. All Rights Reserved. | Designed for Quality Education
+                    </div>
+        </footer>
+ <div class="privacy-section">
+  <h3>🔒 <strong>Your Privacy </strong></h3><br> 
+  <p>
+    We collect your name, contact number, email, and feedback solely for communication purposes. 
+    This information is used to provide you with relevant educational updates and materials. 
+    Your data is securely stored and will not be shared with any third parties.
+  </p>
+</div>
+
+  
+ 
+    <!-- ==========================
+         WHATSAPP FLOAT BUTTON
+    ========================== -->
+    <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
+
+
+<!-- ========== RAZORPAY ========== -->
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
+<script>
+const firebaseConfig = {
+  apiKey: "AIzaSyApsAgXKfNbe3-u2sO2jG_JfkMpmE0tCd0",
+    authDomain: "rscedu-45e74.firebaseapp.com",
+    projectId: "rscedu-45e74",
+    storageBucket: "rscedu-45e74.firebasestorage.app",
+    messagingSenderId: "127790699547",
+    appId: "1:127790699547:web:2fc02df876a7549b86d4be",
+    measurementId: "G-VZLPGY58ZL"
+};
+
+firebase.initializeApp(firebaseConfig);
+const auth = firebase.auth();
+</script>
+ 
+<!-- ========== MAIN SCRIPT ========== -->
+<script>
+ const CLASS_TIMINGS = {
+
+  cbse9  : "7:55 PM",
+  cbse10 : "7:00 PM",
+  cbse11 : "8:00 PM",
+  cbse12 : "9:00 PM",
+
+  engg1  : "5:00 PM",
+  engg2  : "6:30 PM",
+  engg3  : "8:30 PM",
+
+  control : "10:00 AM",
+  AGS     : "11:00 AM",
+  Maths   : "7:30 PM"
+
+};
+
+
+const CLASS_DURATION = {
+
+  cbse9  : "",
+  cbse10 : "1.5 Hours",
+  cbse11 : "2 Hours",
+  cbse12 : "1 Hour",
+
+  engg1  : "1.5 Hours",
+  engg2  : "1.5 Hours",
+  engg3  : "2 Hours",
+
+  control : "1 Hour",
+  AGS     : "1 Hour",
+  Maths   : "1.5 Hours"
+
+};
+function canStartClass(course){
+
+  const now = new Date();
+
+  const currentMinutes =
+      now.getHours() * 60 + now.getMinutes();
+
+  const classTime =
+      CLASS_TIMINGS[course];
+
+  if(!classTime) return true;
+
+  const [time, modifier] = classTime.split(" ");
+
+  let [hours, minutes] = time.split(":").map(Number);
+
+  if(modifier === "PM" && hours !== 12){
+      hours += 12;
+  }
+
+  if(modifier === "AM" && hours === 12){
+      hours = 0;
+  }
+
+  const classMinutes =
+      hours * 60 + minutes;
+
+  return currentMinutes >= classMinutes;
+}
+
+function updateClassCountdown(course){
+
+  const timerDiv =
+    document.getElementById("timer-" + course);
+
+  if(!timerDiv) return;
+    
+  const now = new Date();
+
+  const currentMinutes =
+      now.getHours()*60 + now.getMinutes();
+
+  const classTime =
+      CLASS_TIMINGS[course];
+
+  if(!classTime) return;
+
+  const [time, modifier] =
+      classTime.split(" ");
+
+  let [hours, minutes] =
+      time.split(":").map(Number);
+
+  if(modifier === "PM" && hours !== 12){
+      hours += 12;
+  }
+
+  if(modifier === "AM" && hours === 12){
+      hours = 0;
+  }
+
+  const classMinutes =
+      hours*60 + minutes;
+
+  const remaining =
+      classMinutes - currentMinutes;
+
+  if(remaining <= 0){
+
+    timerDiv.innerHTML =
+      "🟢 Demo Started";
+
+    timerDiv.style.color = "#16a34a";
+
+}
+else if(remaining >= 60){
+
+    const hrs =
+      Math.floor(remaining / 60);
+
+    timerDiv.innerHTML =
+      "⏳ " + hrs + " hour remaining";
+
+    timerDiv.style.color = "#7c3aed";
+
+}
+else{
+
+    timerDiv.innerHTML =
+      "⏳ " + remaining + " min remaining";
+
+    timerDiv.style.color = "#7c3aed";
+}
+}
+    
+/* ---- STATE ---- */
+let studentStatus  = null;
+let selectedCourse = "";
+const CLASSES_PER_MONTH = 12;
+ 
+const PRICE_PER_HOUR = {
+  cbse9: 1, cbse10: 300, cbse11: 350, cbse12: 400,
+  engg1: 700,  engg2: 700,  engg3: 700,  control: 800,
+  AGS: 400,    Maths: 400
+};
+ 
+/* ---- INIT ---- */
+document.addEventListener("DOMContentLoaded", async () => {
+  // All join buttons disabled by default
+  document.querySelectorAll(".joinBtn").forEach(btn => {
+    btn.style.opacity       = "0.5";
+    btn.style.pointerEvents = "none";
+  });
+ 
+  // Set today's date
+  const dateEl = document.querySelector(".date");
+  if (dateEl) dateEl.textContent = new Date().toLocaleDateString("en-IN");
+ 
+  await refreshStatus();
+});
+ 
+/* ---- REFRESH STATUS ---- */
+async function refreshStatus() {
+  // Always load seats (works even when not logged in)
+  try {
+    const seatRes  = await fetch("/api/seat-count");
+    const seatData = await seatRes.json();
+    updateSeatDisplays(seatData);
+  } catch(e) {
+    console.warn("Seat load failed:", e);
+  }
+
+  // Load student status (only if logged in)
+  try {
+    const res  = await fetch("/api/student-status");
+    const data = await res.json();
+    studentStatus = data;
+    if (data.logged_in) {
+      updateSeatDisplays(data.available_seats || {});
+      updateDiscountDisplays(data.discounts || {});
+      updateAllCourseUI();
+    }
+  } catch(e) {
+    // Not logged in — buttons still work via popup
+    studentStatus = { logged_in: false };
+    console.log("Not logged in yet");
+  }
+}
+
+ 
+/* ---- SEAT DISPLAY ---- */
+function updateSeatDisplays(seats) {
+  Object.entries(seats).forEach(([course, val]) => {
+    const el = document.getElementById("seats-" + course);
+    if (!el) return;
+    // Handle both formats: number or {available, total}
+    const count = (typeof val === "object") ? val.available : val;
+    el.textContent      = count + " seats left";
+    el.style.color      = count < 10 ? "red" : "#555";
+    el.style.fontWeight = count < 10 ? "bold" : "normal";
+    el.style.display    = "block";
+  });
+}
+
+
+
+/* ---- 50% DISCOUNT DISPLAY ---- */
+function updateDiscountDisplays(discounts) {
+  Object.entries(discounts).forEach(([course, eligible]) => {
+    const el = document.getElementById("discount-" + course);
+    if (!el) return;
+    if (eligible) {
+      el.innerHTML  = "🔥 <strong>50% OFF</strong> – Only for first 10 students!";
+      el.style.display = "block";
+    } else {
+      el.style.display = "none";
+    }
+  });
+}
+
+ 
+/* ---- UPDATE ALL COURSE UIs ---- */
+function updateAllCourseUI() {
+  const allCourses = ["cbse9","cbse10","cbse11","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
+  allCourses.forEach(updateUI);
+}
+ 
+function updateUI(course) {
+  const s         = studentStatus || {};
+  const demoDone  = (s.demo_done    || {})[course] || false;
+  const enrolled  = (s.enrolled     || {})[course] || false;
+  const hoursUsed = (s.hours_used   || {})[course] || 0;
+  const maxHours  = (s.max_hours    || {})[course] || CLASSES_PER_MONTH;
+  const planDone  = enrolled && hoursUsed >= maxHours;
+  
+ 
+ /* Demo button — NO admin text ever shown to students */
+  const demoBtn = document.getElementById("demoBtn-" + course);
+  if (demoBtn) {
+    if (demoDone) {
+      demoBtn.textContent         = "Demo Done ✓";
+      demoBtn.style.background    = "#16a34a";
+      demoBtn.style.color         = "white";
+      demoBtn.style.pointerEvents = "none";
+      demoBtn.style.opacity       = "0.85";
+    } else {
+      demoBtn.textContent         = "Free Demo";
+      demoBtn.style.background    = "#fff3b0";
+      demoBtn.style.color         = "#333";
+      demoBtn.style.pointerEvents = "auto";
+      demoBtn.style.opacity       = "1";
+    }
+  }
+
+ 
+  /* Enroll button */
+  const enrollBtn = document.getElementById("enrollBtn-" + course);
+  if (enrollBtn) {
+    if (planDone) {
+      enrollBtn.textContent        = "Re-Enroll";
+      enrollBtn.style.background   = "#dc2626";
+      enrollBtn.style.color        = "white";
+      enrollBtn.style.pointerEvents = "auto";
+    } else if (enrolled) {
+      enrollBtn.textContent        = "Registered ✓";
+      enrollBtn.style.background   = "#0b5394";
+      enrollBtn.style.color        = "white";
+      enrollBtn.style.pointerEvents = "none";
+    } else {
+      enrollBtn.textContent        = "Enroll";
+      enrollBtn.style.background   = "#bbdefb";
+      enrollBtn.style.color        = "#333";
+      enrollBtn.style.pointerEvents = "auto";
+    }
+  }
+ 
+  /* Join button */
+  const joinBtn = document.getElementById("joinBtn-" + course);
+  if (joinBtn) {
+    if (enrolled && !planDone) {
+      joinBtn.style.opacity       = "1";
+      joinBtn.style.pointerEvents = "auto";
+      joinBtn.title = (maxHours - hoursUsed) + " classes remaining";
+    } else {
+      joinBtn.style.opacity       = "0.5";
+      joinBtn.style.pointerEvents = "none";
+    }
+  }
+
+ 
+  /* Hours left */
+  const hoursEl = document.getElementById("hours-" + course);
+  if (hoursEl) {
+    if (enrolled && !planDone) {
+      hoursEl.textContent  = "📚 " + (maxHours - hoursUsed) + " classes remaining";
+      hoursEl.style.display = "block";
+    } else {
+      hoursEl.style.display = "none";
+    }
+  }
+
+}
+window.addEventListener("load", () => {
+
+  const courses = ["cbse9", "cbse10", "cbse11", "cbse12", "engg1", "engg2", "engg3", "control", "AGS", "Maths"];
+
+  // 🔥 EACH COURSE
+  courses.forEach(course => {
+
+        // 🔴 LIVE STATUS CHECK
+        checkLiveStatus(course);
+ 
+         
+        // 🔄 AUTO REFRESH LIVE STATUS
+        setInterval(() => {
+          checkLiveStatus(course);
+        }, 5000);
+               
+  });
+
+
+  // ⏰ CLASS TIMINGS DISPLAY
+  Object.keys(CLASS_TIMINGS).forEach(course => {
+
+    const timeBtn =
+      document.getElementById("time-" + course);
+
+    if(timeBtn){
+      timeBtn.innerHTML =
+        "Starts at " + CLASS_TIMINGS[course];
+    }
+
+  });
+
+});
+    
+ 
+/* ======================================
+   FREE DEMO — Phone OTP always required
+====================================== */
+<!-- ALL HTML ABOVE -->
+
+
+function startDemoSession(course) {
+
+  const phone = document.getElementById("phoneInput")?.value 
+             || studentStatus?.phone 
+             || localStorage.getItem("phone");
+
+  if (!phone) {
+    showMessage("⚠️ Enter phone number");
+    return;
+  }
+
+  // 🔥 save phone
+  localStorage.setItem("phone", phone);
+
+  const key = "demo_running_" + course;
+
+  // 🔥 already running block
+  if (localStorage.getItem(key)) {
+
+    // ✅ SHOW MESSAGE
+    showMessage("⏳ Demo already running...");
+
+    // 🔥 OPEN EXISTING CLASS AGAIN
+    fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+      .then(res => res.json())
+      .then(data => {
+
+        if(data.meet_link){
+
+            window.open(data.redirect_url, "_blank");
+
+        } else {
+
+            showMessage("⚠️ Class not started yet");
+
+        }
+
+      });
+
+    return;
+}
+
+  // 🔥 already completed check
+  fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+    .then(res => res.json())
+    .then(data => {
+
+      if (data.demo_done) {
+        showMessage("⚠️ Demo already completed");
+        return;
+      }
+
+      
+          if(!canStartClass(course)){
+
+               updateClassCountdown(course);
+            
+               showMessage(
+                  "⏰ Class starts at " +
+                  CLASS_TIMINGS[course]
+               );
+            
+               return;
+            }
+      
+        startDemoFlow();
+     });
+
+  function startDemoFlow() {
+
+    const timerDiv  = document.getElementById("timer-" + course);
+    const liveBadge = document.getElementById("live-" + course);
+
+    if (!timerDiv) return;
+
+    // 🔥 INSERT INITIAL STUDENT (Demo = NO)
+    fetch("/api/demo-complete", {
+      method: "POST",
+      headers: {"Content-Type":"application/json"},
+      body: JSON.stringify({
+      phone: studentStatus?.phone,
+      course: course,
+      demo: "start"
+     })
+   });
+
+     // 🔥 START TIMER
+    const startTime = Date.now();
+    localStorage.setItem(key, startTime);
+
+    timerDiv.dataset.running = "true";
+
+    if (liveBadge) liveBadge.style.display = "none";
+
+    showLivePopup(course);
+           
+      
+    updateClassCountdown(course);
+
+    const countdownInterval = setInterval(() => {
+    
+       if(!localStorage.getItem(key)){
+          clearInterval(countdownInterval);
+          return;
+       }
+    
+       updateClassCountdown(course);
+    
+    }, 60000);
+      
+       
+    // 🔥 OPEN CLASS LINK
+    fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+      .then(res => res.json())
+      .then(data => {
+
+        if (!data.meet_link) {
+          showMessage("⚠️ Class not started yet");
+          return;
+        }
+
+        window.open(data.redirect_url, "_blank");
+      });
+
+   
+
+   
+  }
+}
+
+/* ======================================
+   ENROLL
+====================================== */
+function enroll(course) {
+
+  let el = document.getElementById("msg-" + course);
+  if(el) el.innerHTML = "";
+
+  if (!(studentStatus?.demo_done || {})[course]) {
+    showCourseMessage(course, "⚠️ Attend Free Demo first");
+    return;
+  }
+
+  const seats = (studentStatus.available_seats || {})[course];
+  if (seats !== undefined && seats <= 0) {
+    showMessage("❌ Seats Full");
+    return;
+  }
+
+  selectedCourse = course;
+
+  fetch(`/api/enroll-info?course=${course}`)
+    .then(res => res.json())
+    .then(data => {
+
+      openEnrollPopup(course, data.monthly_amount);
+
+      const base = (PRICE_PER_HOUR[course] || 400) * CLASSES_PER_MONTH;
+      const eligible = (studentStatus.discounts || {})[course];
+      const final = eligible ? Math.floor(base * 0.5) : base;
+
+      document.getElementById("courseTitle").textContent =
+        course.toUpperCase() + " – Monthly Plan";
+
+      document.getElementById("coursePrice").innerHTML = eligible
+        ? `<span style="text-decoration:line-through;color:#999;">₹${base}</span>
+           <span style="color:#dc2626;font-size:20px;font-weight:bold;">₹${final}</span>
+           <span style="background:#dc2626;color:white;padding:2px 8px;border-radius:12px;">50% OFF</span>`
+        : `₹${final}`;
+
+      document.getElementById("studentName").value = studentStatus.name || "";
+
+    });
+}
+ function openEnrollPopup(course, amount){
+  selectedCourse = course;
+
+  document.getElementById("courseTitle").textContent =
+    course.toUpperCase() + " – Monthly Plan";
+
+  document.getElementById("coursePrice").innerText =
+    "Monthly Fee: ₹" + amount;
+
+  document.getElementById("enrollPopup").style.display = "flex";
+}      
+ 
+function closeEnroll(){
+  document.getElementById("enrollPopup").style.display = "none";
+}
+ 
+/* ======================================
+   PAYMENT
+====================================== */
+
+async function payNow() {
+  const name = document.getElementById("studentName").value.trim();
+  if (!name) {
+    showMessage("⚠️ Please enter your name to continue.");
+    document.getElementById("studentName").focus();
+    return;
+  }
+  try {
+    const res  = await fetch("/api/create-order", {
+      method:  "POST",
+      headers: {"Content-Type":"application/json"},
+      body:    JSON.stringify({course: selectedCourse, name: name})
+    });
+    const data = await res.json();
+    if (data.error) { showMessage("❌ " + data.error); return; }
+ 
+    const options = {
+      key:         data.razorpay_key,
+      amount:      data.amount,
+      currency:    "INR",
+      name:        "Ranjitham Study Center",
+      description: selectedCourse.toUpperCase() + " Monthly Fee" + (data.discount_applied ? " (50% OFF)" : ""),
+      order_id:    data.order_id,
+      prefill:     {name: data.name, contact: studentStatus.phone || ""},
+      theme:       {color: "#1e3a8a"},
+      handler: async function(response) {
+        const sRes  = await fetch("/api/payment-success", {
+          method:  "POST",
+          headers: {"Content-Type":"application/json"},
+          body:    JSON.stringify({
+            course:     selectedCourse,
+            order_id:   response.razorpay_order_id,
+            payment_id: response.razorpay_payment_id
+          })
+        });
+        const sData = await sRes.json();
+        if (sData.status === "success") {
+          showMessage("🎉 Payment Successful! You are now Registered.");
+          closeEnroll();
+          await refreshStatus();
+        } else {
+          showMessage("⚠️ Payment done but enrollment failed. Contact support.");
+        }
+      }
+    };
+    const rzp = new Razorpay(options);
+    rzp.on("payment.failed", r => showMessage("❌ Payment failed: " + r.error.description));
+    rzp.open();
+  } catch(e) {
+    showMessage("❌ Error starting payment. Try again.");
+    console.error(e);
+  }
+}
+ function markPaid(){
+  showMessage("📌 Payment marked. Admin will verify.");
+  closeEnroll();
+} 
+/* ======================================
+   JOIN CLASS
+====================================== */
+async function joinClass(course) {
+
+  const demoDone = (studentStatus?.demo_done || {})[course];
+  const enrolled = (studentStatus?.enrolled || {})[course];
+
+  // ❌ both இல்லை
+  if (!demoDone && !enrolled) {
+    showCourseMessage(course, "⚠️ Attend Demo & Enroll first");
+    return;
+  }
+
+  // ❌ only demo இல்லை
+  if (!demoDone) {
+    showCourseMessage(course, "⚠️ Attend Demo first");
+    return;
+  }
+
+  // ❌ only enroll இல்லை
+  if (!enrolled) {
+    showCourseMessage(course, "⚠️ Enroll first");
+    return;
+  }
+
+  // ✅ correct case
+  try {
+    const res = await fetch("/api/join-class?course=" + course);
+    const data = await res.json();
+
+    if (data.error) {
+      showMessage("❌ " + data.error);
+      return;
+    }
+
+    window.open(data.redirect_url, "_blank");
+    showMessage("✅ Joined Successfully");
+
+  } catch(e) {
+    showMessage("❌ Error joining");
+  }
+    if(data.show_feedback){
+
+   openFeedbackPopup(course);
+
+   showMessage("📚 Monthly classes completed");
+
+   return;
+}
+}
+    
+ function showPhonePopup(course, type){
+  currentCourse = course;
+  step = 1;
+
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("otpInput").value = "";
+  document.getElementById("otpInput").style.display = "none";
+
+  document.getElementById("statusMsg").innerHTML = "";
+
+  document.getElementById("demoPopup").style.display = "flex";
+
+  // 🔥 change button text based on action
+  const btn = document.getElementById("mainBtn");
+
+  if(type === "join"){
+    btn.textContent = "Verify & Join";
+  } else if(type === "enroll"){
+    btn.textContent = "Verify & Enroll";
+  } else {
+    btn.textContent = "Send OTP";
+  }
+}
+
+    async function openFeedbackPopup(course){
+
+   const res = await fetch(`/get-teacher?course=${course}`);
+   const data = await res.json();
+
+   document.getElementById("feedbackTeacher").value =
+      data.teacher;
+
+   document.getElementById("feedbackCourse").value =
+      course;
+
+   document.getElementById("feedbackPopup").style.display =
+      "flex";
+}
+    async function submitTeacherFeedback(){
+
+   const teacher =
+      document.getElementById("feedbackTeacher").value;
+
+   const course =
+      document.getElementById("feedbackCourse").value;
+
+   const rating =
+      document.getElementById("feedbackRating").value;
+
+   const comment =
+      document.getElementById("feedbackComment").value;
+
+   const formData = new FormData();
+
+   formData.append("teacher", teacher);
+   formData.append("course", course);
+   formData.append("rating", rating);
+   formData.append("comment", comment);
+
+   await fetch("/submit-teacher-feedback", {
+      method: "POST",
+      body: formData
+   });
+
+   alert("Feedback submitted successfully");
+
+   document.getElementById("feedbackPopup").style.display =
+      "none";
+}
+/* ======================================
+   LIVE POPUP
+====================================== */
+let currentLiveCourse = "";
+function showLivePopup(course) {
+  currentLiveCourse = course;
+  const popup = document.getElementById("livePopup");
+  const text  = document.getElementById("popupText");
+  if (!popup || !text) return;
+  text.textContent = "🔴 " + course.toUpperCase() + " LIVE NOW – Join Fast!";
+  popup.style.display = "block";
+  setTimeout(() => { popup.style.display = "none"; }, 6000);
+}
+function joinFromPopup() {
+  if (currentLiveCourse) joinClass(currentLiveCourse);
+}
+
+/* ======================================
+   LIVE STATUS
+====================================== */
+
+ async function checkLiveStatus(course){
+
+  const res = await fetch(`/api/class-status?course=${course}`);
+  const data = await res.json();
+
+  const badge = document.getElementById("live-" + course);
+  const joinBtn = document.getElementById("joinBtn-" + course);
+
+  // 🔥 LIVE BADGE SAFE CHECK
+  if(badge){
+
+    if(data.live){
+      badge.style.display = "inline-block";
+    } else {
+      badge.style.display = "none";
+    }
+
+  }
+
+  // 🔥 JOIN BUTTON SAFE CHECK
+  if(joinBtn){
+
+    if(data.live){
+
+      joinBtn.style.opacity = "1";
+      joinBtn.style.pointerEvents = "auto";
+
+    } else {
+
+      joinBtn.style.opacity = "0.5";
+      joinBtn.style.pointerEvents = "none";
+
+    }
+
+  }
+} 
+ 
+/* ======================================
+   SEARCH
+====================================== */
+function searchClass() {
+  const input = document.getElementById("searchInput").value.toLowerCase();
+
+  document.querySelectorAll(".card").forEach(card => {
+
+    const text = card.innerText.toLowerCase();
+    const category = card.dataset.category;
+
+    const matchSearch = text.includes(input);
+    const matchCategory = selectedCategory === "all" || category === selectedCategory;
+
+    if (matchSearch && matchCategory) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+
+  });
+}
+ 
+
+/* ======================================
+   TOAST MESSAGE
+====================================== */
+function showMessage(msg) {
+  document.querySelectorAll(".rsc-toast").forEach(e => e.remove());
+  const box = document.createElement("div");
+  box.className   = "rsc-toast";
+  box.textContent = msg;
+  Object.assign(box.style, {
+    position:"fixed", bottom:"24px", left:"50%", transform:"translateX(-50%)",
+    background:"#1e3a8a", color:"white", padding:"12px 24px",
+    borderRadius:"10px", boxShadow:"0 8px 20px rgba(0,0,0,0.25)",
+    zIndex:"9999", fontSize:"15px", maxWidth:"90vw", textAlign:"center",
+    fontFamily:"Poppins,sans-serif"
+  });
+  document.body.appendChild(box);
+  setTimeout(() => box.remove(), 3500);
+}
+
+ function showCourseMessage(course, msg) {
+  let el = document.getElementById("msg-" + course);
+  if (!el) return;
+
+  el.innerHTML = msg;
+  el.style.display = "block";
+
+  setTimeout(() => {
+    el.innerHTML = "";
+  }, 4000);
+}
+async function handleOTP(){
+
+  const phone = document.getElementById("phoneInput").value.trim();
+  const otp   = document.getElementById("otpInput").value.trim();
+  const btn   = document.getElementById("mainBtn");
+  const msg   = document.getElementById("statusMsg");
+
+ if(phone.length !== 10){
+  msg.innerHTML = "❌ Enter valid 10 digit number";
+  msg.style.color = "red";
+  return;
+}
+
+  // STEP 1 → SEND OTP
+  if(step === 1){
+   
+    const res = await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
+    const data = await res.json();
+
+    // 🔥 running check
+    const key = "demo_running_" + currentCourse;
+    if(localStorage.getItem(key)){
+      msg.innerHTML = "⏳ Demo already running";
+      msg.style.color = "orange";
+      return;
+    }
+    
+    // 🔥 completed check
+    if(data.demo_done){
+      msg.innerHTML = "⚠️ Demo already completed. For re-demo access, pay ₹200 and share the payment screenshot with the admin.";
+      msg.style.color = "red";
+      return;
+    }
+    const appVerifier = window.recaptchaVerifier;
+    const phoneNumber = "+91" + phone;
+
+    try{
+      const confirmationResult =
+        await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
+   
+      window.confirmationResult = confirmationResult;
+
+      document.getElementById("otpInput").style.display = "block";
+
+      btn.textContent = "Verify OTP";
+      btn.disabled = false;
+
+      msg.innerHTML = "📱 OTP sent";
+      msg.style.color = "green";
+
+      document.getElementById("resendBtn").style.display = "block";  // 🔥 ADD HERE
+
+      startTimer();   // 🔥 ADD THIS 
+      step = 2;
+
+    } catch(e){
+      console.error(e);   // 🔥 ADD THIS
+      msg.innerHTML = "❌ Failed to send OTP";
+      msg.style.color = "red";
+      btn.textContent = "Send OTP";
+      btn.disabled = false;
+    }
+  }
+
+  // STEP 2 → VERIFY OTP
+  else if(step === 2){
+
+      // inside STEP 2 (after verify)
+      const res = await fetch("/api/check-demo?course=" + currentCourse + "&phone=" + phone);
+      const data = await res.json();
+      
+      if(data.demo_done){
+        msg.innerHTML = "⚠️ Demo already completed";
+        msg.style.color = "red";
+        return;
+      }
+
+    try{
+      await window.confirmationResult.confirm(otp);
+
+      msg.innerHTML = "✅ Verified ✔";
+      msg.style.color = "green";
+
+      btn.textContent = "Proceed for Demo";
+      btn.style.background = "green";
+      btn.disabled = false;
+
+      step = 3;
+
+      // SAVE SESSION
+      await fetch("/save-user", {
+        method:"POST",
+        headers:{"Content-Type":"application/json"},
+        body: JSON.stringify({ phone })
+      });
+  
+     // 🔥 ADD THIS
+     await refreshStatus();
+     updateAllCourseUI();   // 🔥 immediate
+     
+    } catch(e){
+      msg.innerHTML = "❌ Wrong OTP";
+      msg.style.color = "red";
+      btn.textContent = "Verify OTP";
+      btn.disabled = false;
+    }
+  }
+
+  // STEP 3
+  else if(step === 3){
+    document.getElementById("demoPopup").style.display = "none";
+    startDemoSession(currentCourse);
+  }
+}
+</script> 
+<script>
+ // 🔒 Only numbers allowed
+document.addEventListener("DOMContentLoaded", () => {
+
+  const phone = document.getElementById("phoneInput");
+  const otp   = document.getElementById("otpInput");
+
+  if(phone){
+    phone.addEventListener("input", function(){
+      this.value = this.value.replace(/\D/g,'').slice(0,10);
+    });
+  }
+
+  if(otp){
+    otp.addEventListener("input", function(){
+      this.value = this.value.replace(/\D/g,'').slice(0,6);
+    });
+  }
+
+});
+
+ let otpTimer = 300;
+let timerInterval;
+
+function startTimer(){
+
+  otpTimer = 300;
+
+  clearInterval(timerInterval);
+
+  timerInterval = setInterval(()=>{
+
+    otpTimer--;
+
+    let min = Math.floor(otpTimer/60);
+    let sec = otpTimer % 60;
+
+    document.getElementById("timer").innerHTML =
+      `⏳ ${min}:${sec<10?'0'+sec:sec}`;
+
+    if(otpTimer <= 0){
+      clearInterval(timerInterval);
+      document.getElementById("timer").innerHTML = "❌ OTP Expired";
+      step = 1;
+    }
+
+  },1000);
+}
+
+ 
+ function resendOTP(){
+
+  document.getElementById("otpInput").style.display = "none";
+  document.getElementById("statusMsg").innerHTML = "";
+
+  step = 1;
+
+  // 🔥 reset recaptcha
+  if(window.recaptchaVerifier){
+    window.recaptchaVerifier.clear();
+    window.recaptchaVerifier = null;
+  }
+
+  openDemoPopup(currentCourse);  // recreate fresh
+}
+ function closePopup(){
+  document.getElementById("demoPopup").style.display = "none";
+  clearInterval(timerInterval); // 🔥 add this
+}
+
+  let currentCourse = "";
+  let step = 1;
+
+async function openDemoPopup(course){
+  currentCourse = course;
+  step = 1;
+
+  try {
+    // 🔥 BACKEND CHECK
+    const res = await fetch("/api/check-demo?course=" + course);
+    const data = await res.json();
+
+    if(data.demo_done){
+      showCourseMessage(course, "⚠️ Demo already completed");
+      return;
+    }
+
+  } catch(e){
+    console.log("API error:", e);
+  }
+
+  // 🔥 EXISTING CODE (unchanged)
+  if (!window.recaptchaVerifier) {
+    window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
+      size: 'invisible'
+    });
+  }
+  
+  clearInterval(timerInterval);
+
+  document.getElementById("phoneInput").value = "";
+  document.getElementById("otpInput").value = "";
+  document.getElementById("otpInput").style.display = "none";
+
+  document.getElementById("resendBtn").style.display = "none";
+  document.getElementById("timer").innerHTML = "";
+
+  const btn = document.getElementById("mainBtn");
+  btn.textContent = "Send OTP";
+  btn.style.background = "#ffd54f";
+
+  document.getElementById("statusMsg").innerHTML = "";
+
+  document.getElementById("demoPopup").style.display = "flex";
+}
+
+ function updateSeats(course, seats){
+
+  const el = document.getElementById("seats-" + course);
+  if (!el) return;
+
+  // 🔥 ONLY SHOW WHEN LOW
+  if (seats <= 10) {
+
+    el.style.display = "block";
+    el.textContent = "🔥 Only " + seats + " seats left";
+    el.classList.add("low-seats");
+
+  } else {
+    el.style.display = "none";
+  }
+}
+ async function resetStudent(phone){
+  await fetch("/admin/reset-demo", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({ phone })
+  });
+
+  location.reload(); // 🔥 MUST
+}
+
+ async function deleteStudent(phone, course){
+
+  if(!confirm("Are you sure to delete this student?")) return;
+
+  const res = await fetch("/delete-student", {
+    method: "POST",
+    headers: {"Content-Type": "application/json"},
+    body: JSON.stringify({phone, course})
+  });
+
+  const data = await res.json();
+
+  if(data.status === "deleted"){
+    
+    // 🔥 REMOVE ROW FROM UI
+    const row = document.getElementById(`row-${phone}-${course}`);
+    if(row) row.remove();
+
+    showMessage("🗑 Deleted successfully");
+  }
+}
+
+
+ function deleteStudent(phone, course){
+
+  if(!confirm("Are you sure to delete?")) return;
+
+  fetch("/admin/delete-student", {
+    method:"POST",
+    headers:{"Content-Type":"application/json"},
+    body: JSON.stringify({phone, course})
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert("Deleted successfully");
+    location.reload();
+  });
+}
+
+ async function loadDemo(course, phone){
+
+  const res = await fetch(`/api/check-demo?course=${course}&phone=${phone}`);
+  const data = await res.json();
+
+  if(data.status === "running"){
+
+    let remaining = data.remaining;
+
+    const interval = setInterval(() => {
+      remaining--;
+
+      document.getElementById("timer-"+course).textContent =
+        "⏳ Demo: " + remaining + " sec";
+
+      if(remaining <= 0){
+        clearInterval(interval);
+        document.getElementById("timer-"+course).textContent =
+          "✅ Demo Completed – Please Enroll";
+      }
+
+    },1000);
+  }
+
+  if(data.status === "completed"){
+    document.getElementById("timer-"+course).textContent =
+      "✅ Demo Completed – Please Enroll";
+  }
+}
+ const tabs = document.querySelectorAll(".tabs button");
+const searchContainer = document.getElementById("tabSearchContainer");
+
+let selectedCategory = "all";
+
+// 🔹 TAB CLICK
+document.querySelectorAll(".tabs button").forEach(btn => {
+  btn.addEventListener("click", () => {
+
+    document.querySelectorAll(".tabs button").forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    selectedCategory = btn.dataset.cat;
+
+    // 🔥 clear search when switching tab
+    document.getElementById("searchInput").value = "";
+
+    filterCards();
+  });
+});
+function showSearchBox(category) {
+
+  let placeholder = "Search...";
+
+  if (category !== "all") {
+    placeholder = "Search " + category + "...";
+  }
+
+  searchContainer.innerHTML = `
+    <input type="text" id="tabSearch" placeholder="🔎 ${placeholder}">
+  `;
+
+  document.getElementById("tabSearch").addEventListener("input", filterCards);
+}
+ function filterCards() {
+
+  const searchValue = document.getElementById("searchInput").value.toLowerCase();
+
+  document.querySelectorAll(".card").forEach(card => {
+
+    const text = card.innerText.toLowerCase();
+    const category = card.dataset.category;
+
+    // 🔥 category match
+    const matchCategory = (selectedCategory === "all" || category === selectedCategory);
+
+    // 🔥 search match
+    const matchSearch = text.includes(searchValue);
+
+    if (matchCategory && matchSearch) {
+      card.style.display = "block";
+    } else {
+      card.style.display = "none";
+    }
+
+  });
+}
+ document.querySelectorAll(".course-box").forEach((box, index) => {
+  box.addEventListener("click", () => {
+    document.querySelectorAll(".tabs button")[index+1].click();
+  });
+});
+ 
+ </script>
+<script>
+const modeButtons = document.querySelectorAll(".mode-tabs button");
+const cards = document.querySelectorAll(".card");
+
+modeButtons.forEach(btn => {
+  btn.addEventListener("click", () => {
+
+    // active button change
+    modeButtons.forEach(b => b.classList.remove("active"));
+    btn.classList.add("active");
+
+    const mode = btn.getAttribute("data-mode");
+
+    cards.forEach(card => {
+      const cardMode = card.getAttribute("data-mode");
+
+      if (mode === "india") {
+        // show india + both
+        if (cardMode === "india" || cardMode === "both") {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      } else {
+        // abroad → only both or abroad
+        if (cardMode === "both" || cardMode === "abroad") {
+          card.style.display = "block";
+        } else {
+          card.style.display = "none";
+        }
+      }
+    });
+
+  });
+});
+</script>
+
+<script>
+
+document.addEventListener("DOMContentLoaded", () => {
+
+  /* MODE BUTTONS */
+  const modeButtons = document.querySelectorAll(".mode-tabs button");
+
+  /* CATEGORY BUTTONS */
+  const categoryButtons = document.querySelectorAll(".tabs button");
+
+  /* ELEMENTS */
+  const abroadMsg = document.getElementById("abroadMessage");
+  const courseSection = document.getElementById("courseSection");
+
+  const cardsSection = document.querySelector(".section");
+  const tabsSection = document.querySelector(".tabs");
+  const searchSection = document.querySelector(".search-box");
+
+  const cards = document.querySelectorAll(".card");
+
+  /* DEFAULT CATEGORY */
+  let currentCategory = "all";
+
+
+  /* =========================
+        MODE SWITCH
+  ========================== */
+
+  modeButtons.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      modeButtons.forEach(b => b.classList.remove("active"));
+      btn.classList.add("active");
+
+      const mode = btn.dataset.mode;
+
+      /* 🌍 ABROAD */
+      if(mode === "abroad") {
+
+        abroadMsg.style.display = "block";
+
+        courseSection.style.display = "none";
+        tabsSection.style.display = "none";
+        searchSection.style.display = "none";
+        cardsSection.style.display = "none";
+
+      }
+
+      /* 🇮🇳 INDIA */
+      else {
+
+        abroadMsg.style.display = "none";
+
+        courseSection.style.display = "block";
+        tabsSection.style.display = "flex";
+        searchSection.style.display = "block";
+        cardsSection.style.display = "block";
+
+        filterCards();
+
+      }
+
+    });
+
+  });
+
+
+
+  /* =========================
+        CATEGORY FILTER
+  ========================== */
+
+  categoryButtons.forEach(btn => {
+
+    btn.addEventListener("click", () => {
+
+      categoryButtons.forEach(b => b.classList.remove("active"));
+
+      btn.classList.add("active");
+
+      currentCategory = btn.dataset.cat;
+
+      filterCards();
+
+    });
+
+  });
+
+
+
+  /* =========================
+        FILTER FUNCTION
+  ========================== */
+
+  function filterCards() {
+
+    cards.forEach(card => {
+
+      const cat = card.dataset.category;
+
+      if(currentCategory === "all" || cat === currentCategory) {
+
+        card.style.display = "block";
+
+      } else {
+
+        card.style.display = "none";
+
+      }
+
+    });
+
+  }
+
+
+  /* DEFAULT LOAD */
+  filterCards();
+
+});
+
+</script>
+ <div id="feedbackPopup" class="popup">
+
+  <div class="popup-content">
+
+    <h3>⭐ Give Teacher Feedback</h3>
+
+    <input type="text" id="feedbackTeacher" readonly>
+
+    <input type="text" id="feedbackCourse" readonly>
+
+    <select id="feedbackRating">
+      <option value="5">⭐⭐⭐⭐⭐</option>
+      <option value="4">⭐⭐⭐⭐</option>
+      <option value="3">⭐⭐⭐</option>
+      <option value="2">⭐⭐</option>
+      <option value="1">⭐</option>
+    </select>
+
+    <textarea
+      id="feedbackComment"
+      placeholder="Write your feedback">
+    </textarea>
+
+    <button onclick="submitTeacherFeedback()">
+      Submit Feedback
+    </button>
+
+  </div>
+
+</div>
+ <div id="demoPopup" style="
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+
+  <div style="background:white;padding:25px;border-radius:12px;width:300px;text-align:center;position:relative;">
+
+    <!-- ❌ CLOSE BUTTON -->
+    <button onclick="closePopup()" style="
+      position:absolute;
+      top:10px;
+      right:15px;
+      background:red;
+      color:white;
+      border:none;
+      border-radius:50%;
+      width:30px;height:30px;
+      cursor:pointer;
+    ">❌</button>
+
+    <h3>Free Demo</h3>
+
+    <!-- PHONE -->
+    <input id="phoneInput" type="tel" maxlength="10"
+      placeholder="Enter Mobile Number"
+      style="width:100%;padding:10px;margin-bottom:10px;">
+
+    <!-- OTP -->
+    <input id="otpInput" type="tel" maxlength="6"
+      placeholder="Enter OTP"
+      style="width:100%;padding:10px;margin-bottom:10px;display:none;">
+
+    <!-- TIMER -->
+    <div id="timer" style="margin:8px 0;font-size:14px;color:#0b5394;"></div>
+
+    <!-- BUTTON -->
+    <button id="mainBtn" onclick="handleOTP()" style="
+      width:100%;
+      padding:10px;
+      background:#ffd54f;
+      border:none;
+      border-radius:6px;
+    ">
+      Send OTP
+    </button>
+
+    <!-- RESEND -->
+    <button id="resendBtn" onclick="resendOTP()" style="
+      display:none;
+      margin-top:10px;
+      padding:8px;
+      width:100%;
+      background:#eee;
+      border:none;
+      border-radius:6px;
+    ">
+      🔄 Resend OTP
+    </button>
+
+    <p id="statusMsg" style="margin-top:10px;font-weight:bold;"></p>
+
+  </div>
+</div>
+
+  <div id="enrollPopup" style="
+  display:none;
+  position:fixed;
+  top:0;left:0;
+  width:100%;height:100%;
+  background:rgba(0,0,0,0.6);
+  justify-content:center;
+  align-items:center;
+  z-index:9999;
+">
+
+  <div style="background:white;padding:25px;border-radius:12px;width:320px;text-align:center;position:relative;">
+
+    <!-- CLOSE -->
+    <button onclick="closeEnroll()" style="
+      position:absolute;
+      top:10px;
+      right:15px;
+      background:red;
+      color:white;
+      border:none;
+      border-radius:50%;
+      width:30px;height:30px;
+      cursor:pointer;
+    ">❌</button>
+
+    <h3 id="courseTitle"></h3>
+        <p id="coursePrice"></p>
+        
+        <input id="studentName" placeholder="Enter your name"
+        style="width:100%;padding:10px;margin-top:10px;">
+    <h4 style="color:#0b5394;">₹ Payment</h4>
+
+    <!-- PAYMENT OPTIONS -->
+    <button onclick="payNow()" style="
+      width:100%;
+      padding:10px;
+      background:#4caf50;
+      color:white;
+      border:none;
+      border-radius:6px;
+      margin-top:10px;
+    ">
+      💳 Pay & Enroll
+    </button>
+
+    <p id="enrollMsg" style="margin-top:10px;"></p>
+
+  </div>
+</div>
+<div id="recaptcha-container"></div>
+    
+</body>
+</html>

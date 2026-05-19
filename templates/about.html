@@ -1,0 +1,1655 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Ranjitham Study Center | Online and offline Tuition | Courses </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ranjitham Study Center provides result-oriented  coaching for students with online and offline classes, worksheets, tests, and exam-focused preparation.">
+    <meta name="keywords" content="Tuition, CBSE Coaching, Online Classes, Class 6 to 12 Tuition, Tuition center in Medavakkam, Tuition center in chennai, Tuition center in pallikaranai, Ranjitham Study Center">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+    <style>
+        /* ==========================
+           GLOBAL STYLES
+        ========================== */
+
+        /* Make everything flexible */
+            *{
+              box-sizing: border-box;
+            }
+            
+            body{
+              margin: 0;
+              padding: 0;
+              background: #ffffff;
+              color: #333;
+              overflow-x: hidden;
+            }
+            
+            /* Images responsive */
+            img{
+              max-width: 100%;
+              height: auto;
+            }
+            
+            /* Container width */
+            .container{
+              width: 90%;
+              margin: auto;
+            }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
+
+
+        a {
+            text-decoration: none;
+        }
+
+        /* ==========================
+           NAVBAR
+        ========================== */
+        .navbar {
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;   /* 🔥 allows wrapping */
+        }
+       
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 90px;
+        }
+
+        .brand-text h1 {
+            color: #0b5394;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .brand-text p {
+            color: #0b5394;
+            font-size: 13px;
+        }
+
+        
+        .nav-center a {
+            margin: 0 15px;
+            color: #0b5394;
+            font-weight: 600;
+        }
+
+        .nav-center a:hover {
+            text-decoration: underline;
+        }
+
+       .demo-btn {
+            background: linear-gradient(45deg, #ff2d55, #7b2cbf);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 600;
+            animation: blink 2s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+   @media(max-width:768px){
+  .navbar{
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* LEFT → logo + title */
+  .nav-left{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;  /* 🔥 LEFT align */
+  }
+
+  .logo{
+    height: 55px;
+  }
+
+  .brand-text h1{
+    font-size: 18px;
+  }
+
+  .brand-text p{
+    font-size: 11px;
+  }
+
+  /* CENTER → MENU */
+  .nav-center{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;              /* 🔥 allow 2 lines */
+    justify-content: center;
+    margin-top: 8px;
+    gap: 6px;              /* 🔥 reduce gap */
+    flex-wrap: nowrap;     /* 🔥 single line */
+  }
+
+  .nav-center a{
+    font-size: 12px;       /* 🔥 reduce text */
+    margin: 0 4px;         /* 🔥 less spacing */
+    white-space: nowrap;
+  }
+
+  /* DEMO → CENTER */
+  .nav-right{
+    width: 100%;
+    display: flex;
+    justify-content: center;   /* 🔥 CENTER */
+    margin-top: 8px;
+  }
+
+  .demo-btn{
+    font-size: 13px;
+  }
+
+}
+
+
+
+
+/* COMMON */
+.section{
+    padding: 20px 0;
+
+}
+
+.container{
+    max-width:1500px;
+    margin:auto;
+    background:white;
+    padding:10px;
+    border-radius: 10px
+}
+
+h2{
+    color:#0b5394;
+    margin-bottom:10px;
+    text-align:center;
+}
+.about-points {
+    max-width: 2000px;
+    margin: 0 auto;
+    padding-left: 10px;
+    text-align:justify;
+}
+
+.about-points li {
+    margin-bottom: 20px;   /* space between points */
+    line-height: 1.7;
+    font-size: 16px;
+    text-align:justify;
+}
+/* ==========================
+           HOME SECTION
+        ========================== */
+        .home-section {
+            padding: 70px 20px;
+            background: #ffffff;
+        }
+
+        .home-container {
+            max-width: 1500px;
+            margin: auto;
+        }
+
+        .home-title {
+            text-align: center;
+            font-size: 32px;
+            color: #0b5394;
+            margin-bottom: 50px;
+        }
+
+        .home-content {
+            display: grid;
+            grid-template-columns: 3fr 5fr;  /* 🔥 TEXT bigger */
+            gap: 50px;
+            align-items: center;
+            justify-content:flex-end;
+           
+  }
+
+        .home-image{
+          display:flex;
+          width:100%;
+          max-width:550px;   /* 🔥 increase from 480 → 550 */
+          box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+          border-radius: 18px;
+          justify-content:flex-end;
+             
+         }
+      
+         .home-text p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 18px;
+            width: 100%;
+        }
+
+                .home-text{
+                  text-align: justify;
+                  
+                }
+                
+                /* First intro */
+                .home-intro{
+                  font-size: 18px;
+                  line-height: 1.8;
+                  margin-bottom: 20px;
+                  color:#333;
+                }
+                
+                /* Highlight word */
+                .highlight{
+                  color:#0b5394;
+                  font-weight:600;
+                }
+                
+               /* Description */
+                .home-desc{
+                  font-size:16px;
+                  line-height:1.7;
+                  color:#555;
+                }
+                
+               
+
+        @media(max-width: 768px) {
+            .slides img {
+                height: 240px;
+            }
+
+            .slider {
+                max-height: 240px;
+            }
+
+            .home-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 600px) {
+            h1 { font-size: 24px; }
+            h2 { font-size: 20px; }
+            p { font-size: 14px; }
+        }
+
+
+
+/* VISION & MISSION */
+.vision-mission-section{
+        width: 100%;
+        padding: 80px 0;
+    }
+
+    /* TWO EQUAL COLUMNS */
+    .vision-mission-wrapper{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
+
+    /* CENTER CONTENT INSIDE EACH HALF */
+    .vm-box{
+        max-width: 1500px;
+        margin: 0 auto;   /* THIS IS THE KEY */
+        padding: 0 40px;
+    }
+
+    .vm-box h2{
+        font-size: 26px;
+        margin-bottom: 5px;
+        color: #111;
+    }
+
+    .vm-box p{
+        font-size: 16px;
+        line-height: 1.7;
+        color: #333;
+        text-align: justify;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px){
+        .vision-mission-wrapper{
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+    }
+
+
+.about-offerings {
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  padding: 60px 10%;
+}
+
+.offer-item {
+  flex: 1;
+  max-width: 32%;
+}
+
+/* CENTER THE HEADING */
+.offer-item h3 {
+  text-align: center;
+  font-size: 21px;
+  font-weight: 600;
+  color: #0a3d62;
+  margin-bottom: 8px;
+}
+
+/* LINE BELOW HEADING */
+.offer-item h3::after {
+  content: "";
+  display: block;
+  width: 45px;
+  height: 3px;
+  background-color: #0a3d62;
+  margin: 8px auto 12px auto;
+}
+
+/* ICON STYLE (BIGGER & CENTERED) */
+.offer-icon {
+  text-align: center;
+  font-size: 34px;   /* 🔥 icon size increased */
+  margin-bottom: 14px;
+}
+
+/* PARAGRAPH */
+.offer-item p {
+  font-size: 15.5px;
+  line-height: 1.8;
+  color: #444;
+  text-align: justify;
+}
+
+@media (max-width: 900px) {
+  .about-offerings {
+    flex-direction: column;
+    gap: 35px;
+  }
+
+  .offer-item {
+    max-width: 100%;
+  }
+}
+
+
+ /* ==========================
+   CTA (NEW PREMIUM STYLE)
+========================== */
+.cta-section {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #1e3a8a, #6d28d9); /* 🔥 blue + purple */
+}
+
+.cta-box {
+    max-width: 1100px;
+    margin: auto;
+    color: white;
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.cta-small {
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.cta-box h2 {
+    font-size: 38px;
+    margin-bottom: 15px;
+    font-weight: 700;
+    color: white;
+}
+
+.cta-text {
+    font-size: 16px;
+    margin-bottom: 35px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+}
+
+/* 🔥 BUTTON UPGRADE */
+.cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #facc15, #f59e0b); /* GOLD */
+    color: #1e3a8a;
+    padding: 14px 40px;
+    border-radius: 40px;
+    font-weight: 600;
+    transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.cta-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+}
+        
+ /* ==========================
+   FOOTER (NEW STYLE)
+========================== */
+.footer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #cbd5e1;
+    padding: 70px 20px 25px;
+}
+
+.footer-container {
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 50px;
+}
+
+.footer-box h3 {
+    color: white;
+    margin-bottom: 18px;
+    font-size: 18px;
+}
+
+.footer-box p {
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.footer-box a {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+.footer-box a:hover {
+    color: #facc15; /* 🔥 gold hover */
+    transform: translateX(5px);
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 13px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    color: #94a3b8;
+}
+
+         /* ==========================
+           WHATSAPP FLOAT BUTTON
+        ========================== */
+        .whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 56px;
+            height: 56px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            z-index: 1000;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .whatsapp:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        }
+
+  .privacy-section{
+  background: #f1f5f9;   /* light clean bg */
+  padding: 30px 20px;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* 🔥 HEADING */
+.privacy-section h3{
+  text-align: center;
+  color: #0b5fa5;   /* bright blue */
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* 🔥 PARAGRAPH */
+.privacy-section p{
+    width: 100%;              /* 🔥 full width */
+  text-align: justify;      /* left → right fill */
+
+  color:red;        /* dark readable */
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.lang-banner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+
+  background: linear-gradient(135deg, #e3f2fd, #ffffff);
+  border-left:6px solid #0b5394;
+
+  padding:20px 25px;
+  border-radius:12px;
+  margin:20px auto;
+  max-width:1100px;
+
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+    
+}
+
+/* TEXT */
+.lang-text p{
+  margin:0;
+  font-size:15px;
+  line-height:1.6;
+  color:#0b5394;
+  font-weight:500;
+}
+.lang-btn:hover{
+  background: linear-gradient(135deg, #ff6a00, #ff8c2a);
+  transform:translateY(-2px);
+}
+
+/* MOBILE RESPONSIVE */
+@media(max-width:768px){
+  .lang-banner{
+    flex-direction:column;
+    text-align:center;
+  }
+ 
+}        
+
+/* wrapper */
+.top-section{
+  max-width:1000px;
+  margin:20px auto;
+  padding:0 10px;
+}
+
+/* dropdown align right */
+.lang-switch{
+  display:flex;
+  justify-content:center;
+  margin-bottom:15px;
+  padding-right:10px;   /* small spacing */
+}
+
+/* dropdown styling */
+.lang-switch select{
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:14px;
+  cursor:pointer;
+}
+
+.lang-switch select:hover{
+  background:#f0f7ff;
+} 
+
+      
+</style>
+</head>
+<body>
+
+ 
+
+    <!-- ==========================
+         NAVBAR
+    ========================== -->
+    <nav class="navbar"> 
+        <div class="nav-left"> 
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo"> 
+            <div class="brand-text"> 
+                <h1>RANJITHAM STUDY CENTER</h1> 
+                <p>Learn • Practice • Excel in Mathematics</p> 
+            </div>
+        </div>
+        <div class="nav-center"> 
+            <a href="{{ url_for('home') }}">Home</a> 
+            <a href="{{ url_for('about') }}">About</a> 
+            <a href="{{ url_for('courses') }}">Class</a> 
+            <a href="{{ url_for('materials') }}">Materials</a>
+            <a href="{{ url_for('contact') }}">Contact</a> 
+        </div> 
+        <div class="nav-right">
+        <a href="/contact" class="demo-btn">Free demo class</a>
+        </div>
+    </nav>
+
+<div class="top-section">
+
+  <div class="lang-switch">
+    <select id="languageSelect" onchange="changeLanguage()">
+      <option value="english">English</option>
+      <option value="tamil">தமிழ்</option>
+      <option value="hindi">हिंदी</option>
+      <option value="telugu">తెలుగు</option>
+      <option value="kannada">ಕನ್ನಡ</option>
+      <option value="malayalam">മലയാളം</option>
+    </select>
+  </div>
+
+  <div class="lang-banner">
+      
+   <div class="lang-text">
+    <p>
+      At Ranjitham Study Center, we believe that every parent should clearly understand their child’s education. 
+      To support this, our content is available in <strong>multiple languages</strong>, making it easier for parents 
+      from different backgrounds to access and understand the information comfortably. 
+      At the same time, students are continuously guided to improve their academic understanding, including English proficiency.
+    </p>
+  </div>
+
+  </div>
+</div>
+        
+<!-- ENGLISH -->
+<div id="english" class="lang-content">
+<section class="section">
+  <div class="container">
+
+    <h2>About Ranjitham Study Center</h2>
+
+    <!-- POINTS -->
+    <ul class="about-points">
+        <li>
+      <strong>Ranjitham Study Center</strong> was established on <strong>1st August 2025</strong> with a clear vision to provide 
+      quality mathematics education for school students. The official website, <strong>rscedu.in</strong>, was launched on 
+      <strong>14th April 2026</strong> to make learning more accessible through both online and offline platforms.
+      Since its inception, the center has focused on building a structured and student-friendly learning environment, 
+      helping students improve their understanding, confidence, and academic performance in mathematics.
+      </li>
+
+      <li>
+        It is a well-structured learning environment designed to support students at different academic levels. 
+        The center focuses on creating a disciplined and student-friendly atmosphere that encourages consistent learning and improvement.
+      </li>
+
+       <li>
+        We provide coaching for multiple boards including <strong>CBSE, State Board, and ICSE</strong>, 
+        ensuring that teaching is aligned with the specific syllabus and exam pattern of each board.
+      </li>
+
+      <li>
+        The center is suitable for students who need strong foundational support, regular guidance, 
+        and a structured study approach, especially those aiming to improve performance in school and board exams.
+      </li>
+
+      <li>
+        Facilities include regular assessments, doubt-clearing support, study materials, 
+        and guidance for exam preparation, helping students stay consistent and focused throughout the academic year.
+      </li>
+
+      <li>
+        Special attention is given to <strong>slow learning students</strong>, 
+        ensuring that each student progresses at the right pace with proper support.
+      </li>
+
+        <li>
+ 
+      At our Center, the focus is not just on marks, but on building a strong academic foundation 
+      that supports long-term learning and confidence.
+   
+     </li>
+     </ul>
+
+  </div>
+</section>
+    
+<section class="about-offerings">
+
+  <div class="offer-item">
+    <h3>Online & Offline Classes</h3>
+    <div class="offer-icon">🧑‍🏫</div>
+    <p>
+      Ranjitham Study Center offers both <strong>online</strong> and 
+      <strong>offline tuition classes</strong>, allowing students to learn 
+      in the mode that best suits their convenience.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>Handwritten Notes</h3>
+    <div class="offer-icon">✍️</div>
+    <p>
+      High-quality <strong>handwritten Mathematics notes</strong> are prepared 
+      specifically for school students, focusing on key concepts, important formulas, 
+      and problem-solving techniques.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>Paid Notes Access</h3>
+    <div class="offer-icon">⬇️</div>
+    <p>
+      Students can <strong>access notes through the website</strong> at a nominal cost. 
+      These notes are highly useful for <strong>revision and exam preparation</strong>.
+    </p>
+  </div>
+
+</section>
+
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">Our Director</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
+          
+        Ranjitham Study Center offers high-quality educational services with a strong focus on academic excellence 
+        and result-oriented teaching. Structured coaching is provided through a concept-based and student-focused 
+        approach under the guidance of our founder, Mr. Balakumar.He is a dedicated mathematics educator with a passion for student development and motivation. 
+        He completed his undergraduate studies at PSNA College of Engineering and Technology, Dindigul, followed by 
+        postgraduate studies at Thiagarajar College of Engineering, and is currently pursuing a PhD at VIT Chennai.
+        </p>
+        
+       <p class="home-desc">
+
+        With a deep commitment to teaching, he focuses on strengthening students’ fundamentals in both 
+        school-level and engineering mathematics through clear and structured explanations.In addition to regular coaching, specialized academic support is provided for students with backlogs 
+        or arrears in Electrical and Electronics Engineering subjects. This support helps students build confidence, 
+        clear their examinations successfully, and achieve consistent academic progress.
+        </p>
+  </div>
+</div>                
+</div>
+</section>
+
+<section class="section vision-mission">
+  <div class="vision-mission-wrapper">
+      <div class="vm-box">
+        <h3>Vision</h3>
+        <p>
+          Our vision is to create a strong academic environment where students develop a deep understanding and appreciation for mathematics.
+          We strive to transform mathematics from a subject of memorization into a subject of logical thinking and problem-solving.
+          By nurturing curiosity, discipline, and confidence, we aim to prepare students not only for examinations but also for lifelong learning and intellectual growth.
+        </p>
+      </div>
+
+      <div class="vm-box">
+        <h3>Mission</h3>
+        <p>
+          Our mission is to deliver concept-oriented and student-focused mathematics education through well-structured teaching methods.
+          We emphasize clarity of fundamentals, step-by-step explanations, and consistent practice to ensure strong conceptual foundations.
+          Through regular assessments, personalized doubt-clearing sessions, and exam-focused training,
+          we guide each student towards improved performance, accuracy, and confidence in both board and competitive examinations.
+        </p>
+      </div>
+    </div>
+  </section>
+</div>
+    
+<!-- TAMIL -->
+<div id="tamil" class="lang-content" style="display:none;">
+<section class="section">
+  <div class="container">
+
+    <h2>ரஞ்சிதம் ஸ்டடி சென்டர் பற்றி</h2>
+ 
+    <!-- POINTS -->
+    <ul class="about-points">
+
+        <li>
+      <strong>ரஞ்சிதம் ஸ்டடி சென்டர்</strong> <strong>1 ஆகஸ்ட் 2025</strong> அன்று தொடங்கப்பட்டது, பள்ளி மாணவர்களுக்கு தரமான கணிதக் கல்வியை வழங்கும் நோக்கத்துடன். 
+      அதிகாரப்பூர்வ இணையதளம் <strong>rscedu.in</strong> <strong>14 ஏப்ரல் 2026</strong> அன்று தொடங்கப்பட்டது, 
+      ஆன்லைன் மற்றும் ஆஃப்லைன் முறைகளில் கற்றலை மேலும் எளிதாக அணுகக்கூடியதாக மாற்றும் வகையில்.தொடங்கியதிலிருந்து, இந்த மையம் ஒழுங்குபடுத்தப்பட்ட மற்றும் மாணவர் நட்பு கற்றல் சூழலை உருவாக்குவதில் கவனம் செலுத்தி வருகிறது, 
+      இதன் மூலம் மாணவர்கள் கணிதத்தில் புரிதல், நம்பிக்கை மற்றும் கல்வி முன்னேற்றத்தை மேம்படுத்த உதவுகிறது.
+      </li>
+
+      <li>
+        ரஞ்சிதம் ஸ்டடி சென்டர் என்பது பல்வேறு கல்வி நிலைகளில் உள்ள மாணவர்களை ஆதரிக்க வடிவமைக்கப்பட்ட ஒழுங்குபடுத்தப்பட்ட கற்றல் சூழல் ஆகும். 
+        இந்த மையம் ஒழுக்கமான மற்றும் மாணவர் நட்பு சூழலை உருவாக்குவதில் கவனம் செலுத்துகிறது, இது தொடர்ந்து கற்றலும் முன்னேற்றமும் ஏற்பட உதவுகிறது.
+      </li>
+
+     <li>
+        <strong>CBSE, மாநில வாரியம் மற்றும் ICSE</strong> போன்ற பல்வேறு பாடத்திட்டங்களுக்கு பயிற்சி வழங்கப்படுகிறது, 
+        ஒவ்வொரு பாடத்திட்டத்தின் பாடத்திட்டம் மற்றும் தேர்வு முறைக்கு ஏற்ப கற்பித்தல் வழங்கப்படுகிறது.
+      </li>
+
+      <li>
+        இந்த மையம் அடிப்படை புரிதல், தொடர்ச்சியான வழிகாட்டுதல் மற்றும் ஒழுங்குபடுத்தப்பட்ட படிப்பு முறையை</strong> 
+        தேவைப்படுகின்ற மாணவர்களுக்கு மிகவும் ஏற்றதாகும், குறிப்பாக பள்ளி மற்றும் போர்டு தேர்வுகளில் முன்னேற்றம் பெற விரும்புபவர்களுக்கு.
+      </li>
+
+      <li>
+        வாராந்திர தேர்வுகள், சந்தேக தீர்வு அமர்வுகள், படிப்பு பொருட்கள் மற்றும் தேர்வு தயாரிப்பு வழிகாட்டுதல்</strong> போன்ற வசதிகள் வழங்கப்படுகின்றன, 
+        இது மாணவர்கள் தொடர்ந்து கவனத்துடன் படிக்க உதவுகிறது.
+      </li>
+
+      <li>
+        <strong>மெதுவாக கற்கும் மாணவர்களுக்கு </strong>தனிப்பட்ட கவனம் வழங்கப்படுகிறது, 
+        இதனால் ஒவ்வொரு மாணவரும் தங்களுக்கு ஏற்ற வேகத்தில் முன்னேற முடிகிறது.
+      </li>
+
+      <li> 
+      ரஞ்சிதம் ஸ்டடி சென்டர் இல், மதிப்பெண்கள் மட்டுமல்லாமல், 
+      நீண்ட கால கற்றல் மற்றும் நம்பிக்கையை உருவாக்கும் வலுவான கல்வி அடித்தளத்தை உருவாக்குவதில் கவனம் செலுத்தப்படுகிறது.
+      
+      தெளிவான மற்றும் ஒழுங்குபடுத்தப்பட்ட அணுகுமுறையுடன், 
+      மாணவர்கள் மேம்பட்ட புரிதல், சிறந்த செயல்திறன் மற்றும் கல்வி வெற்றி அடைய வழிகாட்டப்படுகிறது.
+     </li>
+
+ </ul>
+
+  </div>
+</section>
+
+ <section class="about-offerings">
+
+  <div class="offer-item">
+    <h3>ஆன்லைன் & ஆஃப்லைன் வகுப்புகள்</h3>
+    <div class="offer-icon">🧑‍🏫</div>
+    <p>
+      ரஞ்சிதம் ஸ்டடி சென்டர் <strong>ஆன்லைன்</strong> மற்றும் 
+      <strong>ஆஃப்லைன் டியூஷன் வகுப்புகளை</strong> வழங்குகிறது, 
+      மாணவர்கள் தங்களுக்கு வசதியான முறையில் கற்கும் வாய்ப்பை பெறுகின்றனர்.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>கையெழுத்து குறிப்புகள்</h3>
+    <div class="offer-icon">✍️</div>
+    <p>
+      உயர்தரமான <strong>கையெழுத்து கணித குறிப்புகள்</strong> பள்ளி மாணவர்களுக்கு சிறப்பாக தயாரிக்கப்படுகின்றன, 
+      முக்கிய கருத்துகள், முக்கிய சூத்திரங்கள் மற்றும் பிரச்சினை தீர்க்கும் முறைகள் மீது கவனம் செலுத்தப்படுகிறது.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>கட்டண குறிப்புகள் அணுகல்</h3>
+    <div class="offer-icon">⬇️</div>
+    <p>
+      மாணவர்கள் <strong>இணையதளத்தின் மூலம் குறிப்புகளை அணுகலாம்</strong> குறைந்த கட்டணத்தில். 
+      இந்த குறிப்புகள் <strong>மீளாய்வு மற்றும் தேர்வு தயாரிப்பிற்கு</strong> மிகவும் பயனுள்ளதாக இருக்கும்.
+    </p>
+  </div>
+
+</section>
+   
+
+<!-- FOUNDER SECTION -->
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">எங்கள் இயக்குநர் பற்றி</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
+          
+        ரஞ்சிதம் ஸ்டடி சென்டர் உயர்தரமான கல்விச் சேவைகளை வழங்குகிறது, கல்வி சிறப்பிற்கும் 
+        முடிவை மையப்படுத்திய கற்பித்தலுக்கும் முக்கியத்துவம் அளிக்கிறது. 
+        கட்டமைக்கப்பட்ட பயிற்சி, கருத்து அடிப்படையிலும் மாணவர் மையப்படுத்தப்பட்ட அணுகுமுறையிலும், 
+        எங்கள் நிறுவனர் திரு. பாலகுமார் அவர்களின் வழிகாட்டுதலில் வழங்கப்படுகிறது. 
+        அவர் மாணவர்களின் முன்னேற்றம் மற்றும் ஊக்கத்திற்கு ஆர்வமுள்ள அர்ப்பணிப்புடன் செயல்படும் கணித ஆசிரியர் ஆவார். 
+        அவர் PSNA College of Engineering and Technology, Dindigul இல் தனது இளங்கலை படிப்பை முடித்துள்ளார், 
+        பின்னர் Thiagarajar College of Engineering இல் முதுகலைப் படிப்பை முடித்துள்ளார், மேலும் தற்போது VIT Chennai இல் PhD மேற்கொண்டு வருகிறார்.
+    </p>
+        
+   <p class="home-desc">
+
+        கற்பித்தலின் மீது ஆழமான அர்ப்பணிப்புடன், அவர் பள்ளி நிலை மற்றும் பொறியியல் கணிதத்தில் 
+        மாணவர்களின் அடிப்படை அறிவை தெளிவான மற்றும் கட்டமைக்கப்பட்ட விளக்கங்களின் மூலம் வலுப்படுத்துவதில் கவனம் செலுத்துகிறார். 
+        வழக்கமான பயிற்சிகளுக்கு கூடுதலாக, Electrical and Electronics Engineering பாடங்களில் 
+        நிலுவையில் உள்ள (arrears) மாணவர்களுக்கு சிறப்பு கல்வி ஆதரவும் வழங்கப்படுகிறது. 
+        இந்த ஆதரவு மாணவர்கள் நம்பிக்கையை வளர்க்க, தேர்வுகளை வெற்றிகரமாக முடிக்க, மற்றும் தொடர்ச்சியான கல்வி முன்னேற்றத்தை அடைய உதவுகிறது.
+   </p>
+  </div>
+</div>                
+</div>
+</section>
+
+ 
+<!-- VISION & MISSION -->
+<section class="section vision-mission">
+ <div class="vision-mission-wrapper">
+      <div class="vm-box">
+        <h3>எங்கள் பார்வை</h3>
+        <p>
+          மாணவர்கள் கணிதத்தை ஆழமாகப் புரிந்து கொண்டு அதனை விரும்பக் கற்றுக்கொள்ளும் வலுவான கல்விச் சூழலை உருவாக்குவதே எங்கள் பார்வையாகும்.
+             மனப்பாடமாகக் கற்றுக் கொள்ளும் பாடமாக இல்லாமல், தர்க்க ரீதியான சிந்தனை மற்றும் பிரச்சினைத் தீர்வு திறனை வளர்க்கும் பாடமாக கணிதத்தை மாற்ற முயற்சிக்கிறோம்.
+             ஆர்வம், ஒழுக்கம் மற்றும் தன்னம்பிக்கையை வளர்த்து, மாணவர்களை தேர்வுகளுக்காக மட்டுமல்லாமல், வாழ்நாள் முழுவதும் கற்றல் மற்றும் அறிவாற்றல் 
+            வளர்ச்சிக்காகவும் தயார்படுத்துவதே எங்கள் இலக்காகும்.
+        </p>
+      </div>
+
+      <div class="vm-box">
+        <h3>எங்கள் நோக்கம்</h3>
+        <p>
+         நன்கு திட்டமிடப்பட்ட கற்பித்தல் முறைகளின் மூலம் கருத்து அடிப்படையிலும் மாணவர் மையமாகவும் அமைந்த கணிதக் கல்வியை வழங்குவதே எங்கள் நோக்கமாகும்.
+       அடிப்படை கருத்துகளின் தெளிவு, படிப்படையான விளக்கங்கள் மற்றும் தொடர்ச்சியான பயிற்சி ஆகியவற்றிற்கு முக்கியத்துவம் அளித்து, மாணவர்களுக்கு வலுவான கருத்து அடித்தளத்தை உருவாக்குகிறோம்.
+          வழக்கமான மதிப்பீடுகள், தனிப்பட்ட சந்தேகத் தீர்வு வகுப்புகள் மற்றும் தேர்வு மையமான பயிற்சிகள் மூலம், பள்ளி மற்றும் போட்டித் தேர்வுகளில் 
+            மாணவர்கள் சிறந்த செயல்திறன், துல்லியம் மற்றும் தன்னம்பிக்கையை பெற வழிகாட்டுகிறோம்.
+        </p>
+      </div>
+
+    </div>
+      
+</section>
+</div>
+
+<div id="hindi" class="lang-content" style="display:none;">
+<section class="section">
+  <div class="container">
+
+    <h2>रंजीथम स्टडी सेंटर के बारे में</h2>
+
+    <!-- POINTS -->
+    <ul class="about-points">
+
+        <li>
+      <strong>रंजीथम स्टडी सेंटर</strong> की स्थापना <strong>1 अगस्त 2025</strong> को की गई, 
+      जिसका उद्देश्य स्कूल के छात्रों को उच्च गुणवत्ता वाली गणित शिक्षा प्रदान करना है। 
+      आधिकारिक वेबसाइट <strong>rscedu.in</strong> को <strong>14 अप्रैल 2026</strong> को लॉन्च किया गया, 
+      ताकि ऑनलाइन और ऑफलाइन दोनों माध्यमों से सीखना अधिक सुलभ बनाया जा सके।
+       स्थापना के बाद से, यह केंद्र एक संरचित और छात्र-अनुकूल शिक्षण वातावरण बनाने पर ध्यान केंद्रित कर रहा है, 
+      जिससे छात्रों की समझ, आत्मविश्वास और गणित में शैक्षणिक प्रदर्शन में सुधार हो सके।
+      </li>
+
+      <li>
+        <strong>रंजीथम स्टडी सेंटर</strong> एक सुव्यवस्थित शिक्षण वातावरण है, 
+        जिसे विभिन्न शैक्षणिक स्तरों के छात्रों का समर्थन करने के लिए डिज़ाइन किया गया है। 
+        यह केंद्र अनुशासित और छात्र-अनुकूल वातावरण बनाने पर ध्यान केंद्रित करता है, 
+        जो निरंतर सीखने और प्रगति को प्रोत्साहित करता है।
+      </li>
+     
+      <li>
+        <strong>CBSE, राज्य बोर्ड और ICSE</strong> सहित विभिन्न बोर्डों के लिए कोचिंग प्रदान की जाती है, 
+        जिससे प्रत्येक बोर्ड के पाठ्यक्रम और परीक्षा पैटर्न के अनुसार शिक्षण सुनिश्चित किया जा सके।
+      </li>
+
+      <li>
+        यह केंद्र उन छात्रों के लिए उपयुक्त है जिन्हें मजबूत आधार, नियमित मार्गदर्शन और 
+        एक संरचित अध्ययन पद्धति की आवश्यकता होती है, विशेष रूप से वे जो स्कूल और बोर्ड परीक्षाओं में बेहतर प्रदर्शन करना चाहते हैं।
+      </li>
+
+      <li>
+        नियमित साप्ताहिक परीक्षण, डाउट-क्लियरिंग सत्र, अध्ययन सामग्री और परीक्षा तैयारी मार्गदर्शन जैसी सुविधाएं प्रदान की जाती हैं, 
+        जो छात्रों को पूरे शैक्षणिक वर्ष के दौरान लगातार और केंद्रित रहने में मदद करती हैं।
+      </li>
+
+       <li>
+          <strong>धीमी गति से सीखने वाले छात्रों</strong> और उच्च प्रदर्शन करने वाले छात्रों दोनों पर विशेष ध्यान दिया जाता है, 
+        जिससे प्रत्येक छात्र अपनी गति से उचित समर्थन के साथ आगे बढ़ सके।
+        </li>
+    
+      <li>
+       रंजीथम स्टडी सेंटर में केवल अंक प्राप्त करने पर ही नहीं, 
+      बल्कि एक मजबूत शैक्षणिक आधार बनाने पर ध्यान दिया जाता है, 
+      जो दीर्घकालिक सीखने और आत्मविश्वास को बढ़ावा देता है।
+    
+      एक स्पष्ट और संरचित दृष्टिकोण के साथ, यह केंद्र छात्रों को 
+      बेहतर समझ, बेहतर प्रदर्शन और शैक्षणिक सफलता की ओर मार्गदर्शन करता है।
+      </li>
+
+ </ul>
+  </div>
+</section>
+
+
+<section class="about-offerings">
+
+  <div class="offer-item">
+    <h3>ऑनलाइन और ऑफलाइन कक्षाएं</h3>
+    <div class="offer-icon">🧑‍🏫</div>
+    <p>
+      रंजीथम स्टडी सेंटर <strong>ऑनलाइन</strong> और 
+      <strong>ऑफलाइन ट्यूशन कक्षाएं</strong> प्रदान करता है, 
+      जिससे छात्र अपनी सुविधा के अनुसार सीख सकते हैं।
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>हस्तलिखित नोट्स</h3>
+    <div class="offer-icon">✍️</div>
+    <p>
+      उच्च गुणवत्ता वाले <strong>हस्तलिखित गणित नोट्स</strong> स्कूल के छात्रों के लिए विशेष रूप से तैयार किए जाते हैं, 
+      जिनमें मुख्य अवधारणाएं, महत्वपूर्ण सूत्र और समस्या-समाधान तकनीकों पर ध्यान दिया जाता है।
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>पेड नोट्स एक्सेस</h3>
+    <div class="offer-icon">⬇️</div>
+    <p>
+      छात्र <strong>वेबसाइट के माध्यम से नोट्स एक्सेस कर सकते हैं</strong> एक नाममात्र शुल्क पर। 
+      ये नोट्स <strong>रीविजन और परीक्षा की तैयारी</strong> के लिए बहुत उपयोगी हैं।
+    </p>
+  </div>
+
+</section>
+
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">हमारे निदेशक के बारे में</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
+          
+        रंजीथम स्टडी सेंटर उच्च गुणवत्ता वाली शैक्षणिक सेवाएं प्रदान करता है, जिसमें शैक्षणिक उत्कृष्टता 
+        और परिणाम-उन्मुख शिक्षण पर विशेष ध्यान दिया जाता है। संरचित कोचिंग एक कॉन्सेप्ट-आधारित और 
+        छात्र-केंद्रित दृष्टिकोण के माध्यम से हमारे संस्थापक श्री बालकुमार के मार्गदर्शन में प्रदान की जाती है। 
+        वे एक समर्पित गणित शिक्षक हैं, जिन्हें छात्रों के विकास और प्रेरणा के प्रति गहरी रुचि है। 
+        उन्होंने PSNA College of Engineering and Technology, Dindigul से अपनी स्नातक शिक्षा पूरी की, 
+        इसके बाद Thiagarajar College of Engineering से स्नातकोत्तर किया, और वर्तमान में VIT Chennai में PhD कर रहे हैं।
+    </p>
+        
+   <p class="home-desc">
+
+        शिक्षण के प्रति गहरी प्रतिबद्धता के साथ, वे स्कूल स्तर और इंजीनियरिंग गणित दोनों में 
+        छात्रों की मूलभूत समझ को स्पष्ट और संरचित व्याख्या के माध्यम से मजबूत बनाने पर ध्यान केंद्रित करते हैं। 
+        नियमित कोचिंग के अलावा, Electrical and Electronics Engineering विषयों में बैकलॉग या एरियर वाले छात्रों के लिए 
+        विशेष शैक्षणिक सहायता भी प्रदान की जाती है। यह सहायता छात्रों को आत्मविश्वास बढ़ाने, 
+        परीक्षाओं को सफलतापूर्वक पास करने और निरंतर शैक्षणिक प्रगति प्राप्त करने में मदद करती है।
+   </p>
+  </div>
+</div>                
+</div>
+</section>
+
+
+<section class="section vision-mission">
+  <div class="vision-mission-wrapper">
+      
+      <div class="vm-box">
+        <h3>विजन</h3>
+        <p>
+          हमारा विजन एक मजबूत शैक्षणिक वातावरण बनाना है, जहां छात्र गणित के प्रति गहरी समझ और सराहना विकसित करें।
+          हम गणित को केवल रटने वाला विषय नहीं, बल्कि तार्किक सोच और समस्या-समाधान का विषय बनाने का प्रयास करते हैं।
+          जिज्ञासा, अनुशासन और आत्मविश्वास को विकसित करके, हम छात्रों को न केवल परीक्षाओं के लिए बल्कि जीवन भर के सीखने और बौद्धिक विकास के लिए तैयार करना चाहते हैं।
+        </p>
+      </div>
+
+      <div class="vm-box">
+        <h3>मिशन</h3>
+        <p>
+          हमारा मिशन सुव्यवस्थित शिक्षण विधियों के माध्यम से कॉन्सेप्ट-आधारित और छात्र-केंद्रित गणित शिक्षा प्रदान करना है।
+          हम मजबूत बुनियादी समझ सुनिश्चित करने के लिए मूलभूत स्पष्टता, चरण-दर-चरण व्याख्या और निरंतर अभ्यास पर जोर देते हैं।
+          नियमित मूल्यांकन, व्यक्तिगत डाउट-क्लियरिंग सत्र और परीक्षा-केंद्रित प्रशिक्षण के माध्यम से,
+          हम प्रत्येक छात्र को बेहतर प्रदर्शन, सटीकता और आत्मविश्वास की ओर मार्गदर्शन करते हैं, 
+          चाहे वह बोर्ड परीक्षाएं हों या प्रतियोगी परीक्षाएं।
+        </p>
+      </div>
+
+  </div>
+</section>
+</div>
+
+<div id="telugu" class="lang-content" style="display:none;">
+<section class="section">
+  <div class="container">
+
+    <h2>రంజితం స్టడీ సెంటర్ గురించి</h2>
+
+      <!-- POINTS -->
+    <ul class="about-points">
+
+         <li>
+      <strong>రంజితం స్టడీ సెంటర్</strong> <strong>1 ఆగస్టు 2025</strong> న స్థాపించబడింది, 
+      పాఠశాల విద్యార్థులకు ఉన్నత స్థాయి గణిత విద్యను అందించాలనే లక్ష్యంతో. 
+      అధికారిక వెబ్‌సైట్ <strong>rscedu.in</strong> ను <strong>14 ఏప్రిల్ 2026</strong> న ప్రారంభించారు, 
+      ఆన్‌లైన్ మరియు ఆఫ్‌లైన్ విధానాల ద్వారా అభ్యాసాన్ని మరింత సులభంగా అందుబాటులోకి తీసుకురావడానికి.
+      స్థాపన నుండి, ఈ కేంద్రం ఒక క్రమబద్ధమైన మరియు విద్యార్థి-స్నేహపూర్వక అభ్యాస వాతావరణాన్ని రూపొందించడంపై దృష్టి సారిస్తోంది, 
+      దీనివల్ల విద్యార్థుల అవగాహన, ఆత్మవిశ్వాసం మరియు గణితంలో విద్యా ప్రగతి మెరుగుపడుతుంది.
+      </li>
+
+      <li>
+        <strong>రంజితం స్టడీ సెంటర్</strong> అనేది వివిధ విద్యా స్థాయిలలో ఉన్న విద్యార్థులకు మద్దతు ఇవ్వడానికి రూపొందించిన 
+        క్రమబద్ధమైన అభ్యాస వాతావరణం. ఈ కేంద్రం క్రమశిక్షణతో కూడిన మరియు విద్యార్థి-స్నేహపూర్వక వాతావరణాన్ని 
+        సృష్టించడంపై దృష్టి పెడుతుంది, ఇది నిరంతర అభ్యాసం మరియు పురోగతిని ప్రోత్సహిస్తుంది.
+      </li>
+
+      <li>
+        <strong>CBSE, రాష్ట్ర బోర్డు మరియు ICSE</strong> వంటి వివిధ బోర్డులకు కోచింగ్ అందించబడుతుంది, 
+        ప్రతి బోర్డు సిలబస్ మరియు పరీక్ష విధానానికి అనుగుణంగా బోధన జరుగుతుంది.
+      </li>
+
+      <li>
+        ఈ కేంద్రం బలమైన పునాది, నిరంతర మార్గదర్శనం మరియు క్రమబద్ధమైన అధ్యయన విధాన 
+        అవసరమైన విద్యార్థులకు అనుకూలంగా ఉంటుంది, ముఖ్యంగా పాఠశాల మరియు బోర్డు పరీక్షల్లో మెరుగైన ఫలితాలు సాధించాలని కోరుకునే వారికి.
+      </li>
+
+      <li>
+        వారాంత పరీక్షలు, సందేహ నివృత్తి సెషన్లు, అధ్యయన పదార్థాలు మరియు పరీక్షా సిద్ధత మార్గదర్శనం వంటి సౌకర్యాలు అందించబడతాయి, 
+        ఇవి విద్యార్థులు సంవత్సరం పొడవునా క్రమశిక్షణతో మరియు దృష్టి సారించి చదవడానికి సహాయపడతాయి.
+      </li>
+
+        <li>
+      <strong>నెమ్మదిగా నేర్చుకునే విద్యార్థులు మరియు మెరుగైన ప్రదర్శన చేసే విద్యార్థులకు</strong> ప్రత్యేక శ్రద్ధ ఇవ్వబడుతుంది, 
+      ప్రతి విద్యార్థి తనకు అనుకూలమైన వేగంలో సరైన మద్దతుతో ముందుకు సాగేందుకు సహాయం చేయబడుతుంది.
+       </li>
+
+        
+       <li>
+       రంజితం స్టడీ సెంటర్ లో కేవలం మార్కులపై మాత్రమే కాకుండా, 
+      దీర్ఘకాలిక అభ్యాసం మరియు ఆత్మవిశ్వాసాన్ని పెంపొందించే బలమైన విద్యా పునాదిని నిర్మించడంపై దృష్టి పెట్టబడుతుంది.
+         స్పష్టమైన మరియు క్రమబద్ధమైన విధానంతో, ఈ కేంద్రం విద్యార్థులను 
+      మెరుగైన అవగాహన, మెరుగైన ప్రదర్శన మరియు విద్యా విజయానికి దారి చూపిస్తుంది.
+   </li>
+    </ul>
+
+  </div>
+</section>
+
+<section class="about-offerings">
+
+  <div class="offer-item">
+    <h3>ఆన్‌లైన్ & ఆఫ్‌లైన్ తరగతులు</h3>
+    <div class="offer-icon">🧑‍🏫</div>
+    <p>
+      రంజితం స్టడీ సెంటర్ <strong>ఆన్‌లైన్</strong> మరియు 
+      <strong>ఆఫ్‌లైన్ ట్యూషన్ తరగతులు</strong> అందిస్తుంది, 
+      విద్యార్థులు తమకు అనుకూలమైన విధానంలో నేర్చుకునే అవకాశాన్ని పొందుతారు.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>చేతిరాత నోట్స్</h3>
+    <div class="offer-icon">✍️</div>
+    <p>
+      ఉన్నత నాణ్యత గల <strong>చేతిరాత గణిత నోట్స్</strong> పాఠశాల విద్యార్థుల కోసం ప్రత్యేకంగా తయారు చేయబడతాయి, 
+      ముఖ్యమైన భావనలు, ముఖ్యమైన సూత్రాలు మరియు సమస్య పరిష్కార పద్ధతులపై దృష్టి పెట్టబడుతుంది.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>చెల్లింపు నోట్స్ యాక్సెస్</h3>
+    <div class="offer-icon">⬇️</div>
+    <p>
+      విద్యార్థులు <strong>వెబ్‌సైట్ ద్వారా నోట్స్‌ను యాక్సెస్ చేయవచ్చు</strong> తక్కువ చెల్లింపుతో. 
+      ఈ నోట్స్ <strong>పునశ్చరణ మరియు పరీక్ష సిద్ధతకు</strong> చాలా ఉపయోగకరంగా ఉంటాయి.
+    </p>
+  </div>
+
+</section>
+    
+
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">మా డైరెక్టర్ గురించి</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
+          
+        రంజితం స్టడీ సెంటర్ ఉన్నతమైన విద్యా సేవలను అందిస్తుంది, ఇందులో విద్యా ప్రతిభకు మరియు ఫలితాలపై ఆధారిత బోధనకు ప్రత్యేక ప్రాధాన్యత ఇవ్వబడుతుంది. 
+        నిర్మితమైన కోచింగ్ కాన్సెప్ట్ ఆధారిత మరియు విద్యార్థి-కేంద్రిత విధానంలో మా వ్యవస్థాపకుడు శ్రీ బాలకుమార్ మార్గదర్శకత్వంలో అందించబడుతుంది. 
+        ఆయన విద్యార్థుల అభివృద్ధి మరియు ప్రేరణపై ఆసక్తి కలిగిన అంకితభావం గల గణిత ఉపాధ్యాయుడు. 
+        ఆయన PSNA College of Engineering and Technology, Dindigul లో తన అండర్‌గ్రాడ్యుయేషన్ పూర్తి చేశారు, 
+        అనంతరం Thiagarajar College of Engineering లో పోస్ట్‌గ్రాడ్యుయేషన్ పూర్తి చేశారు, ప్రస్తుతం VIT Chennai లో PhD కొనసాగిస్తున్నారు.
+    </p>
+        
+   <p class="home-desc">
+
+        బోధనపై గాఢమైన నిబద్ధతతో, ఆయన పాఠశాల స్థాయి మరియు ఇంజినీరింగ్ గణితంలో విద్యార్థుల పునాది అవగాహనను 
+        స్పష్టమైన మరియు క్రమబద్ధమైన వివరణల ద్వారా బలోపేతం చేయడంపై దృష్టి సారిస్తున్నారు. 
+        సాధారణ కోచింగ్‌కు అదనంగా, Electrical and Electronics Engineering విషయాలలో బ్యాక్‌లాగ్ లేదా ఎరియర్స్ ఉన్న విద్యార్థులకు 
+        ప్రత్యేక అకాడెమిక్ సహాయం కూడా అందించబడుతుంది. ఈ సహాయం విద్యార్థులు ఆత్మవిశ్వాసాన్ని పెంపొందించుకోవడానికి, 
+        పరీక్షలను విజయవంతంగా పూర్తి చేయడానికి మరియు నిరంతర విద్యా పురోగతిని సాధించడానికి సహాయపడుతుంది.
+   </p>
+  </div>
+</div>                
+</div>
+</section>
+
+
+<section class="section vision-mission">
+  <div class="vision-mission-wrapper">
+      
+      <div class="vm-box">
+        <h3>విజన్</h3>
+        <p>
+          మా విజన్ ఒక బలమైన విద్యా వాతావరణాన్ని సృష్టించడం, ఇందులో విద్యార్థులు గణితంపై లోతైన అవగాహన మరియు అభిమానం అభివృద్ధి చేసుకోవాలి.
+          గణితాన్ని కేవలం కంఠస్థం చేసే విషయంగా కాకుండా, తార్కిక ఆలోచన మరియు సమస్య పరిష్కార నైపుణ్యాలను పెంపొందించే విషయంగా మార్చడానికి మేము కృషి చేస్తున్నాము.
+          జిజ్ఞాస, క్రమశిక్షణ మరియు ఆత్మవిశ్వాసాన్ని పెంపొందించడం ద్వారా, మేము విద్యార్థులను కేవలం పరీక్షలకే కాకుండా జీవితాంతం అభ్యాసం మరియు మేధో వికాసానికి సిద్ధం చేయాలని లక్ష్యంగా పెట్టుకున్నాము.
+        </p>
+      </div>
+
+      <div class="vm-box">
+        <h3>మిషన్</h3>
+        <p>
+          మా మిషన్ సక్రమంగా రూపొందించిన బోధన పద్ధతుల ద్వారా కాన్సెప్ట్ ఆధారిత మరియు విద్యార్థి-కేంద్రిత గణిత విద్యను అందించడం.
+          బలమైన పునాది కోసం మౌలిక స్పష్టత, దశలవారీ వివరణ మరియు నిరంతర అభ్యాసంపై మేము దృష్టి సారిస్తున్నాము.
+          నియమిత మూల్యాంకనాలు, వ్యక్తిగత సందేహ నివృత్తి సెషన్లు మరియు పరీక్షలపై దృష్టి పెట్టిన శిక్షణ ద్వారా,
+          మేము ప్రతి విద్యార్థిని మెరుగైన ప్రదర్శన, ఖచ్చితత్వం మరియు ఆత్మవిశ్వాసం వైపు నడిపిస్తున్నాము,
+          అది బోర్డు పరీక్షలు కావచ్చు లేదా పోటీ పరీక్షలు కావచ్చు.
+        </p>
+      </div>
+
+  </div>
+</section>
+</div>
+
+<div id="kannada" class="lang-content" style="display:none;">
+<section class="section">
+  <div class="container">
+
+    <h2>ರಂಜಿತಂ ಸ್ಟಡಿ ಸೆಂಟರ್ ಬಗ್ಗೆ</h2>
+
+    <!-- POINTS -->
+    <ul class="about-points">
+
+        <li>
+      <strong>ರಂಜಿತಂ ಸ್ಟಡಿ ಸೆಂಟರ್</strong> ಅನ್ನು <strong>1 ಆಗಸ್ಟ್ 2025</strong> ರಂದು ಸ್ಥಾಪಿಸಲಾಯಿತು, 
+      ಶಾಲಾ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಉತ್ತಮ ಗುಣಮಟ್ಟದ ಗಣಿತ ಶಿಕ್ಷಣವನ್ನು ನೀಡುವ ಉದ್ದೇಶದಿಂದ. 
+      ಅಧಿಕೃತ ವೆಬ್‌ಸೈಟ್ <strong>rscedu.in</strong> ಅನ್ನು <strong>14 ಏಪ್ರಿಲ್ 2026</strong> ರಂದು ಪ್ರಾರಂಭಿಸಲಾಯಿತು, 
+      ಆನ್‌ಲೈನ್ ಮತ್ತು ಆಫ್‌ಲೈನ್ ಮೂಲಕ ಕಲಿಕೆಯನ್ನು ಇನ್ನಷ್ಟು ಸುಲಭವಾಗಿ ಲಭ್ಯವಾಗುವಂತೆ ಮಾಡಲು.
+      ಸ್ಥಾಪನೆಯಾದ ಬಳಿಕದಿಂದ, ಈ ಕೇಂದ್ರವು ವಿದ್ಯಾರ್ಥಿ ಸ್ನೇಹಿ ಮತ್ತು ವ್ಯವಸ್ಥಿತ ಕಲಿಕಾ ವಾತಾವರಣವನ್ನು ನಿರ್ಮಿಸುವತ್ತ ಗಮನ ಹರಿಸಿದೆ, 
+      ಇದರಿಂದ ವಿದ್ಯಾರ್ಥಿಗಳ ಅರಿವು, ಆತ್ಮವಿಶ್ವಾಸ ಮತ್ತು ಗಣಿತದಲ್ಲಿ ಶೈಕ್ಷಣಿಕ ಸಾಧನೆ ಹೆಚ್ಚಾಗುತ್ತದೆ.
+      </li>
+
+      <li>
+        ರಂಜಿತಂ ಸ್ಟಡಿ ಸೆಂಟರ್ ವು ವಿವಿಧ ಶೈಕ್ಷಣಿಕ ಮಟ್ಟಗಳ ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು ಬೆಂಬಲಿಸಲು ವಿನ್ಯಾಸಗೊಳಿಸಿದ 
+        ವ್ಯವಸ್ಥಿತ ಕಲಿಕಾ ವಾತಾವರಣವಾಗಿದೆ. ಈ ಕೇಂದ್ರವು ಶಿಸ್ತುಬದ್ಧ ಮತ್ತು ವಿದ್ಯಾರ್ಥಿ ಸ್ನೇಹಿ ವಾತಾವರಣವನ್ನು ನಿರ್ಮಿಸುವತ್ತ ಗಮನ ಹರಿಸುತ್ತದೆ, 
+        ಇದು ನಿರಂತರ ಕಲಿಕೆ ಮತ್ತು ಪ್ರಗತಿಯನ್ನು ಉತ್ತೇಜಿಸುತ್ತದೆ.
+      </li>
+
+       <li>
+        <strong>CBSE, ರಾಜ್ಯ ಮಂಡಳಿ ಮತ್ತು ICSE</strong> ಸೇರಿದಂತೆ ವಿವಿಧ ಪಠ್ಯಕ್ರಮಗಳಿಗೆ ಕೋಚಿಂಗ್ ನೀಡಲಾಗುತ್ತದೆ, 
+        ಪ್ರತಿಯೊಂದು ಮಂಡಳಿಯ ಪಠ್ಯಕ್ರಮ ಮತ್ತು ಪರೀಕ್ಷಾ ವಿಧಾನಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಬೋಧನೆ ಮಾಡಲಾಗುತ್ತದೆ.
+      </li>
+
+      <li>
+        ಈ ಕೇಂದ್ರವು ಬಲವಾದ ಅಡಿಪಾಯ, ನಿಯಮಿತ ಮಾರ್ಗದರ್ಶನ ಮತ್ತು ವ್ಯವಸ್ಥಿತ ಅಧ್ಯಯನ ವಿಧಾನ ಬೇಕಿರುವ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಸೂಕ್ತವಾಗಿದೆ, 
+        ವಿಶೇಷವಾಗಿ ಶಾಲೆ ಮತ್ತು ಮಂಡಳಿ ಪರೀಕ್ಷೆಗಳಲ್ಲಿ ಉತ್ತಮ ಫಲಿತಾಂಶ ಪಡೆಯಲು ಬಯಸುವವರಿಗೆ.
+      </li>
+
+      <li>
+        ವಾರಂತ್ಯ ಪರೀಕ್ಷೆಗಳು, ಸಂದೇಹ ನಿವಾರಣಾ ಸೆಷನ್‌ಗಳು, ಅಧ್ಯಯನ ಸಾಮಗ್ರಿಗಳು ಮತ್ತು ಪರೀಕ್ಷಾ ಸಿದ್ಧತಾ ಮಾರ್ಗದರ್ಶನ 
+        ಮುಂತಾದ ಸೌಲಭ್ಯಗಳನ್ನು ಒದಗಿಸಲಾಗುತ್ತದೆ, ಇದು ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ವರ್ಷಪೂರ್ತಿ ನಿರಂತರವಾಗಿ ಮತ್ತು ಗಮನದಿಂದ ಕಲಿಯಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ.
+      </li>
+
+      <li>
+        <strong>ಮಂದಗತಿಯ ಕಲಿಯುವ ವಿದ್ಯಾರ್ಥಿಗಳು ಹಾಗೂ ಉತ್ತಮ ಸಾಧನೆ ಮಾಡುವ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ</strong> ವಿಶೇಷ ಗಮನ ನೀಡಲಾಗುತ್ತದೆ, 
+        ಇದರಿಂದ ಪ್ರತಿಯೊಬ್ಬ ವಿದ್ಯಾರ್ಥಿಯೂ ತನ್ನ ವೇಗಕ್ಕೆ ಅನುಗುಣವಾಗಿ ಸರಿಯಾದ ಬೆಂಬಲದೊಂದಿಗೆ ಮುಂದುವರಿಯಲು ಸಾಧ್ಯವಾಗುತ್ತದೆ.
+      </li>
+     <li>
+         ರಂಜಿತಂ ಸ್ಟಡಿ ಸೆಂಟರ್ ನಲ್ಲಿ ಕೇವಲ ಅಂಕಗಳ ಮೇಲೆ ಮಾತ್ರ ಗಮನವಿರದೆ, 
+      ದೀರ್ಘಕಾಲಿಕ ಕಲಿಕೆ ಮತ್ತು ಆತ್ಮವಿಶ್ವಾಸವನ್ನು ಬೆಳೆಸುವ ಬಲವಾದ ಶೈಕ್ಷಣಿಕ ಅಡಿಪಾಯವನ್ನು ನಿರ್ಮಿಸುವುದರ ಮೇಲೆ ಒತ್ತು ನೀಡಲಾಗುತ್ತದೆ.
+      ಸ್ಪಷ್ಟ ಮತ್ತು ವ್ಯವಸ್ಥಿತ ವಿಧಾನದಿಂದ, ಈ ಕೇಂದ್ರವು ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು 
+      ಉತ್ತಮ ಅರಿವು, ಉತ್ತಮ ಸಾಧನೆ ಮತ್ತು ಶೈಕ್ಷಣಿಕ ಯಶಸ್ಸಿನ ಕಡೆಗೆ ಮಾರ್ಗದರ್ಶನ ಮಾಡುತ್ತದೆ.
+   <li>
+ </ul>
+      
+  </div>
+</section>
+
+<section class="about-offerings">
+
+  <div class="offer-item">
+    <h3>ಆನ್‌ಲೈನ್ & ಆಫ್‌ಲೈನ್ ತರಗತಿಗಳು</h3>
+    <div class="offer-icon">🧑‍🏫</div>
+    <p>
+      ರಂಜಿತಂ ಸ್ಟಡಿ ಸೆಂಟರ್ <strong>ಆನ್‌ಲೈನ್</strong> ಮತ್ತು 
+      <strong>ಆಫ್‌ಲೈನ್ ಟ್ಯೂಷನ್ ತರಗತಿಗಳನ್ನು</strong> ನೀಡುತ್ತದೆ, 
+      ವಿದ್ಯಾರ್ಥಿಗಳು ತಮ್ಮ ಅನುಕೂಲಕ್ಕೆ ತಕ್ಕ ರೀತಿಯಲ್ಲಿ ಕಲಿಯಲು ಅವಕಾಶ ನೀಡುತ್ತದೆ.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>ಹಸ್ತಲಿಖಿತ ಟಿಪ್ಪಣಿಗಳು</h3>
+    <div class="offer-icon">✍️</div>
+    <p>
+      ಉನ್ನತ ಗುಣಮಟ್ಟದ <strong>ಹಸ್ತಲಿಖಿತ ಗಣಿತ ಟಿಪ್ಪಣಿಗಳು</strong> ಶಾಲಾ ವಿದ್ಯಾರ್ಥಿಗಳಿಗಾಗಿ ವಿಶೇಷವಾಗಿ ಸಿದ್ಧಪಡಿಸಲಾಗುತ್ತವೆ, 
+      ಮುಖ್ಯ ಸಂकल्पನೆಗಳು, ಪ್ರಮುಖ ಸೂತ್ರಗಳು ಮತ್ತು ಸಮಸ್ಯೆ ಪರಿಹಾರ ತಂತ್ರಗಳ ಮೇಲೆ ಗಮನ ಕೇಂದ್ರೀಕರಿಸಲಾಗುತ್ತದೆ.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>ಪೇಡ್ ನೋಟ್ಸ್ ಪ್ರವೇಶ</h3>
+    <div class="offer-icon">⬇️</div>
+    <p>
+      ವಿದ್ಯಾರ್ಥಿಗಳು <strong>ವೆಬ್‌ಸೈಟ್ ಮೂಲಕ ನೋಟ್ಸ್ ಅನ್ನು ಪ್ರವೇಶಿಸಬಹುದು</strong> ಕಡಿಮೆ ಶುಲ್ಕದಲ್ಲಿ. 
+      ಈ ನೋಟ್ಸ್ <strong>ಪುನರಾವರ್ತನೆ ಮತ್ತು ಪರೀಕ್ಷಾ ಸಿದ್ಧತೆಗೆ</strong> ಬಹಳ ಉಪಯುಕ್ತವಾಗಿವೆ.
+    </p>
+  </div>
+
+</section>
+
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">ನಮ್ಮ ನಿರ್ದೇಶಕರ ಬಗ್ಗೆ</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
+          
+        ರಂಜಿತಂ ಸ್ಟಡಿ ಸೆಂಟರ್ ಉನ್ನತ ಗುಣಮಟ್ಟದ ಶೈಕ್ಷಣಿಕ ಸೇವೆಗಳನ್ನು ಒದಗಿಸುತ್ತದೆ, ಇದರಲ್ಲಿ ಶೈಕ್ಷಣಿಕ ಮೆರುಗು 
+        ಮತ್ತು ಫಲಿತಾಂಶ ಕೇಂದ್ರೀಕೃತ ಬೋಧನೆಗೆ ಹೆಚ್ಚಿನ ಒತ್ತು ನೀಡಲಾಗಿದೆ. ರಚಿತವಾದ ಕೋಚಿಂಗ್ ಅನ್ನು ಸಂकल्पನೆ ಆಧಾರಿತ 
+        ಮತ್ತು ವಿದ್ಯಾರ್ಥಿ ಕೇಂದ್ರೀಕೃತ ವಿಧಾನದಲ್ಲಿ ನಮ್ಮ ಸಂಸ್ಥಾಪಕ ಶ್ರೀ ಬಾಲಕುಮಾರ್ ಅವರ ಮಾರ್ಗದರ್ಶನದಲ್ಲಿ ನೀಡಲಾಗುತ್ತದೆ. 
+        ಅವರು ವಿದ್ಯಾರ್ಥಿಗಳ ಅಭಿವೃದ್ಧಿ ಮತ್ತು ಪ್ರೇರಣೆಯ ಬಗ್ಗೆ ಆಸಕ್ತಿ ಹೊಂದಿರುವ ಸಮರ್ಪಿತ ಗಣಿತ ಶಿಕ್ಷಕರಾಗಿದ್ದಾರೆ. 
+        ಅವರು PSNA College of Engineering and Technology, Dindigul ನಲ್ಲಿ ತಮ್ಮ ಪದವಿ ಪೂರ್ಣಗೊಳಿಸಿದ್ದಾರೆ, 
+        ನಂತರ Thiagarajar College of Engineering ನಲ್ಲಿ ಸ್ನಾತಕೋತ್ತರ ಪೂರ್ಣಗೊಳಿಸಿದ್ದಾರೆ ಮತ್ತು ಪ್ರಸ್ತುತ VIT Chennai ನಲ್ಲಿ PhD ಮಾಡುತ್ತಿದ್ದಾರೆ.
+    </p>
+        
+    <p class="home-desc">
+        ಬೋಧನೆಯ ಮೇಲಿನ ಗಾಢ ನಿಷ್ಠೆಯೊಂದಿಗೆ, ಅವರು ಶಾಲಾ ಮಟ್ಟ ಮತ್ತು ಇಂಜಿನಿಯರಿಂಗ್ ಗಣಿತದಲ್ಲಿ ವಿದ್ಯಾರ್ಥಿಗಳ ಮೂಲಭೂತ ಅರಿವನ್ನು 
+        ಸ್ಪಷ್ಟ ಮತ್ತು ರಚಿತ ವಿವರಣೆಗಳ ಮೂಲಕ ಬಲಪಡಿಸುವುದರಲ್ಲಿ ಗಮನ ಹರಿಸುತ್ತಾರೆ. ನಿಯಮಿತ ಕೋಚಿಂಗ್ ಜೊತೆಗೆ, 
+        Electrical and Electronics Engineering ವಿಷಯಗಳಲ್ಲಿ ಬ್ಯಾಕ್‌ಲಾಗ್ ಅಥವಾ ಅರೆರ್ ಇರುವ ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ 
+        ವಿಶೇಷ ಶೈಕ್ಷಣಿಕ ಸಹಾಯವನ್ನು ಕೂಡ ನೀಡಲಾಗುತ್ತದೆ. ಈ ಸಹಾಯವು ವಿದ್ಯಾರ್ಥಿಗಳಿಗೆ ಆತ್ಮವಿಶ್ವಾಸ ಹೆಚ್ಚಿಸಲು, 
+        ಪರೀಕ್ಷೆಗಳನ್ನು ಯಶಸ್ವಿಯಾಗಿ ಉತ್ತೀರ್ಣರಾಗಲು ಮತ್ತು ನಿರಂತರ ಶೈಕ್ಷಣಿಕ ಪ್ರಗತಿ ಸಾಧಿಸಲು ಸಹಾಯ ಮಾಡುತ್ತದೆ.
+    </p>
+  </div>
+</div>                
+</div>
+</section>
+
+
+<section class="section vision-mission">
+  <div class="vision-mission-wrapper">
+      
+      <div class="vm-box">
+        <h3>ವಿಷನ್</h3>
+        <p>
+          ನಮ್ಮ ವಿಷನ್ ಒಂದು ಬಲವಾದ ಶೈಕ್ಷಣಿಕ ವಾತಾವರಣವನ್ನು ನಿರ್ಮಿಸುವುದು, ಅಲ್ಲಿ ವಿದ್ಯಾರ್ಥಿಗಳು ಗಣಿತದ ಮೇಲೆ ಆಳವಾದ ಅರಿವು ಮತ್ತು ಮೆಚ್ಚುಗೆಯನ್ನು ಅಭಿವೃದ್ಧಿಪಡಿಸುತ್ತಾರೆ.
+          ಗಣಿತವನ್ನು ಕೇವಲ ಕಣ್ತುಂಬಿಕೊಳ್ಳುವ ವಿಷಯವಾಗಿರದೆ, ತಾರ್ಕಿಕ ಚಿಂತನೆ ಮತ್ತು ಸಮಸ್ಯೆ ಪರಿಹಾರ ಕೌಶಲ್ಯಗಳ ವಿಷಯವಾಗಿ ರೂಪಾಂತರಿಸಲು ನಾವು ಪ್ರಯತ್ನಿಸುತ್ತೇವೆ.
+          ಕುತೂಹಲ, ಶಿಸ್ತು ಮತ್ತು ಆತ್ಮವಿಶ್ವಾಸವನ್ನು ಬೆಳೆಸುವ ಮೂಲಕ, ನಾವು ವಿದ್ಯಾರ್ಥಿಗಳನ್ನು ಪರೀಕ್ಷೆಗಳಿಗಾಗಿ ಮಾತ್ರವಲ್ಲದೆ, ಜೀವನಪೂರ್ತಿ ಕಲಿಕೆ ಮತ್ತು ಬೌದ್ಧಿಕ ಬೆಳವಣಿಗೆಗೆ ಸಿದ್ಧಪಡಿಸಲು ಉದ್ದೇಶಿಸಿದ್ದೇವೆ.
+        </p>
+      </div>
+
+      <div class="vm-box">
+        <h3>ಮಿಷನ್</h3>
+        <p>
+          ನಮ್ಮ ಮಿಷನ್ ಸರಿಯಾದ ರೀತಿಯಲ್ಲಿ ರೂಪುಗೊಂಡ ಬೋಧನಾ ವಿಧಾನಗಳ ಮೂಲಕ ಸಂकल्पನೆ ಆಧಾರಿತ ಮತ್ತು ವಿದ್ಯಾರ್ಥಿ-ಕೇಂದ್ರಿತ ಗಣಿತ ಶಿಕ್ಷಣವನ್ನು ನೀಡುವುದು.
+          ಬಲವಾದ ಮೂಲಭೂತ ಅರಿವುಗಾಗಿ ಸ್ಪಷ್ಟತೆ, ಹಂತ ಹಂತದ ವಿವರಣೆ ಮತ್ತು ನಿರಂತರ ಅಭ್ಯಾಸಕ್ಕೆ ನಾವು ಮಹತ್ವ ನೀಡುತ್ತೇವೆ.
+          ನಿಯಮಿತ ಮೌಲ್ಯಮಾಪನ, ವೈಯಕ್ತಿಕ ಸಂದೇಹ ನಿವಾರಣೆ ಸತ್ರಗಳು ಮತ್ತು ಪರೀಕ್ಷಾ ಕೇಂದ್ರೀಕೃತ ತರಬೇತಿ ಮೂಲಕ,
+          ನಾವು ಪ್ರತಿಯೊಬ್ಬ ವಿದ್ಯಾರ್ಥಿಯನ್ನು ಉತ್ತಮ ಸಾಧನೆ, ನಿಖರತೆ ಮತ್ತು ಆತ್ಮವಿಶ್ವಾಸದತ್ತ ಮಾರ್ಗದರ್ಶನ ಮಾಡುತ್ತೇವೆ,
+          ಅದು ಮಂಡಳಿ ಪರೀಕ್ಷೆಗಳಾಗಲಿ ಅಥವಾ ಸ್ಪರ್ಧಾತ್ಮಕ ಪರೀಕ್ಷೆಗಳಾಗಲಿ.
+        </p>
+      </div>
+
+  </div>
+</section>
+</div>
+   
+<div id="malayalam" class="lang-content" style="display:none;">
+<section class="section">
+  <div class="container">
+
+    <h2>രഞ്ജിതം സ്റ്റഡി സെന്ററിനെക്കുറിച്ച്</h2>
+
+    <!-- POINTS -->
+    <ul class="about-points">
+
+    <li>
+      <strong>രഞ്ജിതം സ്റ്റഡി സെന്റർ</strong> <strong>2025 ആഗസ്റ്റ് 1</strong> ന് സ്ഥാപിതമായി, 
+      സ്കൂൾ വിദ്യാർത്ഥികൾക്ക് ഉയർന്ന നിലവാരമുള്ള ഗണിത വിദ്യാഭ്യാസം നൽകുക എന്ന ലക്ഷ്യത്തോടെ. 
+      ഔദ്യോഗിക വെബ്സൈറ്റ് <strong>rscedu.in</strong> <strong>2026 ഏപ്രിൽ 14</strong> ന് ആരംഭിച്ചു, 
+      ഓൺലൈൻയും ഓഫ്‌ലൈൻ രീതികളിലൂടെയും പഠനം കൂടുതൽ എളുപ്പത്തിൽ ലഭ്യമാക്കുന്നതിനായി.
+      സ്ഥാപിതമായതുമുതൽ, ഈ കേന്ദ്രം ക്രമബദ്ധവും വിദ്യാർത്ഥി സൗഹൃദവുമായ പഠന അന്തരീക്ഷം സൃഷ്ടിക്കുന്നതിൽ ശ്രദ്ധ കേന്ദ്രീകരിക്കുന്നു, 
+      ഇതിലൂടെ വിദ്യാർത്ഥികളുടെ മനസ്സിലാക്കൽ, ആത്മവിശ്വാസം, ഗണിതത്തിൽ അക്കാദമിക് പുരോഗതി എന്നിവ മെച്ചപ്പെടുത്തുന്നു.
+     </li>
+
+      <li>
+        രഞ്ജിതം സ്റ്റഡി സെന്റർ വിവിധ വിദ്യാഭ്യാസ നിലകളിലുള്ള വിദ്യാർത്ഥികളെ പിന്തുണയ്ക്കുന്നതിനായി രൂപകൽപ്പന ചെയ്ത 
+        ക്രമബദ്ധമായ പഠന അന്തരീക്ഷമാണ്. ഈ കേന്ദ്രം ശിസ്തബദ്ധവും വിദ്യാർത്ഥി സൗഹൃദവുമായ അന്തരീക്ഷം സൃഷ്ടിക്കുന്നതിൽ ശ്രദ്ധിക്കുന്നു, 
+        ഇത് സ്ഥിരമായ പഠനവും പുരോഗതിയും പ്രോത്സാഹിപ്പിക്കുന്നു.
+      </li>
+       <li>
+        <strong>CBSE, സംസ്ഥാന ബോർഡ്, ICSE</strong> ഉൾപ്പെടെയുള്ള വിവിധ ബോർഡുകൾക്കായി പരിശീലനം നൽകുന്നു, 
+        ഓരോ ബോർഡിന്റെയും സിലബസ് ಮತ್ತು പരീക്ഷാ രീതിക്ക് അനുയോജ്യമായ രീതിയിൽ പഠനം ഉറപ്പാക്കുന്നു.
+      </li>
+
+      <li>
+        ഈ കേന്ദ്രം ശക്തമായ അടിസ്ഥാനവും, സ്ഥിരമായ മാർഗനിർദ്ദേശവും, ക്രമബദ്ധമായ പഠന രീതിയും ആവശ്യമുള്ള വിദ്യാർത്ഥികൾക്ക് അനുയോജ്യമാണ്, 
+        പ്രത്യേകിച്ച് സ്കൂൾയും ബോർഡ് പരീക്ഷകളിലും മികച്ച പ്രകടനം നേടാൻ ആഗ്രഹിക്കുന്നവർക്ക്.
+      </li>
+
+      <li>
+        വാരാന്ത്യ പരീക്ഷകൾ, സംശയനിവാരണ സെഷനുകൾ, പഠന സാമഗ്രികൾ, പരീക്ഷാ തയ്യാറെടുപ്പ് മാർഗനിർദ്ദേശം 
+        തുടങ്ങിയ സൗകര്യങ്ങൾ നൽകുന്നു, ഇത് വിദ്യാർത്ഥികളെ വർഷം മുഴുവൻ ശ്രദ്ധയോടെ പഠിക്കാൻ സഹായിക്കുന്നു.
+      </li>
+
+      <li>
+        <strong>മന്ദഗതിയിൽ പഠിക്കുന്ന വിദ്യാർത്ഥികൾക്കും മികച്ച പ്രകടനം കാഴ്ചവയ്ക്കുന്ന വിദ്യാർത്ഥികൾക്കും</strong> പ്രത്യേക ശ്രദ്ധ നൽകുന്നു, 
+        ഓരോ വിദ്യാർത്ഥിക്കും അവരുടെ വേഗതയ്ക്കനുസരിച്ച് ശരിയായ പിന്തുണ ലഭ്യമാക്കുന്നു.
+      </li>
+       <li>
+        രഞ്ജിതം സ്റ്റഡി സെന്റർ യിൽ മാർക്കുകൾ മാത്രം ലക്ഷ്യമാക്കുന്നതല്ല, 
+      ദീർഘകാല പഠനവും ആത്മവിശ്വാസവും വർദ്ധിപ്പിക്കുന്ന ശക്തമായ അക്കാദമിക് അടിസ്ഥാനമാണ് പ്രധാന ലക്ഷ്യം.
+      വ്യക്തമായും ക്രമബദ്ധമായും ഉള്ള സമീപനത്തിലൂടെ, ഈ കേന്ദ്രം വിദ്യാർത്ഥികളെ 
+      മികച്ച മനസ്സിലാക്കൽ, മികച്ച പ്രകടനം, അക്കാദമിക് വിജയം എന്നിവയിലേക്ക് നയിക്കുന്നു.
+   </li>
+        
+   </ul>
+
+  </div>
+</section>
+
+<section class="about-offerings">
+
+  <div class="offer-item">
+    <h3>ഓൺലൈൻ & ഓഫ്‌ലൈൻ ക്ലാസുകൾ</h3>
+    <div class="offer-icon">🧑‍🏫</div>
+    <p>
+      രഞ്ജിതം സ്റ്റഡി സെന്റർ <strong>ഓൺലൈൻ</strong> കൂടാതെ 
+      <strong>ഓഫ്‌ലൈൻ ട്യൂഷൻ ക്ലാസുകളും</strong> നൽകുന്നു, 
+      വിദ്യാർത്ഥികൾക്ക് അവരുടെ സൗകര്യത്തിന് അനുയോജ്യമായ രീതിയിൽ പഠിക്കാൻ സഹായിക്കുന്നു.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>കൈയെഴുത്ത് നോട്ടുകൾ</h3>
+    <div class="offer-icon">✍️</div>
+    <p>
+      ഉയർന്ന നിലവാരമുള്ള <strong>കൈയെഴുത്ത് ഗണിത നോട്ടുകൾ</strong> സ്കൂൾ വിദ്യാർത്ഥികൾക്കായി പ്രത്യേകം തയ്യാറാക്കുന്നു, 
+      പ്രധാന ആശയങ്ങൾ, പ്രധാന സൂത്രങ്ങൾ, പ്രശ്നപരിഹാര രീതികൾ എന്നിവയിൽ ശ്രദ്ധ കേന്ദ്രീകരിക്കുന്നു.
+    </p>
+  </div>
+
+  <div class="offer-item">
+    <h3>പെയ്ഡ് നോട്ട്സ് ആക്സസ്</h3>
+    <div class="offer-icon">⬇️</div>
+    <p>
+      വിദ്യാർത്ഥികൾക്ക് <strong>വെബ്സൈറ്റ് വഴി നോട്ടുകൾ ആക്സസ് ചെയ്യാം</strong> കുറഞ്ഞ നിരക്കിൽ. 
+      ഈ നോട്ടുകൾ <strong>റിവിഷനും പരീക്ഷാ തയ്യാറെടുപ്പിനും</strong> വളരെ സഹായകരമാണ്.
+    </p>
+  </div>
+
+</section>
+
+<section class="home-section" id="home">
+        <div class="home-container">
+            <h2 class="home-title">ഞങ്ങളുടെ ഡയറക്ടറെക്കുറിച്ച്</h2>
+            <div class="home-content">
+                <div class="home-image">
+                    <img src="{{ url_for('static', filename='images/nature.jpg') }}" alt="center">
+                </div>
+  <div class="home-text">
+    <p class="home-intro">
+          
+        രഞ്ജിതം സ്റ്റഡി സെന്റർ ഉയർന്ന നിലവാരമുള്ള വിദ്യാഭ്യാസ സേവനങ്ങൾ നൽകുന്നു, 
+        ഇതിൽ അക്കാദമിക് മികവും ഫലം കേന്ദ്രീകൃതമായ അധ്യാപനവും പ്രത്യേക പ്രാധാന്യമർഹിക്കുന്നു. 
+        ക്രമബദ്ധമായ കോച്ചിംഗ് ആശയാധിഷ്ഠിതവും വിദ്യാർത്ഥി കേന്ദ്രീകൃതവുമായ രീതിയിൽ 
+        നമ്മുടെ സ്ഥാപകൻ ശ്രീ ബാലകുമാറിന്റെ മാർഗനിർദ്ദേശത്തിൽ നൽകപ്പെടുന്നു. 
+        അദ്ദേഹം വിദ്യാർത്ഥികളുടെ വികസനത്തിനും പ്രചോദനത്തിനും ആഴത്തിലുള്ള താൽപര്യമുള്ള സമർപ്പിത ഗണിത അധ്യാപകനാണ്. 
+        അദ്ദേഹം PSNA College of Engineering and Technology, Dindigul ൽ ബിരുദം നേടി, 
+        തുടർന്ന് Thiagarajar College of Engineering ൽ ബിരുദാനന്തര ബിരുദം പൂർത്തിയാക്കി, 
+        ഇപ്പോൾ VIT Chennai ൽ PhD തുടരുന്നു.
+    </p>
+        
+    <p class="home-desc">
+
+        അധ്യാപനത്തോടുള്ള ആഴത്തിലുള്ള പ്രതിബദ്ധതയോടെ, അദ്ദേഹം സ്കൂൾ തലത്തിലും എഞ്ചിനിയറിംഗ് ഗണിതത്തിലും 
+        വിദ്യാർത്ഥികളുടെ അടിസ്ഥാന അറിവ് വ്യക്തവും ക്രമബദ്ധവുമായ വിശദീകരണങ്ങളിലൂടെ ശക്തിപ്പെടുത്തുന്നതിൽ ശ്രദ്ധ കേന്ദ്രീകരിക്കുന്നു. 
+        സ്ഥിരമായ കോച്ചിംഗിനൊപ്പം, Electrical and Electronics Engineering വിഷയങ്ങളിൽ ബാക്ക്‌ലോഗ് അല്ലെങ്കിൽ 
+        അരിയേഴ്‌സ് ഉള്ള വിദ്യാർത്ഥികൾക്ക് പ്രത്യേക അക്കാദമിക് പിന്തുണയും നൽകുന്നു. 
+        ഈ പിന്തുണ വിദ്യാർത്ഥികൾക്ക് ആത്മവിശ്വാസം വർധിപ്പിക്കാൻ, പരീക്ഷകൾ വിജയകരമായി പാസാക്കാൻ, 
+        തുടർച്ചയായ അക്കാദമിക് പുരോഗതി കൈവരിക്കാൻ സഹായിക്കുന്നു.
+       </p>
+  </div>
+</div>                
+</div>
+</section>
+
+  <section class="section vision-mission">
+  <div class="vision-mission-wrapper">
+      
+      <div class="vm-box">
+        <h3>വിഷൻ</h3>
+        <p>
+          വിദ്യാർത്ഥികൾക്ക് ഗണിതത്തെക്കുറിച്ചുള്ള ആഴത്തിലുള്ള മനസ്സിലാക്കലും അഭിനിവേശവും വളർത്തുന്ന ശക്തമായ അക്കാദമിക് അന്തരീക്ഷം സൃഷ്ടിക്കുകയാണ് ഞങ്ങളുടെ വിഷൻ.
+          ഗണിതത്തെ വെറും ഓർമ്മപ്പെടുത്തൽ വിഷയമായി മാറാതെ, താർക്കിക ചിന്തയും പ്രശ്നപരിഹാര കഴിവുകളും വികസിപ്പിക്കുന്ന വിഷയമായി മാറ്റാൻ ഞങ്ങൾ ശ്രമിക്കുന്നു.
+          കൗതുകം, ശിസ്തം, ആത്മവിശ്വാസം എന്നിവ വളർത്തുന്നതിലൂടെ, വിദ്യാർത്ഥികളെ പരീക്ഷകൾക്കായി മാത്രമല്ല, ജീവിതകാല പഠനത്തിനും ബൗദ്ധിക വളർച്ചയ്ക്കും തയ്യാറാക്കുകയാണ് ഞങ്ങളുടെ ലക്ഷ്യം.
+        </p>
+      </div>
+
+      <div class="vm-box">
+        <h3>മിഷൻ</h3>
+        <p>
+          ക്രമബദ്ധമായ പഠന രീതികളിലൂടെ ആശയാധിഷ്ഠിതവും വിദ്യാർത്ഥി കേന്ദ്രീകൃതവുമായ ഗണിത വിദ്യാഭ്യാസം നൽകുക എന്നതാണ് ഞങ്ങളുടെ മിഷൻ.
+          ശക്തമായ അടിസ്ഥാന അറിവ് ഉറപ്പാക്കാൻ അടിസ്ഥാനത്തിന്റെ വ്യക്തത, ഘട്ടംഘട്ടമായ വിശദീകരണം, സ്ഥിരമായ പരിശീലനം എന്നിവയ്ക്ക് ഞങ്ങൾ പ്രാധാന്യം നൽകുന്നു.
+          സ്ഥിരമായ മൂല്യനിർണയം, വ്യക്തിഗത സംശയനിവാരണ സെഷനുകൾ, പരീക്ഷാ കേന്ദ്രീകൃത പരിശീലനം എന്നിവയുടെ միջոցով,
+          ഓരോ വിദ്യാർത്ഥിയെയും മികച്ച പ്രകടനം, കൃത്യത, ആത്മവിശ്വാസം എന്നിവയിലേക്ക് നയിക്കുന്നു,
+          അത് ബോർഡ് പരീക്ഷകളായാലും മത്സരപരീക്ഷകളായാലും.
+        </p>
+      </div>
+
+  </div>
+</section> 
+</div>
+<!-- ==========================
+         CTA SECTION
+    ========================== -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <p class="cta-small">Best Maths Tuition in Medavakkam </p>
+            <h2>Ready to improve your Maths?</h2>
+            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with good guidance.</p>
+            <a href="/contact" class="cta-btn">Enroll Now</a>
+        </div>
+    </section>
+
+    <!-- ==========================
+         CONTACT & FOOTER
+    ========================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>RANJITHAM STUDY CENTER</h3>
+                <p>Focused maths coaching for Class 6–12 students</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/courses">Courses</a>
+                <a href="/materials">Materials</a>
+                <a href="/contact">Contact</a>
+                <a href="/admin">Admin</a>
+                <a href="/privacy">Privacy policy</a>
+                <a href="/terms">Terms and Conditions</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact Details</h3>
+                <p>📞 7702616245</p>
+                <p>📧 ranjithamstudycenter@gmail.com</p>
+           </div>
+        </div>
+                    <div class="footer-bottom">
+                      © 2026 Ranjitham Study Center. All Rights Reserved. | Designed for Quality Education
+                    </div>
+        </footer>
+ <div class="privacy-section">
+  <h3>🔒 <strong>Your Privacy </strong></h3><br> 
+  <p>
+    We collect your name, contact number, email, and feedback solely for communication purposes. 
+    This information is used to provide you with relevant educational updates and materials. 
+    Your data is securely stored and will not be shared with any third parties.
+  </p>
+</div>
+
+  
+ 
+    <!-- ==========================
+         WHATSAPP FLOAT BUTTON
+    ========================== -->
+    <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
+
+
+<script>
+function changeLanguage() {
+  const selected = document.getElementById("languageSelect").value;
+
+  // Hide all sections
+  document.querySelectorAll(".lang-content").forEach(sec => {
+    sec.style.display = "none";
+  });
+
+  // Show selected section
+  const active = document.getElementById(selected);
+  if(active){
+    active.style.display = "block";
+  }
+}
+
+// Always load English by default
+window.onload = function(){
+  const dropdown = document.getElementById("languageSelect");
+  if(dropdown){
+    dropdown.value = "english";
+  }
+  changeLanguage();
+};
+</script>
+    
+</body>
+</html>
+
+

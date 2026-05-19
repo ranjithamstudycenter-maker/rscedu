@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Secure Payment | Ranjitham Study Center</title>
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<style>
+body{
+    text-align:center;
+    font-family:Poppins,Arial,sans-serif;
+    padding:50px;
+}
+
+button{
+    padding:12px 25px;
+    background:#0b5394;
+    color:white;
+    border:none;
+    cursor:pointer;
+    border-radius:5px;
+}
+    .payment-box{
+    max-width: 400px;
+    margin: 50px auto;
+    padding: 25px;
+    border-radius: 12px;
+    background: #fff;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    text-align: left;   /* 🔥 ADD THIS */
+}
+
+.payment-box h2{
+    text-align:center;
+    margin-bottom:20px;
+}
+
+.payment-box input,
+.payment-box select{
+    width:100%;
+    padding:12px;
+    margin-bottom:15px;
+    border-radius:8px;
+    border:1px solid #ccc;
+}
+
+.payment-box button{
+    width:100%;
+    padding:12px;
+    border-radius:25px;
+    border:none;
+    background:#0b5394;
+    color:white;
+    font-weight:600;
+}
+    .payment-box input::placeholder {
+    color:#999;
+}
+</style>
+</head>
+
+<body>
+
+<div class="payment-box">
+
+<h2>Pay ₹{{ product.price }}</h2>
+<p><b>{{ product.name }}</b></p>
+
+<input type="text" id="phone" placeholder="📱 WhatsApp Number (Required)" 
+pattern="[0-9]{10}" maxlength="10" required>
+
+<input type="email" id="email" placeholder="📧 Email (Optional)">
+            
+<select id="state" required>
+  <option value="">📍 Select State / UT</option>
+</select>
+
+<button id="rzp-button">Pay Now</button>
+
+            <p style="font-size:12.5px; color:#777;">
+           <strong>📌 We are collecting your email, whatsapp number etc.. for only notes share/access in future. No spam calls.</strong> 
+            </p>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+/* ---------- STATES ---------- */
+const states = [
+  "Tamil Nadu","Karnataka","Kerala","Andhra Pradesh","Telangana",
+  "Maharashtra","Delhi","Uttar Pradesh","West Bengal","Gujarat",
+  "Rajasthan","Madhya Pradesh","Punjab","Haryana","Bihar",
+  "Odisha","Assam","Jharkhand","Chhattisgarh","Himachal Pradesh",
+  "Uttarakhand","Goa","Tripura","Manipur","Meghalaya","Nagaland",
+  "Arunachal Pradesh","Mizoram","Sikkim",
+  "Puducherry","Chandigarh","Jammu and Kashmir","Ladakh",
+  "Andaman and Nicobar Islands","Lakshadweep",
+  "Dadra and Nagar Haveli and Daman and Diu"
+];
+
+const stateDropdown = document.getElementById("state");
+
+states.forEach(state => {
+  let option = document.createElement("option");
+  option.value = state;
+  option.text = state;
+  stateDropdown.appendChild(option);
+});
+
+/* ---------- GLOBAL PHONE ---------- */
+let userPhone = "";
+
+/* ---------- RAZORPAY ---------- */
+var options = {
+    "key": "{{ razorpay_key }}",
+    "amount": "{{ product.price * 100 }}",
+    "currency": "INR",
+    "name": "Ranjitham Study Center",
+    "description": "Maths Notes",
+    "order_id": "{{ order_id }}",
+
+    "handler": function (response) {
+
+        const url =
+          "/payment_success?product={{ product_id }}" +
+          "&mode={{ mode }}" +
+          "&board={{ board }}" +
+           "&phone=" + userPhone +
+            "&email=" + email +
+           "&state=" + document.getElementById("state").value;
+
+        window.location.href = url;
+    },
+
+    "prefill": {
+        "email": "",
+        "contact": ""
+    },
+
+    "theme": {
+        "color": "#0b5394"
+    }
+};
+
+var rzp = new Razorpay(options);
+
+/* ---------- BUTTON CLICK ---------- */
+document.getElementById('rzp-button').onclick = function(e){
+
+    var email = document.getElementById("email").value.trim();
+    var phone = document.getElementById("phone").value.trim();
+
+    // PHONE VALIDATION
+    if(!/^[0-9]{10}$/.test(phone)){
+        alert("Enter valid 10-digit WhatsApp number");
+        return;
+    }
+
+    // EMAIL VALIDATION
+    if(email !== "" && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)){
+        alert("Enter valid Email ID");
+        return;
+    }
+
+    // STORE PHONE
+    userPhone = phone;
+
+    // PREFILL
+    options.prefill.email = email;
+    options.prefill.contact = phone;
+
+    rzp.open();
+    e.preventDefault();
+};
+
+});
+</script>
+<script>
+document.addEventListener("DOMContentLoaded", function(){
+
+    const params = new URLSearchParams(window.location.search);
+    const phone = params.get("phone");
+
+    console.log("PHONE RECEIVED =", phone);
+
+    if(phone && phone !== "null" && phone !== ""){
+
+        let message =
+        "Hi 👋%0A" +
+        "Your payment is successful.%0A" +
+        "📘 Notes ready%0A" +
+        "Ranjitham Study Center ku nandri 🙏%0A" +
+        "👉 Open here: " + window.location.origin + "/materials";
+
+        setTimeout(() => {
+            window.open(
+                "https://wa.me/91" + phone + "?text=" + message,
+                "_blank"
+            );
+        }, 800);
+    }
+});
+</script>
+    
+</body>
+</html>
