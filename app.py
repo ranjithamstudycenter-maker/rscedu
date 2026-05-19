@@ -712,7 +712,7 @@ def teacher_login():
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
         if username in teachers and teachers[username]["password"] == password:
-            if not teachers[username].get("enabled", True):
+            if not teachers[username].get("active", True):
                 error = "Your account is disabled"
             else:
                 session["teacher"] = username
