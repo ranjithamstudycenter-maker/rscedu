@@ -946,20 +946,12 @@ def end_class():
 
     try:
 
-        # 🔥 ATTENDANCE CALCULATION
-        conn = sqlite3.connect("students.db")
-        c = conn.cursor()
-           
-        c.execute("""
-        UPDATE students
-        SET demo_done=1,
-        last_updated=?
-        WHERE course=?
-        AND demo_allowed=1
-        """, (course,))
-        
         course = teachers[username]["course"]
 
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        # 🔥 GET ENROLLED STUDENTS
         c.execute("""
         SELECT phone, join_time, hours_used
         FROM students
@@ -991,45 +983,41 @@ def end_class():
                     """, (
                         hours_used + 1,
                         datetime.now().strftime("%Y-%m-%d %H:%M"),
+                        phone,
                         course
                     ))
-                    UPDATE live_classes
-                    SET live=0
-                    WHERE course=?
-                    # 🔥 update salary class count
+
+                    # 🔥 salary update
                     for s in salary_db:
 
                         if s["course"] == course:
 
                             s["class_count"] += 1
 
-                            # ✅ SAFE CHECK
                             if "classes_per_month" in s:
 
                                 if s["class_count"] >= s["classes_per_month"]:
                                     s["completed"] = True
+
+        # 🔥 DEMO COMPLETED
+        c.execute("""
+        UPDATE students
+        SET demo_done=1,
+            last_updated=?
+        WHERE course=?
+        AND demo_allowed=1
+        """, (
+            datetime.now().strftime("%Y-%m-%d %H:%M"),
+            course
+        ))
 
         conn.commit()
         conn.close()
 
         # 🔥 CLASS OFF
         teachers[username]["class_live"] = False
-
-        # 🔥 REMOVE LINK
         teachers[username]["meet_link"] = ""
 
-        conn = sqlite3.connect("students.db")
-        c = conn.cursor()
-        
-        c.execute("""
-        UPDATE live_classes
-        SET live=0
-        WHERE course=?
-        """, (course,))
-        
-        conn.commit()
-        conn.close()
-        
         return jsonify({
             "success": True,
             "live": False
