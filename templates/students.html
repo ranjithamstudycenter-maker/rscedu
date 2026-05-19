@@ -97,8 +97,8 @@ button {
 <th>Phone</th>
 <th>Course</th>
 <th>OTP</th>
-<th>Demo Allowed</th>
-<th>Demo Completed</th>
+<th>Demo allowed</th>
+<th>Demo done</th>
 <th>Registered</th>
 <th>Hours</th>
 <th>Action</th>
@@ -177,7 +177,7 @@ function renderTable(students){
 
         let otp = s.otp_verified ? "Yes" : "No";
         let demoallow = s.demo_allowed ? "Yes" : "No";
-        let demoComp = s.demo_completed ? "Yes" : "No";
+        let demodone = s.demo_done ? "Yes" : "No";
         let enrolled = s.enrolled ? "Yes" : "No";
 
         
@@ -194,7 +194,7 @@ function renderTable(students){
 
             <td><span class="badge ${demoallow=='Yes'?'yes':'no'}">${demoallow}</span></td>
 
-            <td><span class="badge ${demoComp=='Yes'?'yes':'no'}">${demoComp}</span></td>
+            <td><span class="badge ${demodone=='Yes'?'yes':'no'}">${demodone}</span></td>
             
             <td> <span class="badge ${enrolled=='Yes'?'yes':'no'}">${enrolled}</span> </td>
 
