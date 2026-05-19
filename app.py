@@ -276,9 +276,7 @@ def save_user():
         0,
         0,
         datetime.now().strftime("%Y-%m-%d %H:%M"),
-        1,
-        1,
-        0
+       
     ))
 
     conn.commit()
@@ -673,45 +671,43 @@ def join_class_api():
                 "error": "Plan completed. Please re-enroll."
             }), 403
 
-       # 🔥 SAVE JOIN TIME ONLY
+      # 🔥 SAVE JOIN TIME ONLY
         conn = sqlite3.connect("students.db")
         c = conn.cursor()
         
+        # ✅ check registration
         c.execute("""
-        SELECT demo_registered
+        SELECT otp_verified, demo_allowed
         FROM students
         WHERE phone=? AND course=?
         """, (phone, course))
         
         row = c.fetchone()
         
-        conn.close()
+        # ❌ no record
+        if not row:
+            conn.close()
+            return jsonify({
+                "error": "Register first"
+            }), 403
         
-        if not row or row[0] != 1:
+        # ❌ OTP not verified
+        if row[0] != 1:
+            conn.close()
+            return jsonify({
+                "error": "OTP verification required"
+            }), 403
+        
+        # ❌ demo not allowed
+        if row[1] != 1:
+            conn.close()
             return jsonify({
                 "error": "Attend free demo registration first"
             }), 403
-
-        c.execute("""
-        SELECT otp_verified, demo_registered
-        FROM students
-        WHERE phone=? AND course=?
-        """, (phone, course))
         
-        row = c.fetchone()
-        
-        if not row:
-            return jsonify({"error":"Register first"}), 403
-        
-        if row[0] != 1:
-            return jsonify({"error":"OTP verification required"}), 403
-        
-        if row[1] != 1:
-            return jsonify({"error":"Demo registration required"}), 403
-    
+        # ✅ save join time
         join_time = datetime.now().timestamp()
         
-        # 🔥 add new column if needed later
         try:
             c.execute("""
             ALTER TABLE students
