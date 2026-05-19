@@ -842,8 +842,6 @@ def teacher_login():
  
 @app.route("/start-class", methods=["POST"])
 def start_class():
-    data = request.get_json()
-    link = data.get("meetLink")
 
     username = session.get("teacher")
 
@@ -851,30 +849,74 @@ def start_class():
         return jsonify({"error": "Unauthorized"}), 403
 
     meet_link = request.json.get("meetLink")
-    
+
+    if not meet_link:
+        return jsonify({"error": "Meet link missing"}), 400
+
+    course = teachers[username]["course"]
+
+    # =====================================
+    # 🔥 SAVE LIVE CLASS TO DB
+    # =====================================
+
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+
+    # 🔥 create table if not exists
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS live_classes (
+        course TEXT PRIMARY KEY,
+        meet_link TEXT,
+        live INTEGER DEFAULT 0
+    )
+    """)
+
+    # 🔥 insert or update
+    c.execute("""
+    INSERT OR REPLACE INTO live_classes
+    (course, meet_link, live)
+    VALUES (?, ?, 1)
+    """, (
+        course,
+        meet_link
+    ))
+
+    conn.commit()
+    conn.close()
+
+    # =====================================
+    # MEMORY UPDATE
+    # =====================================
+
     teachers[username]["class_live"] = True
     teachers[username]["meet_link"] = meet_link
 
-    return jsonify({"status": "Class started"})
+    return jsonify({
+        "status": "Class started"
+    })
+
 
 def get_active_meet_link(course):
 
-    print("COURSE =", course)
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
 
-    for name, t in teachers.items():
+    c.execute("""
+    SELECT meet_link
+    FROM live_classes
+    WHERE course=?
+    AND live=1
+    """, (course,))
 
-        print(name, t)
+    row = c.fetchone()
 
-        if t["course"] == course and t.get("class_live"):
+    conn.close()
 
-            print("FOUND LINK =", t["meet_link"])
-
-            return t["meet_link"]
-
-    print("NO LINK FOUND")
+    if row:
+        return row[0]
 
     return None
-
+    
 @app.route("/api/class-status")
 def class_status():
 
@@ -951,7 +993,9 @@ def end_class():
                         datetime.now().strftime("%Y-%m-%d %H:%M"),
                         course
                     ))
-
+                    UPDATE live_classes
+                    SET live=0
+                    WHERE course=?
                     # 🔥 update salary class count
                     for s in salary_db:
 
@@ -974,6 +1018,18 @@ def end_class():
         # 🔥 REMOVE LINK
         teachers[username]["meet_link"] = ""
 
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+        
+        c.execute("""
+        UPDATE live_classes
+        SET live=0
+        WHERE course=?
+        """, (course,))
+        
+        conn.commit()
+        conn.close()
+        
         return jsonify({
             "success": True,
             "live": False
