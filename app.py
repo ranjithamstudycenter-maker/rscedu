@@ -80,7 +80,7 @@ teachers = {
         "password": "M10@2026",
         "course": "cbse9",
         "meet_link": "",
-        "enabled": True,
+        "active": True,
         "class_live": False,
         "gpay": "7702616245"
     },
@@ -88,7 +88,7 @@ teachers = {
         "password": "M10@2026",
         "course": "cbse10",
         "meet_link": "",
-        "enabled": True,
+        "active": True,
         "class_live": False,
         "gpay": "7702616245"
     },
@@ -97,6 +97,7 @@ teachers = {
         "course": "cbse12",
         "meet_link": "",
         "active": True,
+        "class_live": False,
         "gpay": "7702616245"
     },
     "faculty1": {
@@ -712,7 +713,7 @@ def teacher_login():
         username = request.form.get("username", "").strip()
         password = request.form.get("password", "")
         if username in teachers and teachers[username]["password"] == password:
-            if not teachers[username].get("enabled", True):
+            if not teachers[username].get("active", True):
                 error = "Your account is disabled"
             else:
                 session["teacher"] = username
