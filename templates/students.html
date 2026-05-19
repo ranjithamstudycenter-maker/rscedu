@@ -176,7 +176,7 @@ function renderTable(students){
     students.forEach(s => {
 
         let otp = s.otp_verified ? "Yes" : "No";
-        let demoReg = s.demo_registered ? "Yes" : "No";
+        let demoallow = s.demo_allowed ? "Yes" : "No";
         let demoComp = s.demo_completed ? "Yes" : "No";
         let enrolled = s.enrolled ? "Yes" : "No";
 
@@ -192,7 +192,7 @@ function renderTable(students){
 
             <td><span class="badge ${otp=='Yes'?'yes':'no'}">${otp}</span></td>
 
-            <td><span class="badge ${demoReg=='Yes'?'yes':'no'}">${demoReg}</span></td>
+            <td><span class="badge ${demoallow=='Yes'?'yes':'no'}">${demoallow}</span></td>
 
             <td><span class="badge ${demoComp=='Yes'?'yes':'no'}">${demoComp}</span></td>
             
