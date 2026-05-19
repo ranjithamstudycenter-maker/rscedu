@@ -2726,19 +2726,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const phone = document.getElementById("phoneInput");
   const otp   = document.getElementById("otpInput");
 
-  const nameInput = document.getElementById("nameInput");
-
-if(nameInput){
-
-   nameInput.addEventListener("input", function(){
-
-      this.value = this.value.trimStart();
-
-   });
-
-}
-    
-      
+       
   if(phone){
     phone.addEventListener("input", function(){
       this.value = this.value.replace(/\D/g,'').slice(0,10);
