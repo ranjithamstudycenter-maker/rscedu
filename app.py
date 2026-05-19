@@ -894,12 +894,14 @@ def start_class():
     
     c.execute("""
     UPDATE live_classes
-    SET live=1,
+    SET class_live=1,
     meet_link=?
     """, (course,))
         
     return jsonify({
         "status": "Class started"
+        "success": True,
+        "live": True
     })
 
 
