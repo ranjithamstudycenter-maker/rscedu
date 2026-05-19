@@ -2766,20 +2766,7 @@ async function openDemoPopup(course){
   currentCourse = course;
   step = 1;
 
-  try {
-    // 🔥 BACKEND CHECK
-    const res = await fetch(`/api/check-demo?course=${course}&phone=${phone}`);
-    const data = await res.json();
-
-    if(data.demo_done){
-      showCourseMessage(course, "⚠️ Demo already completed");
-      return;
-    }
-
-  } catch(e){
-    console.log("API error:", e);
-  }
-
+  
   // 🔥 EXISTING CODE (unchanged)
   if (!window.recaptchaVerifier) {
     window.recaptchaVerifier = new firebase.auth.RecaptchaVerifier('recaptcha-container', {
