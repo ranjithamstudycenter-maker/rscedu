@@ -1845,9 +1845,9 @@ function updateClassCountdown(course){
   if(remaining <= 0){
 
     timerDiv.innerHTML =
-      "🟢 Demo Started";
-
-    timerDiv.style.color = "#16a34a";
+    "⏳ Class Time Started";
+    
+    timerDiv.style.color = "#7c3aed";
 
 }
 else if(remaining >= 60){
@@ -2473,69 +2473,34 @@ function joinFromPopup() {
 
  async function checkLiveStatus(course){
 
-  const res = await fetch(`/api/class-status?course=${course}`);
+  const res =
+  await fetch(`/api/class-status?course=${course}`);
+
   const data = await res.json();
 
-  const badge = document.getElementById("live-" + course);
-  const joinBtn = document.getElementById("joinBtn-" + course);
+  const badge =
+  document.getElementById("live-" + course);
 
-  // 🔥 LIVE BADGE SAFE CHECK
-  if(badge){
+  const msg =
+  document.getElementById("msg-" + course);
 
-    if(data.live){
+  if(data.live){
+
+      // 🔴 LIVE BADGE
       badge.style.display = "inline-block";
-    } else {
+
+      // ✅ DEMO STARTED MESSAGE
+      msg.innerHTML = "🟢 Demo Started";
+
+      // 🔥 LIVE POPUP
+      showLivePopup(course);
+
+  } else {
+
       badge.style.display = "none";
-    }
 
   }
-
-  // 🔥 JOIN BUTTON SAFE CHECK
-  if(joinBtn){
-
-    if(data.live){
-
-      joinBtn.style.opacity = "1";
-      joinBtn.style.pointerEvents = "auto";
-
-    } else {
-
-      joinBtn.style.opacity = "0.5";
-      joinBtn.style.pointerEvents = "none";
-
-        // 🔥 DEMO COMPLETED MESSAGE
-        const timerDiv = document.getElementById("timer-" + course);
-        
-        const key = "demo_running_" + course;
-        
-        if(localStorage.getItem(key)){
-        
-            timerDiv.style.display = "block";
-        
-            timerDiv.innerHTML =
-              "✅ Demo Completed — Please Enroll";
-        
-            timerDiv.style.color = "green";
-            timerDiv.style.fontWeight = "600";
-        
-            // 🔥 enable enroll button
-            const enrollBtn =
-              document.getElementById("enrollBtn-" + course);
-        
-            if(enrollBtn){
-        
-                enrollBtn.style.pointerEvents = "auto";
-                enrollBtn.style.opacity = "1";
-            }
-        
-            // 🔥 clear running state
-            localStorage.removeItem(key);
-        }
-
-    }
-
-  }
-} 
+}
  
 /* ======================================
    SEARCH
