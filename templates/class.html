@@ -2583,9 +2583,15 @@ async function handleOTP(){
 
     // 🔥 running check
     const key = "demo_running_" + currentCourse;
+
     if(localStorage.getItem(key)){
+    
       msg.innerHTML = "⏳ Demo already running";
       msg.style.color = "orange";
+    
+      // 🔥 open class directly
+      window.open("/join-live/" + currentCourse, "_blank");
+    
       return;
     }
     
