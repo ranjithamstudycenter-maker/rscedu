@@ -2564,7 +2564,9 @@ function showMessage(msg) {
 }
 async function handleOTP(){
 
+  const name = document.getElementById("nameInput").value.trim();
   const phone = document.getElementById("phoneInput").value.trim();
+  const email = document.getElementById("emailInput").value.trim();
   const otp   = document.getElementById("otpInput").value.trim();
   const btn   = document.getElementById("mainBtn");
   const msg   = document.getElementById("statusMsg");
@@ -2662,8 +2664,9 @@ async function handleOTP(){
         method:"POST",
         headers:{"Content-Type":"application/json"},
         body: JSON.stringify({
-            name: document.getElementById("studentName").value,
+            name: name,
             phone: phone,
+            email: email,
             course: currentCourse
         })
       });
@@ -2694,6 +2697,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const phone = document.getElementById("phoneInput");
   const otp   = document.getElementById("otpInput");
 
+  if(!name){
+     alert("Enter your name");
+     return;
+  }
+    
   if(phone){
     phone.addEventListener("input", function(){
       this.value = this.value.replace(/\D/g,'').slice(0,10);
