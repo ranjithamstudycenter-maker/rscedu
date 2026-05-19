@@ -320,6 +320,7 @@ def check_demo():
     # ✅ NORMAL RESPONSE
     return jsonify({
         "demo_done": False,
+        "meet_link": meet_link,
         "redirect_url": f"/join-live/{course}"
     })
 
