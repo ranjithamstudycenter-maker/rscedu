@@ -846,7 +846,15 @@ def end_class():
         # 🔥 ATTENDANCE CALCULATION
         conn = sqlite3.connect("students.db")
         c = conn.cursor()
-
+           
+        c.execute("""
+        UPDATE students
+        SET demo_completed=1,
+        demo_done=1
+        WHERE course=?
+        AND demo_registered=1
+        """, (course,))
+        
         course = teachers[username]["course"]
 
         c.execute("""
