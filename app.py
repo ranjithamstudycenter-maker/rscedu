@@ -640,108 +640,130 @@ def payment_success_api():
 def join_class_api():
 
     phone = session.get("phone")
+
     if not phone:
         return jsonify({"error": "Not logged in"}), 401
 
     course = request.args.get("course")
+
     if not course:
         return jsonify({"error": "Course missing"}), 400
 
     user = get_user(phone)
 
+    # =================================
+    # DB CHECK
+    # =================================
+
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT otp_verified, demo_allowed, demo_done
+    FROM students
+    WHERE phone=? AND course=?
+    """, (phone, course))
+
+    row = c.fetchone()
+
+    # ❌ no record
+    if not row:
+        conn.close()
+        return jsonify({
+            "error": "Register first"
+        }), 403
+
+    # ❌ OTP not verified
+    if row[0] != 1:
+        conn.close()
+        return jsonify({
+            "error": "OTP verification required"
+        }), 403
+
+    # ❌ demo not allowed
+    if row[1] != 1:
+        conn.close()
+        return jsonify({
+            "error": "Attend free demo registration first"
+        }), 403
+
+    # =================================
+    # USER STATUS
+    # =================================
+
     demo_done = user["demo_done"].get(course, False)
     enrolled  = user["enrolled"].get(course, False)
 
-    # ❌ demo not done
     if not demo_done:
-        return jsonify({"error": "Attend demo first"}), 403
+        conn.close()
+        return jsonify({
+            "error": "Attend demo first"
+        }), 403
 
-    # ✅ enrolled users → check usage
+    # =================================
+    # ENROLLED HOURS CHECK
+    # =================================
+
     if enrolled:
+
         hours_used = user["hours_used"].get(course, 0)
         max_hours  = user["max_hours"].get(course, classes_per_month)
 
         if hours_used >= max_hours:
 
-            # 🔥 reset enrollment
-            user["enrolled"][course] = False
-        
+            conn.close()
+
             return jsonify({
                 "completed": True,
                 "show_feedback": True,
                 "error": "Plan completed. Please re-enroll."
             }), 403
 
-      # 🔥 SAVE JOIN TIME ONLY
-        conn = sqlite3.connect("students.db")
-        c = conn.cursor()
-        
-        # ✅ check registration
-        c.execute("""
-        SELECT otp_verified, demo_allowed, demo_done
-        FROM students
-        WHERE phone=? AND course=?
-        """, (phone, course))
-        
-        row = c.fetchone()
-        conn.close()
+    # =================================
+    # SAVE JOIN TIME
+    # =================================
 
-        # ❌ no record
-        if not row:
-            conn.close()
-            return jsonify({
-                "error": "Register first"
-            }), 403
-        
-        # ❌ OTP not verified
-        if row[0] != 1:
-            conn.close()
-            return jsonify({
-                "error": "OTP verification required"
-            }), 403
-        
-        # ❌ demo not allowed
-        if row[1] != 1:
-            conn.close()
-            return jsonify({
-                "error": "Attend free demo registration first"
-            }), 403
-        
-        # ✅ save join time
-        join_time = datetime.now().timestamp()
-        
-        try:
-            c.execute("""
-            ALTER TABLE students
-            ADD COLUMN join_time REAL
-            """)
-        except:
-            pass
-        
-        c.execute("""
-        UPDATE students
-        SET join_time=?, last_updated=?
-        WHERE phone=? AND course=?
-        """, (
-            join_time,
-            datetime.now().strftime("%Y-%m-%d %H:%M"),
-            phone,
-            course
-        ))
-        
-        conn.commit()
-        conn.close()
+    join_time = datetime.now().timestamp()
 
-    # 🔥 SAME LINK for demo + join
+    try:
+        c.execute("""
+        ALTER TABLE students
+        ADD COLUMN join_time REAL
+        """)
+    except:
+        pass
+
+    c.execute("""
+    UPDATE students
+    SET join_time=?, last_updated=?
+    WHERE phone=? AND course=?
+    """, (
+        join_time,
+        datetime.now().strftime("%Y-%m-%d %H:%M"),
+        phone,
+        course
+    ))
+
+    conn.commit()
+    conn.close()
+
+    # =================================
+    # LIVE CLASS
+    # =================================
+
     meet_link = get_active_meet_link(course)
 
     if not meet_link:
-        return jsonify({"error": "Class not started yet"}), 404
+        return jsonify({
+            "error": "Class not started yet"
+        }), 404
 
     return jsonify({
         "status": "ok",
+        "redirect_url": f"/join-live/{course}",
         "hours_used": user["hours_used"].get(course, 0),
-        "hours_remaining": user["max_hours"].get(course, classes_per_month) - user["hours_used"].get(course, 0)
+        "hours_remaining": user["max_hours"].get(course, classes_per_month)
+                             - user["hours_used"].get(course, 0)
     })
     
 @app.route("/join-live/<course>")
