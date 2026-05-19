@@ -1011,18 +1011,7 @@ def end_class():
                                 if s["class_count"] >= s["classes_per_month"]:
                                     s["completed"] = True
 
-        # 🔥 DEMO COMPLETED
-        c.execute("""
-        UPDATE students
-        SET demo_done=1,
-            last_updated=?
-        WHERE course=?
-        AND demo_allowed=1
-        """, (
-            datetime.now().strftime("%Y-%m-%d %H:%M"),
-            course
-        ))
-
+        
         conn.commit()
         conn.close()
 
@@ -1030,6 +1019,19 @@ def end_class():
         teachers[username]["class_live"] = False
         teachers[username]["meet_link"] = ""
 
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+        
+        c.execute("""
+        UPDATE live_classes
+        SET class_live=0,
+            meet_link=''
+        WHERE course=?
+        """, (course,))
+        
+        conn.commit()
+        conn.close()
+        
         return jsonify({
             "success": True,
             "live": False
