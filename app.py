@@ -1199,9 +1199,22 @@ def teacher_dashboard():
             "demo_done": bool(r[5])
     
         })
+    conn.close()
+    
+    conn = sqlite3.connect("students.db")
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+    
+    c.execute("""
+    SELECT *
+    FROM students
+    WHERE course=?
+    """, (teacher.get("course"),))
+    
+    students = c.fetchall()
     
     conn.close()
-        
+    
     return render_template(
         "teacher_Dashboard.html",
         teacher_name=username,
@@ -1210,6 +1223,7 @@ def teacher_dashboard():
         total_courses=total_courses,
         active_classes=active_classes,
         feedbacks=feedbacks,
+        students=students,
         total_faculties=total_faculties,
         total_students=total_students,
         waiting_students=waiting_students,
