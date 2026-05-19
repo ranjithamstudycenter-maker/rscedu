@@ -2764,7 +2764,7 @@ async function openDemoPopup(course){
 
   try {
     // 🔥 BACKEND CHECK
-    const res = await fetch("/api/check-demo?course=" + course);
+    const res = await fetch(`/api/check-demo?course=${course}&phone=${phone}`);
     const data = await res.json();
 
     if(data.demo_done){
