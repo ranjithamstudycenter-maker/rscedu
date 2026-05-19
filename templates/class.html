@@ -2726,13 +2726,19 @@ document.addEventListener("DOMContentLoaded", () => {
   const phone = document.getElementById("phoneInput");
   const otp   = document.getElementById("otpInput");
 
-  const name =  document.getElementById("studentName").value;
+  const nameInput = document.getElementById("studentName");
+
+if(nameInput){
+
+   nameInput.addEventListener("input", function(){
+
+      this.value = this.value.trimStart();
+
+   });
+
+}
     
-  if(!name){
-     alert("Enter your name");
-     return;
-  }
-    
+      
   if(phone){
     phone.addEventListener("input", function(){
       this.value = this.value.replace(/\D/g,'').slice(0,10);
