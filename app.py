@@ -231,8 +231,12 @@ def available_seats(course):
 
 @app.route("/save-user", methods=["POST"])
 def save_user():
+
     data = request.json
+
     phone = data.get("phone")
+    name  = data.get("name")
+    course = data.get("course")
 
     session["phone"] = phone
     user = get_user(phone)
@@ -240,6 +244,38 @@ def save_user():
     # 🔥 INSERT BASE RECORD (if not exists)
     conn = sqlite3.connect("students.db")
     c = conn.cursor()
+
+    c.execute("""
+    INSERT OR REPLACE INTO students
+    (
+        phone,
+        course,
+        name,
+        demo_done,
+        enrolled,
+        hours_used,
+        max_hours,
+        payment_amount,
+        last_updated,
+        otp_verified,
+        demo_registered,
+        demo_completed
+    )
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+    """, (
+        phone,
+        course,
+        name,
+        0,
+        0,
+        0,
+        0,
+        0,
+        datetime.now().strftime("%Y-%m-%d %H:%M"),
+        1,
+        1,
+        0
+    ))
 
     conn.commit()
     conn.close()
