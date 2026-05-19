@@ -2405,7 +2405,7 @@ async function joinClass(course) {
   }
 }
 
-    async function openFeedbackPopup(course){
+async function openFeedbackPopup(course){
 
    const res = await fetch(`/get-teacher?course=${course}`);
    const data = await res.json();
@@ -2419,7 +2419,7 @@ async function joinClass(course) {
    document.getElementById("feedbackPopup").style.display =
       "flex";
 }
-    async function submitTeacherFeedback(){
+async function submitTeacherFeedback(){
 
    const teacher =
       document.getElementById("feedbackTeacher").value;
@@ -2502,6 +2502,35 @@ function joinFromPopup() {
 
       joinBtn.style.opacity = "0.5";
       joinBtn.style.pointerEvents = "none";
+
+        // 🔥 DEMO COMPLETED MESSAGE
+        const timerDiv = document.getElementById("timer-" + course);
+        
+        const key = "demo_running_" + course;
+        
+        if(localStorage.getItem(key)){
+        
+            timerDiv.style.display = "block";
+        
+            timerDiv.innerHTML =
+              "✅ Demo Completed — Please Enroll";
+        
+            timerDiv.style.color = "green";
+            timerDiv.style.fontWeight = "600";
+        
+            // 🔥 enable enroll button
+            const enrollBtn =
+              document.getElementById("enrollBtn-" + course);
+        
+            if(enrollBtn){
+        
+                enrollBtn.style.pointerEvents = "auto";
+                enrollBtn.style.opacity = "1";
+            }
+        
+            // 🔥 clear running state
+            localStorage.removeItem(key);
+        }
 
     }
 
