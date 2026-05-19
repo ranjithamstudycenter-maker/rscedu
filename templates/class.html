@@ -2486,6 +2486,26 @@ function joinFromPopup() {
 
   if(data.live){
 
+      const msg = document.getElementById("msg-" + course);
+
+        msg.innerHTML = `
+          🔴 Live Class Started
+          <br><br>
+        
+          <button onclick="joinClass('${course}')"
+          style="
+            background:white;
+            color:red;
+            border:none;
+            padding:8px 15px;
+            border-radius:8px;
+            font-weight:600;
+            cursor:pointer;
+          ">
+            Join Demo
+          </button>
+        `;
+      
       // 🔴 LIVE BADGE
       badge.style.display = "inline-block";
 
