@@ -3038,8 +3038,7 @@ function startTimer(){
     }
 }
 
-  openDemoPopup(currentCourse);  // recreate fresh
-}
+  
  function closePopup(){
 
   document.getElementById("demoPopup")
@@ -3063,7 +3062,7 @@ async function openDemoPopup(course){
     });
   }
   
-  clearInterval(timerInterval);
+  clearInterval(otpInterval);
 
   document.getElementById("phoneInput").value = "";
   document.getElementById("otpInput").value = "";
