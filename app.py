@@ -1021,7 +1021,14 @@ def end_class():
                                 if s["class_count"] >= s["classes_per_month"]:
                                     s["completed"] = True
 
-        
+        # 🔥 VERY IMPORTANT
+        # reset join time
+        c.execute("""
+        UPDATE students
+        SET join_time=NULL
+        WHERE course=?
+        """, (course,))
+
         conn.commit()
         conn.close()
 
@@ -1029,19 +1036,20 @@ def end_class():
         teachers[username]["class_live"] = False
         teachers[username]["meet_link"] = ""
 
+        # 🔥 UPDATE LIVE CLASS TABLE
         conn = sqlite3.connect("students.db")
         c = conn.cursor()
-        
+
         c.execute("""
         UPDATE live_classes
         SET live=0,
             meet_link=''
         WHERE course=?
         """, (course,))
-        
+
         conn.commit()
         conn.close()
-        
+
         return jsonify({
             "success": True,
             "live": False
@@ -1054,7 +1062,6 @@ def end_class():
         return jsonify({
             "error": str(e)
         }), 500
-        
 @app.route("/get-teacher")
 def get_teacher():
     course = request.args.get("course")
