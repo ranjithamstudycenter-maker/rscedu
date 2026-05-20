@@ -2636,12 +2636,53 @@ async function handleOTP(){
     const key = "demo_running_" + currentCourse;
 
     if(localStorage.getItem(key)){
-    
-      msg.innerHTML = "⏳ Demo already running";
-      msg.style.color = "orange";
-    
-      return;
+
+```
+fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+  .then(res => res.json())
+  .then(data => {
+
+    const joinBtn =
+    document.getElementById("popupJoinBtn");
+
+    // 🔴 CLASS LIVE
+    if(data.meet_link){
+
+        document.getElementById("statusMsg").innerHTML =
+          "⏳ Demo already running";
+
+        document.getElementById("statusMsg").style.color =
+          "orange";
+
+        joinBtn.style.display = "block";
+
+        joinBtn.onclick = () => {
+            window.open(data.meet_link, "_blank");
+        };
+
     }
+
+    // 🔴 CLASS ENDED
+    else{
+
+        localStorage.removeItem(key);
+
+        document.getElementById("statusMsg").innerHTML =
+          "✅ Demo completed. Please enroll";
+
+        document.getElementById("statusMsg").style.color =
+          "green";
+
+        joinBtn.style.display = "none";
+    }
+
+  });
+
+return;
+```
+
+}
+
     
     // 🔥 completed check
     if(data.demo_done){
