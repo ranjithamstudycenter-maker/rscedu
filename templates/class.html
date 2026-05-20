@@ -2750,6 +2750,13 @@ async function handleOTP(){
 
             joinBtn.style.display = "block";
 
+            // 🔥 change button text
+            document.getElementById("mainBtn").textContent =
+            "Join Class";
+            
+            document.getElementById("mainBtn").style.background =
+            "green";
+
             joinBtn.onclick = () => {
                 window.open(data.meet_link, "_blank");
             };
@@ -2874,8 +2881,21 @@ async function handleOTP(){
 
   // STEP 3
   else if(step === 3){
+
+    const key = "demo_running_" + currentCourse;
+
+    // 🔴 class not live
+    if(!localStorage.getItem(key)){
+
+        msg.innerHTML = "⏳ Wait for Class";
+        msg.style.color = "orange";
+
+        return;
+    }
+
+    // 🔴 class live
     startDemoSession(currentCourse);
-  }
+}
 } 
      </script>
     <script>
@@ -2899,54 +2919,133 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
 });
-
- let otpTimer = 300;
-let timerInterval;
+let otpSeconds = 300;
+let otpInterval;
 
 function startTimer(){
 
-  otpTimer = 300;
+    clearInterval(otpInterval);
 
-  clearInterval(timerInterval);
+    otpSeconds = 300;
 
-  timerInterval = setInterval(()=>{
+    const timer =
+    document.getElementById("otpTimer");
 
-    otpTimer--;
+    const resendBtn =
+    document.getElementById("resendBtn");
 
-    let min = Math.floor(otpTimer/60);
-    let sec = otpTimer % 60;
+    resendBtn.style.display = "none";
 
-    document.getElementById("timer").innerHTML =
-      `⏳ ${min}:${sec<10?'0'+sec:sec}`;
+    otpInterval = setInterval(() => {
 
-    if(otpTimer <= 0){
-      clearInterval(timerInterval);
-      document.getElementById("timer").innerHTML = "❌ OTP Expired";
-      step = 1;
+        const min =
+        Math.floor(otpSeconds / 60);
+
+        const sec =
+        otpSeconds % 60;
+
+        timer.innerHTML =
+        `⏳ OTP expires in ${min}:${sec
+            .toString()
+            .padStart(2,"0")}`;
+
+        otpSeconds--;
+
+        if(otpSeconds < 0){
+
+            clearInterval(otpInterval);
+
+            timer.innerHTML =
+            "❌ OTP expired";
+
+            resendBtn.style.display =
+            "block";
+
+            step = 1;
+        }
+
+    }, 1000);
+}
+ 
+ 
+ async function resendOTP(){
+
+    const phone =
+    document.getElementById("phoneInput")
+    .value.trim();
+
+    if(phone.length !== 10){
+
+        alert("❌ Enter valid mobile number");
+        return;
     }
 
-  },1000);
+    // 🔥 reset old recaptcha
+    if(window.recaptchaVerifier){
+
+        window.recaptchaVerifier.clear();
+
+        window.recaptchaVerifier = null;
+    }
+
+    // 🔥 recreate recaptcha
+    window.recaptchaVerifier =
+    new firebase.auth.RecaptchaVerifier(
+        'recaptcha-container',
+        {
+            size: 'invisible'
+        }
+    );
+
+    const phoneNumber = "+91" + phone;
+
+    try{
+
+        const confirmationResult =
+        await firebase.auth()
+        .signInWithPhoneNumber(
+            phoneNumber,
+            window.recaptchaVerifier
+        );
+
+        window.confirmationResult =
+        confirmationResult;
+
+        document.getElementById("otpInput")
+        .style.display = "block";
+
+        document.getElementById("statusMsg")
+        .innerHTML = "📱 OTP resent";
+
+        document.getElementById("statusMsg")
+        .style.color = "green";
+
+        // 🔥 restart fresh timer
+        startTimer();
+
+        // 🔥 keep verify step
+        step = 2;
+
+    }catch(e){
+
+        console.error(e);
+
+        document.getElementById("statusMsg")
+        .innerHTML = "❌ Failed to resend OTP";
+
+        document.getElementById("statusMsg")
+        .style.color = "red";
+    }
 }
-
- 
- function resendOTP(){
-
-  document.getElementById("otpInput").style.display = "none";
-  document.getElementById("statusMsg").innerHTML = "";
-
-  step = 1;
-
-  // 🔥 reset recaptcha
-  if(window.recaptchaVerifier){
-    window.recaptchaVerifier.clear();
-    window.recaptchaVerifier = null;
-  }
 
   openDemoPopup(currentCourse);  // recreate fresh
 }
  function closePopup(){
-  document.getElementById("demoPopup").style.display = "none";
-  clearInterval(timerInterval); // 🔥 add this
+
+  document.getElementById("demoPopup")
+  .style.display = "none";
+
+  clearInterval(otpInterval);
 }
 
   let currentCourse = "";
@@ -3297,82 +3396,7 @@ document.addEventListener("DOMContentLoaded", () => {
   filterCards();
 
 });
-function startTimer(){
 
-    clearInterval(otpInterval);
-
-    otpSeconds = 300;
-
-    const timer =
-    document.getElementById("otpTimer");
-
-    const resendBtn =
-    document.getElementById("resendBtn");
-
-    resendBtn.style.display = "none";
-
-    otpInterval = setInterval(() => {
-
-        const min =
-        Math.floor(otpSeconds / 60);
-
-        const sec =
-        otpSeconds % 60;
-
-        timer.innerHTML =
-        `⏳ OTP expires in ${min}:${sec
-            .toString()
-            .padStart(2,"0")}`;
-
-        otpSeconds--;
-
-        if(otpSeconds < 0){
-
-            clearInterval(otpInterval);
-
-            timer.innerHTML =
-            "❌ OTP expired";
-
-            resendBtn.style.display =
-            "block";
-        }
-
-    }, 1000);
-}
-async function resendOTP(){
-
-    const phone =
-    document.getElementById("phoneInput")
-    .value.trim();
-
-    const phoneNumber = "+91" + phone;
-
-    try{
-
-        const confirmationResult =
-        await firebase.auth()
-        .signInWithPhoneNumber(
-            phoneNumber,
-            window.recaptchaVerifier
-        );
-
-        window.confirmationResult =
-        confirmationResult;
-
-        document.getElementById("statusMsg")
-        .innerHTML = "📱 OTP resent";
-
-        startTimer();
-
-    }catch(e){
-
-        console.error(e);
-
-        alert("❌ Failed to resend OTP");
-
-    }
-}
-    
 </script>
  <div id="feedbackPopup" class="popup">
 
