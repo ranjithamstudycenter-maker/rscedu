@@ -2656,50 +2656,47 @@ async function handleOTP(){
 
     if(localStorage.getItem(key)){
 
-```
-fetch(`/api/check-demo?course=${course}&phone=${phone}`)
-  .then(res => res.json())
-  .then(data => {
+    fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`)
+      .then(res => res.json())
+      .then(data => {
 
-    const joinBtn =
-    document.getElementById("popupJoinBtn");
+        const joinBtn =
+        document.getElementById("popupJoinBtn");
 
-    // 🔴 CLASS LIVE
-    if(data.meet_link){
+        // 🔴 CLASS LIVE
+        if(data.meet_link){
 
-        document.getElementById("statusMsg").innerHTML =
-          "⏳ Demo already running";
+            document.getElementById("statusMsg").innerHTML =
+              "⏳ Demo already running";
 
-        document.getElementById("statusMsg").style.color =
-          "orange";
+            document.getElementById("statusMsg").style.color =
+              "orange";
 
-        joinBtn.style.display = "block";
+            joinBtn.style.display = "block";
 
-        joinBtn.onclick = () => {
-            window.open(data.meet_link, "_blank");
-        };
+            joinBtn.onclick = () => {
+                window.open(data.meet_link, "_blank");
+            };
 
-    }
+        }
 
-    // 🔴 CLASS ENDED
-    else{
+        // 🔴 CLASS ENDED
+        else{
 
-        localStorage.removeItem(key);
+            localStorage.removeItem(key);
 
-        document.getElementById("statusMsg").innerHTML =
-          "✅ Demo completed. Please enroll";
+            document.getElementById("statusMsg").innerHTML =
+              "✅ Demo completed. Please enroll";
 
-        document.getElementById("statusMsg").style.color =
-          "green";
+            document.getElementById("statusMsg").style.color =
+              "green";
 
-        joinBtn.style.display = "none";
-    }
+            joinBtn.style.display = "none";
+        }
 
-  });
+      });
 
-return;
-```
-
+    return;
 }
 
     
