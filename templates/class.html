@@ -1986,7 +1986,7 @@ function updateUI(course) {
       demoBtn.style.pointerEvents = "none";
       demoBtn.style.opacity       = "0.85";
     } else {
-      demoBtn.textContent         = "Free Demo";
+      demoBtn.textContent         = "Enroll for Demo";
       demoBtn.style.background    = "#fff3b0";
       demoBtn.style.color         = "#333";
       demoBtn.style.pointerEvents = "auto";
@@ -1999,7 +1999,7 @@ function updateUI(course) {
   const enrollBtn = document.getElementById("enrollBtn-" + course);
   if (enrollBtn) {
     if (planDone) {
-      enrollBtn.textContent        = "Re-Enroll";
+      enrollBtn.textContent        = "Re-Pay";
       enrollBtn.style.background   = "#dc2626";
       enrollBtn.style.color        = "white";
       enrollBtn.style.pointerEvents = "auto";
@@ -2009,7 +2009,7 @@ function updateUI(course) {
       enrollBtn.style.color        = "white";
       enrollBtn.style.pointerEvents = "none";
     } else {
-      enrollBtn.textContent        = "Enroll";
+      enrollBtn.textContent        = "Pay";
       enrollBtn.style.background   = "#bbdefb";
       enrollBtn.style.color        = "#333";
       enrollBtn.style.pointerEvents = "auto";
@@ -2185,7 +2185,7 @@ if (localStorage.getItem(key)) {
                               badge.style.display = "none";
                           }
                 
-                          alert("✅ Demo Completed. Please Enroll");
+                          alert("✅ Demo Completed. Kindly Pay and attend class");
                       }
                 
                    }, 5000);
@@ -2440,7 +2440,7 @@ async function joinClass(course) {
 
   // ❌ both இல்லை
   if (!demoDone && !enrolled) {
-    showCourseMessage(course, "⚠️ Attend Demo & Enroll first");
+    showCourseMessage(course, "⚠️ Attend Demo & Pay first");
     return;
   }
 
@@ -2452,7 +2452,7 @@ async function joinClass(course) {
 
   // ❌ only enroll இல்லை
   if (!enrolled) {
-    showCourseMessage(course, "⚠️ Enroll first");
+    showCourseMessage(course, "⚠️ Pay first");
     return;
   }
 
@@ -2776,7 +2776,7 @@ async function handleOTP(){
     
     // 🔥 completed check
     if(data.demo_done){
-      msg.innerHTML = "⚠️ Demo already completed. For re-demo access, pay ₹200 and share the payment screenshot with the admin.";
+      msg.innerHTML = "⚠️ Demo already completed. For re-demo access, pay ₹100 and share the payment screenshot with the admin.";
       msg.style.color = "red";
       return;
     }
