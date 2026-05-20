@@ -2155,6 +2155,15 @@ if (localStorage.getItem(key)) {
                 
                           // hide join button
                           joinBtn.style.display = "none";
+
+                        // 🔥 remove running message
+                        const timerBox =
+                        document.getElementById("timer-" + currentCourse);
+                        
+                        if(timerBox){
+                        
+                            timerBox.innerHTML = "";
+                        }
                 
                           // update course message
                           const msgBox =
