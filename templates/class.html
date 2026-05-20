@@ -2127,8 +2127,61 @@ if (localStorage.getItem(key)) {
                joinBtn.style.display = "block";
 
                joinBtn.onclick = () => {
-                  window.open(data.meet_link, "_blank");
-               };
+
+                   // 🔥 open class
+                   window.open(data.meet_link, "_blank");
+                
+                   // 🔥 close popup
+                   document.getElementById("demoPopup").style.display = "none";
+                
+                   // 🔥 start checking class end
+                   clearInterval(popupWatcher);
+                
+                   popupWatcher = setInterval(async () => {
+                
+                      const res = await fetch(
+                        `/api/check-demo?course=${course}&phone=${phone}`
+                      );
+                
+                      const liveData = await res.json();
+                
+                      // 🔴 CLASS ENDED
+                      if(!liveData.meet_link){
+                
+                          clearInterval(popupWatcher);
+                
+                          // remove running
+                          localStorage.removeItem(key);
+                
+                          // hide join button
+                          joinBtn.style.display = "none";
+                
+                          // update course message
+                          const msgBox =
+                          document.getElementById("msg-" + course);
+                
+                          if(msgBox){
+                
+                              msgBox.innerHTML =
+                              "✅ Demo Completed Please Enroll";
+                
+                              msgBox.style.color = "green";
+                          }
+                
+                          // hide LIVE badge
+                          const badge =
+                          document.getElementById("live-" + course);
+                
+                          if(badge){
+                              badge.style.display = "none";
+                          }
+                
+                          alert("✅ Demo Completed. Please Enroll");
+                      }
+                
+                   }, 5000);
+                
+                };
             }
 
        } 
