@@ -2103,7 +2103,18 @@ function startDemoSession(course) {
         // ✅ LIVE CLASS EXISTS
         if(data.meet_link){
 
-            showMessage("🔴 Demo already running...");
+            const isPaid =
+               studentStatus?.enrolled?.[course];
+            
+            if(isPaid){
+            
+               showMessage("🔴 Class already running");
+            
+            }else{
+            
+               showMessage("⏳ Demo already running");
+            
+            }
 
             // 🔥 optional popup join button
             const joinBtn = document.getElementById("popupJoinBtn");
@@ -2517,9 +2528,27 @@ function joinFromPopup() {
       // ✅ DEMO STARTED MESSAGE
       if(msg){
          msg.style.color = "green";
-         msg.innerHTML = "🟢 Demo Started";
-       }
-
+        const isPaid =
+           studentStatus?.enrolled?.[course];
+        
+        const isDemo =
+           studentStatus?.demo_done?.[course];
+        
+        if(isPaid){
+        
+           msg.innerHTML = "🔴 Class Started";
+        
+        }
+        else if(isDemo){
+        
+           msg.innerHTML = "🔴 Demo Started";
+        
+        }
+        else{
+        
+           msg.innerHTML = "";
+        
+        }
       // 🔥 LIVE POPUP
       showLivePopup(course);
 
