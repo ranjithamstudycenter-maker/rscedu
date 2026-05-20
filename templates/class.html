@@ -2094,24 +2094,48 @@ function startDemoSession(course) {
 
   const key = "demo_running_" + course;
 
-  // 🔥 already running block
   if (localStorage.getItem(key)) {
 
-    // ✅ SHOW MESSAGE
-    showMessage("⏳ Demo already running...");
-
-    // 🔥 OPEN EXISTING CLASS AGAIN
     fetch(`/api/check-demo?course=${course}&phone=${phone}`)
       .then(res => res.json())
       .then(data => {
 
+        // ✅ LIVE CLASS EXISTS
         if(data.meet_link){
 
+            showMessage("🔴 Demo already running...");
+
+            // 🔥 optional popup join button
+            const joinBtn = document.getElementById("popupJoinBtn");
+
+            if(joinBtn){
+
+               joinBtn.style.display = "block";
+
+               joinBtn.onclick = () => {
+                  window.open(data.meet_link, "_blank");
+               };
+            }
+
+            // 🔥 auto open
             window.open(data.meet_link, "_blank");
 
-        } else {
+        } 
+        
+        // ❌ CLASS ENDED
+        else {
 
-            showMessage("⚠️ Class not started yet");
+            // 🔥 VERY IMPORTANT
+            localStorage.removeItem(key);
+
+            showMessage("✅ Demo completed. Please enroll");
+
+            // 🔥 hide join button
+            const joinBtn = document.getElementById("popupJoinBtn");
+
+            if(joinBtn){
+               joinBtn.style.display = "none";
+            }
 
         }
 
@@ -2119,7 +2143,6 @@ function startDemoSession(course) {
 
     return;
 }
-
   // 🔥 already completed check
   fetch(`/api/check-demo?course=${course}&phone=${phone}`)
     .then(res => res.json())
