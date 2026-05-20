@@ -1327,7 +1327,9 @@ html, body{
           {% if student.demo_done.get('cbse9') %}
            <button class="btn btn-demo-done">Demo Completed</button>
          {% else %}
-          <button class="btn btn-demo" onclick="openDemoPopup('cbse9')">  Free Demo </button>
+          <<button id="demoBtn-cbse9"
+class="btn btn-demo"
+onclick="openDemoPopup('cbse9')">
          {% endif %}
              
        
@@ -1335,7 +1337,9 @@ html, body{
           {% if registered %}
             <button class="btn btn-registered">Registered</button>
           {% else %}
-            <button class="btn btn-enroll" onclick="enroll('cbse9')">Enroll</button>
+            <button id="enrollBtn-cbse9"
+class="btn btn-enroll"
+onclick="enroll('cbse9')">
           {% endif %}
         
           <!-- JOIN -->
@@ -1884,7 +1888,7 @@ const PRICE_PER_HOUR = {
 /* ---- INIT ---- */
 document.addEventListener("DOMContentLoaded", async () => {
   // All join buttons disabled by default
-  document.querySelectorAll(".joinBtn").forEach(btn => {
+  document.querySelectorAll(".btn-join").forEach(btn => {
     btn.style.opacity       = "0.5";
     btn.style.pointerEvents = "none";
   });
