@@ -2726,6 +2726,17 @@ async function handleOTP(){
             document.getElementById("statusMsg").style.color =
               "orange";
 
+            const timerBox =
+            document.getElementById("timer-" + currentCourse);
+            
+            if(timerBox){
+            
+                timerBox.innerHTML =
+                "🟢 Class Running";
+            
+                timerBox.style.color = "green";
+            }
+
             joinBtn.style.display = "block";
 
             joinBtn.onclick = () => {
