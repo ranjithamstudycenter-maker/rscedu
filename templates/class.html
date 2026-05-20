@@ -2731,7 +2731,6 @@ async function handleOTP(){
 
   // STEP 3
   else if(step === 3){
-    document.getElementById("demoPopup").style.display = "none";
     startDemoSession(currentCourse);
   }
 } 
@@ -3262,7 +3261,21 @@ document.addEventListener("DOMContentLoaded", () => {
       🔄 Resend OTP
     </button>
 
-    <p id="statusMsg" style="margin-top:10px;font-weight:bold;"></p>
+    <button id="popupJoinBtn"
+        style="
+        display:none;
+        width:100%;
+        padding:10px;
+        margin-top:10px;
+        background:green;
+        color:white;
+        border:none;
+        border-radius:6px;
+        "
+        >
+        Join Class
+        </button>
+      <p id="statusMsg" style="margin-top:10px;font-weight:bold;"></p>
 
   </div>
 </div>
