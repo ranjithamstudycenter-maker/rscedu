@@ -2225,7 +2225,11 @@ if (localStorage.getItem(key)) {
       .then(data => {
 
         if (!data.meet_link) {
-          showMessage("⚠️ Class not started yet");
+          document.getElementById("statusMsg").innerHTML =
+                   "⏳ Wait for class";
+                
+                document.getElementById("statusMsg").style.color =
+                   "orange";
           return;
         }
 
@@ -2503,59 +2507,70 @@ function joinFromPopup() {
 
  async function checkLiveStatus(course){
 
-  const res =
-  await fetch(`/api/class-status?course=${course}`);
+const res =
+await fetch(`/api/class-status?course=${course}`);
 
-  const data = await res.json();
+const data =
+await res.json();
 
-  const badge =
-  document.getElementById("live-" + course);
+const badge =
+document.getElementById("live-" + course);
 
-  const msg =
-  document.getElementById("msg-" + course);
+const msg =
+document.getElementById("msg-" + course);
 
-  if(data.live){
+if(data.live){
 
-      // 🔴 LIVE BADGE
-      if(badge){
-         badge.style.display = "inline-block";
-      }
+```
+  if(badge){
+    badge.style.display = "inline-block";
+  }
 
-      // ✅ DEMO STARTED MESSAGE
-      if(msg){
-         msg.style.color = "green";
-        const isPaid =
-           studentStatus?.enrolled?.[course];
-        
-        const isDemo =
-           studentStatus?.demo_done?.[course];
-        
-        if(isPaid){
-        
-           msg.innerHTML = "🔴 Class Started";
-        
-        }
-        else if(isDemo){
-        
-           msg.innerHTML = "🔴 Demo Started";
-        
-        }
-        else{
-        
-           msg.innerHTML = "";
-        
-        }
-      // 🔥 LIVE POPUP
-      showLivePopup(course);
+  if(msg){
 
-  } else {
+    const isPaid =
+      studentStatus?.enrolled?.[course];
 
-      if(badge){
-        badge.style.display = "none";
-       }
+    const isDemo =
+      studentStatus?.demo_done?.[course];
+
+    msg.style.color = "green";
+
+    if(isPaid){
+
+       msg.innerHTML = "🔴 Class Started";
+
+    }
+    else if(isDemo){
+
+       msg.innerHTML = "🔴 Demo Started";
+
+    }
+    else{
+
+       msg.innerHTML = "⏳ Class Live";
+
+    }
 
   }
+```
+
+} else {
+
+```
+  if(badge){
+     badge.style.display = "none";
+  }
+
+  if(msg){
+     msg.innerHTML = "";
+  }
+```
+
 }
+
+}
+
  
 /* ======================================
    SEARCH
