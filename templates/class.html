@@ -1746,6 +1746,8 @@ const auth = firebase.auth();
 <!-- ========== MAIN SCRIPT ========== -->
 <script>
 let popupWatcher = null;
+let otpSeconds = 300;
+let otpInterval;
  const CLASS_TIMINGS = {
 
   cbse9  : "9:40 AM",
@@ -2797,6 +2799,10 @@ async function handleOTP(){
       msg.innerHTML = "📱 OTP sent";
       msg.style.color = "green";
 
+     // 🔥 hide details after otp sent
+      document.getElementById("nameInput").style.display = "none";
+      document.getElementById("emailInput").style.display = "none";
+      document.getElementById("phoneInput").style.display = "none";
       document.getElementById("resendBtn").style.display = "block";  // 🔥 ADD HERE
 
       startTimer();   // 🔥 ADD THIS 
@@ -2829,6 +2835,12 @@ async function handleOTP(){
 
       msg.innerHTML = "✅ Verified ✔";
       msg.style.color = "green";
+      
+      setTimeout(() => {
+
+          msg.innerHTML = "";
+
+      }, 2000);
 
       btn.textContent = "Proceed for Demo";
       btn.style.background = "green";
@@ -3285,7 +3297,82 @@ document.addEventListener("DOMContentLoaded", () => {
   filterCards();
 
 });
+function startTimer(){
 
+    clearInterval(otpInterval);
+
+    otpSeconds = 300;
+
+    const timer =
+    document.getElementById("otpTimer");
+
+    const resendBtn =
+    document.getElementById("resendBtn");
+
+    resendBtn.style.display = "none";
+
+    otpInterval = setInterval(() => {
+
+        const min =
+        Math.floor(otpSeconds / 60);
+
+        const sec =
+        otpSeconds % 60;
+
+        timer.innerHTML =
+        `⏳ OTP expires in ${min}:${sec
+            .toString()
+            .padStart(2,"0")}`;
+
+        otpSeconds--;
+
+        if(otpSeconds < 0){
+
+            clearInterval(otpInterval);
+
+            timer.innerHTML =
+            "❌ OTP expired";
+
+            resendBtn.style.display =
+            "block";
+        }
+
+    }, 1000);
+}
+async function resendOTP(){
+
+    const phone =
+    document.getElementById("phoneInput")
+    .value.trim();
+
+    const phoneNumber = "+91" + phone;
+
+    try{
+
+        const confirmationResult =
+        await firebase.auth()
+        .signInWithPhoneNumber(
+            phoneNumber,
+            window.recaptchaVerifier
+        );
+
+        window.confirmationResult =
+        confirmationResult;
+
+        document.getElementById("statusMsg")
+        .innerHTML = "📱 OTP resent";
+
+        startTimer();
+
+    }catch(e){
+
+        console.error(e);
+
+        alert("❌ Failed to resend OTP");
+
+    }
+}
+    
 </script>
  <div id="feedbackPopup" class="popup">
 
@@ -3366,7 +3453,14 @@ document.addEventListener("DOMContentLoaded", () => {
       style="width:100%;padding:10px;margin-bottom:10px;display:none;">
 
     <!-- TIMER -->
-    <div id="timer" style="margin:8px 0;font-size:14px;color:#0b5394;"></div>
+    <div id="otpTimer"
+     style="
+       margin-top:8px;
+       color:#7c3aed;
+       font-weight:600;
+       text-align:center;
+     ">
+    </div>
 
     <!-- BUTTON -->
     <button id="mainBtn" onclick="handleOTP()" style="
@@ -3380,19 +3474,22 @@ document.addEventListener("DOMContentLoaded", () => {
     </button>
 
     <!-- RESEND -->
-    <button id="resendBtn" onclick="resendOTP()" style="
-      display:none;
-      margin-top:10px;
-      padding:8px;
-      width:100%;
-      background:#eee;
-      border:none;
-      border-radius:6px;
-    ">
-      🔄 Resend OTP
-    </button>
-
-    <button id="popupJoinBtn"
+    <button id="resendBtn"
+        onclick="resendOTP()"
+        style="
+        display:none;
+        margin-top:10px;
+        background:#2563eb;
+        color:white;
+        padding:10px;
+        border:none;
+        border-radius:8px;
+        width:100%;
+        ">
+        🔄 Resend OTP
+        </button>
+   
+      <button id="popupJoinBtn"
         style="
         display:none;
         width:100%;
