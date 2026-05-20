@@ -639,11 +639,23 @@ function endClass() {
       return;
     }
 
+    // 🔴 STATUS UPDATE
     document.getElementById("statusText").innerHTML =
-      "🔴 Class Offline";
+      "🔴 Class Ended";
 
     document.getElementById("statusText").className =
       "status off";
+
+    // 🔥 CLEAR INPUT
+    document.getElementById("meetLink").value = "";
+
+    // 🔥 OPTIONAL LIVE OFF MESSAGE
+    const liveBox = document.getElementById("liveStatus");
+
+    if(liveBox){
+      liveBox.innerHTML = "❌ LIVE OFF";
+      liveBox.style.color = "red";
+    }
 
     alert("✅ Class Ended");
 
