@@ -2095,6 +2095,8 @@ enrollBtn.style.pointerEvents =
 }
 
 
+/* JOIN BUTTON */
+
 const joinBtn =
 document.getElementById(
 "joinBtn-" + course
@@ -2105,26 +2107,17 @@ if(joinBtn){
 const live =
 liveStatus[course] || false;
 
-// paid student
-const allowPaid =
-enrolled && !planDone;
-
-// demo student
-const allowDemo =
-demoDone && live;
-
-
-// ---------- PAID ----------
-if(allowPaid){
+// paid user
+if(enrolled && !planDone){
 
 joinBtn.style.display =
 "inline-block";
 
-joinBtn.style.pointerEvents =
-"auto";
-
 joinBtn.style.opacity =
 "1";
+
+joinBtn.style.pointerEvents =
+"auto";
 
 joinBtn.textContent =
 "Join Now";
@@ -2134,17 +2127,17 @@ joinBtn.onclick =
 
 }
 
-// ---------- DEMO ----------
-else if(allowDemo){
+// demo user
+else if(demoDone && live){
 
 joinBtn.style.display =
 "inline-block";
 
-joinBtn.style.pointerEvents =
-"auto";
-
 joinBtn.style.opacity =
 "1";
+
+joinBtn.style.pointerEvents =
+"auto";
 
 joinBtn.textContent =
 "Join Class";
@@ -2154,7 +2147,7 @@ joinBtn.onclick =
 
 }
 
-// ---------- HIDE ----------
+// hide others
 else{
 
 joinBtn.style.display =
@@ -2163,7 +2156,6 @@ joinBtn.style.display =
 }
 
 }
-
 
 /* HOURS */
 
@@ -2843,7 +2835,7 @@ err
 
 liveStatus[course]=data.live;
 
-updateUI(course);
+
 /* ======================================
    SEARCH
 ====================================== */
