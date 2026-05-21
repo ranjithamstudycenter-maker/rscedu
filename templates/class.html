@@ -2102,7 +2102,7 @@ liveStatus[course] || false;
 if(enrolled && !planDone){
 
 joinBtn.style.display =
-"inline-block";
+"flex";
 
 joinBtn.style.opacity =
 "1";
@@ -2112,7 +2112,7 @@ joinBtn.style.pointerEvents =
 
 joinBtn.textContent =
 "Join Now";
-
+joinBtn.classList.remove("disabled");
 joinBtn.onclick =
 ()=>joinClass(course);
 
