@@ -2016,19 +2016,66 @@ function updateUI(course) {
     }
   }
  
+  
   /* Join button */
-  const joinBtn = document.getElementById("joinBtn-" + course);
-  if (joinBtn) {
-    if (enrolled && !planDone) {
-      joinBtn.style.opacity       = "1";
-      joinBtn.style.pointerEvents = "auto";
-      joinBtn.title = (maxHours - hoursUsed) + " classes remaining";
-    } else {
-      joinBtn.style.opacity       = "0.5";
-      joinBtn.style.pointerEvents = "none";
-    }
-  }
+const joinBtn =
+document.getElementById(
+"joinBtn-" + course
+);
 
+if(joinBtn){
+
+const demoDone =
+(s.demo_done || {})[course]
+|| false;
+
+const allowJoin =
+(enrolled && !planDone)
+||
+demoDone;
+
+if(allowJoin){
+
+joinBtn.style.opacity =
+"1";
+
+joinBtn.style.pointerEvents =
+"auto";
+
+joinBtn.style.display =
+"inline-block";
+
+if(enrolled){
+
+joinBtn.title =
+(maxHours - hoursUsed)
++ " classes remaining";
+
+}
+else{
+
+joinBtn.title =
+"Demo access";
+
+}
+
+}
+else{
+
+joinBtn.style.opacity =
+"0.5";
+
+joinBtn.style.pointerEvents =
+"none";
+
+joinBtn.style.display =
+"none";
+
+joinBtn.title = "";
+
+}
+
+}
  
   /* Hours left */
   const hoursEl = document.getElementById("hours-" + course);
