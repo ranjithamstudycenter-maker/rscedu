@@ -2609,69 +2609,81 @@ function joinFromPopup() {
 
  async function checkLiveStatus(course){
 
-const res =
-await fetch(`/api/class-status?course=${course}`);
-
-const data =
-await res.json();
-
-const badge =
-document.getElementById("live-" + course);
-
-const msg =
-document.getElementById("msg-" + course);
-
-if(data.live){
-
-```
-  if(badge){
-    badge.style.display = "inline-block";
-  }
-
-  if(msg){
-
-    const isPaid =
-      studentStatus?.enrolled?.[course];
-
-    const isDemo =
-      studentStatus?.demo_done?.[course];
-
-    msg.style.color = "green";
-
-    if(isPaid){
-
-       msg.innerHTML = "🔴 Class Started";
-
-    }
-    else if(isDemo){
-
-       msg.innerHTML = "🔴 Demo Started";
-
-    }
-    else{
-
-       msg.innerHTML = "⏳ Class Live";
-
-    }
-
-  }
-```
-
-} else {
-
-```
-  if(badge){
-     badge.style.display = "none";
-  }
-
-  if(msg){
-     msg.innerHTML = "";
-  }
-```
-
-}
-
-}
+        try{
+        
+        const res =
+        await fetch(`/api/class-status?course=${course}`);
+        
+        const data =
+        await res.json();
+        
+        const badge =
+        document.getElementById("live-" + course);
+        
+        const msg =
+        document.getElementById("msg-" + course);
+        
+        if(data.live){
+        
+        if(badge){
+        badge.style.display="inline-block";
+        }
+        
+        if(msg){
+        
+        const isPaid =
+        (studentStatus &&
+         studentStatus.enrolled &&
+         studentStatus.enrolled[course]) || false;
+        
+        const isDemo =
+        (studentStatus &&
+         studentStatus.demo_done &&
+         studentStatus.demo_done[course]) || false;
+        
+        msg.style.color="green";
+        
+        if(isPaid){
+        
+        msg.innerHTML="🔴 Class Started";
+        
+        }
+        else if(isDemo){
+        
+        msg.innerHTML="🔴 Demo Started";
+        
+        }
+        else{
+        
+        msg.innerHTML="⏳ Class Live";
+        
+        }
+        
+        }
+        
+        }else{
+        
+        if(badge){
+        badge.style.display="none";
+        }
+        
+        if(msg){
+        msg.innerHTML="";
+        }
+        
+        }
+        
+        }catch(err){
+        
+        console.log(
+        "checkLiveStatus error",
+        course,
+        err
+        );
+        
+        }
+        
+        }
 
  
 /* ======================================
