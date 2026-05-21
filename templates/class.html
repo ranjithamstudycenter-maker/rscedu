@@ -2686,10 +2686,17 @@ function joinFromPopup() {
         
         if(data.live){
         
+        else{
+
         if(badge){
-        badge.style.display="inline-block";
+        
+        badge.style.display =
+        "none";
+        
         }
         
+        updateUI(course);
+           
         if(msg){
         
         const isPaid =
