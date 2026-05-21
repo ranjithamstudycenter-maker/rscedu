@@ -2750,109 +2750,100 @@ async function checkLiveStatus(course){
 
 try{
 
-        const res =
-        await fetch(
-        `/api/class-status?course=${course}`
-        );
-        
-        const data =
-        await res.json();
-        
-        const badge =
-        document.getElementById(
-        "live-" + course
-        );
-        
-        const msg =
-        document.getElementById(
-        "msg-" + course
-        );
-        
-        
-        // LIVE
-        liveStatus[course] = data.live;
-        if(data.live){
-        
-        if(badge){
-        
-        badge.style.display =
-        "inline-block";
-        
-        }
-        
-        if(msg){
-        
-        const isPaid =
-        (studentStatus?.enrolled?.[course])
-        || false;
-        
-        const isDemo =
-        (studentStatus?.demo_done?.[course])
-        || false;
-        
-        msg.style.color =
-        "green";
-        
-        if(isPaid){
-        
-        msg.innerHTML =
-        "🔴 Class Started";
-        
-        }
-        else if(isDemo){
-        
-        msg.innerHTML =
-        "🔴 Demo Started";
-        
-        }
-        else{
-        
-        msg.innerHTML =
-        "⏳ Class Live";
-        
-        }
-        
-        }
-        
-        }
-        
-        
-        // NOT LIVE
-        else{
-        
-        if(badge){
-        
-        badge.style.display =
-        "none";
-        
-        }
-        
-        if(msg){
-        
-        msg.innerHTML =
-        "";
-        
-        }
-        
-        }
-        
-        
-        // refresh buttons
-        updateUI(course);
-        
-        }
-        catch(err){
-        
-        console.log(
-        "checkLiveStatus error",
-        course,
-        err
-        );
-        
-        }
-        
-        }
-         
+const res =
+await fetch(
+`/api/class-status?course=${course}`
+);
+
+const data =
+await res.json();
+
+
+// 🔥 IMPORTANT
+liveStatus[course] =
+data.live || false;
+
+
+const badge =
+document.getElementById(
+"live-" + course
+);
+
+const msg =
+document.getElementById(
+"msg-" + course
+);
+
+
+if(badge){
+
+badge.style.display =
+data.live
+? "inline-block"
+: "none";
+
+}
+
+
+// 🔥 update buttons
+updateUI(course);
+
+
+if(msg){
+
+const isPaid =
+studentStatus?.enrolled?.[course];
+
+const isDemo =
+studentStatus?.demo_done?.[course];
+
+msg.style.color =
+"green";
+
+if(data.live){
+
+if(isPaid){
+
+msg.innerHTML =
+"🔴 Class Started";
+
+}
+
+else if(isDemo){
+
+msg.innerHTML =
+"🔴 Demo Started";
+
+}
+
+else{
+
+msg.innerHTML =
+"⏳ Class Live";
+
+}
+
+}
+else{
+
+msg.innerHTML =
+"";
+
+}
+
+}
+
+}catch(err){
+
+console.log(
+"Live error",
+course,
+err
+);
+
+}
+
+}
 /* ======================================
    SEARCH
 ====================================== */
