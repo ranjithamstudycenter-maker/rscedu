@@ -1877,6 +1877,7 @@ else{
     
 /* ---- STATE ---- */
 let studentStatus  = null;
+let liveStatus = {};
 let selectedCourse = "";
 const CLASSES_PER_MONTH = 12;
  
@@ -1967,57 +1968,135 @@ function updateAllCourseUI() {
   allCourses.forEach(updateUI);
 }
  
-function updateUI(course) {
-  const s         = studentStatus || {};
-  const demoDone  = (s.demo_done    || {})[course] || false;
-  const enrolled  = (s.enrolled     || {})[course] || false;
-  const hoursUsed = (s.hours_used   || {})[course] || 0;
-  const maxHours  = (s.max_hours    || {})[course] || CLASSES_PER_MONTH;
-  const planDone  = enrolled && hoursUsed >= maxHours;
-  
- 
- /* Demo button — NO admin text ever shown to students */
-  const demoBtn = document.getElementById("demoBtn-" + course);
-  if (demoBtn) {
-    if (demoDone) {
-      demoBtn.textContent         = "Demo Done ✓";
-      demoBtn.style.background    = "#16a34a";
-      demoBtn.style.color         = "white";
-      demoBtn.style.pointerEvents = "none";
-      demoBtn.style.opacity       = "0.85";
-    } else {
-      demoBtn.textContent         = "Enroll for Demo";
-      demoBtn.style.background    = "#fff3b0";
-      demoBtn.style.color         = "#333";
-      demoBtn.style.pointerEvents = "auto";
-      demoBtn.style.opacity       = "1";
-    }
-  }
+function updateUI(course){
 
- 
-  /* Enroll button */
-  const enrollBtn = document.getElementById("enrollBtn-" + course);
-  if (enrollBtn) {
-    if (planDone) {
-      enrollBtn.textContent        = "Re-Pay";
-      enrollBtn.style.background   = "#dc2626";
-      enrollBtn.style.color        = "white";
-      enrollBtn.style.pointerEvents = "auto";
-    } else if (enrolled) {
-      enrollBtn.textContent        = "Registered ✓";
-      enrollBtn.style.background   = "#0b5394";
-      enrollBtn.style.color        = "white";
-      enrollBtn.style.pointerEvents = "none";
-    } else {
-      enrollBtn.textContent        = "Pay";
-      enrollBtn.style.background   = "#bbdefb";
-      enrollBtn.style.color        = "#333";
-      enrollBtn.style.pointerEvents = "auto";
-    }
-  }
- 
-  
-/* Join button */
+const s =
+studentStatus || {};
+
+const demoDone =
+(s.demo_done || {})[course] || false;
+
+const enrolled =
+(s.enrolled || {})[course] || false;
+
+const hoursUsed =
+(s.hours_used || {})[course] || 0;
+
+const maxHours =
+(s.max_hours || {})[course] || CLASSES_PER_MONTH;
+
+const planDone =
+enrolled && hoursUsed >= maxHours;
+
+
+/* DEMO BUTTON */
+const demoBtn =
+document.getElementById(
+"demoBtn-" + course
+);
+
+if(demoBtn){
+
+if(demoDone){
+
+demoBtn.textContent =
+"Demo Done ✓";
+
+demoBtn.style.background =
+"#16a34a";
+
+demoBtn.style.color =
+"white";
+
+demoBtn.style.pointerEvents =
+"none";
+
+demoBtn.style.opacity =
+"0.85";
+
+}
+else{
+
+demoBtn.textContent =
+"Enroll for Demo";
+
+demoBtn.style.background =
+"#fff3b0";
+
+demoBtn.style.color =
+"#333";
+
+demoBtn.style.pointerEvents =
+"auto";
+
+demoBtn.style.opacity =
+"1";
+
+}
+
+}
+
+
+/* ENROLL BUTTON */
+
+const enrollBtn =
+document.getElementById(
+"enrollBtn-" + course
+);
+
+if(enrollBtn){
+
+if(planDone){
+
+enrollBtn.textContent =
+"Re-Pay";
+
+enrollBtn.style.background =
+"#dc2626";
+
+enrollBtn.style.color =
+"white";
+
+enrollBtn.style.pointerEvents =
+"auto";
+
+}
+else if(enrolled){
+
+enrollBtn.textContent =
+"Registered ✓";
+
+enrollBtn.style.background =
+"#0b5394";
+
+enrollBtn.style.color =
+"white";
+
+enrollBtn.style.pointerEvents =
+"none";
+
+}
+else{
+
+enrollBtn.textContent =
+"Pay";
+
+enrollBtn.style.background =
+"#bbdefb";
+
+enrollBtn.style.color =
+"#333";
+
+enrollBtn.style.pointerEvents =
+"auto";
+
+}
+
+}
+
+
+/* JOIN BUTTON */
+
 const joinBtn =
 document.getElementById(
 "joinBtn-" + course
@@ -2026,19 +2105,7 @@ document.getElementById(
 if(joinBtn){
 
 const live =
-document
-.getElementById(
-"live-" + course
-)?.offsetParent
-!== null;
-
-const demoDone =
-(s.demo_done || {})[course]
-|| false;
-
-const enrolled =
-(s.enrolled || {})[course]
-|| false;
+liveStatus[course] || false;
 
 const allowJoin =
 live &&
@@ -2048,31 +2115,23 @@ live &&
 demoDone
 );
 
-
-// DEFAULT HIDE
 joinBtn.style.display =
-"none";
+allowJoin
+? "inline-block"
+: "none";
 
 joinBtn.style.opacity =
-"0.5";
+allowJoin
+? "1"
+: "0.5";
 
 joinBtn.style.pointerEvents =
-"none";
-
-
-if(allowJoin){
-
-joinBtn.style.display =
-"inline-block";
-
-joinBtn.style.opacity =
-"1";
-
-joinBtn.style.pointerEvents =
-"auto";
+allowJoin
+? "auto"
+: "none";
 
 joinBtn.textContent =
-"Join Class";
+"Join Now";
 
 if(enrolled){
 
@@ -2091,18 +2150,37 @@ joinBtn.title =
 
 }
 
+
+/* HOURS */
+
+const hoursEl =
+document.getElementById(
+"hours-" + course
+);
+
+if(hoursEl){
+
+if(enrolled && !planDone){
+
+hoursEl.textContent =
+"📚 "
++
+(maxHours-hoursUsed)
++
+" classes remaining";
+
+hoursEl.style.display =
+"block";
+
 }
- 
-  /* Hours left */
-  const hoursEl = document.getElementById("hours-" + course);
-  if (hoursEl) {
-    if (enrolled && !planDone) {
-      hoursEl.textContent  = "📚 " + (maxHours - hoursUsed) + " classes remaining";
-      hoursEl.style.display = "block";
-    } else {
-      hoursEl.style.display = "none";
-    }
-  }
+else{
+
+hoursEl.style.display =
+"none";
+
+}
+
+}
 
 }
 window.addEventListener("load", () => {
@@ -2692,6 +2770,7 @@ try{
         
         
         // LIVE
+        liveStatus[course] = data.live;
         if(data.live){
         
         if(badge){
