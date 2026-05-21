@@ -1327,9 +1327,7 @@ html, body{
           {% if student.demo_done.get('cbse9') %}
            <button class="btn btn-demo-done">Demo Completed</button>
          {% else %}
-          <button id="demoBtn-cbse9"
-class="btn btn-demo"
-onclick="openDemoPopup('cbse9')"> Free Demo </button>
+          <button id="demoBtn-cbse9" class="btn btn-demo" onclick="openDemoPopup('cbse9')"> Free Demo </button>
          {% endif %}
              
        
@@ -1761,7 +1759,7 @@ let otpInterval;
 
   control : "10:00 AM",
   AGS     : "11:00 AM",
-  Maths   : "7:30 PM"
+  maths   : "7:30 PM"
 
 };
 
@@ -1779,7 +1777,7 @@ const CLASS_DURATION = {
 
   control : "1 Hour",
   AGS     : "1 Hour",
-  Maths   : "1.5 Hours"
+  maths   : "1.5 Hours"
 
 };
 function canStartClass(course){
@@ -1885,7 +1883,7 @@ const CLASSES_PER_MONTH = 12;
 const PRICE_PER_HOUR = {
   cbse9: 1, cbse10: 300, cbse11: 350, cbse12: 400,
   engg1: 700,  engg2: 700,  engg3: 700,  control: 800,
-  AGS: 400,    Maths: 400
+  AGS: 400,    maths: 400
 };
  
 /* ---- INIT ---- */
@@ -1965,7 +1963,7 @@ function updateDiscountDisplays(discounts) {
  
 /* ---- UPDATE ALL COURSE UIs ---- */
 function updateAllCourseUI() {
-  const allCourses = ["cbse9","cbse10","cbse11","cbse12","engg1","engg2","engg3","control","AGS","Maths"];
+  const allCourses = ["cbse9","cbse10","cbse11","cbse12","engg1","engg2","engg3","control","AGS","maths"];
   allCourses.forEach(updateUI);
 }
  
