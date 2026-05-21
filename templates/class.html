@@ -2183,7 +2183,9 @@ hoursEl.style.display =
 }
 
 }
-window.addEventListener("load", () => {
+window.addEventListener("load", async () => {
+
+await refreshStatus();
 
 const courses = [
 "cbse9",
@@ -2198,41 +2200,21 @@ const courses = [
 "maths"
 ];
 
-courses.forEach(course => {
-
-try{
-
-checkLiveStatus(course);
-
-}catch(err){
-
-console.log(
-"Initial live error",
-course,
-err
-);
-
-}
-
-setInterval(async()=>{
-
-try{
+for(const course of courses){
 
 await checkLiveStatus(course);
 
-}catch(err){
+updateUI(course);
 
-console.log(
-"Refresh live error",
-course,
-err
-);
+setInterval(async()=>{
 
-}
+await checkLiveStatus(course);
+
+updateUI(course);
 
 },5000);
 
-});
+}
 
 });
 
@@ -2844,6 +2826,10 @@ err
 }
 
 }
+
+liveStatus[course]=data.live;
+
+updateUI(course);
 /* ======================================
    SEARCH
 ====================================== */
