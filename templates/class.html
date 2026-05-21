@@ -1889,16 +1889,7 @@ const PRICE_PER_HOUR = {
  
 /* ---- INIT ---- */
 document.addEventListener("DOMContentLoaded", async () => {
-  // All join buttons disabled by default
-  document.querySelectorAll(".btn-join").forEach(btn => {
-    btn.style.opacity       = "0.5";
-    btn.style.pointerEvents = "none";
-  });
- 
-  // Set today's date
-  const dateEl = document.querySelector(".date");
-  if (dateEl) dateEl.textContent = new Date().toLocaleDateString("en-IN");
- 
+   
   await refreshStatus();
 });
  
