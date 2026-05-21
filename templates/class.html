@@ -2101,7 +2101,7 @@ const courses = [
 "engg3",
 "control",
 "AGS",
-"Maths"
+"maths"
 ];
 
 courses.forEach(course => {
@@ -2939,10 +2939,19 @@ async function handleOTP(){
 
       }, 2000);
 
+      document.getElementById("otpInput").style.display="none";
+        
+      document.getElementById("otpTimer").style.display="none";
+        
+      const verifyBtn = document.getElementById("verifyBtn");
+        
+      if(verifyBtn)
+      verifyBtn.style.display="none";
+
       btn.textContent = "Proceed for Demo";
       btn.style.background = "green";
       btn.disabled = false;
-    
+
       step = 3;
 
       // SAVE SESSION
