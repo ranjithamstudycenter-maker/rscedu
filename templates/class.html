@@ -3188,17 +3188,22 @@ function startTimer(){
 
         otpSeconds--;
 
-        if(otpSeconds < 0){
+        if(otpSeconds<=0){
 
-            clearInterval(otpInterval);
-
-            timer.innerHTML =
-            "❌ OTP expired";
-
-            resendBtn.style.display =
-            "block";
-
-            step = 1;
+        clearInterval(
+        otpInterval
+        );
+        
+        // VERIFIED already → do nothing
+        if(otpVerified){
+        
+        return;
+        
+        }
+        
+        // NOT VERIFIED → show resend
+        showResend();
+        
         }
 
     }, 1000);
