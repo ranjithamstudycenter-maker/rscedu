@@ -2685,9 +2685,19 @@ function joinFromPopup() {
         document.getElementById("msg-" + course);
         
         if(data.live){
-        
-        else{
 
+        if(badge){
+        
+        badge.style.display =
+        "inline-block";
+        
+        }
+        
+        updateUI(course);
+        
+        }
+        else{
+        
         if(badge){
         
         badge.style.display =
@@ -2696,6 +2706,8 @@ function joinFromPopup() {
         }
         
         updateUI(course);
+        
+        }
            
         if(msg){
         
