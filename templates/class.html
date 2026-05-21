@@ -292,10 +292,15 @@ body{
 
 /* JOIN */
 .btn-join{
-  background:#81c784;
-  color:white;
-}
+background:#81c784;
+color:white;
 
+display:inline-block !important;
+visibility:visible !important;
+
+flex:1;
+}
+     
 .btn-joined{
   background:#2e7d32;
   color:white;
@@ -2087,7 +2092,6 @@ enrollBtn.style.pointerEvents =
 
 
 /* JOIN BUTTON */
-
 const joinBtn =
 document.getElementById(
 "joinBtn-" + course
@@ -2098,29 +2102,16 @@ if(joinBtn){
 const live =
 liveStatus[course] || false;
 
-// paid user
-if(enrolled && !planDone){
+const enrolled =
+(s.enrolled || {})[course]
+|| false;
 
-joinBtn.style.display =
-"flex";
+const demoDone =
+(s.demo_done || {})[course]
+|| false;
 
-joinBtn.style.opacity =
-"1";
 
-joinBtn.style.pointerEvents =
-"auto";
-
-joinBtn.textContent =
-"Join Now";
-joinBtn.classList.remove("disabled");
-joinBtn.onclick =
-()=>joinClass(course);
-
-}
-
-// demo user
-else if(demoDone && live){
-
+// DEFAULT → ALWAYS SHOW
 joinBtn.style.display =
 "inline-block";
 
@@ -2130,15 +2121,45 @@ joinBtn.style.opacity =
 joinBtn.style.pointerEvents =
 "auto";
 
+
+// PAID USER
+if(enrolled){
+
 joinBtn.textContent =
-"Join Class";
+"Join Now";
 
 joinBtn.onclick =
-()=>showLivePopup(course);
+()=>joinClass(course);
 
 }
 
-// hide others
+// DEMO USER
+else if(demoDone){
+
+joinBtn.textContent =
+live
+?
+"Join Class"
+:
+"Wait for Class";
+
+joinBtn.onclick =
+live
+?
+()=>joinClass(course)
+:
+null;
+
+if(!live){
+
+joinBtn.style.opacity =
+"0.5";
+
+}
+
+}
+
+// NOT REGISTERED
 else{
 
 joinBtn.style.display =
