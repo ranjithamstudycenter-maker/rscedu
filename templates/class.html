@@ -3112,7 +3112,11 @@ async function openDemoPopup(course){
   document.getElementById("otpInput").style.display = "none";
 
   document.getElementById("resendBtn").style.display = "none";
-  document.getElementById("timer").innerHTML = "";
+  const timer = document.getElementById("timer-" + currentCourse);
+
+  if(timer){
+  timer.innerHTML="";
+  }
 
   const btn = document.getElementById("mainBtn");
   btn.textContent = "Send OTP";
