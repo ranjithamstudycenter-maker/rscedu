@@ -2017,7 +2017,7 @@ function updateUI(course) {
   }
  
   
-  /* Join button */
+/* Join button */
 const joinBtn =
 document.getElementById(
 "joinBtn-" + course
@@ -2025,16 +2025,45 @@ document.getElementById(
 
 if(joinBtn){
 
+const live =
+document
+.getElementById(
+"live-" + course
+)
+?.style.display
+=== "inline-block";
+
 const demoDone =
 (s.demo_done || {})[course]
 || false;
 
+const enrolled =
+(s.enrolled || {})[course]
+|| false;
+
 const allowJoin =
+live &&
+(
+demoDone ||
 (enrolled && !planDone)
-||
-demoDone;
+);
+
+
+// DEFAULT HIDE
+joinBtn.style.display =
+"none";
+
+joinBtn.style.opacity =
+"0.5";
+
+joinBtn.style.pointerEvents =
+"none";
+
 
 if(allowJoin){
+
+joinBtn.style.display =
+"inline-block";
 
 joinBtn.style.opacity =
 "1";
@@ -2042,14 +2071,15 @@ joinBtn.style.opacity =
 joinBtn.style.pointerEvents =
 "auto";
 
-joinBtn.style.display =
-"inline-block";
+joinBtn.textContent =
+"Join Class";
 
 if(enrolled){
 
 joinBtn.title =
-(maxHours - hoursUsed)
-+ " classes remaining";
+(maxHours-hoursUsed)
++
+" classes remaining";
 
 }
 else{
@@ -2058,20 +2088,6 @@ joinBtn.title =
 "Demo access";
 
 }
-
-}
-else{
-
-joinBtn.style.opacity =
-"0.5";
-
-joinBtn.style.pointerEvents =
-"none";
-
-joinBtn.style.display =
-"none";
-
-joinBtn.title = "";
 
 }
 
