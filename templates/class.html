@@ -2046,22 +2046,56 @@ function updateUI(course) {
 }
 window.addEventListener("load", () => {
 
-  const courses = ["cbse9", "cbse10", "cbse11", "cbse12", "engg1", "engg2", "engg3", "control", "AGS", "Maths"];
+const courses = [
+"cbse9",
+"cbse10",
+"cbse11",
+"cbse12",
+"engg1",
+"engg2",
+"engg3",
+"control",
+"AGS",
+"Maths"
+];
 
-  // 🔥 EACH COURSE
-  courses.forEach(course => {
+courses.forEach(course => {
 
-        // 🔴 LIVE STATUS CHECK
-        checkLiveStatus(course);
- 
-         
-        // 🔄 AUTO REFRESH LIVE STATUS
-        setInterval(() => {
-          checkLiveStatus(course);
-        }, 5000);
-               
-  });
+try{
 
+checkLiveStatus(course);
+
+}catch(err){
+
+console.log(
+"Initial live error",
+course,
+err
+);
+
+}
+
+setInterval(async()=>{
+
+try{
+
+await checkLiveStatus(course);
+
+}catch(err){
+
+console.log(
+"Refresh live error",
+course,
+err
+);
+
+}
+
+},5000);
+
+});
+
+});
 
   // ⏰ CLASS TIMINGS DISPLAY
   Object.keys(CLASS_TIMINGS).forEach(course => {
