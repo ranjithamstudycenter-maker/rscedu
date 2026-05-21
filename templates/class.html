@@ -2029,9 +2029,8 @@ const live =
 document
 .getElementById(
 "live-" + course
-)
-?.style.display
-=== "inline-block";
+)?.offsetParent
+!== null;
 
 const demoDone =
 (s.demo_done || {})[course]
@@ -2044,8 +2043,9 @@ const enrolled =
 const allowJoin =
 live &&
 (
-demoDone ||
 (enrolled && !planDone)
+||
+demoDone
 );
 
 
