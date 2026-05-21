@@ -3048,6 +3048,28 @@ async function handleOTP(){
     try{
       await window.confirmationResult.confirm(otp);
 
+      // 👇 PASTE HERE
+    otpVerified = true;
+    
+    clearInterval(otpInterval);
+    
+    const resend =
+    document.getElementById(
+    "resendOtp"
+    );
+    
+    if(resend){
+    resend.style.display="none";
+    }
+    
+    const timer =
+    document.getElementById(
+    "otpTimer"
+    );
+    
+    if(timer){
+    timer.innerHTML="";
+    }  
       msg.innerHTML = "✅ Verified ✔";
       msg.style.color = "green";
       
