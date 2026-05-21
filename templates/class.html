@@ -2095,8 +2095,6 @@ enrollBtn.style.pointerEvents =
 }
 
 
-/* JOIN BUTTON */
-
 const joinBtn =
 document.getElementById(
 "joinBtn-" + course
@@ -2107,44 +2105,60 @@ if(joinBtn){
 const live =
 liveStatus[course] || false;
 
-const allowJoin =
-live &&
-(
-(enrolled && !planDone)
-||
-demoDone
-);
+// paid student
+const allowPaid =
+enrolled && !planDone;
+
+// demo student
+const allowDemo =
+demoDone && live;
+
+
+// ---------- PAID ----------
+if(allowPaid){
 
 joinBtn.style.display =
-allowJoin
-? "inline-block"
-: "none";
-
-joinBtn.style.opacity =
-allowJoin
-? "1"
-: "0.5";
+"inline-block";
 
 joinBtn.style.pointerEvents =
-allowJoin
-? "auto"
-: "none";
+"auto";
+
+joinBtn.style.opacity =
+"1";
 
 joinBtn.textContent =
 "Join Now";
 
-if(enrolled){
-
-joinBtn.title =
-(maxHours-hoursUsed)
-+
-" classes remaining";
+joinBtn.onclick =
+()=>joinClass(course);
 
 }
+
+// ---------- DEMO ----------
+else if(allowDemo){
+
+joinBtn.style.display =
+"inline-block";
+
+joinBtn.style.pointerEvents =
+"auto";
+
+joinBtn.style.opacity =
+"1";
+
+joinBtn.textContent =
+"Join Class";
+
+joinBtn.onclick =
+()=>showLivePopup(course);
+
+}
+
+// ---------- HIDE ----------
 else{
 
-joinBtn.title =
-"Demo access";
+joinBtn.style.display =
+"none";
 
 }
 
