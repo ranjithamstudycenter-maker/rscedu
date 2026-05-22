@@ -575,81 +575,112 @@ No waiting students
 function startClass() {
 
   const link =
-  document.getElementById(
-  "meetLink"
-  ).value.trim();
+  document
+  .getElementById("meetLink")
+  .value
+  .trim();
 
   // validation
   if(!link){
-    alert("⚠️ Please enter Google Meet link");
+
+    alert(
+    "⚠️ Please enter Google Meet link"
+    );
+
     return;
   }
 
-  // meet check
-  if(!link.includes("meet.google.com")){
-    alert("❌ Invalid Google Meet link");
+  if(
+    !link.includes(
+    "meet.google.com"
+    )
+  ){
+
+    alert(
+    "❌ Invalid Google Meet link"
+    );
+
     return;
   }
 
-  fetch("/start-class",{
+  // 🔥 OPEN TAB IMMEDIATELY
+  const meetTab =
+  window.open(
+    "",
+    "_blank"
+  );
+
+  fetch(
+  "/start-class",
+  {
+
     method:"POST",
 
     headers:{
-      "Content-Type":"application/json"
+      "Content-Type":
+      "application/json"
     },
 
-    body:JSON.stringify({
+    body:
+    JSON.stringify({
       meetLink:link
     })
 
   })
 
-  .then(res=>res.json())
+  .then(
+  res=>res.json()
+  )
 
   .then(data=>{
 
     if(data.error){
 
-      alert(data.error);
-      return;
-
-    }
-
-    // UI update
-    document.getElementById(
-    "statusText"
-    ).innerHTML =
-    "🟢 Class Live";
-
-    document.getElementById(
-    "statusText"
-    ).className =
-    "status live";
-
-    // clear input
-    document.getElementById(
-    "meetLink"
-    ).value="";
-
-    // OPEN ONLY ONCE
-    if(data.status==="ok"){
-
-      window.open(
-      link,
-      "_blank"
-      );
+      meetTab.close();
 
       alert(
-      "✅ Class Started Successfully"
+      data.error
       );
 
+      return;
     }
+
+    document
+    .getElementById(
+    "statusText"
+    )
+    .innerHTML =
+    "🟢 Class Live";
+
+    document
+    .getElementById(
+    "statusText"
+    )
+    .className =
+    "status live";
+
+    document
+    .getElementById(
+    "meetLink"
+    )
+    .value="";
+
+    // 🔥 redirect opened tab
+    meetTab.location.href =
+    link;
+
+    alert(
+    "✅ Class Started Successfully"
+    );
 
   })
 
   .catch(err=>{
 
-    console.error(err);
+    if(meetTab)
+    meetTab.close();
+
+    console.log(err);
 
     alert(
     "⚠️ Server error"
@@ -658,7 +689,6 @@ function startClass() {
   });
 
 }
-
 
 // 🔴 END CLASS
 function endClass() {
