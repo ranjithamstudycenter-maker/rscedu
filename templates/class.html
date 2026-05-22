@@ -2995,53 +2995,49 @@ async function handleOTP(){
     const res = await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
     const data = await res.json();
 
-    // 🔥 running check
-    const key = "demo_running_" + currentCourse;
-
-    if(localStorage.getItem(key)){
-
-    fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`)
-      .then(res => res.json())
-      .then(data => {
-
-        const joinBtn =
-        document.getElementById("popupJoinBtn");
-
-        // 🔴 CLASS LIVE
-        if(data.meet_link){
-
-            document.getElementById("statusMsg").innerHTML =
-              "⏳ Demo already running";
-
-            document.getElementById("statusMsg").style.color =
-              "orange";
-
-            const timerBox =
-            document.getElementById("timer-" + currentCourse);
-            
-            if(timerBox){
-            
-                timerBox.innerHTML =
-                "🟢 Class Running";
-            
-                timerBox.style.color = "green";
-            }
-
-            joinBtn.style.display = "block";
-
-            // 🔥 change button text
-            document.getElementById("mainBtn").textContent =
-            "Join Class";
-            
-            document.getElementById("mainBtn").style.background =
-            "green";
-
-            joinBtn.onclick = () => {
-                window.open(data.meet_link, "_blank");
-            };
-
-        }
-
+    const key =
+    "demo_running_" +
+    currentCourse;
+    
+    const joinBtn =
+    document.getElementById(
+    "popupJoinBtn"
+    );
+    
+    // class already running
+    if(
+    localStorage.getItem(key)
+    &&
+    data.meet_link
+    ){
+    
+    msg.innerHTML =
+    "🟢 Class Live";
+    
+    msg.style.color =
+    "green";
+    
+    joinBtn.style.display =
+    "block";
+    
+    btn.textContent =
+    "Join Class";
+    
+    btn.style.background =
+    "green";
+    
+    joinBtn.onclick =
+    async ()=>{
+    
+    await joinClass(
+    currentCourse
+    );
+    
+    };
+    
+    return;
+    
+    }
         // 🔴 CLASS ENDED
         else{
 
