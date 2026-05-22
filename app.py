@@ -700,16 +700,6 @@ def join_class_api():
 
     demo_allowed = row[1]
     
-    demo_done = (
-        user["demo_done"]
-        .get(course, False)
-    )
-
-    enrolled = (
-        user["enrolled"]
-        .get(course, False)
-    )
-
     # 🔥 allow:
     # 1 verified demo student
     # 2 enrolled student
