@@ -696,11 +696,9 @@ def join_class_api():
 
     
     
-    otp_verified =
-    row[0]
-    
-    demo_allowed =
-    row[1]
+    otp_verified = row[0]
+
+    demo_allowed = row[1]
     
     demo_done = (
         user["demo_done"]
