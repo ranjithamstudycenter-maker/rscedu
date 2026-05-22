@@ -921,7 +921,8 @@ def start_class():
         return jsonify({
             "status": "Class started",
             "success": True,
-            "live": True
+            "live": True,
+            "meet_link": meet_link
         })
 
     except Exception as e:
