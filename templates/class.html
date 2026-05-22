@@ -2299,15 +2299,39 @@ if (localStorage.getItem(key)) {
 
             if(joinBtn){
 
-               joinBtn.style.display = "block";
-
-               joinBtn.onclick = () => {
-
-                   // 🔥 open class
-                   window.open(data.meet_link, "_blank");
+                joinBtn.style.display = "block";
                 
-                   // 🔥 close popup
-                   document.getElementById("demoPopup").style.display = "none";
+                joinBtn.innerHTML =
+                "Join Class";
+                
+                joinBtn.disabled =
+                false;
+                
+                joinBtn.onclick =
+                async function(){
+                
+                try{
+                
+                await joinClass(course);
+                
+                document
+                .getElementById(
+                "demoPopup"
+                )
+                .style.display =
+                "none";
+                
+                }catch(e){
+                
+                showMessage(
+                "❌ Unable to join"
+                );
+                
+                }
+                
+                };
+                
+                }
                 
                    // 🔥 start checking class end
                    clearInterval(popupWatcher);
@@ -2644,9 +2668,13 @@ async function joinClass(course) {
     window.open(data.meet_link, "_blank");
     showMessage("✅ Joined Successfully");
 
-  } catch(e) {
-    showMessage("❌ Error joining");
-  }
+  } catch(err){
+
+    console.log(err);
+
+    showMessage(
+    "❌ Join failed"
+    )
     if(data.show_feedback){
 
    openFeedbackPopup(course);
@@ -3804,20 +3832,31 @@ document.addEventListener("DOMContentLoaded", () => {
         🔄 Resend OTP
         </button>
    
-      <button id="popupJoinBtn"
-        style="
-        display:none;
-        width:100%;
-        padding:10px;
-        margin-top:10px;
-        background:green;
-        color:white;
-        border:none;
-        border-radius:6px;
-        "
-        >
-        Join Class
-        </button>
+      <button
+            id="popupJoinBtn"
+            
+            onclick="
+            joinClass(
+            currentCourse
+            )
+            "
+            
+            style="
+            display:none;
+            width:100%;
+            padding:10px;
+            margin-top:10px;
+            background:green;
+            color:white;
+            border:none;
+            border-radius:6px;
+            cursor:pointer;
+            border-radius:6px;
+            ">
+            
+            Join Class
+            
+            </button>
       <p id="statusMsg" style="margin-top:10px;font-weight:bold;"></p>
 
   </div>
