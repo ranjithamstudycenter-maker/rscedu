@@ -695,48 +695,48 @@ def join_class_api():
     enrolled  = user["enrolled"].get(course, False)
 
     demo_done =
-        user["demo_done"].get(
-        course,
-        False
-        )
-        
-        enrolled =
-        user["enrolled"].get(
-        course,
-        False
-        )
-        
-        otp_verified =
-        row[0]
-        
-        demo_allowed =
-        row[1]
-        
-        
-        # 🔥 allow:
-        # 1 verified demo student
-        # 2 enrolled student
-        
-        allow_join = (
-        (
-        otp_verified==1
-        and
-        demo_allowed==1
-        )
-        or
-        enrolled
-        )
-        
-        if not allow_join:
-        
-            conn.close()
-        
-            return jsonify({
-        
-              "error":
-              "Join not allowed"
-        
-            }),403
+    user["demo_done"].get(
+    course,
+    False
+    )
+    
+    enrolled =
+    user["enrolled"].get(
+    course,
+    False
+    )
+    
+    otp_verified =
+    row[0]
+    
+    demo_allowed =
+    row[1]
+    
+    
+    # 🔥 allow:
+    # 1 verified demo student
+    # 2 enrolled student
+    
+    allow_join = (
+    (
+    otp_verified==1
+    and
+    demo_allowed==1
+    )
+    or
+    enrolled
+    )
+    
+    if not allow_join:
+    
+        conn.close()
+    
+        return jsonify({
+    
+          "error":
+          "Join not allowed"
+    
+        }),403
 
     # =================================
     # ENROLLED HOURS CHECK
