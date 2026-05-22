@@ -694,17 +694,7 @@ def join_class_api():
     demo_done = user["demo_done"].get(course, False)
     enrolled  = user["enrolled"].get(course, False)
 
-    demo_done =
-    user["demo_done"].get(
-    course,
-    False
-    )
     
-    enrolled =
-    user["enrolled"].get(
-    course,
-    False
-    )
     
     otp_verified =
     row[0]
@@ -712,7 +702,16 @@ def join_class_api():
     demo_allowed =
     row[1]
     
-    
+    demo_done = (
+        user["demo_done"]
+        .get(course, False)
+    )
+
+    enrolled = (
+        user["enrolled"]
+        .get(course, False)
+    )
+
     # 🔥 allow:
     # 1 verified demo student
     # 2 enrolled student
@@ -798,6 +797,7 @@ def join_class_api():
 
     return jsonify({
         "status": "ok",
+        "meet_link": meet_link,
         "redirect_url": f"/join-live/{course}",
         "hours_used": user["hours_used"].get(course, 0),
         "hours_remaining": user["max_hours"].get(course, classes_per_month)
