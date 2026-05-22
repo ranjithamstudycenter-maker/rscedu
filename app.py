@@ -964,24 +964,27 @@ def get_active_meet_link(course):
 
     return None
     
-    
+
 @app.route("/api/class-status")
 def class_status():
 
     course = request.args.get("course")
 
-    for name, t in teachers.items():
+    if not course:
 
-        if t["course"] == course:
+        return jsonify({
+            "live": False,
+            "meet_link": ""
+        })
 
-            return jsonify({
-                "live": t.get("class_live", False),
-                "meet_link": t.get("meet_link", "")
-            })
+    meet_link = get_active_meet_link(course)
 
     return jsonify({
-        "live": False,
-        "meet_link": ""
+
+        "live": bool(meet_link),
+
+        "meet_link": meet_link or ""
+
     })
 
 @app.route("/end-class", methods=["POST"])
