@@ -1750,7 +1750,7 @@ const auth = firebase.auth();
 <script>
 let popupWatcher = null;
 let otpSeconds = 300;
-let otpInterval;
+window.otpInterval = null;
 let otpVerified = false;
  const CLASS_TIMINGS = {
 
@@ -3122,7 +3122,10 @@ async function handleOTP(){
       // 👇 PASTE HERE
     otpVerified = true;
     
-    clearInterval(otpInterval);
+    if(window.otpInterval){
+    clearInterval(window.otpInterval);
+    window.otpInterval = null;
+    }
     
     const resend =
     document.getElementById(
@@ -3232,7 +3235,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
 function startTimer(){
 
-    clearInterval(otpInterval);
+    if(window.otpInterval){
+    clearInterval(window.otpInterval);
+    window.otpInterval = null;
+    }
 
     otpSeconds = 300;
 
@@ -3244,7 +3250,7 @@ function startTimer(){
 
     resendBtn.style.display = "none";
 
-    otpInterval = setInterval(() => {
+    window.otpInterval = setInterval(() => {
 
         const min =
         Math.floor(otpSeconds / 60);
@@ -3359,7 +3365,10 @@ function startTimer(){
   document.getElementById("demoPopup")
   .style.display = "none";
 
-  clearInterval(otpInterval);
+  if(window.otpInterval){
+  clearInterval(window.otpInterval);
+  window.otpInterval = null;
+}
 }
 
   let currentCourse = "";
@@ -3378,7 +3387,10 @@ async function openDemoPopup(course){
     });
   }
   
-  clearInterval(otpInterval);
+  if(window.otpInterval){
+  clearInterval(window.otpInterval);
+  window.otpInterval = null;
+  }
 
   document.getElementById("phoneInput").value = "";
   document.getElementById("otpInput").value = "";
