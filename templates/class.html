@@ -2760,7 +2760,7 @@ const data =
 await res.json();
 
 
-// 🔥 IMPORTANT
+// 🔥 SAVE LIVE STATUS
 liveStatus[course] =
 data.live || false;
 
@@ -2776,6 +2776,7 @@ document.getElementById(
 );
 
 
+// 🔴 LIVE BADGE
 if(badge){
 
 badge.style.display =
@@ -2786,10 +2787,54 @@ data.live
 }
 
 
-// 🔥 update buttons
+// 🔥 POPUP BUTTON AUTO CHANGE
+if(
+data.live &&
+step === 3 &&
+currentCourse === course
+){
+
+const btn =
+document.getElementById(
+"mainBtn"
+);
+
+if(btn){
+
+btn.textContent =
+"Join Class";
+
+btn.style.background =
+"#16a34a";
+
+btn.disabled =
+false;
+
+}
+
+const status =
+document.getElementById(
+"statusMsg"
+);
+
+if(status){
+
+status.innerHTML =
+"🔴 Class Started";
+
+status.style.color =
+"green";
+
+}
+
+}
+
+
+// 🔥 UPDATE COURSE BUTTONS
 updateUI(course);
 
 
+// 🔥 CARD MESSAGE
 if(msg){
 
 const isPaid =
@@ -2809,14 +2854,12 @@ msg.innerHTML =
 "🔴 Class Started";
 
 }
-
 else if(isDemo){
 
 msg.innerHTML =
 "🔴 Demo Started";
 
 }
-
 else{
 
 msg.innerHTML =
