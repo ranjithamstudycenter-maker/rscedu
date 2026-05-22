@@ -574,52 +574,89 @@ No waiting students
 
 function startClass() {
 
-  const link = document.getElementById("meetLink").value.trim();
+  const link =
+  document.getElementById(
+  "meetLink"
+  ).value.trim();
 
-  // ✅ validation
+  // validation
   if(!link){
     alert("⚠️ Please enter Google Meet link");
     return;
   }
 
-  // ✅ basic link check
+  // meet check
   if(!link.includes("meet.google.com")){
     alert("❌ Invalid Google Meet link");
     return;
   }
 
-  fetch("/start-class", {
-    method: "POST",
-    headers: {"Content-Type": "application/json"},
-    body: JSON.stringify({ meetLink: link })
+  fetch("/start-class",{
+    method:"POST",
+
+    headers:{
+      "Content-Type":"application/json"
+    },
+
+    body:JSON.stringify({
+      meetLink:link
+    })
+
   })
-  .then(res => res.json())
-  .then(data => {
+
+  .then(res=>res.json())
+
+  .then(data=>{
 
     if(data.error){
+
       alert(data.error);
       return;
+
     }
 
-    // ✅ UI update
-    document.getElementById("statusText").innerHTML = "🟢 Class Live";
-    document.getElementById("statusText").className = "status live";
+    // UI update
+    document.getElementById(
+    "statusText"
+    ).innerHTML =
+    "🟢 Class Live";
 
-    // ✅ clear input
-    document.getElementById("meetLink").value = "";
+    document.getElementById(
+    "statusText"
+    ).className =
+    "status live";
 
-    // 🔥 OPEN GOOGLE MEET FOR FACULTY
-    window.open(link, "_blank");
+    // clear input
+    document.getElementById(
+    "meetLink"
+    ).value="";
 
-    alert("✅ Class Started Successfully");
+    // OPEN ONLY ONCE
+    if(data.status==="ok"){
+
+      window.open(
+      link,
+      "_blank"
+      );
+
+      alert(
+      "✅ Class Started Successfully"
+      );
+
+    }
 
   })
-  .catch(err => {
 
-    alert("⚠️ Server error");
+  .catch(err=>{
+
     console.error(err);
 
+    alert(
+    "⚠️ Server error"
+    );
+
   });
+
 }
 
 
