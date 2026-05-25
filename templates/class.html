@@ -3348,13 +3348,29 @@ function startTimer(){
 
  function closePopup(){
 
-  document.getElementById("demoPopup")
-  .style.display = "none";
+    document.getElementById("demoPopup")
+    .style.display = "none";
 
-  if(window.otpInterval){
-  clearInterval(window.otpInterval);
-  window.otpInterval = null;
-}
+    if(window.otpInterval){
+
+        clearInterval(window.otpInterval);
+
+        window.otpInterval = null;
+    }
+
+    otpVerified = false;
+
+    step = 1;
+
+    document.getElementById("otpInput")
+    .style.display = "none";
+
+    document.getElementById("resendBtn")
+    .style.display = "none";
+
+    document.getElementById("statusMsg")
+    .innerHTML = "";
+
 }
 
   let currentCourse = "";
