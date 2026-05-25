@@ -2637,7 +2637,7 @@ async function joinClass(course) {
   }
 
   try {
-    const res = await fetch("/api/join-class?course=" + course);
+    const res = await fetch("/api/join-class?course=" + encodeURIComponent(currentCourse))
     const data = await res.json();
 
     if (data.show_feedback) {
@@ -3021,7 +3021,8 @@ async ()=>{
 
 const live =
 await fetch(
-`/api/join-class?course=${currentCourse}`
+`/api/join-class?course=" +
+encodeURIComponent(currentCourse)`
 );
 
 const liveData =
