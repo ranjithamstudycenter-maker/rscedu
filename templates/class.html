@@ -2369,7 +2369,7 @@ if (localStorage.getItem(key)) {
                           if(msgBox){
                 
                               msgBox.innerHTML =
-                              "✅ Demo Completed Please Enroll";
+                              "✅ Demo Completed Please Pay";
                 
                               msgBox.style.color = "green";
                           }
@@ -2382,8 +2382,35 @@ if (localStorage.getItem(key)) {
                               badge.style.display = "none";
                           }
                 
-                          alert("✅ Demo Completed. Kindly Pay and attend class");
-                      }
+                         // close popup
+                                document
+                                .getElementById(
+                                "demoPopup"
+                                )
+                                .style.display =
+                                "none";
+                                
+                                // show message in class card
+                                const msgBox =
+                                document.getElementById(
+                                "msg-" + course
+                                );
+                                
+                                if(msgBox){
+                                
+                                msgBox.innerHTML =
+                                "✅ Demo Completed. Kindly Pay and attend class";
+                                
+                                msgBox.style.color =
+                                "green";
+                                
+                                msgBox.style.fontWeight =
+                                "600";
+                                
+                                msgBox.style.display =
+                            "block";
+                                
+                                }
                 
                    }, 5000);
               } 
