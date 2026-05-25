@@ -2257,262 +2257,87 @@ updateUI(course);
 ====================================== */
 function startDemoSession(course) {
 
-const phone =
-document.getElementById("phoneInput")?.value
-||
-studentStatus?.phone
-||
-localStorage.getItem("phone");
-
-if(!phone){
-
-showMessage(
-"⚠️ Enter phone number"
-);
-
-return;
-
-}
-
-localStorage.setItem(
-"phone",
-phone
-);
-
-const key =
-"demo_running_" +
-course;
-
-
-// already running
-if(localStorage.getItem(key)){
-
-fetch(
-`/api/check-demo?course=${course}&phone=${phone}`
-)
-
-.then(
-res=>res.json()
-)
-
-.then(data=>{
-
-const joinBtn =
-document.getElementById(
-"popupJoinBtn"
-);
-
-
-// LIVE
-if(data.meet_link){
-
-const isPaid =
-studentStatus
-?.enrolled
-?.[course];
-
-if(isPaid){
-
-showMessage(
-"🔴 Class already running"
-);
-
-}
-else{
-
-showMessage(
-"⏳ Demo already running"
-);
-
-}
-
-
-if(joinBtn){
-
-joinBtn.style.display =
-"block";
-
-joinBtn.innerHTML =
-"Join Class";
-
-joinBtn.disabled =
-false;
-
-joinBtn.onclick =
-async ()=>{
-
-try{
-
-await joinClass(
-course
-);
-
-// close popup
-document
-.getElementById(
-"demoPopup"
-)
-.style.display =
-"none";
-
-}
-catch(e){
-
-showMessage(
-"❌ Unable to join"
-);
-
-}
-
-};
-
-}
-
-
-// watcher
-clearInterval(
-popupWatcher
-);
-
-popupWatcher =
-setInterval(
-async()=>{
-
-const res =
-await fetch(
-`/api/check-demo?course=${course}&phone=${phone}`
-);
-
-const liveData =
-await res.json();
-
-
-// class ended
-if(
-!liveData.meet_link
-){
-
-clearInterval(
-popupWatcher
-);
-
-localStorage.removeItem(
-key
-);
-
-
-// hide join
-if(joinBtn){
-
-joinBtn.style.display =
-"none";
-
-}
-
-
-// clear timer
-const timerBox =
-document.getElementById(
-"timer-" +
-course
-);
-
-if(timerBox){
-
-timerBox.innerHTML =
-"";
-
-}
-
-
-// remove live
-const badge =
-document.getElementById(
-"live-" +
-course
-);
-
-if(badge){
-
-badge.style.display =
-"none";
-
-}
-
-
-// close popup
-const popup =
-document.getElementById(
-"demoPopup"
-);
-
-if(popup){
-
-popup.style.display =
-"none";
-
-}
-
-
-// card message
-let doneBox =
-document.getElementById(
-"msg-" +
-course
-);
-
-if(doneBox){
-
-doneBox.innerHTML =
-"✅ Demo Completed • Kindly Pay";
-
-doneBox.style.color =
-"green";
-
-doneBox.style.fontWeight =
-"600";
-
-doneBox.style.display =
-"block";
-
-}
-
-}
-
-},
-
-5000
-
-);
-
-}
-
-
-// not live
-else{
-
-localStorage.removeItem(
-key
-);
-
-if(joinBtn){
-
-joinBtn.style.display =
-"none";
-
-}
-
-}
-
-});
-
-return;
-
-}
-
-}
-
- // 🔥 already completed check
+  const phone = document.getElementById("phoneInput")?.value 
+             || studentStatus?.phone 
+             || localStorage.getItem("phone");
+
+  if (!phone) {
+    showMessage("⚠️ Enter phone number");
+    return;
+  }
+
+  localStorage.setItem("phone", phone);
+  const key = "demo_running_" + course;
+
+  if (localStorage.getItem(key)) {
+
+    fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+      .then(res => res.json())
+      .then(data => {
+
+        const joinBtn = document.getElementById("popupJoinBtn");
+
+        if(data.meet_link){
+
+          const isPaid = studentStatus?.enrolled?.[course];
+          if(isPaid){
+            showMessage("🔴 Class already running");
+          } else {
+            showMessage("⏳ Demo already running");
+          }
+
+          if(joinBtn){
+            joinBtn.style.display = "block";
+            joinBtn.innerHTML = "Join Class";
+            joinBtn.disabled = false;
+            joinBtn.onclick = async function(){
+              try{
+                await joinClass(course);
+                document.getElementById("demoPopup").style.display = "none";
+              } catch(e){
+                showMessage("❌ Unable to join");
+              }
+            };
+          }
+
+          clearInterval(popupWatcher);
+          popupWatcher = setInterval(async () => {
+            const res = await fetch(`/api/check-demo?course=${course}&phone=${phone}`);
+            const liveData = await res.json();
+
+            if(!liveData.meet_link){
+              clearInterval(popupWatcher);
+              localStorage.removeItem(key);
+              if(joinBtn) joinBtn.style.display = "none";
+
+              const timerBox = document.getElementById("timer-" + course);
+              if(timerBox) timerBox.innerHTML = "";
+
+              const msgBox = document.getElementById("msg-" + course);
+              if(msgBox){
+                msgBox.innerHTML = "✅ Demo Completed Please Enroll";
+                msgBox.style.color = "green";
+              }
+
+              const badge = document.getElementById("live-" + course);
+              if(badge) badge.style.display = "none";
+
+              alert("✅ Demo Completed. Kindly Pay and attend class");
+            }
+          }, 5000);
+
+        } else {
+          // class இல்லை — key remove பண்ணு, message வேண்டாம்
+          localStorage.removeItem(key);
+          if(joinBtn) joinBtn.style.display = "none";
+        }
+
+      });
+
+    return;
+  }
+
+  // 🔥 already completed check
   fetch(`/api/check-demo?course=${course}&phone=${phone}`)
     .then(res => res.json())
     .then(data => {
@@ -2522,21 +2347,46 @@ return;
         return;
       }
 
-      
-          if(!canStartClass(course)){
+      if(!canStartClass(course)){
+        updateClassCountdown(course);
+        showMessage("⏰ Class starts at " + CLASS_TIMINGS[course]);
+        return;
+      }
 
-               updateClassCountdown(course);
-            
-               showMessage(
-                  "⏰ Class starts at " +
-                  CLASS_TIMINGS[course]
-               );
-            
-               return;
-            }
-      
-        startDemoFlow();
-     });
+   // 🔥 already completed check
+                fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+                .then(res => res.json())
+                .then(data => {
+                
+                if(data.demo_done){
+                
+                showMessage(
+                "⚠️ Demo already completed"
+                );
+                
+                return;
+                
+                }
+                
+                // class not started
+                if(!canStartClass(course)){
+                
+                updateClassCountdown(
+                course
+                );
+                
+                showMessage(
+                "⏰ Wait for class"
+                );
+                
+                return;
+                
+                }
+                
+                // start flow
+                startDemoFlow();
+                
+                });
 
   function startDemoFlow() {
 
