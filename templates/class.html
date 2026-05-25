@@ -3636,7 +3636,7 @@ async function openDemoPopup(course){
       if(remaining <= 0){
         clearInterval(interval);
         document.getElementById("timer-"+course).textContent =
-          "✅ Demo Completed – Please Enroll";
+          "✅ Demo Completed – Please Pay";
       }
 
     },1000);
@@ -3644,7 +3644,7 @@ async function openDemoPopup(course){
 
   if(data.status === "completed"){
     document.getElementById("timer-"+course).textContent =
-      "✅ Demo Completed – Please Enroll";
+      "✅ Demo Completed – Please Pay";
   }
 }
  const tabs = document.querySelectorAll(".tabs button");
