@@ -3048,7 +3048,7 @@ async function handleOTP(){
             joinBtn.style.display = "none";
         }
 
-      });
+   
 
     return;
 }
@@ -3367,6 +3367,7 @@ function startTimer(){
   let step = 1;
 
 async function openDemoPopup(course){
+  let otpVerified = false;
   otpVerified = false;
   currentCourse = course;
   step = 1;
