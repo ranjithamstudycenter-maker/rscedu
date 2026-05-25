@@ -2970,6 +2970,7 @@ function showMessage(msg) {
     el.innerHTML = "";
   }, 4000);
 }
+let otpVerified = false;
 async function handleOTP(){
 
   const name = document.getElementById("nameInput").value.trim();
@@ -3048,12 +3049,7 @@ async function handleOTP(){
             joinBtn.style.display = "none";
         }
 
-   
-
-    return;
-}
-
-    
+       
     // 🔥 completed check
     if(data.demo_done){
       msg.innerHTML = "⚠️ Demo already completed. For re-demo access, pay ₹100 and share the payment screenshot with the admin.";
