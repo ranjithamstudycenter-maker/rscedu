@@ -2971,116 +2971,200 @@ async function handleOTP(){
 }
 
   // STEP 1 → SEND OTP
-  if(step === 1){
-   
-    const res = await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
-    const data = await res.json();
+if(step === 1){
 
-    const key =
-    "demo_running_" +
-    currentCourse;
-    
-    const joinBtn =
-    document.getElementById(
-    "popupJoinBtn"
-    );
-    
-    // class already running
-    if(
-    localStorage.getItem(key)
-    &&
-    data.meet_link
-    ){
-    
-    msg.innerHTML =
-    "🟢 Class Live";
-    
-    msg.style.color =
-    "green";
-    
-    joinBtn.style.display =
-    "block";
-    
-    btn.textContent =
-    "Join Class";
-    
-    btn.style.background =
-    "green";
-    
-    joinBtn.onclick =
-    async ()=>{
-      // 🔥 directly open link — joinClass check bypass
-      const liveRes = await fetch(
-        `/api/check-demo?course=${currentCourse}&phone=${phone}`
-      );
-      const liveData = await liveRes.json();
-      if(liveData.meet_link){
-        window.open(liveData.meet_link, "_blank");
-      } else {
-        showMessage("⏳ Class not started yet");
-      }
-    };
-    
-    return;
-    
-    }
-        // 🔴 CLASS ENDED
-        else{
+const res =
+await fetch(
+`/api/check-demo?course=${currentCourse}&phone=${phone}`
+);
 
-            localStorage.removeItem(key);
+const data =
+await res.json();
 
-            document.getElementById("statusMsg").innerHTML =
-              "✅ Demo completed. Please enroll";
+const key =
+"demo_running_" +
+currentCourse;
 
-            document.getElementById("statusMsg").style.color =
-              "green";
+const joinBtn =
+document.getElementById(
+"popupJoinBtn"
+);
 
-            if(joinBtn){
-            joinBtn.style.display="none";
-            }
-        }
+// 🔥 ONLY AFTER VERIFIED → JOIN MODE
+if(
+step===3
+&&
+localStorage.getItem(key)
+&&
+data.meet_link
+){
 
-       
-    // 🔥 completed check
-    if(data.demo_done){
-      msg.innerHTML = "⚠️ Demo already completed. For re-demo access, pay ₹100 and share the payment screenshot with the admin.";
-      msg.style.color = "red";
-      return;
-    }
-    const appVerifier = window.recaptchaVerifier;
-    const phoneNumber = "+91" + phone;
+msg.innerHTML =
+"🟢 Class Live";
 
-    try{
-      const confirmationResult =
-        await firebase.auth().signInWithPhoneNumber(phoneNumber, appVerifier);
-   
-      window.confirmationResult = confirmationResult;
+msg.style.color =
+"green";
 
-      document.getElementById("otpInput").style.display = "block";
+btn.textContent =
+"Join Class";
 
-      btn.textContent = "Verify OTP";
-      btn.disabled = false;
+btn.style.background =
+"green";
 
-      msg.innerHTML = "📱 OTP sent";
-      msg.style.color = "green";
+if(joinBtn){
 
-     // 🔥 hide details after otp sent
-      document.getElementById("nameInput").style.display = "none";
-      document.getElementById("emailInput").style.display = "none";
-      document.getElementById("phoneInput").style.display = "none";
-      document.getElementById("resendBtn").style.display = "block";  // 🔥 ADD HERE
+joinBtn.style.display =
+"block";
 
-      startTimer();   // 🔥 ADD THIS 
-      step = 2;
+joinBtn.onclick =
+async ()=>{
 
-    } catch(e){
-      console.error(e);   // 🔥 ADD THIS
-      msg.innerHTML = "❌ Failed to send OTP";
-      msg.style.color = "red";
-      btn.textContent = "Send OTP";
-      btn.disabled = false;
-    }
-  }
+const live =
+await fetch(
+`/api/join-class?course=${currentCourse}`
+);
+
+const liveData =
+await live.json();
+
+if(
+liveData.error
+||
+!liveData.meet_link
+){
+
+showMessage(
+"⏳ Class not started yet"
+);
+
+return;
+
+}
+
+document
+.getElementById(
+"demoPopup"
+)
+.style.display =
+"none";
+
+window.open(
+liveData.meet_link,
+"_blank"
+);
+
+};
+
+}
+
+return;
+
+}
+
+// ❌ DON'T SHOW DEMO COMPLETED HERE
+if(data.demo_done){
+
+msg.innerHTML =
+"⚠️ Demo already completed";
+
+msg.style.color =
+"red";
+
+return;
+
+}
+
+const appVerifier =
+window.recaptchaVerifier;
+
+const phoneNumber =
+"+91" + phone;
+
+try{
+
+const confirmationResult =
+await firebase
+.auth()
+.signInWithPhoneNumber(
+phoneNumber,
+appVerifier
+);
+
+window.confirmationResult =
+confirmationResult;
+
+document
+.getElementById(
+"otpInput"
+)
+.style.display =
+"block";
+
+// hide details
+document
+.getElementById(
+"nameInput"
+)
+.style.display =
+"none";
+
+document
+.getElementById(
+"emailInput"
+)
+.style.display =
+"none";
+
+document
+.getElementById(
+"phoneInput"
+)
+.style.display =
+"none";
+
+btn.textContent =
+"Verify OTP";
+
+btn.disabled =
+false;
+
+msg.innerHTML =
+"📱 OTP sent";
+
+msg.style.color =
+"green";
+
+document
+.getElementById(
+"resendBtn"
+)
+.style.display =
+"none";
+
+startTimer();
+
+step = 2;
+
+}
+catch(e){
+
+console.log(e);
+
+msg.innerHTML =
+"❌ Failed to send OTP";
+
+msg.style.color =
+"red";
+
+btn.textContent =
+"Send OTP";
+
+btn.disabled =
+false;
+
+}
+
+}
 
   // STEP 2 → VERIFY OTP
   else if(step === 2){
@@ -3171,20 +3255,51 @@ async function handleOTP(){
     }
   }
 
-  // STEP 3
   else if(step === 3){
 
-    const key = "demo_running_" + currentCourse;
+    const res =
+    await fetch(
+    `/api/join-class?course=${currentCourse}`
+    );
 
-    // 🔴 class not live
-    if(!localStorage.getItem(key)){
+    const data =
+    await res.json();
 
-        msg.innerHTML = "⏳ Wait for Class";
-        msg.style.color = "orange";
+    // ❌ class not started
+    if(
+    data.error
+    ||
+    !data.meet_link
+    ){
+
+        msg.innerHTML =
+        "⏳ Wait for Class";
+
+        msg.style.color =
+        "orange";
 
         return;
     }
 
+    // ✅ class started
+    btn.textContent =
+    "Join Class";
+
+    btn.style.background =
+    "green";
+
+    // open popup → meet
+    document.getElementById(
+    "demoPopup"
+    ).style.display =
+    "none";
+
+    window.open(
+    data.meet_link,
+    "_blank"
+    );
+
+}
     // 🔴 class live
     startDemoSession(currentCourse);
 }
