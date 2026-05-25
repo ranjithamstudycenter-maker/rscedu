@@ -2669,6 +2669,11 @@ async function joinClass(course) {
       return;
     }
 
+    if(!data.meet_link){
+      showMessage("⏳ Class not started yet");
+      return;
+    }
+
     window.open(data.meet_link, "_blank");
     showMessage("✅ Joined Successfully");
 
