@@ -1855,8 +1855,18 @@ function updateClassCountdown(course){
 
   if(remaining <= 0){
 
-    timerDiv.innerHTML =
+    timerDiv.innerHTML=
     "⏳ Class Time Started";
+    
+    timerDiv.style.display=
+    "block";
+    
+    setTimeout(()=>{
+    
+    timerDiv.style.display=
+    "none";
+    
+    },300000);
     
     timerDiv.style.color = "#7c3aed";
 
@@ -2308,45 +2318,98 @@ showMessage("❌ Unable to join");
 
 }
 
-clearInterval(popupWatcher);
+clearInterval(
+popupWatcher
+);
 
-popupWatcher=setInterval(async()=>{
+popupWatcher=
+setInterval(
+async()=>{
 
-const res=await fetch(`/api/check-demo?course=${course}&phone=${phone}`);
-const liveData=await res.json();
+const res=
+await fetch(
+`/api/check-demo?course=${course}&phone=${phone}`
+);
 
-if(!liveData.meet_link){
+const liveData=
+await res.json();
 
-clearInterval(popupWatcher);
+if(
+!liveData.meet_link
+){
 
-localStorage.removeItem(key);
+clearInterval(
+popupWatcher
+);
 
-if(joinBtn)
-joinBtn.style.display="none";
+localStorage.removeItem(
+key
+);
 
-const timer=document.getElementById("timer-"+course);
-if(timer) timer.innerHTML="";
+const timer=
+document.getElementById(
+"timer-"+course
+);
 
-const badge=document.getElementById("live-"+course);
-if(badge) badge.style.display="none";
+if(timer){
 
-const msg=document.getElementById("msg-"+course);
+timer.innerHTML=
+"";
+
+timer.style.display=
+"none";
+
+}
+
+const badge=
+document.getElementById(
+"live-"+course
+);
+
+if(badge){
+
+badge.style.display=
+"none";
+
+}
+
+const msg=
+document.getElementById(
+"msg-"+course
+);
 
 if(msg){
 
-msg.innerHTML="✅ Demo Completed. Kindly Pay and attend class";
-msg.style.color="green";
-msg.style.display="block";
+msg.innerHTML=
+"✅ Demo Completed. Kindly Pay and attend class";
+
+msg.style.color=
+"green";
+
+msg.style.display=
+"block";
+
+msg.style.fontWeight=
+"600";
 
 }
 
-document.getElementById(
+document
+.getElementById(
 "demoPopup"
-).style.display="none";
+)
+.style.display=
+"none";
+
+await refreshStatus();
 
 }
 
-},5000);
+},
+
+5000
+
+);
 
 }else{
 
@@ -2371,26 +2434,25 @@ fetch(`/api/check-demo?course=${course}&phone=${phone}`)
 
 if(data.demo_done){
 
-const msg=document.getElementById("msg-"+course);
-
-if(msg){
-
 msg.innerHTML=
-"✅ Demo Completed. Kindly Pay and attend class";
+"⚠️ Demo already completed. For re-demo access, pay ₹100 and share payment screenshot.";
 
 msg.style.color=
-"green";
+"red";
 
-}
+btn.disabled=
+false;
 
-showMessage(
-"✅ Demo already completed"
-);
+document
+.getElementById(
+"otpInput"
+)
+.style.display=
+"none";
 
 return;
 
 }
-
 if(!canStartClass(course)){
 
 updateClassCountdown(course);
@@ -3094,7 +3156,6 @@ return;
 
 
 
-// 🔥 completed
 if(data.demo_done){
 
 msg.innerHTML=
@@ -3102,6 +3163,16 @@ msg.innerHTML=
 
 msg.style.color=
 "red";
+
+btn.disabled=
+false;
+
+document
+.getElementById(
+"otpInput"
+)
+.style.display=
+"none";
 
 return;
 
