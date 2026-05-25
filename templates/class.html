@@ -2357,7 +2357,7 @@ if (localStorage.getItem(key)) {
 
                         // 🔥 remove running message
                         const timerBox =
-                        document.getElementById("timer-" + currentCourse);
+                        document.getElementById("timer-" + course);
                         
                         if(timerBox){
                         
@@ -3042,7 +3042,9 @@ async function handleOTP(){
             document.getElementById("statusMsg").style.color =
               "green";
 
-            joinBtn.style.display = "none";
+            if(joinBtn){
+            joinBtn.style.display="none";
+            }
         }
 
        
@@ -3113,7 +3115,7 @@ async function handleOTP(){
     
     const resend =
     document.getElementById(
-    "resendOtp"
+    "resendBtn"
     );
     
     if(resend){
