@@ -2392,34 +2392,27 @@ if (localStorage.getItem(key)) {
       
             // ❌ CLASS ENDED
           
-        else{
-
-            localStorage.removeItem(key);
-
-            // 🔥 only show if demo was actually running
-            const wasRunning = localStorage.getItem("demo_was_running_" + course);
-
-            if(wasRunning){
-
-                localStorage.removeItem("demo_was_running_" + course);
-
-                document.getElementById("statusMsg").innerHTML =
-                  "✅ Demo completed. Please enroll";
-
-                document.getElementById("statusMsg").style.color =
-                  "green";
-
+                    // 🔴 only if key existed before
+                    else if(localStorage.getItem(key)){
+            
+                        localStorage.removeItem(key);
+            
+                        document.getElementById("statusMsg").innerHTML =
+                          "✅ Demo completed. Please enroll";
+            
+                        document.getElementById("statusMsg").style.color =
+                          "green";
+            
+                        if(joinBtn){
+                        joinBtn.style.display="none";
+                        }
+                    }
+                    // 🔥 key இல்லன்னா — nothing, just continue
+            
+                  });
+            
+                return;
             }
-
-            if(joinBtn){
-            joinBtn.style.display="none";
-            }
-        }
-
-      });
-
-    return;
-}
   
   // 🔥 already completed check
   fetch(`/api/check-demo?course=${course}&phone=${phone}`)
@@ -2636,8 +2629,10 @@ async function payNow() {
 ====================================== */
 async function joinClass(course) {
 
-  const demoDone = (studentStatus?.demo_done || {})[course];
-  const enrolled = (studentStatus?.enrolled || {})[course];
+  const demoDone = (studentStatus?.demo_done || {})[course]
+                || (studentStatus?.is_demo_user || {})[course];
+  const enrolled = (studentStatus?.enrolled || {})[course]
+                || (studentStatus?.is_enrolled_user || {})[course];
 
   if (!demoDone && !enrolled) {
     showCourseMessage(course, "⚠️ Attend Demo & Pay first");
