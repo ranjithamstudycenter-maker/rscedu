@@ -2382,37 +2382,8 @@ if (localStorage.getItem(key)) {
                               badge.style.display = "none";
                           }
                 
-                         // close popup
-                                document
-                                .getElementById(
-                                "demoPopup"
-                                )
-                                .style.display =
-                                "none";
-                                
-                                // show message in class card
-                                const msgBox =
-                                document.getElementById(
-                                "msg-" + course
-                                );
-                                
-                                if(msgBox){
-                                
-                                msgBox.innerHTML =
-                                "✅ Demo Completed. Kindly Pay and attend class";
-                                
-                                msgBox.style.color =
-                                "green";
-                                
-                                msgBox.style.fontWeight =
-                                "600";
-                                
-                                msgBox.style.display =
-                            "block";
-                                
-                                }
-                
-                   }, 5000);
+                        alert("✅ Demo Completed. Kindly Pay and attend class");
+                           }, 5000);
               } 
       
           // 🔴 CLASS ENDED
