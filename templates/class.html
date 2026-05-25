@@ -2304,9 +2304,7 @@ try{
 
 await joinClass(course);
 
-document.getElementById(
-"demoPopup"
-).style.display="none";
+document.getElementById("demoPopup").style.display="none";
 
 }catch{
 
@@ -2318,105 +2316,79 @@ showMessage("❌ Unable to join");
 
 }
 
-clearInterval(
-popupWatcher
-);
+clearInterval(popupWatcher);
 
-popupWatcher=
-setInterval(
-async()=>{
+popupWatcher=setInterval(async()=>{
 
-const res=
-await fetch(
-`/api/check-demo?course=${course}&phone=${phone}`
-);
+const res=await fetch(`/api/check-demo?course=${course}&phone=${phone}`);
+const liveData=await res.json();
 
-const liveData=
-await res.json();
+if(!liveData.meet_link){
 
-if(
-!liveData.meet_link
-){
+clearInterval(popupWatcher);
 
-clearInterval(
-popupWatcher
-);
+localStorage.removeItem(key);
+localStorage.setItem("demo_done_"+course,"yes");
 
-localStorage.removeItem(
-key
-);
+// hide join
+if(joinBtn){
+joinBtn.style.display="none";
+}
 
-const timer=
-document.getElementById(
-"timer-"+course
-);
+// remove timer
+const timer=document.getElementById("timer-"+course);
 
 if(timer){
 
-timer.innerHTML=
-"";
-
-timer.style.display=
-"none";
+timer.innerHTML="";
+timer.style.display="none";
 
 }
 
-const badge=
-document.getElementById(
-"live-"+course
-);
+// hide live
+const badge=document.getElementById("live-"+course);
 
 if(badge){
 
-badge.style.display=
-"none";
+badge.style.display="none";
 
 }
 
-const msg=
-document.getElementById(
-"msg-"+course
-);
+// close popup
+const popup=document.getElementById("demoPopup");
+
+if(popup){
+
+popup.style.display="none";
+
+}
+
+// completed message
+const msg=document.getElementById("msg-"+course);
 
 if(msg){
 
-msg.innerHTML=
-"✅ Demo Completed. Kindly Pay and attend class";
-
-msg.style.color=
-"green";
-
-msg.style.display=
-"block";
-
-msg.style.fontWeight=
-"600";
+msg.innerHTML="✅ Demo Completed. Kindly Pay and attend class";
+msg.style.color="green";
+msg.style.display="block";
+msg.style.fontWeight="600";
 
 }
 
-document
-.getElementById(
-"demoPopup"
-)
-.style.display=
-"none";
-
+// refresh
 await refreshStatus();
 
 }
 
-},
-
-5000
-
-);
+},5000);
 
 }else{
 
 localStorage.removeItem(key);
 
-if(joinBtn)
+if(joinBtn){
 joinBtn.style.display="none";
+}
 
 }
 
@@ -2432,27 +2404,26 @@ fetch(`/api/check-demo?course=${course}&phone=${phone}`)
 .then(res=>res.json())
 .then(data=>{
 
-if(data.demo_done){
+if(
+data.demo_done
+||
+localStorage.getItem("demo_done_"+course)
+){
 
 msg.innerHTML=
 "⚠️ Demo already completed. For re-demo access, pay ₹100 and share payment screenshot.";
 
-msg.style.color=
-"red";
+msg.style.color="red";
 
-btn.disabled=
-false;
+btn.disabled=false;
 
-document
-.getElementById(
-"otpInput"
-)
-.style.display=
-"none";
+document.getElementById("otpInput").style.display="none";
 
 return;
 
 }
+
+// wait for class
 if(!canStartClass(course)){
 
 updateClassCountdown(course);
@@ -2465,6 +2436,7 @@ return;
 
 }
 
+// proceed
 startDemoFlow(course,phone,key);
 
 });
@@ -3154,31 +3126,6 @@ return;
 
 }
 
-
-
-if(data.demo_done){
-
-msg.innerHTML=
-"⚠️ Demo already completed. For re-demo access, pay ₹100 and share payment screenshot.";
-
-msg.style.color=
-"red";
-
-btn.disabled=
-false;
-
-document
-.getElementById(
-"otpInput"
-)
-.style.display=
-"none";
-
-return;
-
-}
-
-
 const appVerifier=
 window.recaptchaVerifier;
 
@@ -3282,6 +3229,24 @@ false;
       // inside STEP 2 (after verify)
       const res = await fetch("/api/check-demo?course=" + currentCourse + "&phone=" + phone);
       const data = await res.json();
+
+      if(
+        data.demo_done
+        ||
+        localStorage.getItem(
+        "demo_done_"+currentCourse
+        )
+        ){
+        
+        msg.innerHTML=
+        "⚠️ Demo already completed. For re-demo access, pay ₹100 and share payment screenshot.";
+        
+        msg.style.color=
+        "red";
+        
+        return;
+        
+        }
       
       if(data.demo_done){
         msg.innerHTML = "⚠️ Demo already completed";
