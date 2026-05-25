@@ -2629,25 +2629,21 @@ async function joinClass(course) {
   const demoDone = (studentStatus?.demo_done || {})[course];
   const enrolled = (studentStatus?.enrolled || {})[course];
 
-  // ❌ both இல்லை
   if (!demoDone && !enrolled) {
     showCourseMessage(course, "⚠️ Attend Demo & Pay first");
     return;
   }
 
-  // ❌ only demo இல்லை
   if (!demoDone) {
     showCourseMessage(course, "⚠️ Attend Demo first");
     return;
   }
 
-  // ❌ only enroll இல்லை
   if (!enrolled) {
     showCourseMessage(course, "⚠️ Pay first");
     return;
   }
 
-  // ✅ correct case
   try {
     const res = await fetch("/api/join-class?course=" + course);
     const data = await res.json();
@@ -2657,26 +2653,22 @@ async function joinClass(course) {
       return;
     }
 
+    if (data.show_feedback) {
+      openFeedbackPopup(course);
+      showCourseMessage(course, "📚 Monthly classes completed! Please Re-enroll.");
+      return;
+    }
+
     window.open(data.meet_link, "_blank");
     showMessage("✅ Joined Successfully");
 
-  } catch(err){
-
+  } catch(err) {
     console.log(err);
+    showMessage("❌ Join failed");
+  }
 
-    showMessage(
-    "❌ Join failed"
-    )
-    if(data.show_feedback){
-
-   openFeedbackPopup(course);
-
-   showMessage("📚 Monthly classes completed");
-
-   return;
 }
-}
-    
+
  function showPhonePopup(course, type){
   currentCourse = course;
   step = 1;
