@@ -3417,6 +3417,12 @@ async function openDemoPopup(course){
   btn.style.background = "#ffd54f";
 
   document.getElementById("statusMsg").innerHTML = "";
+  document.getElementById("statusMsg").style.color = "";
+
+  // 🔥 reset nameInput and emailInput visibility
+  document.getElementById("nameInput").style.display = "block";
+  document.getElementById("emailInput").style.display = "block";
+  document.getElementById("phoneInput").style.display = "block";
 
   document.getElementById("demoPopup").style.display = "flex";
 }
