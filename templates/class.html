@@ -2257,104 +2257,50 @@ updateUI(course);
 ====================================== */
 function startDemoSession(course){
 
-const phone =
-document.getElementById("phoneInput")?.value
-||
-studentStatus?.phone
-||
-localStorage.getItem("phone");
+const phone=document.getElementById("phoneInput")?.value||studentStatus?.phone||localStorage.getItem("phone");
 
 if(!phone){
-
-showMessage(
-"⚠️ Enter phone number"
-);
-
+showMessage("⚠️ Enter phone number");
 return;
-
 }
 
-localStorage.setItem(
-"phone",
-phone
-);
+localStorage.setItem("phone",phone);
 
-const key =
-"demo_running_" +
-course;
+const key="demo_running_"+course;
 
 
 // already running
 if(localStorage.getItem(key)){
 
-fetch(
-`/api/check-demo?course=${course}&phone=${phone}`
-)
-
+fetch(`/api/check-demo?course=${course}&phone=${phone}`)
 .then(res=>res.json())
-
 .then(data=>{
 
-const joinBtn =
-document.getElementById(
-"popupJoinBtn"
-);
+const joinBtn=document.getElementById("popupJoinBtn");
 
-
-// class live
 if(data.meet_link){
 
-const isPaid =
-studentStatus?.enrolled?.[course];
-
-if(isPaid){
-
-showMessage(
-"🔴 Class already running"
-);
-
-}else{
-
-showMessage(
-"⏳ Demo already running"
-);
-
-}
-
+showMessage(studentStatus?.enrolled?.[course]?"🔴 Class already running":"⏳ Demo already running");
 
 if(joinBtn){
 
-joinBtn.style.display =
-"block";
+joinBtn.style.display="block";
+joinBtn.innerHTML="Join Class";
+joinBtn.disabled=false;
 
-joinBtn.innerHTML =
-"Join Class";
-
-joinBtn.disabled =
-false;
-
-joinBtn.onclick =
-async ()=>{
+joinBtn.onclick=async()=>{
 
 try{
 
-await joinClass(
-course
-);
+await joinClass(course);
 
-document
-.getElementById(
+document.getElementById(
 "demoPopup"
-)
-.style.display =
-"none";
+).style.display="none";
 
-}
-catch(e){
+}catch{
 
-showMessage(
-"❌ Unable to join"
-);
+showMessage("❌ Unable to join");
 
 }
 
@@ -2362,108 +2308,52 @@ showMessage(
 
 }
 
+clearInterval(popupWatcher);
 
-// watcher
-clearInterval(
-popupWatcher
-);
+popupWatcher=setInterval(async()=>{
 
-popupWatcher =
-setInterval(
-async()=>{
+const res=await fetch(`/api/check-demo?course=${course}&phone=${phone}`);
+const liveData=await res.json();
 
-const res =
-await fetch(
-`/api/check-demo?course=${course}&phone=${phone}`
-);
+if(!liveData.meet_link){
 
-const liveData =
-await res.json();
+clearInterval(popupWatcher);
 
-if(
-!liveData.meet_link
-){
+localStorage.removeItem(key);
 
-clearInterval(
-popupWatcher
-);
+if(joinBtn)
+joinBtn.style.display="none";
 
-localStorage.removeItem(
-key
-);
+const timer=document.getElementById("timer-"+course);
+if(timer) timer.innerHTML="";
 
-if(joinBtn){
+const badge=document.getElementById("live-"+course);
+if(badge) badge.style.display="none";
 
-joinBtn.style.display =
-"none";
+const msg=document.getElementById("msg-"+course);
+
+if(msg){
+
+msg.innerHTML="✅ Demo Completed. Kindly Pay and attend class";
+msg.style.color="green";
+msg.style.display="block";
 
 }
 
-const timerBox =
 document.getElementById(
-"timer-"+course
-);
-
-if(timerBox){
-
-timerBox.innerHTML =
-"";
+"demoPopup"
+).style.display="none";
 
 }
 
-const msgBox =
-document.getElementById(
-"msg-"+course
-);
+},5000);
 
-if(msgBox){
+}else{
 
-msgBox.innerHTML =
-"✅ Demo Completed Please Enroll";
+localStorage.removeItem(key);
 
-msgBox.style.color =
-"green";
-
-}
-
-const badge =
-document.getElementById(
-"live-"+course
-);
-
-if(badge){
-
-badge.style.display =
-"none";
-
-}
-
-alert(
-"✅ Demo Completed. Kindly Pay and attend class"
-);
-
-}
-
-},
-
-5000
-
-);
-
-}
-
-else{
-
-localStorage.removeItem(
-key
-);
-
-if(joinBtn){
-
-joinBtn.style.display =
-"none";
-
-}
+if(joinBtn)
+joinBtn.style.display="none";
 
 }
 
@@ -2475,117 +2365,129 @@ return;
 
 
 // completed check
-fetch(
-`/api/check-demo?course=${course}&phone=${phone}`
-)
-
-.then(
-res=>res.json()
-)
-
+fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+.then(res=>res.json())
 .then(data=>{
 
 if(data.demo_done){
 
+const msg=document.getElementById("msg-"+course);
+
+if(msg){
+
+msg.innerHTML=
+"✅ Demo Completed. Kindly Pay and attend class";
+
+msg.style.color=
+"green";
+
+}
+
 showMessage(
-"⚠️ Demo already completed"
+"✅ Demo already completed"
 );
 
 return;
 
 }
 
+if(!canStartClass(course)){
 
-if(
-!canStartClass(course)
-){
-
-updateClassCountdown(
-course
-);
+updateClassCountdown(course);
 
 showMessage(
-"⏰ Class starts at "
-+
-CLASS_TIMINGS[course]
-+
-" • Wait for class"
+"⏰ Class starts at "+CLASS_TIMINGS[course]+" • Wait for class"
 );
 
 return;
 
 }
 
-
-// proceed
-startDemoFlow();
+startDemoFlow(course,phone,key);
 
 });
 
 }
 
-  function startDemoFlow() {
 
-    const timerDiv  = document.getElementById("timer-" + course);
-    const liveBadge = document.getElementById("live-" + course);
 
-    if (!timerDiv) return;
+function startDemoFlow(course,phone,key){
 
-    // 🔥 INSERT INITIAL STUDENT (Demo = NO)
-    fetch("/api/demo-complete", {
-      method: "POST",
-      headers: {"Content-Type":"application/json"},
-      body: JSON.stringify({
-      phone: studentStatus?.phone,
-      course: course,
-      demo: "start"
-     })
-   });
+const timerDiv=document.getElementById("timer-"+course);
+const liveBadge=document.getElementById("live-"+course);
 
-     // 🔥 START TIMER
-    const startTime = Date.now();
-    localStorage.setItem(key, startTime);
-    localStorage.setItem("demo_was_running_" + course, "true");
+if(!timerDiv)
+return;
 
-    timerDiv.dataset.running = "true";
 
-    if (liveBadge) liveBadge.style.display = "inline-block";
+fetch("/api/demo-complete",{
 
-    showLivePopup(course);
-           
-      
-    updateClassCountdown(course);
+method:"POST",
 
-    const countdownInterval = setInterval(() => {
-    
-       if(!localStorage.getItem(key)){
-          clearInterval(countdownInterval);
-          return;
-       }
-    
-       updateClassCountdown(course);
-    
-    }, 60000);
-  
-       
-    // 🔥 OPEN CLASS LINK
-    fetch(`/api/check-demo?course=${course}&phone=${phone}`)
-      .then(res => res.json())
-      .then(data => {
+headers:{
+"Content-Type":"application/json"
+},
 
-        if (!data.meet_link) {
-          document.getElementById("statusMsg").innerHTML =
-                   "⏳ Wait for class";
-                
-                document.getElementById("statusMsg").style.color =
-                   "orange";
-          return;
-        }
+body:JSON.stringify({
 
-        window.open(data.meet_link, "_blank");
-      }); 
-  }
+phone:studentStatus?.phone,
+course:course,
+demo:"start"
 
+})
+
+});
+
+
+localStorage.setItem(
+key,
+Date.now()
+);
+
+localStorage.setItem(
+"demo_was_running_"+course,
+"true"
+);
+
+timerDiv.dataset.running="true";
+
+if(liveBadge)
+liveBadge.style.display="inline-block";
+
+
+showLivePopup(course);
+
+updateClassCountdown(course);
+
+
+fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+.then(res=>res.json())
+.then(data=>{
+
+if(!data.meet_link){
+
+document.getElementById(
+"statusMsg"
+).innerHTML=
+"⏳ Wait for class";
+
+document.getElementById(
+"statusMsg"
+).style.color=
+"orange";
+
+return;
+
+}
+
+window.open(
+data.meet_link,
+"_blank"
+);
+
+});
+
+}
 
 /* ======================================
    ENROLL
