@@ -2969,62 +2969,44 @@ async function handleOTP(){
   return;
 }
 
-  // STEP 1 → SEND OTP
-if(step === 1){
+ // STEP 1 → SEND OTP
+if(step===1){
 
-const res =
-await fetch(
-`/api/check-demo?course=${currentCourse}&phone=${phone}`
-);
+const res=await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
+const data=await res.json();
 
-const data =
-await res.json();
+const key="demo_running_"+currentCourse;
 
-const key =
-"demo_running_" +
-currentCourse;
+const joinBtn=document.getElementById("popupJoinBtn");
 
-const joinBtn =
-document.getElementById(
-"popupJoinBtn"
-);
 
-// 🔥 ONLY AFTER VERIFIED → JOIN MODE
+// 🔥 VERIFIED + LIVE → JOIN
 if(
-step===3
-&&
-localStorage.getItem(key)
-&&
+step===3 &&
+localStorage.getItem(key) &&
 data.meet_link
 ){
 
-msg.innerHTML =
-"🟢 Class Live";
+msg.innerHTML="🟢 Class Live";
+msg.style.color="green";
 
-msg.style.color =
-"green";
-
-btn.textContent =
-"Join Class";
-
-btn.style.background =
-"green";
+btn.textContent="Join Class";
+btn.style.background="green";
 
 if(joinBtn){
 
-joinBtn.style.display =
-"block";
+joinBtn.style.display="block";
 
-joinBtn.onclick =
-async ()=>{
+joinBtn.onclick=async()=>{
 
-const live =
+try{
+
+const live=
 await fetch(
-`/api/join-class?course=" +
-encodeURIComponent(currentCourse)`
+`/api/join-class?course=${encodeURIComponent(currentCourse)}`
 );
 
-const liveData =
+const liveData=
 await live.json();
 
 if(
@@ -3045,13 +3027,24 @@ document
 .getElementById(
 "demoPopup"
 )
-.style.display =
+.style.display=
 "none";
 
 window.open(
 liveData.meet_link,
 "_blank"
 );
+
+}
+catch(e){
+
+console.log(e);
+
+showMessage(
+"⚠️ Unable to join"
+);
+
+}
 
 };
 
@@ -3061,28 +3054,70 @@ return;
 
 }
 
-// ❌ DON'T SHOW DEMO COMPLETED HERE
+
+
+// 🔥 already running
+if(
+localStorage.getItem(key)
+&&
+data.meet_link
+){
+
+msg.innerHTML=
+"🟢 Class Live";
+
+msg.style.color=
+"green";
+
+if(joinBtn){
+
+joinBtn.style.display=
+"block";
+
+joinBtn.innerHTML=
+"Join Class";
+
+joinBtn.disabled=
+false;
+
+}
+
+btn.textContent=
+"Join Class";
+
+btn.style.background=
+"green";
+
+return;
+
+}
+
+
+
+// 🔥 completed
 if(data.demo_done){
 
-msg.innerHTML =
-"⚠️ Demo already completed";
+msg.innerHTML=
+"⚠️ Demo already completed. For re-demo access, pay ₹100 and share payment screenshot.";
 
-msg.style.color =
+msg.style.color=
 "red";
 
 return;
 
 }
 
-const appVerifier =
+
+const appVerifier=
 window.recaptchaVerifier;
 
-const phoneNumber =
-"+91" + phone;
+const phoneNumber=
+"+91"+phone;
+
 
 try{
 
-const confirmationResult =
+const confirmationResult=
 await firebase
 .auth()
 .signInWithPhoneNumber(
@@ -3090,76 +3125,80 @@ phoneNumber,
 appVerifier
 );
 
-window.confirmationResult =
+window.confirmationResult=
 confirmationResult;
 
+
+// show otp
 document
 .getElementById(
 "otpInput"
 )
-.style.display =
+.style.display=
 "block";
 
-// hide details
+
+// hide inputs
 document
 .getElementById(
 "nameInput"
 )
-.style.display =
+.style.display=
 "none";
 
 document
 .getElementById(
 "emailInput"
 )
-.style.display =
+.style.display=
 "none";
 
 document
 .getElementById(
 "phoneInput"
 )
-.style.display =
+.style.display=
 "none";
 
-btn.textContent =
+
+btn.textContent=
 "Verify OTP";
 
-btn.disabled =
+btn.disabled=
 false;
 
-msg.innerHTML =
+msg.innerHTML=
 "📱 OTP sent";
 
-msg.style.color =
+msg.style.color=
 "green";
 
 document
 .getElementById(
 "resendBtn"
 )
-.style.display =
+.style.display=
 "none";
 
 startTimer();
 
-step = 2;
+step=2;
 
 }
 catch(e){
 
 console.log(e);
 
-msg.innerHTML =
+msg.innerHTML=
 "❌ Failed to send OTP";
 
-msg.style.color =
+msg.style.color=
 "red";
 
-btn.textContent =
+btn.textContent=
 "Send OTP";
 
-btn.disabled =
+btn.disabled=
 false;
 
 }
@@ -3303,8 +3342,7 @@ false;
     // 🔴 class live
     startDemoSession(currentCourse);
 }
- 
-     
+   
 
  // 🔒 Only numbers allowed
 document.addEventListener("DOMContentLoaded", () => {
