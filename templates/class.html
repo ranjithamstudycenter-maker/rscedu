@@ -3009,11 +3009,16 @@ async function handleOTP(){
     
     joinBtn.onclick =
     async ()=>{
-    
-    await joinClass(
-    currentCourse
-    );
-    
+      // 🔥 directly open link — joinClass check bypass
+      const liveRes = await fetch(
+        `/api/check-demo?course=${currentCourse}&phone=${phone}`
+      );
+      const liveData = await liveRes.json();
+      if(liveData.meet_link){
+        window.open(liveData.meet_link, "_blank");
+      } else {
+        showMessage("⏳ Class not started yet");
+      }
     };
     
     return;
