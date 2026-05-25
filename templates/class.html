@@ -2479,7 +2479,7 @@ if (localStorage.getItem(key)) {
        updateClassCountdown(course);
     
     }, 60000);
-      
+  
        
     // 🔥 OPEN CLASS LINK
     fetch(`/api/check-demo?course=${course}&phone=${phone}`)
@@ -2496,11 +2496,7 @@ if (localStorage.getItem(key)) {
         }
 
         window.open(data.meet_link, "_blank");
-      });
-
-   
-
-   
+      }); 
   }
 }
 
