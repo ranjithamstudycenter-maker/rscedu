@@ -2428,6 +2428,16 @@ if(doneMsg){
 doneMsg.innerHTML=
 "✅ Demo Completed. Kindly Pay and attend class";
 
+msg.style.display=
+"block";
+
+setTimeout(()=>{
+
+msg.style.display=
+"none";
+
+},120000);
+
 doneMsg.style.color=
 "green";
 
@@ -3330,28 +3340,35 @@ false;
         }
       
       if(data.demo_done){
-        document.getElementById(
-        "otpInput"
-        ).style.display =
-        "none";
-        
-        document.getElementById(
-        "resendBtn"
-        ).style.display =
-        "none";
-        
-        btn.style.display =
-        "none";
-        
-        msg.innerHTML =
-        "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
-        
-        msg.style.color =
-        "red";
-        
-        return;
+     document.getElementById(
+    "otpBox"
+    ).style.display="none";
+    
+    document.getElementById(
+    "otpStatus"
+    ).style.display="none";
+    
+    document.getElementById(
+    "mainBtn"
+    ).style.display="none";
+    
+    const demoMsg=
+    document.getElementById(
+    "demoMsg"
+    );
+    
+    demoMsg.innerHTML=
+    "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
+    
+    demoMsg.style.display=
+    "block";
+    
+    demoMsg.style.color=
+    "red";
+    
+    return;
+    
     }
-
     try{
       await window.confirmationResult.confirm(otp);
 
@@ -3688,8 +3705,11 @@ async function openDemoPopup(course){
 
   document.getElementById("statusMsg").innerHTML = "";
   document.getElementById("statusMsg").style.color = "";
-
-  document.getElementById("mainBtn").style.display ="block";
+  document.getElementById("demoMsg").style.display="none";
+  document.getElementById("otpBox").style.display="block";
+  document.getElementById("otpStatus").style.display="none";
+  document.getElementById("mainBtn").style.display="block";
+ 
 
 
 
