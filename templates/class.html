@@ -2344,6 +2344,29 @@ await res.json();
 
 if(!liveData.meet_link){
 
+await fetch(
+"/api/demo-complete",
+{
+method:"POST",
+
+headers:{
+"Content-Type":"application/json"
+},
+
+body:JSON.stringify({
+
+phone:phone,
+
+course:course,
+
+demo:"complete"
+
+})
+
+}
+
+);
+    
 clearInterval(
 popupWatcher
 );
