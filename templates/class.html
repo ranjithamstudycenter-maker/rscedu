@@ -2520,8 +2520,14 @@ document.getElementById("mainBtn");
 
 if(demoMsg){
 
-demoMsg.innerHTML=
+statusMsg.innerHTML=
 "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
+
+statusMsg.style.color="red";
+
+otpInput.style.display="none";
+
+mainBtn.style.display="none";
 
 demoMsg.style.display="block";
 demoMsg.style.color="red";
@@ -3703,15 +3709,38 @@ function startTimer(){
   let step = 1;
 
 async function openDemoPopup(course){
+demoMsg =
+document.getElementById("statusMsg");
+
+otpInput =
+document.getElementById("otpInput");
+
+mainBtn =
+document.getElementById("mainBtn");
+
+otpStatus =
+document.getElementById("statusMsg");    
     
-const demoMsg=document.getElementById("demoMsg");
-
 if(demoMsg){
-
 demoMsg.innerHTML="";
 demoMsg.style.display="none";
-
 }
+
+if(otpInput){
+otpInput.style.display="none";
+otpInput.value="";
+}
+
+if(mainBtn){
+mainBtn.style.display="block";
+mainBtn.innerHTML="Send OTP";
+}
+
+if(otpStatus){
+otpStatus.style.display="block";
+otpStatus.innerHTML="";
+}
+
   otpVerified = false;
   currentCourse = course;
   step = 1;
