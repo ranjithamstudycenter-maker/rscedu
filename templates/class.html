@@ -3330,10 +3330,27 @@ false;
         }
       
       if(data.demo_done){
-        msg.innerHTML = "⚠️ Demo already completed";
-        msg.style.color = "red";
+        document.getElementById(
+        "otpInput"
+        ).style.display =
+        "none";
+        
+        document.getElementById(
+        "resendBtn"
+        ).style.display =
+        "none";
+        
+        btn.style.display =
+        "none";
+        
+        msg.innerHTML =
+        "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
+        
+        msg.style.color =
+        "red";
+        
         return;
-      }
+    }
 
     try{
       await window.confirmationResult.confirm(otp);
@@ -3672,79 +3689,9 @@ async function openDemoPopup(course){
   document.getElementById("statusMsg").innerHTML = "";
   document.getElementById("statusMsg").style.color = "";
 
-    const phone =
-    studentStatus?.phone
-    ||
-    localStorage.getItem("phone");
-    
-    if(phone){
-    
-    const res =
-    await fetch(
-    `/api/check-demo?course=${course}&phone=${phone}`
-    );
-    
-    const data =
-    await res.json();
-    
-    if(
-    data.demo_done
-    ||
-    localStorage.getItem(
-    "demo_done_"+course
-    )
-    ){
-    
-    document.getElementById(
-    "otpInput"
-    ).style.display =
-    "none";
-    
-    document.getElementById(
-    "resendBtn"
-    ).style.display =
-    "none";
-    
-    document.getElementById(
-    "nameInput"
-    ).style.display =
-    "none";
-    
-    document.getElementById(
-    "emailInput"
-    ).style.display =
-    "none";
-    
-    document.getElementById(
-    "phoneInput"
-    ).style.display =
-    "none";
-    
-    document.getElementById(
-    "mainBtn"
-    ).style.display =
-    "none";
-    
-    document.getElementById(
-    "statusMsg"
-    ).innerHTML =
-    "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
-    
-    document.getElementById(
-    "statusMsg"
-    ).style.color =
-    "red";
-    
-    document.getElementById(
-    "demoPopup"
-    ).style.display =
-    "flex";
-    
-    return;
-    
-    }
-    
-    }
+  document.getElementById("mainBtn").style.display ="block";
+
+
 
   // 🔥 reset nameInput and emailInput visibility
   document.getElementById("nameInput").style.display = "block";
