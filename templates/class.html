@@ -2500,9 +2500,50 @@ localStorage.getItem(
 )
 ){
 
-showMessage(
-"⚠️ Demo already completed. For re-demo access, pay ₹100 and share payment screenshot."
+const demoMsg=
+document.getElementById(
+"demoMsg"
 );
+
+const otpInput=
+document.getElementById(
+"otpInput"
+);
+
+const otpStatus=
+document.getElementById(
+"otpStatus"
+);
+
+const mainBtn=
+document.getElementById(
+"mainBtn"
+);
+
+if(demoMsg){
+
+demoMsg.innerHTML=
+"⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
+
+demoMsg.style.display=
+"block";
+
+demoMsg.style.color=
+"red";
+
+}
+
+if(otpInput)
+otpInput.style.display=
+"none";
+
+if(otpStatus)
+otpStatus.style.display=
+"none";
+
+if(mainBtn)
+mainBtn.style.display=
+"none";
 
 return;
 
@@ -3671,6 +3712,15 @@ function startTimer(){
   let step = 1;
 
 async function openDemoPopup(course){
+    
+const demoMsg=document.getElementById("demoMsg");
+
+if(demoMsg){
+
+demoMsg.innerHTML="";
+demoMsg.style.display="none";
+
+}
   otpVerified = false;
   currentCourse = course;
   step = 1;
