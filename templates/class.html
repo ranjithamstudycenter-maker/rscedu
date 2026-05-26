@@ -2265,184 +2265,73 @@ updateUI(course);
 /* ======================================
    FREE DEMO — Phone OTP always required
 ====================================== */
-function startDemoSession(course){
+function startDemoSession(course) {
 
-const phone=document.getElementById("phoneInput")?.value||studentStatus?.phone||localStorage.getItem("phone");
+  const phone = document.getElementById("phoneInput")?.value 
+             || studentStatus?.phone 
+             || localStorage.getItem("phone");
 
-if(!phone){
-showMessage("⚠️ Enter phone number");
-return;
+  if (!phone) {
+    showMessage("⚠️ Enter phone number");
+    return;
+  }
+
+  // 🔥 save phone
+  localStorage.setItem("phone", phone);
+
+  const key = "demo_running_" + course;
+
+  // 🔥 already running block
+  if (localStorage.getItem(key)) {
+
+    // ✅ SHOW MESSAGE
+    showMessage("⏳ Demo already running...");
+
+    // 🔥 OPEN EXISTING CLASS AGAIN
+    fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+      .then(res => res.json())
+      .then(data => {
+
+        if(data.meet_link){
+
+            window.open(data.redirect_url, "_blank");
+
+        } else {
+
+            showMessage("⚠️ Class not started yet");
+
+        }
+
+      });
+
+    return;
 }
 
-localStorage.setItem("phone",phone);
-
-const key="demo_running_"+course;
-
-
-// already running
-if(localStorage.getItem(key)){
-
-fetch(`/api/check-demo?course=${course}&phone=${phone}`)
-.then(res=>res.json())
-.then(data=>{
-
-const joinBtn=document.getElementById("popupJoinBtn");
-
-if(data.meet_link){
-
-showMessage(studentStatus?.enrolled?.[course]?"🔴 Class already running":"⏳ Demo already running");
-
-if(joinBtn){
-
-joinBtn.style.display="block";
-joinBtn.innerHTML="Join Class";
-joinBtn.disabled=false;
-
-joinBtn.onclick=async()=>{
-
-try{
-
-await joinClass(course);
-
-document.getElementById("demoPopup").style.display="none";
-
-}catch{
-
-showMessage("❌ Unable to join");
-
-}
-
-};
-
-}
-
-clearInterval(popupWatcher);
-
-popupWatcher=setInterval(async()=>{
-
-const res=await fetch(`/api/check-demo?course=${course}&phone=${phone}`);
-const liveData=await res.json();
-
-if(!liveData.meet_link){
-
-clearInterval(popupWatcher);
-
-localStorage.removeItem(key);
-localStorage.setItem("demo_done_"+course,"yes");
-
-// hide join
-if(joinBtn){
-joinBtn.style.display="none";
-}
-
-// remove timer
-const timer=document.getElementById("timer-"+course);
-
-if(timer){
-
-timer.innerHTML="";
-timer.style.display="none";
-
-}
-
-// hide live
-const badge=document.getElementById("live-"+course);
-
-if(badge){
-
-badge.style.display="none";
-
-}
-
-// close popup
-const popup=document.getElementById("demoPopup");
-
-if(popup){
-
-popup.style.display="none";
-
-}
-
-// completed message
-const msg=document.getElementById("msg-"+course);
-
-if(msg){
-
-msg.innerHTML="✅ Demo Completed. Kindly Pay and attend class";
-msg.style.color="green";
-msg.style.display="block";
-msg.style.fontWeight="600";
-
-}
-
-// refresh
-await refreshStatus();
-
-}
-
-},5000);
-
-}else{
-
-localStorage.removeItem(key);
-
-if(joinBtn){
-joinBtn.style.display="none";
-}
-
-}
-
-});
-
-return;
-
-}
-
-
-// completed check
-fetch(`/api/check-demo?course=${course}&phone=${phone}`)
-.then(res=>res.json())
-.then(data=>{
-
-if(
-data.demo_done
-||
-localStorage.getItem("demo_done_"+course)
-){
-
-msg.innerHTML=
-"⚠️ Demo already completed. For re-demo access, pay ₹100 and share payment screenshot.";
-
-msg.style.color="red";
-
-btn.disabled=false;
-
-document.getElementById("otpInput").style.display="none";
-
-return;
-
-}
-
-// wait for class
-if(!canStartClass(course)){
-
-updateClassCountdown(course);
-
-showMessage(
-"⏰ Class starts at "+CLASS_TIMINGS[course]+" • Wait for class"
-);
-
-return;
-
-}
-
-// proceed
-startDemoFlow(course,phone,key);
-
-});
-
-}
-
+  // 🔥 already completed check
+  fetch(`/api/check-demo?course=${course}&phone=${phone}`)
+    .then(res => res.json())
+    .then(data => {
+
+      if (data.demo_done) {
+        showMessage("⚠️ Demo already completed");
+        return;
+      }
+
+      
+          if(!canStartClass(course)){
+
+               updateClassCountdown(course);
+            
+               showMessage(
+                  "⏰ Class starts at " +
+                  CLASS_TIMINGS[course]
+               );
+            
+               return;
+            }
+      
+        startDemoFlow();
+     });
 
 
 function startDemoFlow(course,phone,key){
