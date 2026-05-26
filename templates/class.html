@@ -1752,6 +1752,11 @@ let popupWatcher = null;
 let otpSeconds = 300;
 window.otpInterval = null;
 let otpVerified = false;
+let demoMsg;
+let otpInput;
+let otpStatus;
+let mainBtn;
+    
  const CLASS_TIMINGS = {
 
   cbse9  : "9:40 AM",
@@ -3741,38 +3746,7 @@ demoMsg.style.display="none";
 
   document.getElementById("statusMsg").innerHTML = "";
   document.getElementById("statusMsg").style.color = "";
-    const demoMsg =
-    document.getElementById("demoMsg");
-
-    const otpInput =
-    document.getElementById("otpInput");
-
-    const otpStatus =
-    document.getElementById("otpStatus");
-
-    const mainBtn =
-    document.getElementById("mainBtn");
-
-
-    if(demoMsg){
-    demoMsg.style.display="block";
-    }
-
-    if(otpInput){
-    otpInput.style.display="block";
-    }
-
-    if(otpStatus){
-    otpStatus.style.display="block";
-    }
-
-    if(mainBtn){
-    mainBtn.style.display="block";
-    }
-     
-
-
-
+    
   // 🔥 reset nameInput and emailInput visibility
   document.getElementById("nameInput").style.display = "block";
   document.getElementById("emailInput").style.display = "block";
