@@ -2500,26 +2500,6 @@ localStorage.getItem(
 )
 ){
 
-const demoMsg=
-document.getElementById(
-"demoMsg"
-);
-
-const otpInput=
-document.getElementById(
-"otpInput"
-);
-
-const otpStatus=
-document.getElementById(
-"otpStatus"
-);
-
-const mainBtn=
-document.getElementById(
-"mainBtn"
-);
-
 if(demoMsg){
 
 demoMsg.innerHTML=
@@ -2531,7 +2511,14 @@ demoMsg.style.display=
 demoMsg.style.color=
 "red";
 
-}
+otpInput.style.display=
+"none";
+
+otpStatus.style.display=
+"none";
+
+mainBtn.style.display=
+"none";
 
 if(otpInput)
 otpInput.style.display=
