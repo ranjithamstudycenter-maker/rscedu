@@ -2433,21 +2433,18 @@ if(doneMsg){
 doneMsg.innerHTML=
 "✅ Demo Completed. Kindly Pay and attend class";
 
-msg.style.display=
+doneMsg.style.display="block";
 "block";
 
 setTimeout(()=>{
 
-msg.style.display=
+doneMsg.style.display=
 "none";
 
 },120000);
 
 doneMsg.style.color=
 "green";
-
-doneMsg.style.display=
-"block";
 
 doneMsg.style.fontWeight=
 "600";
@@ -2571,7 +2568,7 @@ headers:{
 
 body:JSON.stringify({
 
-phone:studentStatus?.phone,
+phone:phone,
 course:course,
 demo:"start"
 
