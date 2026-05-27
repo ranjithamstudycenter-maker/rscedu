@@ -2498,25 +2498,13 @@ fetch(`/api/check-demo?course=${course}&phone=${phone}`)
 .then(res=>res.json())
 .then(data=>{
 
-if(
-data.demo_done ||
-localStorage.getItem(
-"demo_done_"+course
-)
-){
+if(data.demo_done){
 
 const statusMsg =
 document.getElementById("statusMsg");
 
-const otpInput =
-document.getElementById("otpInput");
-
-const mainBtn =
-document.getElementById("mainBtn");
-
-const resendBtn =
-document.getElementById("resendBtn");
-
+statusMsg.style.display =
+"block";
 
 statusMsg.innerHTML =
 "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
@@ -2524,23 +2512,14 @@ statusMsg.innerHTML =
 statusMsg.style.color =
 "red";
 
-statusMsg.style.display =
-"block";
-
-statusMsg.style.fontWeight =
-"600";
-
-
-otpInput.style.display =
+document.getElementById("otpInput").style.display =
 "none";
 
-mainBtn.style.display =
+document.getElementById("mainBtn").style.display =
 "none";
 
-if(resendBtn){
-resendBtn.style.display =
+document.getElementById("resendBtn").style.display =
 "none";
-}
 
 return;
 
@@ -3779,7 +3758,20 @@ otpStatus.innerHTML="";
   document.getElementById("nameInput").style.display = "block";
   document.getElementById("emailInput").style.display = "block";
   document.getElementById("phoneInput").style.display = "block";
-
+     document.getElementById("otpInput").style.display =
+    "none";
+    
+    document.getElementById("mainBtn").style.display =
+    "block";
+    
+    document.getElementById("mainBtn").innerHTML =
+    "Send OTP";
+    
+    document.getElementById("statusMsg").innerHTML =
+    "";
+    
+    document.getElementById("statusMsg").style.display =
+    "none";
   document.getElementById("demoPopup").style.display = "flex";
 }
 
