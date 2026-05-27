@@ -3333,59 +3333,47 @@ false;
   // STEP 2 → VERIFY OTP
   else if(step === 2){
 
-      // inside STEP 2 (after verify)
+       // inside STEP 2 (after verify)
       const phone = document.getElementById("phoneInput").value.trim();
       const res = await fetch("/api/check-demo?course=" + currentCourse + "&phone=" + phone);
       const data = await res.json();
 
-      if(
+       if(
         data.demo_done
         ||
         localStorage.getItem(
         "demo_done_"+currentCourse
         )
         ){
+         document.getElementById(
+        "otpBox"
+        ).style.display="none";
         
-        msg.innerHTML=
-        "⚠️ Demo already completed. For re-demo access, pay ₹100 and share payment screenshot.";
+        document.getElementById(
+        "otpStatus"
+        ).style.display="none";
         
-        msg.style.color=
+        document.getElementById(
+        "mainBtn"
+        ).style.display="none";
+        
+        const demoMsg=
+        document.getElementById(
+        "demoMsg"
+        );
+        
+        demoMsg.innerHTML=
+        "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
+        
+        demoMsg.style.display=
+        "block";
+        
+        demoMsg.style.color=
         "red";
         
         return;
         
         }
-      
-      if(data.demo_done){
-     document.getElementById(
-    "otpBox"
-    ).style.display="none";
-    
-    document.getElementById(
-    "otpStatus"
-    ).style.display="none";
-    
-    document.getElementById(
-    "mainBtn"
-    ).style.display="none";
-    
-    const demoMsg=
-    document.getElementById(
-    "demoMsg"
-    );
-    
-    demoMsg.innerHTML=
-    "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
-    
-    demoMsg.style.display=
-    "block";
-    
-    demoMsg.style.color=
-    "red";
-    
-    return;
-    
-    }
     try{
       await window.confirmationResult.confirm(otp);
 
