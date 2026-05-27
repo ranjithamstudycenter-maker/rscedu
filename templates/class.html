@@ -2496,7 +2496,7 @@ fetch(`/api/check-demo?course=${course}&phone=${phone}`)
 .then(data=>{
 
 if(
-data.demo_done &&
+data.demo_done ||
 localStorage.getItem("demo_done_"+course)
 ){
 
@@ -2512,13 +2512,28 @@ statusMsg.innerHTML =
 statusMsg.style.color =
 "red";
 
-document.getElementById("otpInput").style.display =
+if(window.otpInterval){
+
+clearInterval(
+window.otpInterval
+);
+
+window.otpInterval=
+null;
+
+}
+
+otpSeconds=300;
+
+document.getElementById("otpInput").value="";
+
+document.getElementById("otpInput").style.display=
 "none";
 
-document.getElementById("mainBtn").style.display =
+document.getElementById("mainBtn").style.display=
 "none";
 
-document.getElementById("resendBtn").style.display =
+document.getElementById("resendBtn").style.display=
 "none";
 
 return;
