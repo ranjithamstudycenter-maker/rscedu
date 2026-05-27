@@ -2495,7 +2495,10 @@ fetch(`/api/check-demo?course=${course}&phone=${phone}`)
 .then(res=>res.json())
 .then(data=>{
 
-if(data.demo_done){
+if(
+data.demo_done &&
+localStorage.getItem("demo_done_"+course)
+){
 
 const statusMsg =
 document.getElementById("statusMsg");
@@ -3724,9 +3727,8 @@ otpStatus.style.display="block";
 otpStatus.innerHTML="";
 }
 
-  otpVerified = false;
   currentCourse = course;
-  step = 1;
+ 
 
   
   // 🔥 EXISTING CODE (unchanged)
