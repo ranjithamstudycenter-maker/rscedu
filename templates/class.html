@@ -3389,6 +3389,7 @@ false;
       // 👇 PASTE HERE
     otpVerified = true;
     
+    
     if(window.otpInterval){
     clearInterval(window.otpInterval);
     window.otpInterval = null;
@@ -3687,6 +3688,7 @@ function startTimer(){
 
   let currentCourse = "";
   let step = 1;
+  otpVerified = false;
 
 async function openDemoPopup(course){
 demoMsg =
