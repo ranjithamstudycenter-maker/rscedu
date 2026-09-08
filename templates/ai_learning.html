@@ -1,312 +1,666 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
+    <meta charset="UTF-8">
+    <title>Ranjitham Study Center | Online and offline Tuition | Courses </title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Ranjitham Study Center provides result-oriented  coaching for students with online and offline classes, worksheets, tests, and exam-focused preparation.">
+    <meta name="keywords" content="Tuition, CBSE Coaching, Online Classes, Class 6 to 12 Tuition, Tuition center in Medavakkam, Tuition center in chennai, Tuition center in pallikaranai, Ranjitham Study Center">
+    <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    <link rel="shortcut icon" href="{{ url_for('static', filename='images/logo.jpg') }}">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;600;700&display=swap" rel="stylesheet">
+</head>
+    <style>
+        /* ==========================
+           GLOBAL STYLES
+        ========================== */
 
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+        /* Make everything flexible */
+            *{
+              box-sizing: border-box;
+            }
+            
+            body{
+              margin: 0;
+              padding: 0;
+              background: #ffffff;
+              color: #333;
+              overflow-x: hidden;
+            }
+            
+            /* Images responsive */
+            img{
+              max-width: 100%;
+              height: auto;
+            }
+            
+            /* Container width */
+            .container{
+              width: 90%;
+              margin: auto;
+            }
 
-<title>AI Learning | Ranjitham Study Center</title>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Poppins', sans-serif;
+        }
 
-<style>
 
-*{
-    box-sizing:border-box;
+        a {
+            text-decoration: none;
+        }
+
+        /* ==========================
+           NAVBAR
+        ========================== */
+        .navbar {
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 10px 20px;
+            position: relative;
+            z-index: 1000;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+            flex-wrap: wrap;   /* 🔥 allows wrapping */
+        }
+       
+        .nav-left {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        .nav-right {
+            display: flex;
+            align-items: center;
+        }
+
+        .logo {
+            height: 90px;
+        }
+
+        .brand-text h1 {
+            color: #0b5394;
+            font-size: 26px;
+            font-weight: 700;
+        }
+
+        .brand-text p {
+            color: #0b5394;
+            font-size: 13px;
+        }
+
+        
+        .nav-center a {
+            margin: 0 15px;
+            color: #0b5394;
+            font-weight: 600;
+        }
+
+        .nav-center a:hover {
+            text-decoration: underline;
+        }
+
+       .demo-btn {
+            background: linear-gradient(45deg, #ff2d55, #7b2cbf);
+            color: white;
+            padding: 8px 18px;
+            border-radius: 25px;
+            font-weight: 600;
+            animation: blink 2s infinite;
+        }
+        @keyframes blink {
+            50% { opacity: 0; }
+        }
+
+   @media(max-width:768px){
+  .navbar{
+    flex-direction: column;
+    align-items: center;
+  }
+
+  /* LEFT → logo + title */
+  .nav-left{
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;  /* 🔥 LEFT align */
+  }
+
+  .logo{
+    height: 55px;
+  }
+
+  .brand-text h1{
+    font-size: 18px;
+  }
+
+  .brand-text p{
+    font-size: 11px;
+  }
+
+  /* CENTER → MENU */
+  .nav-center{
+    width: 100%;
+    display: flex;
+    flex-wrap: wrap;              /* 🔥 allow 2 lines */
+    justify-content: center;
+    margin-top: 8px;
+    gap: 6px;              /* 🔥 reduce gap */
+    flex-wrap: nowrap;     /* 🔥 single line */
+  }
+
+  .nav-center a{
+    font-size: 12px;       /* 🔥 reduce text */
+    margin: 0 4px;         /* 🔥 less spacing */
+    white-space: nowrap;
+  }
+
+  /* DEMO → CENTER */
+  .nav-right{
+    width: 100%;
+    display: flex;
+    justify-content: center;   /* 🔥 CENTER */
+    margin-top: 8px;
+  }
+
+  .demo-btn{
+    font-size: 13px;
+  }
+
 }
 
-body{
-    margin:0;
-    font-family:Arial, sans-serif;
-    background:#f5f7fb;
-    color:#1f2937;
+
+
+
+/* COMMON */
+.section{
+    padding: 20px 0;
+
 }
-
-/* HEADER */
-
-.header{
-    background:white;
-    padding:15px 30px;
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    box-shadow:0 2px 10px rgba(0,0,0,0.08);
-    position:sticky;
-    top:0;
-    z-index:100;
-}
-
-.logo{
-    font-size:24px;
-    font-weight:bold;
-    color:#243b80;
-}
-
-.nav a{
-    text-decoration:none;
-    margin-left:20px;
-    color:#374151;
-    font-weight:600;
-}
-
-.nav a:hover{
-    color:#7c3aed;
-}
-
-/* MAIN */
 
 .container{
-    max-width:1000px;
-    margin:40px auto;
-    padding:20px;
-}
-
-.hero{
-    background:linear-gradient(135deg,#243b80,#7c3aed);
-    color:white;
-    padding:45px 30px;
-    border-radius:20px;
-    text-align:center;
-    margin-bottom:30px;
-}
-
-.hero h1{
-    margin:0 0 10px;
-    font-size:36px;
-}
-
-.hero p{
-    font-size:17px;
-    margin:0;
-}
-
-/* CARDS */
-
-.card{
+    max-width:1500px;
+    margin:auto;
     background:white;
-    border-radius:18px;
-    padding:30px;
-    margin-bottom:25px;
-    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+    padding:10px;
+    border-radius: 10px
 }
 
-.card h2{
-    margin-top:0;
-    color:#243b80;
-}
-
-.selection{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px;
-    margin-top:20px;
-}
-
-.selection button{
-    border:2px solid #ddd;
-    background:white;
-    padding:18px;
-    border-radius:12px;
-    cursor:pointer;
-    font-size:16px;
-    font-weight:bold;
-}
-
-.selection button:hover{
-    border-color:#7c3aed;
-    background:#f5f3ff;
-}
-
-.selection button.selected{
-    background:#7c3aed;
-    color:white;
-    border-color:#7c3aed;
-}
-
-/* BUTTON */
-
-.primary-btn{
-    background:#7c3aed;
-    color:white;
-    border:none;
-    padding:14px 28px;
-    border-radius:10px;
-    font-size:16px;
-    font-weight:bold;
-    cursor:pointer;
-    margin-top:20px;
-}
-
-.primary-btn:hover{
-    opacity:0.9;
-}
-
-/* QUESTION */
-
-.question-box{
-    background:#f9fafb;
-    border:1px solid #e5e7eb;
-    padding:25px;
-    border-radius:15px;
-}
-
-.question-number{
-    font-size:14px;
-    color:#6b7280;
+h2{
+    color:#0b5394;
     margin-bottom:10px;
-}
-
-.question{
-    font-size:20px;
-    font-weight:bold;
-    margin-bottom:20px;
-}
-
-.option{
-    display:block;
-    width:100%;
-    text-align:left;
-    padding:14px;
-    margin:10px 0;
-    background:white;
-    border:2px solid #ddd;
-    border-radius:10px;
-    cursor:pointer;
-    font-size:16px;
-}
-
-.option:hover{
-    border-color:#7c3aed;
-}
-
-.option.selected{
-    background:#ede9fe;
-    border-color:#7c3aed;
-}
-
-.option.correct{
-    background:#dcfce7;
-    border-color:#16a34a;
-}
-
-.option.wrong{
-    background:#fee2e2;
-    border-color:#dc2626;
-}
-
-/* RESULT */
-
-.result{
     text-align:center;
 }
-
-.score{
-    font-size:45px;
-    font-weight:bold;
-    color:#7c3aed;
+.about-points {
+    max-width: 2000px;
+    margin: 0 auto;
+    padding-left: 10px;
+    text-align:justify;
 }
 
-.weak-topic{
-    background:#fff7ed;
-    border:1px solid #fdba74;
-    padding:20px;
-    border-radius:12px;
-    margin-top:20px;
+.about-points li {
+    margin-bottom: 20px;   /* space between points */
+    line-height: 1.7;
+    font-size: 16px;
+    text-align:justify;
+}
+/* ==========================
+           HOME SECTION
+        ========================== */
+        .home-section {
+            padding: 70px 20px;
+            background: #ffffff;
+        }
+
+        .home-container {
+            max-width: 1500px;
+            margin: auto;
+        }
+
+        .home-title {
+            text-align: center;
+            font-size: 32px;
+            color: #0b5394;
+            margin-bottom: 50px;
+        }
+
+        .home-content {
+            display: grid;
+            grid-template-columns: 3fr 5fr;  /* 🔥 TEXT bigger */
+            gap: 50px;
+            align-items: center;
+            justify-content:flex-end;
+           
+  }
+
+        .home-image{
+          display:flex;
+          width:100%;
+          max-width:550px;   /* 🔥 increase from 480 → 550 */
+          box-shadow: 0 12px 30px rgba(0,0,0,0.15);
+          border-radius: 18px;
+          justify-content:flex-end;
+             
+         }
+      
+         .home-text p {
+            font-size: 16px;
+            line-height: 1.8;
+            margin-bottom: 18px;
+            width: 100%;
+        }
+
+                .home-text{
+                  text-align: justify;
+                  
+                }
+                
+                /* First intro */
+                .home-intro{
+                  font-size: 18px;
+                  line-height: 1.8;
+                  margin-bottom: 20px;
+                  color:#333;
+                }
+                
+                /* Highlight word */
+                .highlight{
+                  color:#0b5394;
+                  font-weight:600;
+                }
+                
+               /* Description */
+                .home-desc{
+                  font-size:16px;
+                  line-height:1.7;
+                  color:#555;
+                }
+                
+               
+
+        @media(max-width: 768px) {
+            .slides img {
+                height: 240px;
+            }
+
+            .slider {
+                max-height: 240px;
+            }
+
+            .home-content {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media(max-width: 600px) {
+            h1 { font-size: 24px; }
+            h2 { font-size: 20px; }
+            p { font-size: 14px; }
+        }
+
+
+
+/* VISION & MISSION */
+.vision-mission-section{
+        width: 100%;
+        padding: 80px 0;
+    }
+
+    /* TWO EQUAL COLUMNS */
+    .vision-mission-wrapper{
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        width: 100%;
+    }
+
+    /* CENTER CONTENT INSIDE EACH HALF */
+    .vm-box{
+        max-width: 1500px;
+        margin: 0 auto;   /* THIS IS THE KEY */
+        padding: 0 40px;
+    }
+
+    .vm-box h2{
+        font-size: 26px;
+        margin-bottom: 5px;
+        color: #111;
+    }
+
+    .vm-box p{
+        font-size: 16px;
+        line-height: 1.7;
+        color: #333;
+        text-align: justify;
+    }
+
+    /* MOBILE */
+    @media (max-width: 768px){
+        .vision-mission-wrapper{
+            grid-template-columns: 1fr;
+            gap: 40px;
+        }
+    }
+
+
+.about-offerings {
+  display: flex;
+  justify-content: space-between;
+  gap: 60px;
+  padding: 60px 10%;
 }
 
-.progress-container{
-    background:#e5e7eb;
-    height:15px;
-    border-radius:20px;
-    overflow:hidden;
-    margin-top:15px;
+.offer-item {
+  flex: 1;
+  max-width: 32%;
 }
 
-.progress-bar{
-    height:100%;
-    width:0%;
-    background:#7c3aed;
-    transition:0.4s;
+/* CENTER THE HEADING */
+.offer-item h3 {
+  text-align: center;
+  font-size: 21px;
+  font-weight: 600;
+  color: #0a3d62;
+  margin-bottom: 8px;
 }
 
-.hidden{
-    display:none;
+/* LINE BELOW HEADING */
+.offer-item h3::after {
+  content: "";
+  display: block;
+  width: 45px;
+  height: 3px;
+  background-color: #0a3d62;
+  margin: 8px auto 12px auto;
 }
 
-.info-grid{
-    display:grid;
-    grid-template-columns:repeat(3,1fr);
-    gap:15px;
-    margin-top:20px;
+/* ICON STYLE (BIGGER & CENTERED) */
+.offer-icon {
+  text-align: center;
+  font-size: 34px;   /* 🔥 icon size increased */
+  margin-bottom: 14px;
 }
 
-.info{
-    background:#f9fafb;
-    padding:20px;
-    border-radius:12px;
+/* PARAGRAPH */
+.offer-item p {
+  font-size: 15.5px;
+  line-height: 1.8;
+  color: #444;
+  text-align: justify;
+}
+
+@media (max-width: 900px) {
+  .about-offerings {
+    flex-direction: column;
+    gap: 35px;
+  }
+
+  .offer-item {
+    max-width: 100%;
+  }
+}
+
+
+ /* ==========================
+   CTA (NEW PREMIUM STYLE)
+========================== */
+.cta-section {
+    padding: 80px 20px;
+    background: linear-gradient(135deg, #1e3a8a, #6d28d9); /* 🔥 blue + purple */
+}
+
+.cta-box {
+    max-width: 1100px;
+    margin: auto;
+    color: white;
+    border-radius: 20px;
+    padding: 60px 40px;
+    text-align: center;
+    box-shadow: 0 15px 40px rgba(0,0,0,0.2);
+}
+
+.cta-small {
+    font-size: 13px;
+    letter-spacing: 2px;
+    margin-bottom: 10px;
+    opacity: 0.8;
+}
+
+.cta-box h2 {
+    font-size: 38px;
+    margin-bottom: 15px;
+    font-weight: 700;
+    color: white;
+}
+
+.cta-text {
+    font-size: 16px;
+    margin-bottom: 35px;
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    opacity: 0.9;
+}
+
+/* 🔥 BUTTON UPGRADE */
+.cta-btn {
+    display: inline-block;
+    background: linear-gradient(135deg, #facc15, #f59e0b); /* GOLD */
+    color: #1e3a8a;
+    padding: 14px 40px;
+    border-radius: 40px;
+    font-weight: 600;
+    transition: 0.3s;
+    box-shadow: 0 8px 20px rgba(0,0,0,0.25);
+}
+
+.cta-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 25px rgba(0,0,0,0.3);
+}
+        
+ /* ==========================
+   FOOTER (NEW STYLE)
+========================== */
+.footer {
+    background: linear-gradient(135deg, #0f172a, #1e293b);
+    color: #cbd5e1;
+    padding: 70px 20px 25px;
+}
+
+.footer-container {
+    max-width: 1100px;
+    margin: auto;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 50px;
+}
+
+.footer-box h3 {
+    color: white;
+    margin-bottom: 18px;
+    font-size: 18px;
+}
+
+.footer-box p {
+    line-height: 1.7;
+    font-size: 14px;
+}
+
+.footer-box a {
+    display: block;
+    color: #94a3b8;
+    margin-bottom: 10px;
+    transition: 0.3s;
+}
+
+.footer-box a:hover {
+    color: #facc15; /* 🔥 gold hover */
+    transform: translateX(5px);
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    font-size: 13px;
+    border-top: 1px solid rgba(255,255,255,0.1);
+    padding-top: 15px;
+    color: #94a3b8;
+}
+
+         /* ==========================
+           WHATSAPP FLOAT BUTTON
+        ========================== */
+        .whatsapp {
+            position: fixed;
+            bottom: 25px;
+            right: 25px;
+            width: 56px;
+            height: 56px;
+            background: #25D366;
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            text-decoration: none;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.25);
+            z-index: 1000;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .whatsapp:hover {
+            transform: scale(1.1);
+            box-shadow: 0 10px 25px rgba(0,0,0,0.35);
+        }
+
+  .privacy-section{
+  background: #f1f5f9;   /* light clean bg */
+  padding: 30px 20px;
+  text-align: center;
+  border-top: 1px solid #e2e8f0;
+}
+
+/* 🔥 HEADING */
+.privacy-section h3{
+  text-align: center;
+  color: #0b5fa5;   /* bright blue */
+  font-size: 18px;
+  margin-bottom: 10px;
+}
+
+/* 🔥 PARAGRAPH */
+.privacy-section p{
+    width: 100%;              /* 🔥 full width */
+  text-align: justify;      /* left → right fill */
+
+  color:red;        /* dark readable */
+
+  font-size: 14px;
+  line-height: 1.6;
+}
+
+.lang-banner{
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:20px;
+
+  background: linear-gradient(135deg, #e3f2fd, #ffffff);
+  border-left:6px solid #0b5394;
+
+  padding:20px 25px;
+  border-radius:12px;
+  margin:20px auto;
+  max-width:1100px;
+
+  box-shadow:0 6px 20px rgba(0,0,0,0.08);
+    
+}
+
+/* TEXT */
+.lang-text p{
+  margin:0;
+  font-size:15px;
+  line-height:1.6;
+  color:#0b5394;
+  font-weight:500;
+}
+.lang-btn:hover{
+  background: linear-gradient(135deg, #ff6a00, #ff8c2a);
+  transform:translateY(-2px);
+}
+
+/* MOBILE RESPONSIVE */
+@media(max-width:768px){
+  .lang-banner{
+    flex-direction:column;
     text-align:center;
+  }
+ 
+}        
+
+/* wrapper */
+.top-section{
+  max-width:1000px;
+  margin:20px auto;
+  padding:0 10px;
 }
 
-.info strong{
-    display:block;
-    font-size:24px;
-    color:#7c3aed;
+/* dropdown align right */
+.lang-switch{
+  display:flex;
+  justify-content:center;
+  margin-bottom:15px;
+  padding-right:10px;   /* small spacing */
 }
 
-/* MOBILE */
-
-@media(max-width:700px){
-
-    .header{
-        flex-direction:column;
-        gap:12px;
-    }
-
-    .nav a{
-        margin:5px;
-        font-size:14px;
-    }
-
-    .selection{
-        grid-template-columns:1fr;
-    }
-
-    .info-grid{
-        grid-template-columns:1fr;
-    }
-
-    .hero h1{
-        font-size:28px;
-    }
-
+/* dropdown styling */
+.lang-switch select{
+  padding:8px 12px;
+  border-radius:8px;
+  border:1px solid #ccc;
+  font-size:14px;
+  cursor:pointer;
 }
 
+.lang-switch select:hover{
+  background:#f0f7ff;
+} 
+
+      
 </style>
-
 </head>
-
-
 <body>
 
+ 
 
-<!-- HEADER -->
-
-<div class="header">
-
-    <div class="logo">
-        RANJITHAM STUDY CENTER
-    </div>
-
-    <div class="nav">
-        <a href="/">Home</a>
-        <a href="/about">About</a>
-        <a href="/courses">Courses</a>
-        <a href="/ai-learning">AI Learning</a>
-        <a href="/materials">Materials</a>
-        <a href="/contact">Contact</a>
-    </div>
-
-</div>
-
+    <!-- ==========================
+         NAVBAR
+    ========================== -->
+    <nav class="navbar"> 
+        <div class="nav-left"> 
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo"> 
+            <div class="brand-text"> 
+                <h1>RANJITHAM STUDY CENTER</h1> 
+                <p>Learn • Practice • Excel in Mathematics</p> 
+            </div>
+        </div>
+        <div class="nav-center"> 
+            <a href="{{ url_for('home') }}">Home</a> 
+            <a href="{{ url_for('about') }}">About</a> 
+            <a href="{{ url_for('courses') }}">Class</a> 
+            <a href="{{ url_for('materials') }}">Materials</a>
+            <a href="{{ url_for('ai_learning') }}">AI-learning</a>
+            <a href="{{ url_for('contact') }}">Contact</a> 
+        </div> 
+        <div class="nav-right">
+        <a href="/contact" class="demo-btn">Free demo class</a>
+        </div>
+    </nav>
 
 <div class="container">
 
