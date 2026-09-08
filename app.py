@@ -73,25 +73,21 @@ def init_db():
     )
     """)
 
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS syllabi (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        board TEXT,
+        class_name TEXT,
+        subject TEXT,
+        filename TEXT,
+        syllabus_text TEXT,
+        uploaded_at TEXT
+    )
+    """)
     conn.commit()
     conn.close()
 
 init_db()
-# =====================================================
-# SYLLABUS DATABASE
-# =====================================================
-
-c.execute("""
-CREATE TABLE IF NOT EXISTS syllabi (
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-    board TEXT,
-    class_name TEXT,
-    subject TEXT,
-    filename TEXT,
-    syllabus_text TEXT,
-    uploaded_at TEXT
-)
-""")
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
