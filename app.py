@@ -12,6 +12,7 @@ import smtplib
 from openai import OpenAI
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta
+
 from email.message import EmailMessage
 from PyPDF2 import PdfReader
 
@@ -1599,6 +1600,9 @@ def download_salary_pdf():
     """
 
 from werkzeug.utils import secure_filename
+
+SYLLABUS_FOLDER = "syllabus_files"
+os.makedirs(SYLLABUS_FOLDER, exist_ok=True)
 
 @app.route("/upload", methods=["GET", "POST"])
 def upload():
