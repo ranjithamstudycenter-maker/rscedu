@@ -1626,7 +1626,168 @@ def upload():
 
     return render_template("upload.html", message=message)
 
+# =====================================================
+# ADMIN - SYLLABUS UPLOAD
+# =====================================================
 
+@app.route("/admin/syllabus", methods=["GET", "POST"])
+def admin_syllabus():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    message = ""
+    error = ""
+
+    if request.method == "POST":
+
+        board = request.form.get("board", "").strip()
+        class_name = request.form.get("class_name", "").strip()
+        subject = request.form.get("subject", "").strip()
+        file = request.files.get("syllabus_file")
+
+        if not board or not class_name or not subject or not file:
+            error = "Please fill all fields and select a syllabus PDF."
+
+        elif not file.filename.lower().endswith(".pdf"):
+            error = "Only PDF syllabus files are supported."
+
+        else:
+
+            try:
+
+                filename = secure_filename(file.filename)
+
+                # Read syllabus PDF
+                reader = PdfReader(file.stream)
+
+                pages = []
+
+                for page in reader.pages:
+
+                    page_text = page.extract_text() or ""
+
+                    pages.append(page_text)
+
+                syllabus_text = "\n".join(pages).strip()
+
+                if not syllabus_text:
+
+                    error = (
+                        "Could not extract text from this PDF. "
+                        "Please upload a text-based PDF."
+                    )
+
+                else:
+
+                    # Create syllabus folder
+                    folder = os.path.join(
+                        SYLLABUS_FOLDER,
+                        secure_filename(board),
+                        secure_filename(class_name),
+                        secure_filename(subject)
+                    )
+
+                    os.makedirs(folder, exist_ok=True)
+
+                    file.stream.seek(0)
+
+                    file.save(
+                        os.path.join(folder, filename)
+                    )
+
+                    # Save syllabus information in database
+                    conn = sqlite3.connect("students.db")
+
+                    c = conn.cursor()
+
+                    # Remove previous syllabus
+                    # for same board/class/subject
+                    c.execute("""
+                    DELETE FROM syllabi
+                    WHERE board=?
+                    AND class_name=?
+                    AND subject=?
+                    """, (
+                        board,
+                        class_name,
+                        subject
+                    ))
+
+                    # Insert new syllabus
+                    c.execute("""
+                    INSERT INTO syllabi
+                    (
+                        board,
+                        class_name,
+                        subject,
+                        filename,
+                        syllabus_text,
+                        uploaded_at
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?)
+                    """, (
+                        board,
+                        class_name,
+                        subject,
+                        filename,
+                        syllabus_text,
+                        datetime.now().strftime(
+                            "%Y-%m-%d %H:%M"
+                        )
+                    ))
+
+                    conn.commit()
+
+                    conn.close()
+
+                    message = (
+                        "✅ Syllabus uploaded successfully. "
+                        "AI can now use this syllabus."
+                    )
+
+            except Exception as e:
+
+                print("SYLLABUS UPLOAD ERROR:", e)
+
+                error = (
+                    "Syllabus upload failed: " +
+                    str(e)
+                )
+
+    # Get uploaded syllabi
+    conn = sqlite3.connect("students.db")
+
+    conn.row_factory = sqlite3.Row
+
+    c = conn.cursor()
+
+    c.execute("""
+    SELECT
+        id,
+        board,
+        class_name,
+        subject,
+        filename,
+        uploaded_at
+    FROM syllabi
+    ORDER BY id DESC
+    """)
+
+    syllabi = [
+        dict(row)
+        for row in c.fetchall()
+    ]
+
+    conn.close()
+
+    return render_template(
+        "syllabus_upload.html",
+        message=message,
+        error=error,
+        syllabi=syllabi
+    )
+    
 @app.route("/admin/students")
 def admin_students():
     if not session.get("admin"):
