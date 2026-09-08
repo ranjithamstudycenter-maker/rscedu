@@ -13,6 +13,7 @@ from openai import OpenAI
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta
 from email.message import EmailMessage
+from PyPDF2 import PdfReader
 
 
 
@@ -76,7 +77,21 @@ def init_db():
     conn.close()
 
 init_db()
+# =====================================================
+# SYLLABUS DATABASE
+# =====================================================
 
+c.execute("""
+CREATE TABLE IF NOT EXISTS syllabi (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    board TEXT,
+    class_name TEXT,
+    subject TEXT,
+    filename TEXT,
+    syllabus_text TEXT,
+    uploaded_at TEXT
+)
+""")
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
