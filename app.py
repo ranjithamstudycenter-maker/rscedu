@@ -1929,7 +1929,7 @@ def about():
 
 @app.route("/ai_learning")
 def ai_learning():
-    return render_template("AI_learning.html")
+    return render_template("ai_learning.html")
     
 @app.route("/courses")
 def courses():
