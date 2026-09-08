@@ -9,6 +9,7 @@ import csv
 import random
 import requests
 import smtplib
+from openai import OpenAI
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta
 from email.message import EmailMessage
@@ -79,6 +80,7 @@ init_db()
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
+client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
 # -------------------- IN-MEMORY STORES --------------------
 # FIX: otp_store was never initialized — caused NameError crash
@@ -2021,7 +2023,88 @@ def add_header(response):
     return response
 
 # -------------------- STARTUP --------------------
+# =====================================================
+# AI LEARNING - AI QUESTION GENERATOR
+# =====================================================
 
+@app.route("/api/ai-question", methods=["POST"])
+def ai_question():
+
+    try:
+
+        data = request.get_json() or {}
+
+        subject = data.get("subject", "Mathematics")
+        class_name = data.get("class_name", "Class 10")
+        topic = data.get("topic", "Algebra")
+        subtopic = data.get("subtopic", "Factorisation")
+        difficulty = data.get("difficulty", "easy")
+
+        prompt = f"""
+You are an expert school mathematics teacher.
+
+Generate ONE original multiple-choice question for:
+
+Subject: {subject}
+Class: {class_name}
+Topic: {topic}
+Subtopic: {subtopic}
+Difficulty: {difficulty}
+
+Requirements:
+- Suitable for a Class 10 student.
+- The question must be mathematically correct.
+- Provide exactly 4 options.
+- Only ONE option must be correct.
+- Provide a short explanation suitable for a student.
+- Do not copy a famous textbook question verbatim.
+- Return only valid JSON.
+
+JSON format:
+
+{{
+    "question": "question text",
+    "options": [
+        "option 1",
+        "option 2",
+        "option 3",
+        "option 4"
+    ],
+    "correct_answer": 0,
+    "explanation": "short explanation",
+    "topic": "{subtopic}",
+    "difficulty": "{difficulty}"
+}}
+"""
+
+        response = client.responses.create(
+            model="gpt-5.6-luna",
+            input=prompt
+        )
+
+        result = response.output_text.strip()
+
+        # Remove markdown code fences if returned
+        if result.startswith("```"):
+            result = result.replace("```json", "")
+            result = result.replace("```", "")
+            result = result.strip()
+
+        question_data = json.loads(result)
+
+        return jsonify({
+            "success": True,
+            "question": question_data
+        })
+
+    except Exception as e:
+
+        print("AI QUESTION ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 if __name__ == "__main__":
     _load_feedback()
     port = int(os.environ.get("PORT", 10000))
