@@ -1925,7 +1925,12 @@ def home():
 def about():
     return render_template("about.html")
 
+# -------------------- AI LEARNING --------------------
 
+@app.route("/ai-learning")
+def ai_learning():
+    return render_template("ai_learning.html")
+    
 @app.route("/courses")
 def courses():
 
