@@ -989,6 +989,21 @@
 
     </div>
 
+    <!-- AI QUESTION GENERATOR -->
+
+    <button class="primary-btn"
+            onclick="generateAIQuestion()">
+        🤖 Generate AI Question
+    </button>
+
+    <div id="aiLoading"
+         style="display:none;
+                margin-top:15px;
+                color:#7c3aed;
+                font-weight:600;">
+        🤖 AI is preparing your question...
+    </div>
+
 </div>
 
 
@@ -1808,9 +1823,244 @@ function showFinalResult(){
 
 }
 
+
+/* =====================================================
+   AI QUESTION GENERATOR
+===================================================== */
+
+async function generateAIQuestion(){
+
+    const loading =
+        document.getElementById("aiLoading");
+
+    loading.style.display = "block";
+
+    try {
+
+        const response =
+            await fetch("/api/ai-question", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    subject: "Mathematics",
+
+                    class_name: "Class 10",
+
+                    topic: "Algebra",
+
+                    subtopic: "Factorisation",
+
+                    difficulty: adaptiveLevel
+
+                })
+
+            });
+
+        const data =
+            await response.json();
+
+        if(!data.success){
+
+            alert(
+                "AI Error: " +
+                (data.error ||
+                 "Unable to generate question")
+            );
+
+            return;
+        }
+
+        const q = data.question;
+
+        document.getElementById(
+            "adaptiveQuestionCard"
+        ).classList.remove("hidden");
+
+        document.getElementById(
+            "adaptiveQuestionNumber"
+        ).innerText =
+            "🤖 AI Generated Question";
+
+        document.getElementById(
+            "adaptiveQuestionText"
+        ).innerText = q.question;
+
+        const options =
+            document.getElementById(
+                "adaptiveOptions"
+            );
+
+        options.innerHTML = "";
+
+        selectedAnswer = null;
+
+        q.options.forEach((option, index) => {
+
+            const button =
+                document.createElement("button");
+
+            button.className = "option";
+
+            button.innerText = option;
+
+            button.onclick = function(){
+
+                document
+                .querySelectorAll(
+                    "#adaptiveOptions .option"
+                )
+                .forEach(b =>
+                    b.classList.remove("selected")
+                );
+
+                button.classList.add("selected");
+
+                selectedAnswer = index;
+
+            };
+
+            options.appendChild(button);
+
+        });
+
+        // Store current AI question
+        window.currentAIQuestion = q;
+
+        // Change Next Question button
+        const nextButton =
+            document.querySelector(
+                "#adaptiveQuestionCard .primary-btn"
+            );
+
+        nextButton.innerText =
+            "Check Answer →";
+
+        nextButton.onclick =
+            checkAIAnswer;
+
+        document.getElementById(
+            "adaptiveQuestionCard"
+        ).scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+
+    }
+    catch(error){
+
+        console.error("AI ERROR:", error);
+
+        alert(
+            "Unable to connect to AI. Please try again."
+        );
+
+    }
+    finally{
+
+        loading.style.display = "none";
+
+    }
+
+}
+
+
+/* =====================================================
+   CHECK AI ANSWER
+===================================================== */
+
+function checkAIAnswer(){
+
+    if(selectedAnswer === null){
+
+        alert("Please select an answer.");
+
+        return;
+    }
+
+    const q =
+        window.currentAIQuestion;
+
+    if(!q){
+
+        alert("Please generate an AI question first.");
+
+        return;
+    }
+
+    const isCorrect =
+        selectedAnswer === q.correct_answer;
+
+    const options =
+        document.querySelectorAll(
+            "#adaptiveOptions .option"
+        );
+
+    options.forEach((button, index) => {
+
+        button.disabled = true;
+
+        if(index === q.correct_answer){
+
+            button.style.border =
+                "3px solid #16a34a";
+
+        }
+
+        if(
+            index === selectedAnswer &&
+            !isCorrect
+        ){
+
+            button.style.border =
+                "3px solid #dc2626";
+
+        }
+
+    });
+
+    const questionText =
+        document.getElementById(
+            "adaptiveQuestionText"
+        );
+
+    if(isCorrect){
+
+        questionText.innerHTML =
+            "✅ Correct!<br><br>" +
+            q.question +
+            "<br><br>" +
+            "💡 " +
+            q.explanation;
+
+    }
+    else{
+
+        questionText.innerHTML =
+            "❌ Incorrect<br><br>" +
+            "💡 Explanation:<br>" +
+            q.explanation;
+
+    }
+
+    const nextButton =
+        document.querySelector(
+            "#adaptiveQuestionCard .primary-btn"
+        );
+
+    nextButton.innerText =
+        "🤖 Generate Next AI Question";
+
+    nextButton.onclick =
+        generateAIQuestion;
+
+}
+
 </script>
-
-
 </body>
-
 </html>
