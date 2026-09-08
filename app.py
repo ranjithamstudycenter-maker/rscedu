@@ -1927,7 +1927,7 @@ def about():
 
 # -------------------- AI LEARNING --------------------
 
-@app.route("/ai-learning")
+@app.route("/AI_learning")
 def ai_learning():
     return render_template("AI_learning.html")
     
