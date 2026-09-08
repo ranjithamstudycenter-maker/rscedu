@@ -1,0 +1,1255 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>AI Learning | Ranjitham Study Center</title>
+
+<style>
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial, sans-serif;
+    background:#f5f7fb;
+    color:#1f2937;
+}
+
+/* HEADER */
+
+.header{
+    background:white;
+    padding:15px 30px;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    box-shadow:0 2px 10px rgba(0,0,0,0.08);
+    position:sticky;
+    top:0;
+    z-index:100;
+}
+
+.logo{
+    font-size:24px;
+    font-weight:bold;
+    color:#243b80;
+}
+
+.nav a{
+    text-decoration:none;
+    margin-left:20px;
+    color:#374151;
+    font-weight:600;
+}
+
+.nav a:hover{
+    color:#7c3aed;
+}
+
+/* MAIN */
+
+.container{
+    max-width:1000px;
+    margin:40px auto;
+    padding:20px;
+}
+
+.hero{
+    background:linear-gradient(135deg,#243b80,#7c3aed);
+    color:white;
+    padding:45px 30px;
+    border-radius:20px;
+    text-align:center;
+    margin-bottom:30px;
+}
+
+.hero h1{
+    margin:0 0 10px;
+    font-size:36px;
+}
+
+.hero p{
+    font-size:17px;
+    margin:0;
+}
+
+/* CARDS */
+
+.card{
+    background:white;
+    border-radius:18px;
+    padding:30px;
+    margin-bottom:25px;
+    box-shadow:0 5px 20px rgba(0,0,0,0.08);
+}
+
+.card h2{
+    margin-top:0;
+    color:#243b80;
+}
+
+.selection{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-top:20px;
+}
+
+.selection button{
+    border:2px solid #ddd;
+    background:white;
+    padding:18px;
+    border-radius:12px;
+    cursor:pointer;
+    font-size:16px;
+    font-weight:bold;
+}
+
+.selection button:hover{
+    border-color:#7c3aed;
+    background:#f5f3ff;
+}
+
+.selection button.selected{
+    background:#7c3aed;
+    color:white;
+    border-color:#7c3aed;
+}
+
+/* BUTTON */
+
+.primary-btn{
+    background:#7c3aed;
+    color:white;
+    border:none;
+    padding:14px 28px;
+    border-radius:10px;
+    font-size:16px;
+    font-weight:bold;
+    cursor:pointer;
+    margin-top:20px;
+}
+
+.primary-btn:hover{
+    opacity:0.9;
+}
+
+/* QUESTION */
+
+.question-box{
+    background:#f9fafb;
+    border:1px solid #e5e7eb;
+    padding:25px;
+    border-radius:15px;
+}
+
+.question-number{
+    font-size:14px;
+    color:#6b7280;
+    margin-bottom:10px;
+}
+
+.question{
+    font-size:20px;
+    font-weight:bold;
+    margin-bottom:20px;
+}
+
+.option{
+    display:block;
+    width:100%;
+    text-align:left;
+    padding:14px;
+    margin:10px 0;
+    background:white;
+    border:2px solid #ddd;
+    border-radius:10px;
+    cursor:pointer;
+    font-size:16px;
+}
+
+.option:hover{
+    border-color:#7c3aed;
+}
+
+.option.selected{
+    background:#ede9fe;
+    border-color:#7c3aed;
+}
+
+.option.correct{
+    background:#dcfce7;
+    border-color:#16a34a;
+}
+
+.option.wrong{
+    background:#fee2e2;
+    border-color:#dc2626;
+}
+
+/* RESULT */
+
+.result{
+    text-align:center;
+}
+
+.score{
+    font-size:45px;
+    font-weight:bold;
+    color:#7c3aed;
+}
+
+.weak-topic{
+    background:#fff7ed;
+    border:1px solid #fdba74;
+    padding:20px;
+    border-radius:12px;
+    margin-top:20px;
+}
+
+.progress-container{
+    background:#e5e7eb;
+    height:15px;
+    border-radius:20px;
+    overflow:hidden;
+    margin-top:15px;
+}
+
+.progress-bar{
+    height:100%;
+    width:0%;
+    background:#7c3aed;
+    transition:0.4s;
+}
+
+.hidden{
+    display:none;
+}
+
+.info-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin-top:20px;
+}
+
+.info{
+    background:#f9fafb;
+    padding:20px;
+    border-radius:12px;
+    text-align:center;
+}
+
+.info strong{
+    display:block;
+    font-size:24px;
+    color:#7c3aed;
+}
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .header{
+        flex-direction:column;
+        gap:12px;
+    }
+
+    .nav a{
+        margin:5px;
+        font-size:14px;
+    }
+
+    .selection{
+        grid-template-columns:1fr;
+    }
+
+    .info-grid{
+        grid-template-columns:1fr;
+    }
+
+    .hero h1{
+        font-size:28px;
+    }
+
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<!-- HEADER -->
+
+<div class="header">
+
+    <div class="logo">
+        RANJITHAM STUDY CENTER
+    </div>
+
+    <div class="nav">
+        <a href="/">Home</a>
+        <a href="/about">About</a>
+        <a href="/courses">Courses</a>
+        <a href="/ai-learning">AI Learning</a>
+        <a href="/materials">Materials</a>
+        <a href="/contact">Contact</a>
+    </div>
+
+</div>
+
+
+<div class="container">
+
+
+<!-- HERO -->
+
+<div class="hero">
+
+    <h1>🤖 AI Learning</h1>
+
+    <p>
+        Personalized Learning • Adaptive Questions • Smart Performance Analysis
+    </p>
+
+</div>
+
+
+<!-- STEP 1 -->
+
+<div class="card" id="selectionCard">
+
+    <h2>📚 Select Your Learning Module</h2>
+
+    <p>
+        Start your personalized learning journey.
+    </p>
+
+
+    <div class="selection">
+
+        <button onclick="selectSubject(this)">
+            Mathematics
+        </button>
+
+        <button onclick="selectSubject(this)">
+            Science
+        </button>
+
+        <button onclick="selectSubject(this)">
+            Coming Soon
+        </button>
+
+    </div>
+
+
+    <div id="mathSection" class="hidden">
+
+        <h3 style="margin-top:30px;">
+            Class 10 Mathematics
+        </h3>
+
+        <div class="selection">
+
+            <button onclick="startDiagnostic()">
+                Algebra<br>
+                <small>Factorisation</small>
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+<!-- DIAGNOSTIC TEST -->
+
+<div class="card hidden" id="testCard">
+
+    <h2>📝 Diagnostic Test</h2>
+
+    <p>
+        This test contains 10 questions.
+        Your answers will be analysed to identify your learning level.
+    </p>
+
+    <div class="info-grid">
+
+        <div class="info">
+            <strong>10</strong>
+            Questions
+        </div>
+
+        <div class="info">
+            <strong>3</strong>
+            Difficulty Levels
+        </div>
+
+        <div class="info">
+            <strong>10</strong>
+            Marks
+        </div>
+
+    </div>
+
+    <button class="primary-btn" onclick="beginTest()">
+        Start Diagnostic Test
+    </button>
+
+</div>
+
+
+<!-- QUESTION -->
+
+<div class="card hidden" id="questionCard">
+
+    <div class="question-box">
+
+        <div class="question-number" id="questionNumber"></div>
+
+        <div class="question" id="questionText"></div>
+
+        <div id="options"></div>
+
+        <button class="primary-btn"
+                id="nextButton"
+                onclick="nextQuestion()">
+
+            Next Question →
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- RESULT -->
+
+<div class="card hidden" id="resultCard">
+
+    <div class="result">
+
+        <h2>🎯 Diagnostic Result</h2>
+
+        <div class="score" id="scoreText"></div>
+
+        <p id="resultMessage"></p>
+
+
+        <div class="weak-topic">
+
+            <h3>🔍 Learning Analysis</h3>
+
+            <p id="weakTopic"></p>
+
+        </div>
+
+
+        <button class="primary-btn"
+                onclick="startAdaptiveLearning()">
+
+            Start Personalized Learning →
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- ADAPTIVE TEST -->
+
+<div class="card hidden" id="adaptiveCard">
+
+    <h2>🧠 Personalized Learning</h2>
+
+    <p id="adaptiveDescription"></p>
+
+    <div class="progress-container">
+
+        <div class="progress-bar"
+             id="progressBar">
+        </div>
+
+    </div>
+
+</div>
+
+
+<div class="card hidden" id="adaptiveQuestionCard">
+
+    <div class="question-box">
+
+        <div class="question-number"
+             id="adaptiveQuestionNumber">
+        </div>
+
+        <div class="question"
+             id="adaptiveQuestionText">
+        </div>
+
+        <div id="adaptiveOptions"></div>
+
+        <button class="primary-btn"
+                onclick="nextAdaptiveQuestion()">
+
+            Next Question →
+
+        </button>
+
+    </div>
+
+</div>
+
+
+<!-- FINAL -->
+
+<div class="card hidden" id="finalCard">
+
+    <div class="result">
+
+        <h2>🏆 Learning Session Completed</h2>
+
+        <div class="score"
+             id="finalScore">
+        </div>
+
+        <p id="finalMessage"></p>
+
+        <div class="weak-topic">
+
+            <h3>📊 Your Learning Profile</h3>
+
+            <p id="learningProfile"></p>
+
+        </div>
+
+        <button class="primary-btn"
+                onclick="location.reload()">
+
+            Start Again
+
+        </button>
+
+    </div>
+
+</div>
+
+
+</div>
+
+
+<script>
+
+
+/* =====================================================
+   QUESTION BANK
+===================================================== */
+
+
+const diagnosticQuestions = [
+
+{
+    question:"Which of the following is a factor of x² − 9?",
+    options:["x − 3","x + 9","x − 9","x² − 3"],
+    answer:0,
+    difficulty:"easy",
+    topic:"Difference of Squares"
+},
+
+{
+    question:"Factorise: x² + 5x + 6",
+    options:[
+        "(x+2)(x+3)",
+        "(x+1)(x+6)",
+        "(x−2)(x−3)",
+        "(x+5)(x+1)"
+    ],
+    answer:0,
+    difficulty:"easy",
+    topic:"Quadratic Factorisation"
+},
+
+{
+    question:"Factorise: x² − 16",
+    options:[
+        "(x−4)(x+4)",
+        "(x−8)(x+2)",
+        "(x−4)²",
+        "(x+16)(x−1)"
+    ],
+    answer:0,
+    difficulty:"easy",
+    topic:"Difference of Squares"
+},
+
+{
+    question:"Factorise: x² + 7x + 12",
+    options:[
+        "(x+3)(x+4)",
+        "(x+2)(x+6)",
+        "(x+1)(x+12)",
+        "(x−3)(x−4)"
+    ],
+    answer:0,
+    difficulty:"medium",
+    topic:"Quadratic Factorisation"
+},
+
+{
+    question:"Factorise: 2x² + 7x + 3",
+    options:[
+        "(2x+1)(x+3)",
+        "(2x+3)(x+1)",
+        "(x+3)(x+3)",
+        "(2x−1)(x−3)"
+    ],
+    answer:0,
+    difficulty:"medium",
+    topic:"Quadratic Factorisation"
+},
+
+{
+    question:"Factorise: x³ − 8",
+    options:[
+        "(x−2)(x²+2x+4)",
+        "(x−2)(x²−2x+4)",
+        "(x+2)(x²+4)",
+        "(x−8)(x²+1)"
+    ],
+    answer:0,
+    difficulty:"medium",
+    topic:"Cubes"
+},
+
+{
+    question:"Factorise: x³ + 27",
+    options:[
+        "(x+3)(x²−3x+9)",
+        "(x−3)(x²+3x+9)",
+        "(x+3)(x²+3x+9)",
+        "(x−27)(x²+1)"
+    ],
+    answer:0,
+    difficulty:"hard",
+    topic:"Cubes"
+},
+
+{
+    question:"Factorise: x⁴ − 16",
+    options:[
+        "(x−2)(x+2)(x²+4)",
+        "(x−4)(x+4)",
+        "(x²−4)²",
+        "(x−2)⁴"
+    ],
+    answer:0,
+    difficulty:"hard",
+    topic:"Advanced Factorisation"
+},
+
+{
+    question:"Factorise: x² − 10x + 25",
+    options:[
+        "(x−5)²",
+        "(x+5)²",
+        "(x−10)(x−5)",
+        "(x−25)(x+1)"
+    ],
+    answer:0,
+    difficulty:"medium",
+    topic:"Perfect Square"
+},
+
+{
+    question:"If x + y = 10 and xy = 21, which quadratic has roots x and y?",
+    options:[
+        "t² − 10t + 21",
+        "t² + 10t + 21",
+        "t² − 21t + 10",
+        "t² + 21t − 10"
+    ],
+    answer:0,
+    difficulty:"hard",
+    topic:"Quadratic Concepts"
+}
+
+];
+
+
+/* =====================================================
+   ADAPTIVE QUESTION BANK
+===================================================== */
+
+
+const adaptiveQuestions = {
+
+easy:[
+
+{
+    question:"Factorise: x² − 25",
+    options:[
+        "(x−5)(x+5)",
+        "(x−25)(x+1)",
+        "(x−5)²",
+        "(x+25)(x−1)"
+    ],
+    answer:0
+},
+
+{
+    question:"Factorise: x² + 6x + 9",
+    options:[
+        "(x+3)²",
+        "(x−3)²",
+        "(x+6)(x+3)",
+        "(x+9)(x−1)"
+    ],
+    answer:0
+},
+
+{
+    question:"Factorise: x² − 49",
+    options:[
+        "(x−7)(x+7)",
+        "(x−49)(x+1)",
+        "(x−7)²",
+        "(x+49)(x−1)"
+    ],
+    answer:0
+}
+
+],
+
+medium:[
+
+{
+    question:"Factorise: x² + 9x + 20",
+    options:[
+        "(x+4)(x+5)",
+        "(x+2)(x+10)",
+        "(x−4)(x−5)",
+        "(x+20)(x+1)"
+    ],
+    answer:0
+},
+
+{
+    question:"Factorise: 2x² + 5x + 2",
+    options:[
+        "(2x+1)(x+2)",
+        "(2x+2)(x+1)",
+        "(x+5)(2x+1)",
+        "(2x−1)(x−2)"
+    ],
+    answer:0
+},
+
+{
+    question:"Factorise: x² − 6x + 8",
+    options:[
+        "(x−2)(x−4)",
+        "(x+2)(x+4)",
+        "(x−1)(x−8)",
+        "(x−6)(x+2)"
+    ],
+    answer:0
+}
+
+],
+
+hard:[
+
+{
+    question:"Factorise: x³ − 27",
+    options:[
+        "(x−3)(x²+3x+9)",
+        "(x−3)(x²−3x+9)",
+        "(x+3)(x²+9)",
+        "(x−27)(x²+1)"
+    ],
+    answer:0
+},
+
+{
+    question:"Factorise: x⁴ − 81",
+    options:[
+        "(x−3)(x+3)(x²+9)",
+        "(x−9)(x+9)",
+        "(x²−9)²",
+        "(x−3)⁴"
+    ],
+    answer:0
+},
+
+{
+    question:"If x² − 7x + 12 = 0, the roots are:",
+    options:[
+        "3 and 4",
+        "2 and 6",
+        "1 and 12",
+        "−3 and −4"
+    ],
+    answer:0
+}
+
+]
+
+};
+
+
+/* =====================================================
+   VARIABLES
+===================================================== */
+
+let currentQuestion = 0;
+
+let diagnosticScore = 0;
+
+let selectedAnswer = null;
+
+let adaptiveLevel = "easy";
+
+let adaptiveIndex = 0;
+
+let adaptiveScore = 0;
+
+
+/* =====================================================
+   SUBJECT
+===================================================== */
+
+function selectSubject(button){
+
+    document.querySelectorAll(".selection button")
+    .forEach(btn => btn.classList.remove("selected"));
+
+    button.classList.add("selected");
+
+    document.getElementById("mathSection")
+    .classList.remove("hidden");
+}
+
+
+/* =====================================================
+   START DIAGNOSTIC
+===================================================== */
+
+function startDiagnostic(){
+
+    document.getElementById("testCard")
+    .classList.remove("hidden");
+
+    document.getElementById("testCard")
+    .scrollIntoView({
+        behavior:"smooth"
+    });
+}
+
+
+/* =====================================================
+   BEGIN TEST
+===================================================== */
+
+function beginTest(){
+
+    currentQuestion = 0;
+
+    diagnosticScore = 0;
+
+    document.getElementById("selectionCard")
+    .classList.add("hidden");
+
+    document.getElementById("testCard")
+    .classList.add("hidden");
+
+    document.getElementById("questionCard")
+    .classList.remove("hidden");
+
+    showDiagnosticQuestion();
+
+}
+
+
+/* =====================================================
+   SHOW DIAGNOSTIC QUESTION
+===================================================== */
+
+function showDiagnosticQuestion(){
+
+    const q =
+        diagnosticQuestions[currentQuestion];
+
+    document.getElementById("questionNumber")
+    .innerText =
+        "Question " +
+        (currentQuestion + 1) +
+        " of " +
+        diagnosticQuestions.length;
+
+    document.getElementById("questionText")
+    .innerText = q.question;
+
+    const options =
+        document.getElementById("options");
+
+    options.innerHTML = "";
+
+    selectedAnswer = null;
+
+    q.options.forEach((option,index)=>{
+
+        const button =
+            document.createElement("button");
+
+        button.className = "option";
+
+        button.innerText = option;
+
+        button.onclick = function(){
+
+            document
+            .querySelectorAll("#options .option")
+            .forEach(b =>
+                b.classList.remove("selected")
+            );
+
+            button.classList.add("selected");
+
+            selectedAnswer = index;
+
+        };
+
+        options.appendChild(button);
+
+    });
+
+}
+
+
+/* =====================================================
+   NEXT DIAGNOSTIC
+===================================================== */
+
+function nextQuestion(){
+
+    if(selectedAnswer === null){
+
+        alert("Please select an answer.");
+
+        return;
+
+    }
+
+    const q =
+        diagnosticQuestions[currentQuestion];
+
+    if(selectedAnswer === q.answer){
+
+        diagnosticScore++;
+
+    }
+
+    currentQuestion++;
+
+    if(currentQuestion <
+       diagnosticQuestions.length){
+
+        showDiagnosticQuestion();
+
+    }
+    else{
+
+        showDiagnosticResult();
+
+    }
+
+}
+
+
+/* =====================================================
+   RESULT
+===================================================== */
+
+function showDiagnosticResult(){
+
+    document.getElementById("questionCard")
+    .classList.add("hidden");
+
+    document.getElementById("resultCard")
+    .classList.remove("hidden");
+
+    const percentage =
+        diagnosticScore * 10;
+
+    document.getElementById("scoreText")
+    .innerText =
+        diagnosticScore +
+        " / 10";
+
+    let message = "";
+
+    if(percentage < 50){
+
+        adaptiveLevel = "easy";
+
+        message =
+            "Your basic factorisation concepts need improvement.";
+
+        document.getElementById("weakTopic")
+        .innerText =
+            "Weak Area: Basic Factorisation";
+
+    }
+
+    else if(percentage < 80){
+
+        adaptiveLevel = "medium";
+
+        message =
+            "You have a good foundation. Let's strengthen your problem-solving skills.";
+
+        document.getElementById("weakTopic")
+        .innerText =
+            "Learning Area: Quadratic Factorisation";
+
+    }
+
+    else{
+
+        adaptiveLevel = "hard";
+
+        message =
+            "Excellent! You are ready for advanced factorisation problems.";
+
+        document.getElementById("weakTopic")
+        .innerText =
+            "Strength: Factorisation Concepts";
+
+    }
+
+    document.getElementById("resultMessage")
+    .innerText = message;
+
+}
+
+
+/* =====================================================
+   START ADAPTIVE LEARNING
+===================================================== */
+
+function startAdaptiveLearning(){
+
+    adaptiveIndex = 0;
+
+    adaptiveScore = 0;
+
+    document.getElementById("resultCard")
+    .classList.add("hidden");
+
+    document.getElementById("adaptiveCard")
+    .classList.remove("hidden");
+
+    document.getElementById("adaptiveQuestionCard")
+    .classList.remove("hidden");
+
+    document.getElementById("adaptiveDescription")
+    .innerText =
+        "Based on your diagnostic performance, questions have been selected at the " +
+        adaptiveLevel +
+        " difficulty level.";
+
+    showAdaptiveQuestion();
+
+}
+
+
+/* =====================================================
+   SHOW ADAPTIVE
+===================================================== */
+
+function showAdaptiveQuestion(){
+
+    const bank =
+        adaptiveQuestions[adaptiveLevel];
+
+    const q =
+        bank[adaptiveIndex];
+
+    document.getElementById("adaptiveQuestionNumber")
+    .innerText =
+        "Personalized Question " +
+        (adaptiveIndex + 1) +
+        " of " +
+        bank.length;
+
+    document.getElementById("adaptiveQuestionText")
+    .innerText = q.question;
+
+    const options =
+        document.getElementById("adaptiveOptions");
+
+    options.innerHTML = "";
+
+    selectedAnswer = null;
+
+    q.options.forEach((option,index)=>{
+
+        const button =
+            document.createElement("button");
+
+        button.className = "option";
+
+        button.innerText = option;
+
+        button.onclick = function(){
+
+            document
+            .querySelectorAll("#adaptiveOptions .option")
+            .forEach(b =>
+                b.classList.remove("selected")
+            );
+
+            button.classList.add("selected");
+
+            selectedAnswer = index;
+
+        };
+
+        options.appendChild(button);
+
+    });
+
+    const progress =
+        ((adaptiveIndex) /
+        bank.length) * 100;
+
+    document.getElementById("progressBar")
+    .style.width =
+        progress + "%";
+
+}
+
+
+/* =====================================================
+   NEXT ADAPTIVE
+===================================================== */
+
+function nextAdaptiveQuestion(){
+
+    if(selectedAnswer === null){
+
+        alert("Please select an answer.");
+
+        return;
+
+    }
+
+    const bank =
+        adaptiveQuestions[adaptiveLevel];
+
+    const q =
+        bank[adaptiveIndex];
+
+    if(selectedAnswer === q.answer){
+
+        adaptiveScore++;
+
+    }
+
+    adaptiveIndex++;
+
+    if(adaptiveIndex < bank.length){
+
+        showAdaptiveQuestion();
+
+    }
+    else{
+
+        showFinalResult();
+
+    }
+
+}
+
+
+/* =====================================================
+   FINAL RESULT
+===================================================== */
+
+function showFinalResult(){
+
+    document.getElementById("adaptiveCard")
+    .classList.add("hidden");
+
+    document.getElementById("adaptiveQuestionCard")
+    .classList.add("hidden");
+
+    document.getElementById("finalCard")
+    .classList.remove("hidden");
+
+    const total =
+        adaptiveQuestions[adaptiveLevel].length;
+
+    const percentage =
+        Math.round(
+            (adaptiveScore / total) * 100
+        );
+
+    document.getElementById("finalScore")
+    .innerText =
+        percentage + "%";
+
+    let message = "";
+
+    if(percentage >= 80){
+
+        message =
+            "Excellent progress! You are ready for the next level.";
+
+    }
+    else if(percentage >= 50){
+
+        message =
+            "Good progress. Continue practising to improve.";
+
+    }
+    else{
+
+        message =
+            "More practice is recommended before moving to the next level.";
+
+    }
+
+    document.getElementById("finalMessage")
+    .innerText = message;
+
+    document.getElementById("learningProfile")
+    .innerText =
+        "Topic: Factorisation | " +
+        "Diagnostic Level: " +
+        adaptiveLevel.toUpperCase() +
+        " | Adaptive Score: " +
+        adaptiveScore +
+        "/" +
+        total;
+
+}
+
+</script>
+
+
+</body>
+
+</html>
