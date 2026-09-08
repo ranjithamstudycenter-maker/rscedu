@@ -801,6 +801,31 @@
         </div>
     </nav>
 
+<style>
+#selectionCard .module-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:25px}
+#selectionCard .module-card{border:1px solid #e2e8f0;border-radius:20px;padding:24px 20px;background:linear-gradient(145deg,#fff,#f8fafc);cursor:pointer;text-align:left;transition:.25s ease;box-shadow:0 8px 25px rgba(15,23,42,.07)}
+#selectionCard .module-card:hover{transform:translateY(-5px);box-shadow:0 15px 35px rgba(79,70,229,.16);border-color:#818cf8}
+#selectionCard .module-icon{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:27px;margin-bottom:15px;background:#eef2ff}
+#selectionCard .module-card h3{margin:0 0 7px;color:#1e3a8a;font-size:19px}
+#selectionCard .module-card p{margin:0;color:#64748b;font-size:14px;line-height:1.5}
+#selectionCard .module-badge{display:inline-block;margin-top:15px;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2ff;color:#4338ca}
+#selectionCard .module-card.coming{opacity:.72;cursor:not-allowed}
+.ai-level-heading{margin-top:28px;color:#172554}
+.ai-level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.ai-level-card{border:2px solid transparent;border-radius:22px;padding:22px;cursor:pointer;text-align:left;background:#fff;box-shadow:0 10px 30px rgba(15,23,42,.08);transition:.25s ease}
+.ai-level-card:hover{transform:translateY(-5px)}
+.ai-level-card.easy{background:linear-gradient(145deg,#ecfdf5,#fff);border-color:#86efac}
+.ai-level-card.medium{background:linear-gradient(145deg,#fffbeb,#fff);border-color:#fcd34d}
+.ai-level-card.hard{background:linear-gradient(145deg,#fef2f2,#fff);border-color:#fca5a5}
+.ai-level-icon{font-size:30px;margin-bottom:10px}
+.ai-level-card h3{margin:0 0 7px;color:#172554}
+.ai-level-card p{color:#64748b;font-size:14px;line-height:1.5;margin:0}
+.ai-question-count{display:inline-block;margin-top:14px;padding:6px 11px;border-radius:999px;background:#f1f5f9;color:#334155;font-size:12px;font-weight:700}
+.ai-recommended{margin-top:18px;padding:14px 16px;border-radius:14px;background:#eef2ff;color:#3730a3;font-weight:600}
+.ai-session-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:15px 0;padding:12px 15px;border-radius:14px;background:#f8fafc;font-weight:700;color:#334155}
+@media(max-width:800px){#selectionCard .module-grid,.ai-level-grid{grid-template-columns:1fr}}
+</style>
+
 <div class="container">
 
 
@@ -840,20 +865,25 @@
     </p>
 
 
-    <div class="selection">
-
-        <button onclick="selectSubject(this)">
-            Mathematics
-        </button>
-
-        <button onclick="selectSubject(this)">
-            Science
-        </button>
-
-        <button onclick="selectSubject(this)">
-            Coming Soon
-        </button>
-
+    <div class="module-grid">
+        <div class="module-card" onclick="selectSubjectCard(this, 'math')">
+            <div class="module-icon">📐</div>
+            <h3>Mathematics</h3>
+            <p>Build concepts, practise problems and improve mathematical problem-solving skills.</p>
+            <span class="module-badge">AI Adaptive Learning</span>
+        </div>
+        <div class="module-card" onclick="selectSubjectCard(this, 'science')">
+            <div class="module-icon">🔬</div>
+            <h3>Science</h3>
+            <p>Personalised Science learning with syllabus-based AI questions.</p>
+            <span class="module-badge">Coming Soon</span>
+        </div>
+        <div class="module-card coming">
+            <div class="module-icon">🚀</div>
+            <h3>More Subjects</h3>
+            <p>Physics, Chemistry and additional learning modules will be added soon.</p>
+            <span class="module-badge">Coming Soon</span>
+        </div>
     </div>
 
 
@@ -977,35 +1007,48 @@
 
 <div class="card hidden" id="adaptiveCard">
 
-    <h2>🧠 Personalized Learning</h2>
-
+    <h2>🧠 AI Personalized Learning</h2>
     <p id="adaptiveDescription"></p>
 
-    <div class="progress-container">
+    <div id="aiRecommendedLevel" class="ai-recommended"></div>
 
-        <div class="progress-bar"
-             id="progressBar">
+    <h3 class="ai-level-heading">🎯 Choose Your Difficulty Level</h3>
+
+    <div class="ai-level-grid">
+
+        <div class="ai-level-card easy" onclick="selectAILevel('easy')">
+            <div class="ai-level-icon">🌱</div>
+            <h3>Easy</h3>
+            <p>Strengthen fundamentals with simple concept-based questions.</p>
+            <span class="ai-question-count">25 Questions • 2 Marks Each</span>
+        </div>
+
+        <div class="ai-level-card medium" onclick="selectAILevel('medium')">
+            <div class="ai-level-icon">⚡</div>
+            <h3>Medium</h3>
+            <p>Improve application and problem-solving with moderate questions.</p>
+            <span class="ai-question-count">25 Questions • 2 Marks Each</span>
+        </div>
+
+        <div class="ai-level-card hard" onclick="selectAILevel('hard')">
+            <div class="ai-level-icon">🔥</div>
+            <h3>Hard</h3>
+            <p>Challenge yourself with higher-order and advanced problems.</p>
+            <span class="ai-question-count">25 Questions • 2 Marks Each</span>
         </div>
 
     </div>
 
-    <!-- AI QUESTION GENERATOR -->
-
-    <button class="primary-btn"
-            onclick="generateAIQuestion()">
-        🤖 Generate AI Question
-    </button>
-
-    <div id="aiLoading"
-         style="display:none;
-                margin-top:15px;
-                color:#7c3aed;
-                font-weight:600;">
+    <div id="aiLoading" style="display:none;margin-top:20px;color:#7c3aed;font-weight:700;">
         🤖 AI is preparing your question...
     </div>
 
-</div>
+    <div class="ai-session-bar" id="aiSessionBar" style="display:none;">
+        <span id="aiSessionLevel"></span>
+        <span id="aiSessionProgress"></span>
+    </div>
 
+</div>
 
 <div class="card hidden" id="adaptiveQuestionCard">
 
@@ -1401,6 +1444,11 @@ let adaptiveIndex = 0;
 
 let adaptiveScore = 0;
 
+let currentAILevel = "easy";
+let aiQuestionNumber = 0;
+let aiScore = 0;
+const AI_TOTAL_QUESTIONS = 25;
+
 
 /* =====================================================
    SUBJECT
@@ -1415,6 +1463,21 @@ function selectSubject(button){
 
     document.getElementById("mathSection")
     .classList.remove("hidden");
+}
+
+function selectSubjectCard(card, subject){
+
+    if(subject !== "math"){
+        alert("🔬 Science AI Learning is coming soon.");
+        return;
+    }
+
+    document.getElementById("mathSection").classList.remove("hidden");
+
+    document.getElementById("mathSection").scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
 }
 
 
@@ -1628,26 +1691,24 @@ function showDiagnosticResult(){
 function startAdaptiveLearning(){
 
     adaptiveIndex = 0;
-
     adaptiveScore = 0;
 
-    document.getElementById("resultCard")
-    .classList.add("hidden");
+    document.getElementById("resultCard").classList.add("hidden");
+    document.getElementById("adaptiveQuestionCard").classList.add("hidden");
+    document.getElementById("adaptiveCard").classList.remove("hidden");
 
-    document.getElementById("adaptiveCard")
-    .classList.remove("hidden");
+    document.getElementById("adaptiveDescription").innerText =
+        "Your diagnostic result has been analysed. Choose a difficulty level to start a 25-question AI practice session.";
 
-    document.getElementById("adaptiveQuestionCard")
-    .classList.remove("hidden");
+    document.getElementById("aiRecommendedLevel").innerText =
+        "⭐ Recommended Level: " + adaptiveLevel.toUpperCase();
 
-    document.getElementById("adaptiveDescription")
-    .innerText =
-        "Based on your diagnostic performance, questions have been selected at the " +
-        adaptiveLevel +
-        " difficulty level.";
+    document.getElementById("aiSessionBar").style.display = "none";
 
-    showAdaptiveQuestion();
-
+    document.getElementById("adaptiveCard").scrollIntoView({
+        behavior:"smooth",
+        block:"center"
+    });
 }
 
 
@@ -1825,240 +1886,215 @@ function showFinalResult(){
 
 
 /* =====================================================
-   AI QUESTION GENERATOR
+   AI 25-QUESTION SESSION
 ===================================================== */
+
+function selectAILevel(level){
+
+    currentAILevel = level;
+    adaptiveLevel = level;
+    aiQuestionNumber = 0;
+    aiScore = 0;
+    adaptiveScore = 0;
+
+    document.getElementById("adaptiveQuestionCard")
+        .classList.remove("hidden");
+
+    document.getElementById("aiSessionBar")
+        .style.display = "flex";
+
+    updateAISessionBar();
+    generateAIQuestion();
+}
+
+function updateAISessionBar(){
+
+    document.getElementById("aiSessionLevel").innerText =
+        "🎯 " + currentAILevel.toUpperCase() + " • 2 Marks";
+
+    document.getElementById("aiSessionProgress").innerText =
+        "Question " +
+        Math.min(aiQuestionNumber + 1, AI_TOTAL_QUESTIONS) +
+        " / " + AI_TOTAL_QUESTIONS;
+}
 
 async function generateAIQuestion(){
 
-    const loading =
-        document.getElementById("aiLoading");
-
+    const loading = document.getElementById("aiLoading");
     loading.style.display = "block";
 
-    try {
+    try{
 
-        const response =
-            await fetch("/api/ai-question", {
+        const response = await fetch("/api/ai-question",{
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                subject:"Mathematics",
+                class_name:"Class 10",
+                topic:"Algebra",
+                subtopic:"Factorisation",
+                difficulty:currentAILevel,
+                marks:2,
+                question_number:aiQuestionNumber + 1
+            })
+        });
 
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    subject: "Mathematics",
-
-                    class_name: "Class 10",
-
-                    topic: "Algebra",
-
-                    subtopic: "Factorisation",
-
-                    difficulty: adaptiveLevel
-
-                })
-
-            });
-
-        const data =
-            await response.json();
+        const data = await response.json();
 
         if(!data.success){
-
-            alert(
-                "AI Error: " +
-                (data.error ||
-                 "Unable to generate question")
-            );
-
+            alert("AI Error: " + (data.error || "Unable to generate question"));
             return;
         }
 
         const q = data.question;
 
-        document.getElementById(
-            "adaptiveQuestionCard"
-        ).classList.remove("hidden");
+        document.getElementById("adaptiveQuestionNumber").innerText =
+            "🤖 " + currentAILevel.toUpperCase() +
+            " • Question " + (aiQuestionNumber + 1) +
+            " of " + AI_TOTAL_QUESTIONS + " • 2 Marks";
 
-        document.getElementById(
-            "adaptiveQuestionNumber"
-        ).innerText =
-            "🤖 AI Generated Question";
+        document.getElementById("adaptiveQuestionText").innerText = q.question;
 
-        document.getElementById(
-            "adaptiveQuestionText"
-        ).innerText = q.question;
-
-        const options =
-            document.getElementById(
-                "adaptiveOptions"
-            );
-
+        const options = document.getElementById("adaptiveOptions");
         options.innerHTML = "";
-
         selectedAnswer = null;
 
-        q.options.forEach((option, index) => {
+        q.options.forEach((option,index)=>{
 
-            const button =
-                document.createElement("button");
-
+            const button = document.createElement("button");
             button.className = "option";
-
             button.innerText = option;
 
             button.onclick = function(){
 
-                document
-                .querySelectorAll(
-                    "#adaptiveOptions .option"
-                )
-                .forEach(b =>
-                    b.classList.remove("selected")
-                );
+                document.querySelectorAll("#adaptiveOptions .option")
+                    .forEach(b => b.classList.remove("selected"));
 
                 button.classList.add("selected");
-
                 selectedAnswer = index;
-
             };
 
             options.appendChild(button);
-
         });
 
-        // Store current AI question
         window.currentAIQuestion = q;
 
-        // Change Next Question button
         const nextButton =
-            document.querySelector(
-                "#adaptiveQuestionCard .primary-btn"
-            );
+            document.querySelector("#adaptiveQuestionCard .primary-btn");
 
-        nextButton.innerText =
-            "Check Answer →";
+        nextButton.innerText = "Check Answer →";
+        nextButton.onclick = checkAIAnswer;
 
-        nextButton.onclick =
-            checkAIAnswer;
-
-        document.getElementById(
-            "adaptiveQuestionCard"
-        ).scrollIntoView({
-            behavior: "smooth",
-            block: "center"
+        document.getElementById("adaptiveQuestionCard").scrollIntoView({
+            behavior:"smooth",
+            block:"center"
         });
 
     }
     catch(error){
 
-        console.error("AI ERROR:", error);
-
-        alert(
-            "Unable to connect to AI. Please try again."
-        );
+        console.error("AI ERROR:",error);
+        alert("Unable to connect to AI. Please try again.");
 
     }
     finally{
-
         loading.style.display = "none";
-
     }
-
 }
-
-
-/* =====================================================
-   CHECK AI ANSWER
-===================================================== */
 
 function checkAIAnswer(){
 
     if(selectedAnswer === null){
-
         alert("Please select an answer.");
-
         return;
     }
 
-    const q =
-        window.currentAIQuestion;
+    const q = window.currentAIQuestion;
 
     if(!q){
-
         alert("Please generate an AI question first.");
-
         return;
     }
 
-    const isCorrect =
-        selectedAnswer === q.correct_answer;
+    const isCorrect = selectedAnswer === q.correct_answer;
 
-    const options =
-        document.querySelectorAll(
-            "#adaptiveOptions .option"
-        );
+    if(isCorrect){
+        aiScore++;
+        adaptiveScore++;
+    }
 
-    options.forEach((button, index) => {
+    document.querySelectorAll("#adaptiveOptions .option")
+        .forEach((button,index)=>{
 
-        button.disabled = true;
+            button.disabled = true;
 
-        if(index === q.correct_answer){
+            if(index === q.correct_answer)
+                button.style.border = "3px solid #16a34a";
 
-            button.style.border =
-                "3px solid #16a34a";
-
-        }
-
-        if(
-            index === selectedAnswer &&
-            !isCorrect
-        ){
-
-            button.style.border =
-                "3px solid #dc2626";
-
-        }
-
-    });
-
-    const questionText =
-        document.getElementById(
-            "adaptiveQuestionText"
-        );
+            if(index === selectedAnswer && !isCorrect)
+                button.style.border = "3px solid #dc2626";
+        });
 
     if(isCorrect){
 
-        questionText.innerHTML =
-            "✅ Correct!<br><br>" +
-            q.question +
-            "<br><br>" +
-            "💡 " +
-            q.explanation;
+        document.getElementById("adaptiveQuestionText").innerText =
+            "✅ Correct!\n\n" + q.explanation;
 
+    }else{
+
+        document.getElementById("adaptiveQuestionText").innerText =
+            "❌ Incorrect\n\nCorrect answer: " +
+            q.options[q.correct_answer] +
+            "\n\n💡 " + q.explanation;
     }
-    else{
 
-        questionText.innerHTML =
-            "❌ Incorrect<br><br>" +
-            "💡 Explanation:<br>" +
-            q.explanation;
-
-    }
+    aiQuestionNumber++;
+    updateAISessionBar();
 
     const nextButton =
-        document.querySelector(
-            "#adaptiveQuestionCard .primary-btn"
-        );
+        document.querySelector("#adaptiveQuestionCard .primary-btn");
 
-    nextButton.innerText =
-        "🤖 Generate Next AI Question";
+    if(aiQuestionNumber >= AI_TOTAL_QUESTIONS){
 
-    nextButton.onclick =
-        generateAIQuestion;
+        nextButton.innerText = "🏆 View Result";
+        nextButton.onclick = showAISessionResult;
 
+    }else{
+
+        nextButton.innerText = "🤖 Generate Next AI Question";
+        nextButton.onclick = generateAIQuestion;
+    }
+}
+
+function showAISessionResult(){
+
+    document.getElementById("adaptiveCard").classList.add("hidden");
+    document.getElementById("adaptiveQuestionCard").classList.add("hidden");
+    document.getElementById("finalCard").classList.remove("hidden");
+
+    const percentage =
+        Math.round((aiScore / AI_TOTAL_QUESTIONS) * 100);
+
+    document.getElementById("finalScore").innerText =
+        aiScore + " / " + AI_TOTAL_QUESTIONS +
+        " (" + percentage + "%)";
+
+    let message = "";
+
+    if(percentage >= 80)
+        message = "Excellent performance! You are ready for more challenging questions.";
+    else if(percentage >= 50)
+        message = "Good progress. Continue practising to strengthen your concepts.";
+    else
+        message = "More practice is recommended. Try the Easy level and strengthen your fundamentals.";
+
+    document.getElementById("finalMessage").innerText = message;
+
+    document.getElementById("learningProfile").innerText =
+        "Subject: Mathematics | Topic: Factorisation | Difficulty: " +
+        currentAILevel.toUpperCase() +
+        " | Score: " + aiScore + "/" + AI_TOTAL_QUESTIONS +
+        " | Marks: " + (aiScore * 2) + "/" + (AI_TOTAL_QUESTIONS * 2);
 }
 
 </script>
