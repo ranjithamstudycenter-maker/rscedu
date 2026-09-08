@@ -222,77 +222,88 @@ th{
 
     </div>
 
-    <div class="card">
+   <div class="card">
 
-        <h2>📋 Uploaded Syllabi</h2>
+    <h2>📋 Uploaded Syllabi</h2>
 
-        {% if syllabi %}
+    {% if syllabi %}
 
-        <table>
+    <table>
 
-            <thead>
-                <tr>
-                    <th>Board</th>
-                    <th>Class</th>
-                    <th>Subject</th>
-                    <th>File</th>
-                    <th>Uploaded</th>
-                    <th>Action</th>
-                </tr>
-            </thead>
+        <thead>
 
-            <tbody>
+            <tr>
+                <th>Board</th>
+                <th>Class</th>
+                <th>Subject</th>
+                <th>File</th>
+                <th>Uploaded</th>
+                <th>Action</th>
+            </tr>
 
-            {% for s in syllabi %}
+        </thead>
 
-                <tr>
-                    <td>
-                        <span class="badge">
-                            {{ s.board }}
-                        </span>
-                    </td>
+        <tbody>
 
-                    <td>{{ s.class_name }}</td>
+            {% for syllabus in syllabi %}
 
-                    <td>{{ s.subject }}</td>
+            <tr>
 
-                    <td>{{ s.filename }}</td>
+                <td>
+                    {{ syllabus.board }}
+                </td>
 
-                    <td>{{ s.uploaded_at }}</td>
-                    <td>
-                        <button
-                            type="button"
-                            onclick="deleteSyllabus({{ syllabus.id }})"
-                            style="
-                                background:#ef4444;
-                                color:white;
-                                border:none;
-                                padding:8px 14px;
-                                border-radius:8px;
-                                cursor:pointer;
-                                font-weight:700;
-                            ">
-                            🗑️ Delete
-                        </button>
-                    </td>
-                </tr>
+                <td>
+                    {{ syllabus.class_name }}
+                </td>
+
+                <td>
+                    {{ syllabus.subject }}
+                </td>
+
+                <td>
+                    📄 {{ syllabus.filename }}
+                </td>
+
+                <td>
+                    {{ syllabus.uploaded_at }}
+                </td>
+
+                <td>
+
+                    <button
+                        type="button"
+                        onclick="deleteSyllabus({{ syllabus.id }})"
+                        style="
+                            background:#ef4444;
+                            color:white;
+                            border:none;
+                            padding:8px 14px;
+                            border-radius:8px;
+                            cursor:pointer;
+                            font-weight:700;
+                            margin:0;
+                        ">
+                        🗑️ Delete
+                    </button>
+
+                </td>
+
+            </tr>
 
             {% endfor %}
 
-            </tbody>
+        </tbody>
 
-        </table>
+    </table>
 
-        {% else %}
+    {% else %}
 
-        <p>
-            No syllabus uploaded yet.
-        </p>
+    <p>No syllabus uploaded yet.</p>
 
-        {% endif %}
+    {% endif %}
 
-    </div>
-
+</div>
 </div>
 <script>
 
