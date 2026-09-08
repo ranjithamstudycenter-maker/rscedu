@@ -2,3 +2,4 @@ flask
 razorpay
 gunicorn
 openai
+PyPDF2
