@@ -1791,7 +1791,73 @@ def admin_syllabus():
         error=error,
         syllabi=syllabi
     )
-    
+
+# =====================================================
+# ADMIN - DELETE SYLLABUS
+# =====================================================
+
+@app.route("/admin/delete-syllabus/<int:syllabus_id>", methods=["POST"])
+def delete_syllabus(syllabus_id):
+
+    if not session.get("admin"):
+        return jsonify({"error": "Unauthorized"}), 403
+
+    try:
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        # Get syllabus details
+        c.execute("""
+        SELECT board, class_name, subject, filename
+        FROM syllabi
+        WHERE id=?
+        """, (syllabus_id,))
+
+        row = c.fetchone()
+
+        if not row:
+            conn.close()
+            return jsonify({
+                "error": "Syllabus not found"
+            }), 404
+
+        board, class_name, subject, filename = row
+
+        # Delete database record
+        c.execute("""
+        DELETE FROM syllabi
+        WHERE id=?
+        """, (syllabus_id,))
+
+        conn.commit()
+        conn.close()
+
+        # Delete physical PDF file
+        file_path = os.path.join(
+            SYLLABUS_FOLDER,
+            secure_filename(board),
+            secure_filename(class_name),
+            secure_filename(subject),
+            filename
+        )
+
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+        return jsonify({
+            "success": True,
+            "message": "Syllabus deleted successfully"
+        })
+
+    except Exception as e:
+
+        print("DELETE SYLLABUS ERROR:", e)
+
+        return jsonify({
+            "error": str(e)
+        }), 500
+        
 @app.route("/admin/students")
 def admin_students():
     if not session.get("admin"):
