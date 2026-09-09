@@ -1639,22 +1639,48 @@ function startDiagnostic(){
    BEGIN TEST
 ===================================================== */
 
-function beginTest(){
+async function beginTest(){
 
     currentQuestion = 0;
 
     diagnosticScore = 0;
 
-    document.getElementById("selectionCard")
-    .classList.add("hidden");
+    selectedAnswer = null;
 
-    document.getElementById("testCard")
-    .classList.add("hidden");
 
-    document.getElementById("questionCard")
-    .classList.remove("hidden");
+    // Hide selection/test cards
 
-    showDiagnosticQuestion();
+    document.getElementById(
+        "selectionCard"
+    ).classList.add("hidden");
+
+
+    document.getElementById(
+        "testCard"
+    ).classList.add("hidden");
+
+
+    // Show question card
+
+    document.getElementById(
+        "questionCard"
+    ).classList.remove("hidden");
+
+
+    // Loading message
+
+    document.getElementById(
+        "questionText"
+    ).innerText =
+        "🤖 AI is preparing your diagnostic question...";
+
+
+    document.getElementById(
+        "options"
+    ).innerHTML = "";
+
+
+    await generateDiagnosticQuestion();
 
 }
 
@@ -1714,41 +1740,357 @@ function showDiagnosticQuestion(){
 
 }
 
+// =====================================================
+// GENERATE AI DIAGNOSTIC QUESTION
+// =====================================================
 
-/* =====================================================
-   NEXT DIAGNOSTIC
-===================================================== */
+async function generateDiagnosticQuestion(){
 
-function nextQuestion(){
+    const selection =
+        window.aiLearningSelection;
 
-    if(selectedAnswer === null){
 
-        alert("Please select an answer.");
+    if(!selection){
+
+        alert(
+            "Learning selection is missing."
+        );
 
         return;
 
     }
 
-    const q =
-        diagnosticQuestions[currentQuestion];
 
-    if(selectedAnswer === q.answer){
+    try{
+
+        document.getElementById(
+            "questionNumber"
+        ).innerText =
+
+            "🤖 Diagnostic Question " +
+            (currentQuestion + 1) +
+            " of 10";
+
+
+        document.getElementById(
+            "questionText"
+        ).innerText =
+
+            "🤖 AI is preparing your question...";
+
+
+        document.getElementById(
+            "options"
+        ).innerHTML = "";
+
+
+        const response =
+            await fetch(
+                "/api/ai-diagnostic-question",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                        "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        board:
+                        selection.board,
+
+                        class_name:
+                        selection.class_name,
+
+                        subject:
+                        selection.subject,
+
+                        topic:
+                        selection.topic,
+
+                        subtopic:
+                        selection.subtopic,
+
+                        question_number:
+                        currentQuestion + 1
+
+                    })
+
+                }
+            );
+
+
+        if(!response.ok){
+
+            const errorText =
+                await response.text();
+
+            console.error(
+                "DIAGNOSTIC SERVER ERROR:",
+                errorText
+            );
+
+            throw new Error(
+                "Server error: " +
+                response.status
+            );
+
+        }
+
+
+        const data =
+            await response.json();
+
+
+        if(!data.success){
+
+            alert(
+                data.error ||
+                "Unable to generate diagnostic question."
+            );
+
+            return;
+
+        }
+
+
+        const q =
+            data.question;
+
+
+        // Store current question
+
+        window.currentDiagnosticQuestion =
+            q;
+
+
+        // -----------------------------------------
+        // QUESTION NUMBER
+        // -----------------------------------------
+
+        document.getElementById(
+            "questionNumber"
+        ).innerText =
+
+            "📝 Diagnostic Question " +
+            (currentQuestion + 1) +
+            " of 10";
+
+
+        // -----------------------------------------
+        // QUESTION
+        // -----------------------------------------
+
+        document.getElementById(
+            "questionText"
+        ).innerText =
+            q.question;
+
+
+        // -----------------------------------------
+        // OPTIONS
+        // -----------------------------------------
+
+        const options =
+            document.getElementById(
+                "options"
+            );
+
+
+        options.innerHTML = "";
+
+
+        selectedAnswer = null;
+
+
+        q.options.forEach(
+            (option,index)=>{
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.className =
+                    "option";
+
+
+                button.innerText =
+                    option;
+
+
+                button.onclick =
+                    function(){
+
+                        document
+                        .querySelectorAll(
+                            "#options .option"
+                        )
+                        .forEach(
+                            b =>
+                            b.classList
+                            .remove("selected")
+                        );
+
+
+                        button.classList.add(
+                            "selected"
+                        );
+
+
+                        selectedAnswer =
+                            index;
+
+                    };
+
+
+                options.appendChild(
+                    button
+                );
+
+            }
+        );
+
+    }
+
+    catch(error){
+
+        console.error(
+            "DIAGNOSTIC QUESTION ERROR:",
+            error
+        );
+
+
+        alert(
+            "Unable to generate diagnostic question.\n\n" +
+            error.message
+        );
+
+    }
+
+}
+/* =====================================================
+   NEXT DIAGNOSTIC
+===================================================== */
+
+// =====================================================
+// NEXT DIAGNOSTIC QUESTION
+// =====================================================
+
+async function nextQuestion(){
+
+    if(selectedAnswer === null){
+
+        alert(
+            "Please select an answer."
+        );
+
+        return;
+
+    }
+
+
+    const q =
+        window.currentDiagnosticQuestion;
+
+
+    if(!q){
+
+        alert(
+            "Diagnostic question is not available."
+        );
+
+        return;
+
+    }
+
+
+    // -----------------------------------------
+    // CHECK ANSWER
+    // -----------------------------------------
+
+    const isCorrect =
+        selectedAnswer ===
+        q.correct_answer;
+
+
+    if(isCorrect){
 
         diagnosticScore++;
 
     }
 
+
+    // -----------------------------------------
+    // SHOW CORRECT / WRONG
+    // -----------------------------------------
+
+    document
+    .querySelectorAll(
+        "#options .option"
+    )
+    .forEach(
+        (button,index)=>{
+
+            button.disabled = true;
+
+
+            if(
+                index ===
+                q.correct_answer
+            ){
+
+                button.classList.add(
+                    "correct"
+                );
+
+            }
+
+
+            if(
+                index === selectedAnswer &&
+                !isCorrect
+            ){
+
+                button.classList.add(
+                    "wrong"
+                );
+
+            }
+
+        }
+    );
+
+
+    // -----------------------------------------
+    // MOVE TO NEXT
+    // -----------------------------------------
+
     currentQuestion++;
 
-    if(currentQuestion <
-       diagnosticQuestions.length){
 
-        showDiagnosticQuestion();
+    if(currentQuestion < 10){
+
+        // Small delay so student
+        // can see correct/wrong
+
+        setTimeout(
+            generateDiagnosticQuestion,
+            700
+        );
 
     }
+
     else{
 
-        showDiagnosticResult();
+        // Diagnostic completed
+
+        setTimeout(
+            showDiagnosticResult,
+            700
+        );
 
     }
 
