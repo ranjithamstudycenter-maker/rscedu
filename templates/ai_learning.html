@@ -953,7 +953,7 @@
 
             <select
                 id="aiSubject"
-                onchange="enableAIStart()"
+                onchange="loadAITopics()"
                 disabled
                 style="
                     width:100%;
@@ -3663,7 +3663,6 @@ function enableAIStart(){
 
 }
 
-
 // -----------------------------------------------------
 // START AI LEARNING
 // -----------------------------------------------------
@@ -3675,34 +3674,24 @@ function enableAIStart(){
 function startAISubject(){
 
     selectedAIBoard =
-        document.getElementById(
-            "aiBoard"
-        ).value;
-
+        document.getElementById("aiBoard").value;
 
     selectedAIClass =
-        document.getElementById(
-            "aiClass"
-        ).value;
-
+        document.getElementById("aiClass").value;
 
     selectedAISubject =
-        document.getElementById(
-            "aiSubject"
-        ).value;
-
+        document.getElementById("aiSubject").value;
 
     const topicIndex =
-        document.getElementById(
-            "aiTopic"
-        ).value;
-
+        document.getElementById("aiTopic").value;
 
     const subtopic =
-        document.getElementById(
-            "aiSubtopic"
-        ).value;
+        document.getElementById("aiSubtopic").value;
 
+
+    // -----------------------------------------
+    // VALIDATION
+    // -----------------------------------------
 
     if(
         !selectedAIBoard ||
@@ -3717,38 +3706,50 @@ function startAISubject(){
         );
 
         return;
-
     }
 
+
+    // -----------------------------------------
+    // GET SELECTED TOPIC
+    // -----------------------------------------
 
     const selectedTopic =
         window.aiTopics[
             Number(topicIndex)
         ];
 
+    if(!selectedTopic){
+
+        alert("Selected chapter is not available.");
+
+        return;
+    }
+
 
     const topic =
         selectedTopic.topic;
 
 
-    // Store complete selection
+    // -----------------------------------------
+    // STORE COMPLETE SELECTION
+    // -----------------------------------------
 
     window.aiLearningSelection = {
 
         board:
-        selectedAIBoard,
+            selectedAIBoard,
 
         class_name:
-        selectedAIClass,
+            selectedAIClass,
 
         subject:
-        selectedAISubject,
+            selectedAISubject,
 
         topic:
-        topic,
+            topic,
 
         subtopic:
-        subtopic
+            subtopic
 
     };
 
@@ -3759,32 +3760,82 @@ function startAISubject(){
     );
 
 
-    // Hide selection
+    // -----------------------------------------
+    // HIDE SELECTION
+    // -----------------------------------------
 
     document.getElementById(
         "selectionCard"
     ).classList.add("hidden");
 
 
-    // Show diagnostic test
+    // -----------------------------------------
+    // HIDE OLD DIAGNOSTIC SYSTEM
+    // -----------------------------------------
 
     document.getElementById(
         "testCard"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "questionCard"
+    ).classList.add("hidden");
+
+    document.getElementById(
+        "resultCard"
+    ).classList.add("hidden");
+
+
+    // -----------------------------------------
+    // SHOW AI PERSONALIZED LEARNING
+    // -----------------------------------------
+
+    document.getElementById(
+        "adaptiveCard"
     ).classList.remove("hidden");
 
 
+    // -----------------------------------------
+    // SET DESCRIPTION
+    // -----------------------------------------
+
     document.getElementById(
-        "testCard"
+        "adaptiveDescription"
+    ).innerText =
+        "Practice " +
+        selectedAISubject +
+        " → " +
+        topic +
+        " → " +
+        subtopic +
+        " using AI-generated questions.";
+
+
+    // -----------------------------------------
+    // SHOW RECOMMENDED LEVEL AREA
+    // -----------------------------------------
+
+    document.getElementById(
+        "aiRecommendedLevel"
+    ).innerText =
+        "📚 Selected: " +
+        topic +
+        " → " +
+        subtopic;
+
+
+    // -----------------------------------------
+    // SCROLL TO DIFFICULTY
+    // -----------------------------------------
+
+    document.getElementById(
+        "adaptiveCard"
     ).scrollIntoView({
-
-        behavior:"smooth",
-
-        block:"center"
-
+        behavior: "smooth",
+        block: "center"
     });
 
 }
-
 
 // -----------------------------------------------------
 // LOAD WHEN PAGE OPENS
