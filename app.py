@@ -2331,7 +2331,60 @@ def add_header(response):
 # =====================================================
 # AI LEARNING - AI QUESTION GENERATOR
 # =====================================================
+# =====================================================
+# AI LEARNING - GET AVAILABLE SYLLABUS OPTIONS
+# =====================================================
 
+@app.route("/api/ai-learning-options")
+def ai_learning_options():
+
+    try:
+
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+        c.execute("""
+        SELECT DISTINCT
+            board,
+            class_name,
+            subject
+        FROM syllabi
+        ORDER BY board, class_name, subject
+        """)
+
+        rows = c.fetchall()
+
+        conn.close()
+
+        options = []
+
+        for row in rows:
+
+            options.append({
+                "board": row["board"],
+                "class_name": row["class_name"],
+                "subject": row["subject"]
+            })
+
+        return jsonify({
+            "success": True,
+            "options": options
+        })
+
+    except Exception as e:
+
+        print(
+            "AI LEARNING OPTIONS ERROR:",
+            e
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+        
 @app.route("/api/ai-question", methods=["POST"])
 def ai_question():
 
