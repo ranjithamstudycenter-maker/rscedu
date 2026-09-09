@@ -1186,6 +1186,11 @@
         <span id="aiSessionProgress"></span>
     </div>
 
+    <div id="aiTimerBox">
+    <span>⏱️ Time Remaining</span>
+    <strong id="aiTimer">30:00</strong>
+    </div>
+
 </div>
 
 <div class="card hidden" id="adaptiveQuestionCard">
@@ -1585,6 +1590,10 @@ let adaptiveScore = 0;
 let currentAILevel = "easy";
 let aiQuestionNumber = 0;
 let aiScore = 0;
+
+let aiTimerInterval = null;
+let aiTimeRemaining = 30 * 60; // 30 minutes
+let aiTimerStarted = false;
 const AI_TOTAL_QUESTIONS = 25;
 
 
@@ -2375,6 +2384,7 @@ function selectAILevel(level){
     adaptiveLevel = level;
     aiQuestionNumber = 0;
     aiScore = 0;
+    startAITimer();
     adaptiveScore = 0;
 
     document.getElementById("adaptiveQuestionCard")
@@ -2402,84 +2412,227 @@ function updateAISessionBar(){
 // GENERATE AI QUESTION
 // -----------------------------------------------------
 
-async function generateAIQuestion(){
+async function generateAIQuestion() {
 
-    const loading =
-        document.getElementById("aiLoading");
+    const selection = window.aiLearningSelection || {};
 
-    loading.style.display = "block";
+    const board = selection.board;
+    const className = selection.class_name;
+    const subject = selection.subject;
+    const topic = selection.topic;
+    const subtopic = selection.subtopic;
 
-
-    // -----------------------------------------
-    // CHECK SELECTION
-    // -----------------------------------------
-
-    if(!window.aiLearningSelection){
-
-        alert(
-            "Please select your Board, Class, Subject, Chapter and Subtopic."
-        );
-
-        loading.style.display = "none";
-
+    if (!board || !className || !subject || !topic || !subtopic) {
+        alert("Please complete Board, Class, Subject, Topic and Subtopic selection.");
         return;
-
     }
 
+    const questionCard = document.getElementById("questionCard");
 
-    const selection =
-        window.aiLearningSelection;
+    questionCard.innerHTML = `
+        <div style="text-align:center;padding:30px;">
+            <div style="font-size:32px;">🤖</div>
+            <h3>Generating Question...</h3>
+            <p>Please wait while AI prepares your question.</p>
+        </div>
+    `;
+
+    try {
+
+        const response = await fetch("/api/ai-question", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json"
+            },
+            body: JSON.stringify({
+
+                board: board,
+                subject: subject,
+                class_name: className,
+                topic: topic,
+                subtopic: subtopic,
+                difficulty: currentAILevel,
+                marks: 2,
+                question_number: aiQuestionNumber + 1
+
+            })
+        });
+
+        const data = await response.json();
+
+        if (!data.success) {
+            throw new Error(data.error || "Failed to generate question");
+        }
+
+        const q = data.question;
+
+        window.currentAIQuestion = q;
+
+        questionCard.innerHTML = `
+            <div class="ai-question-box">
+
+                <div style="margin-bottom:15px;">
+                    <span class="ai-level-badge">
+                        ${currentAILevel.toUpperCase()}
+                    </span>
+
+                    <span style="margin-left:10px;">
+                        Question ${aiQuestionNumber + 1} / ${AI_TOTAL_QUESTIONS}
+                    </span>
+                </div>
+
+                <h3 style="margin-bottom:20px;">
+                    ${q.question}
+                </h3>
+
+                <div id="aiOptionsContainer">
+
+                    ${q.options.map((option, index) => `
+                        <button
+                            class="ai-option"
+                            onclick="selectAIOption(${index})"
+                            data-index="${index}">
+                            ${String.fromCharCode(65 + index)}. ${option}
+                        </button>
+                    `).join("")}
+
+                </div>
+
+                <div id="aiExplanation"
+                     style="display:none;margin-top:20px;">
+                </div>
+
+                <div style="margin-top:20px;text-align:right;">
+
+                    <button
+                        id="aiActionButton"
+                        onclick="checkAIAnswer()"
+                        class="ai-next-btn">
+                        Submit Answer
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+        updateAISessionBar();
+
+    } catch (error) {
+
+        console.error("AI QUESTION ERROR:", error);
+
+        questionCard.innerHTML = `
+            <div style="text-align:center;padding:30px;">
+
+                <h3>Unable to generate question</h3>
+
+                <p>
+                    ${error.message}
+                </p>
+
+                <button
+                    onclick="generateAIQuestion()"
+                    class="ai-next-btn">
+                    Try Again
+                </button>
+
+            </div>
+        `;
+    }
+}
+
+    function startAITimer() {
+
+    // Prevent multiple timers
+    if (aiTimerInterval) {
+        clearInterval(aiTimerInterval);
+    }
+
+    aiTimeRemaining = 30 * 60;
+    aiTimerStarted = true;
+
+    updateAITimerDisplay();
+
+    aiTimerInterval = setInterval(() => {
+
+        aiTimeRemaining--;
+
+        updateAITimerDisplay();
+
+        if (aiTimeRemaining <= 0) {
+
+            clearInterval(aiTimerInterval);
+            aiTimerInterval = null;
+
+            aiTimeRemaining = 0;
+
+            updateAITimerDisplay();
+
+            autoSubmitAITest();
+        }
+
+    }, 1000);
+}
 
 
-    console.log(
-        "AI QUESTION SELECTION:",
-        selection
+function updateAITimerDisplay() {
+
+    const timerElement = document.getElementById("aiTimer");
+
+    if (!timerElement) {
+        return;
+    }
+
+    const minutes = Math.floor(aiTimeRemaining / 60);
+    const seconds = aiTimeRemaining % 60;
+
+    timerElement.textContent =
+        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+
+    // Normal state
+    timerElement.classList.remove(
+        "timer-warning",
+        "timer-urgent"
     );
 
+    // Warning: 10 minutes
+    if (aiTimeRemaining <= 10 * 60 &&
+        aiTimeRemaining > 5 * 60) {
 
-    try{
+        timerElement.classList.add("timer-warning");
+    }
 
-        const response =
-            await fetch(
-                "/api/ai-question",
-                {
-                    method:"POST",
+    // Urgent: 5 minutes
+    if (aiTimeRemaining <= 5 * 60) {
 
-                    headers:{
-                        "Content-Type":
-                        "application/json"
-                    },
+        timerElement.classList.add("timer-urgent");
+    }
+}
 
-                    body:JSON.stringify({
 
-                        board:
-                        selection.board,
+function stopAITimer() {
 
-                        class_name:
-                        selection.class_name,
+    if (aiTimerInterval) {
 
-                        subject:
-                        selection.subject,
+        clearInterval(aiTimerInterval);
+        aiTimerInterval = null;
+    }
 
-                        topic:
-                        selection.topic,
+    aiTimerStarted = false;
+}
 
-                        subtopic:
-                        selection.subtopic,
 
-                        difficulty:
-                        currentAILevel,
+function autoSubmitAITest() {
 
-                        marks:2,
+    console.log("AI TEST TIME OVER");
 
-                        question_number:
-                        aiQuestionNumber + 1
+    alert("⏰ Time is over! Your test will be submitted automatically.");
 
-                    })
+    stopAITimer();
 
-                }
-            );
-
+    showAISessionResult();
+}
 
         // -----------------------------------------
         // CHECK SERVER RESPONSE
@@ -2741,7 +2894,7 @@ function checkAIAnswer(){
         nextButton.onclick = showAISessionResult;
 
     }else{
-
+        stopAITimer();
         nextButton.innerText = "🤖 Generate Next AI Question";
         nextButton.onclick = generateAIQuestion;
     }
