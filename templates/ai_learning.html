@@ -3504,7 +3504,8 @@ async function loadAITopics(){
 
             }
         );
-
+         // ENABLE CHAPTER DROPDOWN
+            topicSelect.disabled = false;
 
         // Store complete topic data
 
@@ -3518,16 +3519,21 @@ async function loadAITopics(){
 
     catch(error){
 
-        console.error(
-            "AI TOPICS ERROR:",
-            error
-        );
+    console.error(
+        "AI TOPICS ERROR:",
+        error
+    );
 
-        alert(
-            "Unable to load chapters from syllabus."
-        );
+    topicSelect.disabled = false;
 
-    }
+    topicSelect.innerHTML =
+        '<option value="">❌ Unable to load chapters</option>';
+
+    alert(
+        "Unable to load chapters from syllabus.\n\n" +
+        error.message
+    );
+}
 
 }
  // -----------------------------------------------------
