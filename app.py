@@ -3056,7 +3056,295 @@ def save_ai_attempt():
             "error": str(e)
         }), 500
         
+# =====================================================
+# AI 25 QUESTION BATCH
+# =====================================================
 
+@app.route("/api/ai-question-batch", methods=["POST"])
+def ai_question_batch():
+
+    try:
+
+        data = request.get_json() or {}
+
+        board = data.get("board")
+        class_name = data.get("class_name")
+        subject = data.get("subject")
+        topic = data.get("topic")
+        subtopic = data.get("subtopic")
+        difficulty = data.get("difficulty", "easy")
+
+        # -----------------------------------------
+        # VALIDATION
+        # -----------------------------------------
+
+        if not board or not class_name or not subject:
+            return jsonify({
+                "success": False,
+                "error": "Board, Class and Subject are required."
+            }), 400
+
+        if not topic or not subtopic:
+            return jsonify({
+                "success": False,
+                "error": "Chapter and Subtopic are required."
+            }), 400
+
+        if difficulty not in ["easy", "medium", "hard"]:
+            return jsonify({
+                "success": False,
+                "error": "Invalid difficulty level."
+            }), 400
+
+        # -----------------------------------------
+        # GET SYLLABUS
+        # -----------------------------------------
+
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+        SELECT syllabus_text
+        FROM syllabi
+        WHERE board=?
+        AND class_name=?
+        AND subject=?
+        ORDER BY id DESC
+        LIMIT 1
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+        row = c.fetchone()
+        conn.close()
+
+        if not row:
+
+            return jsonify({
+                "success": False,
+                "error": "Syllabus not found for selected subject."
+            }), 404
+
+        syllabus_text = row["syllabus_text"] or ""
+
+        if not syllabus_text.strip():
+
+            return jsonify({
+                "success": False,
+                "error": "Uploaded syllabus is empty."
+            }), 400
+
+        syllabus_context = syllabus_text[:30000]
+
+        # -----------------------------------------
+        # AI PROMPT
+        # -----------------------------------------
+
+        prompt = f"""
+You are an expert Class 10 Mathematics teacher
+and educational question paper designer.
+
+Generate EXACTLY 25 ORIGINAL multiple-choice
+questions for the following:
+
+Board: {board}
+Class: {class_name}
+Subject: {subject}
+Chapter/Topic: {topic}
+Subtopic: {subtopic}
+Difficulty: {difficulty}
+
+IMPORTANT REQUIREMENTS:
+
+1. Generate exactly 25 questions.
+2. Every question must be relevant to the selected
+   chapter and subtopic.
+3. Difficulty must match {difficulty}.
+4. Each question must have exactly 4 options.
+5. Only ONE option must be correct.
+6. Give correct_answer as an integer from 0 to 3.
+7. Give a short student-friendly explanation.
+8. Give a useful hint.
+9. Questions must be mathematically correct.
+10. Questions must be ORIGINAL.
+11. Do not copy textbook questions verbatim.
+12. Avoid duplicate questions.
+13. Return ONLY valid JSON.
+14. Do not use markdown code fences.
+
+JSON format:
+
+{{
+    "questions": [
+        {{
+            "question": "Question text",
+            "options": [
+                "Option 1",
+                "Option 2",
+                "Option 3",
+                "Option 4"
+            ],
+            "correct_answer": 0,
+            "explanation": "Short explanation",
+            "hint": "Short hint"
+        }}
+    ]
+}}
+
+SYLLABUS:
+-------------------------
+{syllabus_context}
+-------------------------
+"""
+
+        # -----------------------------------------
+        # AI CALL — ONLY ONE CALL
+        # -----------------------------------------
+
+        response = client.responses.create(
+            model="gpt-5.6-luna",
+            input=prompt
+        )
+
+        result = response.output_text.strip()
+
+        # -----------------------------------------
+        # CLEAN JSON
+        # -----------------------------------------
+
+        if result.startswith("```"):
+
+            result = result.replace("```json", "")
+            result = result.replace("```", "")
+            result = result.strip()
+
+        question_data = json.loads(result)
+
+        questions = question_data.get("questions", [])
+
+        # -----------------------------------------
+        # VALIDATE
+        # -----------------------------------------
+
+        if not isinstance(questions, list):
+
+            raise ValueError(
+                "AI returned invalid question structure."
+            )
+
+        if len(questions) < 25:
+
+            raise ValueError(
+                f"AI generated only {len(questions)} questions. "
+                "25 questions are required."
+            )
+
+        # Use exactly first 25
+        questions = questions[:25]
+
+        validated_questions = []
+
+        for q in questions:
+
+            if not isinstance(q, dict):
+                continue
+
+            if not q.get("question"):
+                continue
+
+            if not isinstance(q.get("options"), list):
+                continue
+
+            if len(q["options"]) != 4:
+                continue
+
+            if q.get("correct_answer") not in [0, 1, 2, 3]:
+                continue
+
+            validated_questions.append({
+
+                "question":
+                    q["question"],
+
+                "options":
+                    q["options"],
+
+                "correct_answer":
+                    q["correct_answer"],
+
+                "explanation":
+                    q.get("explanation", ""),
+
+                "hint":
+                    q.get("hint", ""),
+
+                "topic":
+                    topic,
+
+                "subtopic":
+                    subtopic,
+
+                "difficulty":
+                    difficulty
+
+            })
+
+        if len(validated_questions) < 25:
+
+            raise ValueError(
+                "AI did not return 25 valid questions."
+            )
+
+        return jsonify({
+
+            "success": True,
+
+            "difficulty":
+                difficulty,
+
+            "questions":
+                validated_questions[:25]
+
+        })
+
+    except Exception as e:
+
+        print(
+            "AI QUESTION BATCH ERROR:",
+            e
+        )
+
+        error_message = str(e)
+
+        # -----------------------------------------
+        # RATE LIMIT
+        # -----------------------------------------
+
+        if "429" in error_message or "rate limit" in error_message.lower():
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "AI service is temporarily busy. "
+                    "Please try again after a short while.",
+
+                "rate_limit": True
+
+            }), 429
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                error_message
+
+        }), 500
 # =====================================================
 # AI DIAGNOSTIC QUESTION
 # =====================================================
