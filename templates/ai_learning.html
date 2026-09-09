@@ -973,7 +973,56 @@
 
     </div>
 
+<div id="aiTopicSection" style="display:none; margin-top:25px;">
 
+    <h3>📚 Select Chapter / Topic</h3>
+
+    <select
+        id="aiTopic"
+        onchange="loadAISubtopics()"
+        style="
+            width:100%;
+            padding:14px;
+            margin-top:8px;
+            border-radius:12px;
+            border:1px solid #cbd5e1;
+            font-size:16px;
+        "
+    >
+
+        <option value="">
+            Select Chapter / Topic
+        </option>
+
+    </select>
+
+</div>
+
+<div id="aiSubtopicSection" style="display:none; margin-top:20px;">
+
+    <h3>📖 Select Subtopic</h3>
+
+    <select
+        id="aiSubtopic"
+        onchange="enableAIStart()"
+        style="
+            width:100%;
+            padding:14px;
+            margin-top:8px;
+            border-radius:12px;
+            border:1px solid #cbd5e1;
+            font-size:16px;
+        "
+    >
+
+        <option value="">
+            Select Subtopic
+        </option>
+
+    </select>
+
+</div>
+       
     <div style="
         margin-top:25px;
         text-align:center;
