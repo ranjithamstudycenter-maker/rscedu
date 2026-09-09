@@ -85,6 +85,69 @@ def init_db():
         uploaded_at TEXT
     )
     """)
+
+    # =====================================================
+    # AI LEARNING - TEST ATTEMPTS
+    # =====================================================
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS ai_attempts (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    
+        phone TEXT,
+    
+        board TEXT,
+        class_name TEXT,
+        subject TEXT,
+        topic TEXT,
+        subtopic TEXT,
+    
+        difficulty TEXT,
+    
+        total_questions INTEGER DEFAULT 25,
+        total_marks INTEGER DEFAULT 50,
+    
+        correct_answers INTEGER DEFAULT 0,
+        incorrect_answers INTEGER DEFAULT 0,
+    
+        score INTEGER DEFAULT 0,
+        percentage REAL DEFAULT 0,
+    
+        question_data TEXT,
+    
+        completed_at TEXT
+    )
+    """)
+
+    # =====================================================
+    # AI LEARNING - TOPIC PERFORMANCE
+    # =====================================================
+    
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS ai_topic_performance (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    
+        phone TEXT,
+    
+        board TEXT,
+        class_name TEXT,
+        subject TEXT,
+        topic TEXT,
+        subtopic TEXT,
+    
+        difficulty TEXT,
+    
+        total_questions INTEGER DEFAULT 0,
+        correct_answers INTEGER DEFAULT 0,
+        incorrect_answers INTEGER DEFAULT 0,
+    
+        score INTEGER DEFAULT 0,
+        percentage REAL DEFAULT 0,
+    
+        last_attempt TEXT
+    )
+    """)
+
     conn.commit()
     conn.close()
 
