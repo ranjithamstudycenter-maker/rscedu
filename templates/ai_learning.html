@@ -1227,10 +1227,65 @@
 
         <h2>🏆 Learning Session Completed</h2>
 
-        <div class="score"
-             id="finalScore">
-        </div>
+        <div class="score" id="finalScore"></div>
 
+<div id="finalStats" style="
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:15px;
+    margin:20px 0;
+">
+
+    <div style="
+        background:#f0fdf4;
+        border:1px solid #bbf7d0;
+        border-radius:15px;
+        padding:15px;
+        text-align:center;
+    ">
+        <div style="font-size:13px;color:#64748b;">
+            Correct
+        </div>
+        <strong id="correctCount"
+                style="font-size:24px;color:#15803d;">
+            0
+        </strong>
+    </div>
+
+            <div style="
+                background:#fef2f2;
+                border:1px solid #fecaca;
+                border-radius:15px;
+                padding:15px;
+                text-align:center;
+            ">
+                <div style="font-size:13px;color:#64748b;">
+                    Incorrect
+                </div>
+                <strong id="incorrectCount"
+                        style="font-size:24px;color:#dc2626;">
+                    0
+                </strong>
+            </div>
+        
+            <div style="
+                background:#eff6ff;
+                border:1px solid #bfdbfe;
+                border-radius:15px;
+                padding:15px;
+                text-align:center;
+            ">
+                <div style="font-size:13px;color:#64748b;">
+                    Marks
+                </div>
+                <strong id="marksCount"
+                        style="font-size:24px;color:#1d4ed8;">
+                    0 / 50
+                </strong>
+            </div>
+        
+        </div>
+        
         <p id="finalMessage"></p>
 
         <div class="weak-topic">
@@ -1595,6 +1650,7 @@ let aiTimerInterval = null;
 let aiTimeRemaining = 30 * 60; // 30 minutes
 let aiTimerStarted = false;
 const AI_TOTAL_QUESTIONS = 25;
+let aiAttemptQuestions = [];
 
 
 /* =====================================================
@@ -2019,12 +2075,38 @@ async function nextQuestion(){
     // -----------------------------------------
     // CHECK ANSWER
     // -----------------------------------------
+    const isCorrect = selectedAnswer === q.correct_answer;
+    
+    // ==========================================
+    // STORE CURRENT QUESTION + STUDENT ANSWER
+    // ==========================================
 
-    const isCorrect =
-        selectedAnswer ===
-        q.correct_answer;
+aiAttemptQuestions.push({
 
+    question_number: aiQuestionNumber + 1,
 
+    question: q.question,
+
+    options: q.options,
+
+    student_answer: selectedAnswer,
+
+    correct_answer: q.correct_answer,
+
+    is_correct: isCorrect,
+
+    explanation: q.explanation || "",
+
+    hint: q.hint || "",
+
+    difficulty: currentAILevel,
+
+    topic: q.topic || "",
+
+    subtopic: q.subtopic || ""
+
+});
+    
     if(isCorrect){
 
         diagnosticScore++;
@@ -2890,11 +2972,15 @@ function checkAIAnswer(){
 
     if(aiQuestionNumber >= AI_TOTAL_QUESTIONS){
 
+        // 25 questions completed
+        stopAITimer();
+    
         nextButton.innerText = "🏆 View Result";
         nextButton.onclick = showAISessionResult;
 
     }else{
-        stopAITimer();
+
+        // Continue timer for next question
         nextButton.innerText = "🤖 Generate Next AI Question";
         nextButton.onclick = generateAIQuestion;
     }
@@ -2902,33 +2988,127 @@ function checkAIAnswer(){
 
 function showAISessionResult(){
 
+    // Stop timer
+    stopAITimer();
+
+    // Hide question cards
     document.getElementById("adaptiveCard").classList.add("hidden");
     document.getElementById("adaptiveQuestionCard").classList.add("hidden");
+
+    // Show final result
     document.getElementById("finalCard").classList.remove("hidden");
 
+    // -----------------------------------------
+    // RESULT CALCULATION
+    // -----------------------------------------
+
+    const totalQuestions = AI_TOTAL_QUESTIONS;
+
+    const correct = aiScore;
+
+    const incorrect =
+        totalQuestions - correct;
+
+    const marks =
+        correct * 2;
+
+    const totalMarks =
+        totalQuestions * 2;
+
     const percentage =
-        Math.round((aiScore / AI_TOTAL_QUESTIONS) * 100);
+        Math.round(
+            (marks / totalMarks) * 100
+        );
+
+    // -----------------------------------------
+    // MAIN SCORE
+    // -----------------------------------------
 
     document.getElementById("finalScore").innerText =
-        aiScore + " / " + AI_TOTAL_QUESTIONS +
+        marks + " / " + totalMarks +
         " (" + percentage + "%)";
+
+    // -----------------------------------------
+    // CORRECT / INCORRECT / MARKS
+    // -----------------------------------------
+
+    document.getElementById("correctCount").innerText =
+        correct;
+
+    document.getElementById("incorrectCount").innerText =
+        incorrect;
+
+    document.getElementById("marksCount").innerText =
+        marks + " / " + totalMarks;
+
+    // -----------------------------------------
+    // PERFORMANCE MESSAGE
+    // -----------------------------------------
 
     let message = "";
 
-    if(percentage >= 80)
-        message = "Excellent performance! You are ready for more challenging questions.";
-    else if(percentage >= 50)
-        message = "Good progress. Continue practising to strengthen your concepts.";
-    else
-        message = "More practice is recommended. Try the Easy level and strengthen your fundamentals.";
+    if(percentage >= 80){
 
-    document.getElementById("finalMessage").innerText = message;
+        message =
+            "Excellent performance! You are ready for more challenging questions.";
+
+    }
+    else if(percentage >= 50){
+
+        message =
+            "Good progress. Continue practising to strengthen your concepts.";
+
+    }
+    else{
+
+        message =
+            "More practice is recommended. Strengthen your fundamentals before moving to a higher level.";
+
+    }
+
+    document.getElementById("finalMessage").innerText =
+        message;
+
+    // -----------------------------------------
+    // CURRENT SELECTION
+    // -----------------------------------------
+
+    const selection =
+        window.aiLearningSelection || {};
+
+    const subject =
+        selection.subject || "Mathematics";
+
+    const topic =
+        selection.topic || "-";
+
+    const subtopic =
+        selection.subtopic || "-";
+
+    // -----------------------------------------
+    // LEARNING PROFILE
+    // -----------------------------------------
 
     document.getElementById("learningProfile").innerText =
-        "Subject: Mathematics | Topic: Factorisation | Difficulty: " +
+
+        "Subject: " + subject +
+
+        " | Topic: " + topic +
+
+        " | Subtopic: " + subtopic +
+
+        " | Difficulty: " +
         currentAILevel.toUpperCase() +
-        " | Score: " + aiScore + "/" + AI_TOTAL_QUESTIONS +
-        " | Marks: " + (aiScore * 2) + "/" + (AI_TOTAL_QUESTIONS * 2);
+
+        " | Correct: " + correct +
+
+        " | Incorrect: " + incorrect +
+
+        " | Score: " +
+        marks + "/" + totalMarks +
+
+        " | Percentage: " +
+        percentage + "%";
 }
 
 
