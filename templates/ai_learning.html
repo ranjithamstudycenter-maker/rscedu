@@ -2056,88 +2056,289 @@ function updateAISessionBar(){
         " / " + AI_TOTAL_QUESTIONS;
 }
 
+// -----------------------------------------------------
+// GENERATE AI QUESTION
+// -----------------------------------------------------
+
 async function generateAIQuestion(){
 
-    const loading = document.getElementById("aiLoading");
+    const loading =
+        document.getElementById("aiLoading");
+
     loading.style.display = "block";
+
+
+    // -----------------------------------------
+    // CHECK SELECTION
+    // -----------------------------------------
+
+    if(!window.aiLearningSelection){
+
+        alert(
+            "Please select your Board, Class, Subject, Chapter and Subtopic."
+        );
+
+        loading.style.display = "none";
+
+        return;
+
+    }
+
+
+    const selection =
+        window.aiLearningSelection;
+
+
+    console.log(
+        "AI QUESTION SELECTION:",
+        selection
+    );
+
 
     try{
 
-        const response = await fetch("/api/ai-question",{
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                subject:"Mathematics",
-                class_name:"Class 10",
-                topic:"Algebra",
-                subtopic:"Factorisation",
-                difficulty:currentAILevel,
-                marks:2,
-                question_number:aiQuestionNumber + 1
-            })
-        });
+        const response =
+            await fetch(
+                "/api/ai-question",
+                {
+                    method:"POST",
 
-        const data = await response.json();
+                    headers:{
+                        "Content-Type":
+                        "application/json"
+                    },
 
-        if(!data.success){
-            alert("AI Error: " + (data.error || "Unable to generate question"));
-            return;
+                    body:JSON.stringify({
+
+                        board:
+                        selection.board,
+
+                        class_name:
+                        selection.class_name,
+
+                        subject:
+                        selection.subject,
+
+                        topic:
+                        selection.topic,
+
+                        subtopic:
+                        selection.subtopic,
+
+                        difficulty:
+                        currentAILevel,
+
+                        marks:2,
+
+                        question_number:
+                        aiQuestionNumber + 1
+
+                    })
+
+                }
+            );
+
+
+        // -----------------------------------------
+        // CHECK SERVER RESPONSE
+        // -----------------------------------------
+
+        if(!response.ok){
+
+            const errorText =
+                await response.text();
+
+            console.error(
+                "AI SERVER ERROR:",
+                errorText
+            );
+
+            throw new Error(
+                "Server returned error " +
+                response.status
+            );
+
         }
 
-        const q = data.question;
 
-        document.getElementById("adaptiveQuestionNumber").innerText =
-            "🤖 " + currentAILevel.toUpperCase() +
-            " • Question " + (aiQuestionNumber + 1) +
-            " of " + AI_TOTAL_QUESTIONS + " • 2 Marks";
+        const data =
+            await response.json();
 
-        document.getElementById("adaptiveQuestionText").innerText = q.question;
 
-        const options = document.getElementById("adaptiveOptions");
+        if(!data.success){
+
+            alert(
+                "AI Error: " +
+                (
+                    data.error ||
+                    "Unable to generate question"
+                )
+            );
+
+            return;
+
+        }
+
+
+        // -----------------------------------------
+        // GET QUESTION
+        // -----------------------------------------
+
+        const q =
+            data.question;
+
+
+        window.currentAIQuestion =
+            q;
+
+
+        // -----------------------------------------
+        // QUESTION NUMBER
+        // -----------------------------------------
+
+        document.getElementById(
+            "adaptiveQuestionNumber"
+        ).innerText =
+
+            "🤖 " +
+            currentAILevel.toUpperCase() +
+
+            " • Question " +
+            (aiQuestionNumber + 1) +
+
+            " of " +
+            AI_TOTAL_QUESTIONS +
+
+            " • 2 Marks";
+
+
+        // -----------------------------------------
+        // QUESTION TEXT
+        // -----------------------------------------
+
+        document.getElementById(
+            "adaptiveQuestionText"
+        ).innerText =
+            q.question;
+
+
+        // -----------------------------------------
+        // OPTIONS
+        // -----------------------------------------
+
+        const options =
+            document.getElementById(
+                "adaptiveOptions"
+            );
+
+
         options.innerHTML = "";
+
+
         selectedAnswer = null;
 
-        q.options.forEach((option,index)=>{
 
-            const button = document.createElement("button");
-            button.className = "option";
-            button.innerText = option;
+        q.options.forEach(
+            (option,index)=>{
 
-            button.onclick = function(){
+                const button =
+                    document.createElement(
+                        "button"
+                    );
 
-                document.querySelectorAll("#adaptiveOptions .option")
-                    .forEach(b => b.classList.remove("selected"));
 
-                button.classList.add("selected");
-                selectedAnswer = index;
-            };
+                button.className =
+                    "option";
 
-            options.appendChild(button);
-        });
 
-        window.currentAIQuestion = q;
+                button.innerText =
+                    option;
 
-        const nextButton =
-            document.querySelector("#adaptiveQuestionCard .primary-btn");
 
-        nextButton.innerText = "Check Answer →";
-        nextButton.onclick = checkAIAnswer;
+                button.onclick =
+                    function(){
 
-        document.getElementById("adaptiveQuestionCard").scrollIntoView({
+                        document
+                        .querySelectorAll(
+                            "#adaptiveOptions .option"
+                        )
+                        .forEach(
+                            b =>
+                            b.classList
+                            .remove("selected")
+                        );
+
+
+                        button.classList
+                            .add("selected");
+
+
+                        selectedAnswer =
+                            index;
+
+                    };
+
+
+                options.appendChild(
+                    button
+                );
+
+            }
+        );
+
+
+        // -----------------------------------------
+        // PROGRESS
+        // -----------------------------------------
+
+        updateAISessionBar();
+
+
+        // -----------------------------------------
+        // SHOW QUESTION CARD
+        // -----------------------------------------
+
+        document.getElementById(
+            "adaptiveQuestionCard"
+        ).classList.remove(
+            "hidden"
+        );
+
+
+        document.getElementById(
+            "adaptiveQuestionCard"
+        ).scrollIntoView({
+
             behavior:"smooth",
+
             block:"center"
+
         });
 
     }
+
     catch(error){
 
-        console.error("AI ERROR:",error);
-        alert("Unable to connect to AI. Please try again.");
+        console.error(
+            "AI QUESTION ERROR:",
+            error
+        );
+
+
+        alert(
+            "Unable to generate AI question.\n\n" +
+            error.message
+        );
 
     }
+
     finally{
-        loading.style.display = "none";
+
+        loading.style.display =
+            "none";
+
     }
+
 }
 
 function checkAIAnswer(){
@@ -2465,6 +2666,264 @@ function loadAISubjects(){
 
 }
 
+// -----------------------------------------------------
+// LOAD CHAPTERS / TOPICS
+// -----------------------------------------------------
+
+async function loadAITopics(){
+
+    selectedAISubject =
+        document.getElementById(
+            "aiSubject"
+        ).value;
+
+
+    const topicSection =
+        document.getElementById(
+            "aiTopicSection"
+        );
+
+    const subtopicSection =
+        document.getElementById(
+            "aiSubtopicSection"
+        );
+
+    const topicSelect =
+        document.getElementById(
+            "aiTopic"
+        );
+
+    const subtopicSelect =
+        document.getElementById(
+            "aiSubtopic"
+        );
+
+
+    // Reset
+
+    topicSelect.innerHTML =
+        '<option value="">Select Chapter / Topic</option>';
+
+    subtopicSelect.innerHTML =
+        '<option value="">Select Subtopic</option>';
+
+    topicSection.style.display = "none";
+
+    subtopicSection.style.display = "none";
+
+    document.getElementById(
+        "startAIButton"
+    ).disabled = true;
+
+
+    if(!selectedAISubject){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/ai-learning-topics",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                        "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        board:
+                        selectedAIBoard,
+
+                        class_name:
+                        selectedAIClass,
+
+                        subject:
+                        selectedAISubject
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!data.success){
+
+            alert(
+                data.error ||
+                "Unable to load chapters."
+            );
+
+            return;
+
+        }
+
+
+        const topics =
+            data.topics || [];
+
+
+        if(topics.length === 0){
+
+            alert(
+                "No chapters/topics found in the uploaded syllabus."
+            );
+
+            return;
+
+        }
+
+
+        topics.forEach(
+            (topic, index) => {
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value = index;
+
+                option.textContent =
+                    topic.topic;
+
+                topicSelect.appendChild(
+                    option
+                );
+
+            }
+        );
+
+
+        // Store complete topic data
+
+        window.aiTopics = topics;
+
+
+        topicSection.style.display =
+            "block";
+
+    }
+
+    catch(error){
+
+        console.error(
+            "AI TOPICS ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to load chapters from syllabus."
+        );
+
+    }
+
+}
+ // -----------------------------------------------------
+// LOAD SUBTOPICS
+// -----------------------------------------------------
+
+function loadAISubtopics(){
+
+    const topicSelect =
+        document.getElementById(
+            "aiTopic"
+        );
+
+    const subtopicSelect =
+        document.getElementById(
+            "aiSubtopic"
+        );
+
+    const subtopicSection =
+        document.getElementById(
+            "aiSubtopicSection"
+        );
+
+
+    const selectedIndex =
+        topicSelect.value;
+
+
+    // Reset
+
+    subtopicSelect.innerHTML =
+        '<option value="">Select Subtopic</option>';
+
+    subtopicSection.style.display =
+        "none";
+
+    document.getElementById(
+        "startAIButton"
+    ).disabled = true;
+
+
+    if(
+        selectedIndex === "" ||
+        !window.aiTopics
+    ){
+
+        return;
+
+    }
+
+
+    const selectedTopic =
+        window.aiTopics[
+            Number(selectedIndex)
+        ];
+
+
+    if(
+        !selectedTopic ||
+        !selectedTopic.subtopics
+    ){
+
+        return;
+
+    }
+
+
+    selectedTopic.subtopics.forEach(
+        subtopic => {
+
+            const option =
+                document.createElement(
+                    "option"
+                );
+
+            option.value =
+                subtopic;
+
+            option.textContent =
+                subtopic;
+
+            subtopicSelect.appendChild(
+                option
+            );
+
+        }
+    );
+
+
+    subtopicSection.style.display =
+        "block";
+
+}
+    
+// -----------------------------------------------------
+// ENABLE START BUTTON
+// -----------------------------------------------------
 
 // -----------------------------------------------------
 // ENABLE START BUTTON
@@ -2477,13 +2936,41 @@ function enableAIStart(){
             "aiSubject"
         ).value;
 
+
+    // When Subject changes,
+    // load chapters from syllabus
+
+    if(selectedAISubject){
+
+        loadAITopics();
+
+    }
+
+
+    const topic =
+        document.getElementById(
+            "aiTopic"
+        ).value;
+
+    const subtopic =
+        document.getElementById(
+            "aiSubtopic"
+        ).value;
+
+
     document.getElementById(
         "startAIButton"
     ).disabled =
-        !selectedAISubject;
+        !selectedAISubject ||
+        !topic ||
+        !subtopic;
 
 }
 
+
+// -----------------------------------------------------
+// START AI LEARNING
+// -----------------------------------------------------
 
 // -----------------------------------------------------
 // START AI LEARNING
@@ -2496,10 +2983,12 @@ function startAISubject(){
             "aiBoard"
         ).value;
 
+
     selectedAIClass =
         document.getElementById(
             "aiClass"
         ).value;
+
 
     selectedAISubject =
         document.getElementById(
@@ -2507,14 +2996,28 @@ function startAISubject(){
         ).value;
 
 
+    const topicIndex =
+        document.getElementById(
+            "aiTopic"
+        ).value;
+
+
+    const subtopic =
+        document.getElementById(
+            "aiSubtopic"
+        ).value;
+
+
     if(
         !selectedAIBoard ||
         !selectedAIClass ||
-        !selectedAISubject
+        !selectedAISubject ||
+        topicIndex === "" ||
+        !subtopic
     ){
 
         alert(
-            "Please select Board, Class and Subject."
+            "Please select Board, Class, Subject, Chapter and Subtopic."
         );
 
         return;
@@ -2522,19 +3025,53 @@ function startAISubject(){
     }
 
 
-    // Store selected values globally
+    const selectedTopic =
+        window.aiTopics[
+            Number(topicIndex)
+        ];
+
+
+    const topic =
+        selectedTopic.topic;
+
+
+    // Store complete selection
+
     window.aiLearningSelection = {
 
-        board: selectedAIBoard,
+        board:
+        selectedAIBoard,
 
-        class_name: selectedAIClass,
+        class_name:
+        selectedAIClass,
 
-        subject: selectedAISubject
+        subject:
+        selectedAISubject,
+
+        topic:
+        topic,
+
+        subtopic:
+        subtopic
 
     };
 
 
-    // Continue to diagnostic
+    console.log(
+        "AI LEARNING SELECTION:",
+        window.aiLearningSelection
+    );
+
+
+    // Hide selection
+
+    document.getElementById(
+        "selectionCard"
+    ).classList.add("hidden");
+
+
+    // Show diagnostic test
+
     document.getElementById(
         "testCard"
     ).classList.remove("hidden");
@@ -2543,7 +3080,11 @@ function startAISubject(){
     document.getElementById(
         "testCard"
     ).scrollIntoView({
-        behavior:"smooth"
+
+        behavior:"smooth",
+
+        block:"center"
+
     });
 
 }
