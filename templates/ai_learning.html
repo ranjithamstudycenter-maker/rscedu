@@ -2464,10 +2464,33 @@ function selectAILevel(level){
 
     currentAILevel = level;
     adaptiveLevel = level;
+
+    // -----------------------------------------
+    // RESET CURRENT ATTEMPT
+    // -----------------------------------------
+
     aiQuestionNumber = 0;
     aiScore = 0;
-    startAITimer();
     adaptiveScore = 0;
+
+    aiCorrectAnswers = 0;
+    aiIncorrectAnswers = 0;
+
+    aiQuestionHistory = [];
+    aiAttemptQuestions = [];
+
+    window.currentAIQuestion = null;
+    selectedAnswer = null;
+
+    // -----------------------------------------
+    // START 30 MINUTE TIMER
+    // -----------------------------------------
+
+    startAITimer();
+
+    // -----------------------------------------
+    // SHOW QUESTION AREA
+    // -----------------------------------------
 
     document.getElementById("adaptiveQuestionCard")
         .classList.remove("hidden");
@@ -2476,9 +2499,14 @@ function selectAILevel(level){
         .style.display = "flex";
 
     updateAISessionBar();
+
+    // -----------------------------------------
+    // GENERATE FIRST QUESTION
+    // -----------------------------------------
+
     generateAIQuestion();
 }
-
+    
 function updateAISessionBar(){
 
     document.getElementById("aiSessionLevel").innerText =
@@ -2494,6 +2522,10 @@ function updateAISessionBar(){
 // GENERATE AI QUESTION
 // -----------------------------------------------------
 
+// -----------------------------------------------------
+// GENERATE AI QUESTION - 25 QUESTION SESSION
+// -----------------------------------------------------
+
 async function generateAIQuestion() {
 
     const selection = window.aiLearningSelection || {};
@@ -2505,122 +2537,313 @@ async function generateAIQuestion() {
     const subtopic = selection.subtopic;
 
     if (!board || !className || !subject || !topic || !subtopic) {
-        alert("Please complete Board, Class, Subject, Topic and Subtopic selection.");
+
+        alert(
+            "Please complete Board, Class, Subject, Topic and Subtopic selection."
+        );
+
         return;
     }
 
-    const questionCard = document.getElementById("questionCard");
+    const questionCard =
+        document.getElementById("adaptiveQuestionCard");
 
-    questionCard.innerHTML = `
-        <div style="text-align:center;padding:30px;">
-            <div style="font-size:32px;">🤖</div>
-            <h3>Generating Question...</h3>
-            <p>Please wait while AI prepares your question.</p>
-        </div>
-    `;
+    const questionNumber =
+        document.getElementById("adaptiveQuestionNumber");
+
+    const questionText =
+        document.getElementById("adaptiveQuestionText");
+
+    const optionsContainer =
+        document.getElementById("adaptiveOptions");
+
+    const actionButton =
+        questionCard.querySelector(".primary-btn");
+
+    const loading =
+        document.getElementById("aiLoading");
+
+
+    // -----------------------------------------
+    // SHOW LOADING
+    // -----------------------------------------
+
+    questionCard.classList.remove("hidden");
+
+    if (loading) {
+        loading.style.display = "block";
+    }
+
+    questionNumber.innerText =
+        "🤖 Preparing Question " +
+        (aiQuestionNumber + 1) +
+        " / " +
+        AI_TOTAL_QUESTIONS;
+
+    questionText.innerText =
+        "AI is preparing your question...";
+
+    optionsContainer.innerHTML = "";
+
+    actionButton.disabled = true;
+
 
     try {
 
-        const response = await fetch("/api/ai-question", {
-            method: "POST",
-            headers: {
-                "Content-Type": "application/json"
-            },
-            body: JSON.stringify({
+        // -----------------------------------------
+        // REQUEST AI QUESTION
+        // -----------------------------------------
 
-                board: board,
-                subject: subject,
-                class_name: className,
-                topic: topic,
-                subtopic: subtopic,
-                difficulty: currentAILevel,
-                marks: 2,
-                question_number: aiQuestionNumber + 1
+        const response = await fetch(
+            "/api/ai-question",
+            {
+                method: "POST",
 
-            })
-        });
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-        const data = await response.json();
+                body: JSON.stringify({
 
-        if (!data.success) {
-            throw new Error(data.error || "Failed to generate question");
+                    board: board,
+
+                    class_name: className,
+
+                    subject: subject,
+
+                    topic: topic,
+
+                    subtopic: subtopic,
+
+                    difficulty: currentAILevel,
+
+                    marks: 2,
+
+                    question_number:
+                        aiQuestionNumber + 1
+
+                })
+            }
+        );
+
+
+        // -----------------------------------------
+        // CHECK SERVER RESPONSE
+        // -----------------------------------------
+
+        if (!response.ok) {
+
+            const errorText =
+                await response.text();
+
+            console.error(
+                "AI QUESTION SERVER ERROR:",
+                errorText
+            );
+
+            throw new Error(
+                "Server error: " +
+                response.status
+            );
         }
 
-        const q = data.question;
+
+        // -----------------------------------------
+        // READ RESPONSE
+        // -----------------------------------------
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            throw new Error(
+                data.error ||
+                "Unable to generate AI question."
+            );
+        }
+
+
+        const q =
+            data.question;
+
+
+        if (
+            !q ||
+            !q.question ||
+            !Array.isArray(q.options) ||
+            q.options.length !== 4
+        ) {
+
+            throw new Error(
+                "Invalid question received from AI."
+            );
+        }
+
+
+        // -----------------------------------------
+        // STORE CURRENT QUESTION
+        // -----------------------------------------
 
         window.currentAIQuestion = q;
 
-        questionCard.innerHTML = `
-            <div class="ai-question-box">
+        selectedAnswer = null;
 
-                <div style="margin-bottom:15px;">
-                    <span class="ai-level-badge">
-                        ${currentAILevel.toUpperCase()}
-                    </span>
 
-                    <span style="margin-left:10px;">
-                        Question ${aiQuestionNumber + 1} / ${AI_TOTAL_QUESTIONS}
-                    </span>
-                </div>
+        // -----------------------------------------
+        // STOP LOADING
+        // -----------------------------------------
 
-                <h3 style="margin-bottom:20px;">
-                    ${q.question}
-                </h3>
+        if (loading) {
+            loading.style.display = "none";
+        }
 
-                <div id="aiOptionsContainer">
 
-                    ${q.options.map((option, index) => `
-                        <button
-                            class="ai-option"
-                            onclick="selectAIOption(${index})"
-                            data-index="${index}">
-                            ${String.fromCharCode(65 + index)}. ${option}
-                        </button>
-                    `).join("")}
+        // -----------------------------------------
+        // QUESTION NUMBER
+        // -----------------------------------------
 
-                </div>
+        questionNumber.innerText =
+            "Question " +
+            (aiQuestionNumber + 1) +
+            " / " +
+            AI_TOTAL_QUESTIONS;
 
-                <div id="aiExplanation"
-                     style="display:none;margin-top:20px;">
-                </div>
 
-                <div style="margin-top:20px;text-align:right;">
+        // -----------------------------------------
+        // QUESTION TEXT
+        // -----------------------------------------
 
-                    <button
-                        id="aiActionButton"
-                        onclick="checkAIAnswer()"
-                        class="ai-next-btn">
-                        Submit Answer
-                    </button>
+        questionText.innerText =
+            q.question;
 
-                </div>
 
-            </div>
-        `;
+        // -----------------------------------------
+        // CLEAR OPTIONS
+        // -----------------------------------------
+
+        optionsContainer.innerHTML = "";
+
+
+        // -----------------------------------------
+        // CREATE 4 OPTIONS
+        // -----------------------------------------
+
+        q.options.forEach(
+            (option, index) => {
+
+                const button =
+                    document.createElement("button");
+
+                button.className =
+                    "option";
+
+                button.type = "button";
+
+                button.innerText =
+                    String.fromCharCode(65 + index) +
+                    ". " +
+                    option;
+
+
+                button.onclick =
+                    function () {
+
+                        document
+                            .querySelectorAll(
+                                "#adaptiveOptions .option"
+                            )
+                            .forEach(
+                                btn =>
+                                    btn.classList
+                                        .remove("selected")
+                            );
+
+
+                        button.classList.add(
+                            "selected"
+                        );
+
+
+                        selectedAnswer =
+                            index;
+
+                    };
+
+
+                optionsContainer.appendChild(
+                    button
+                );
+
+            }
+        );
+
+
+        // -----------------------------------------
+        // RESET ACTION BUTTON
+        // -----------------------------------------
+
+        actionButton.disabled = false;
+
+        actionButton.innerText =
+            "Submit Answer";
+
+        actionButton.onclick =
+            checkAIAnswer;
+
+
+        // -----------------------------------------
+        // UPDATE SESSION BAR
+        // -----------------------------------------
 
         updateAISessionBar();
 
-    } catch (error) {
+    }
 
-        console.error("AI QUESTION ERROR:", error);
 
-        questionCard.innerHTML = `
-            <div style="text-align:center;padding:30px;">
+    catch (error) {
 
-                <h3>Unable to generate question</h3>
+        console.error(
+            "AI QUESTION ERROR:",
+            error
+        );
 
-                <p>
-                    ${error.message}
-                </p>
 
-                <button
-                    onclick="generateAIQuestion()"
-                    class="ai-next-btn">
-                    Try Again
-                </button>
+        if (loading) {
+            loading.style.display = "none";
+        }
 
-            </div>
+
+        questionNumber.innerText =
+            "Question " +
+            (aiQuestionNumber + 1) +
+            " / " +
+            AI_TOTAL_QUESTIONS;
+
+
+        questionText.innerText =
+            "Unable to generate question.";
+
+
+        optionsContainer.innerHTML = `
+            <p style="
+                color:#dc2626;
+                margin:15px 0;
+            ">
+                ${error.message}
+            </p>
         `;
+
+
+        actionButton.disabled = false;
+
+        actionButton.innerText =
+            "🔄 Try Again";
+
+        actionButton.onclick =
+            generateAIQuestion;
+
     }
 }
 
@@ -2714,208 +2937,6 @@ function autoSubmitAITest() {
     stopAITimer();
 
     showAISessionResult();
-}
-
-        // -----------------------------------------
-        // CHECK SERVER RESPONSE
-        // -----------------------------------------
-
-        if(!response.ok){
-
-            const errorText =
-                await response.text();
-
-            console.error(
-                "AI SERVER ERROR:",
-                errorText
-            );
-
-            throw new Error(
-                "Server returned error " +
-                response.status
-            );
-
-        }
-
-
-        const data =
-            await response.json();
-
-
-        if(!data.success){
-
-            alert(
-                "AI Error: " +
-                (
-                    data.error ||
-                    "Unable to generate question"
-                )
-            );
-
-            return;
-
-        }
-
-
-        // -----------------------------------------
-        // GET QUESTION
-        // -----------------------------------------
-
-        const q =
-            data.question;
-
-
-        window.currentAIQuestion =
-            q;
-
-
-        // -----------------------------------------
-        // QUESTION NUMBER
-        // -----------------------------------------
-
-        document.getElementById(
-            "adaptiveQuestionNumber"
-        ).innerText =
-
-            "🤖 " +
-            currentAILevel.toUpperCase() +
-
-            " • Question " +
-            (aiQuestionNumber + 1) +
-
-            " of " +
-            AI_TOTAL_QUESTIONS +
-
-            " • 2 Marks";
-
-
-        // -----------------------------------------
-        // QUESTION TEXT
-        // -----------------------------------------
-
-        document.getElementById(
-            "adaptiveQuestionText"
-        ).innerText =
-            q.question;
-
-
-        // -----------------------------------------
-        // OPTIONS
-        // -----------------------------------------
-
-        const options =
-            document.getElementById(
-                "adaptiveOptions"
-            );
-
-
-        options.innerHTML = "";
-
-
-        selectedAnswer = null;
-
-
-        q.options.forEach(
-            (option,index)=>{
-
-                const button =
-                    document.createElement(
-                        "button"
-                    );
-
-
-                button.className =
-                    "option";
-
-
-                button.innerText =
-                    option;
-
-
-                button.onclick =
-                    function(){
-
-                        document
-                        .querySelectorAll(
-                            "#adaptiveOptions .option"
-                        )
-                        .forEach(
-                            b =>
-                            b.classList
-                            .remove("selected")
-                        );
-
-
-                        button.classList
-                            .add("selected");
-
-
-                        selectedAnswer =
-                            index;
-
-                    };
-
-
-                options.appendChild(
-                    button
-                );
-
-            }
-        );
-
-
-        // -----------------------------------------
-        // PROGRESS
-        // -----------------------------------------
-
-        updateAISessionBar();
-
-
-        // -----------------------------------------
-        // SHOW QUESTION CARD
-        // -----------------------------------------
-
-        document.getElementById(
-            "adaptiveQuestionCard"
-        ).classList.remove(
-            "hidden"
-        );
-
-
-        document.getElementById(
-            "adaptiveQuestionCard"
-        ).scrollIntoView({
-
-            behavior:"smooth",
-
-            block:"center"
-
-        });
-
-    }
-
-    catch(error){
-
-        console.error(
-            "AI QUESTION ERROR:",
-            error
-        );
-
-
-        alert(
-            "Unable to generate AI question.\n\n" +
-            error.message
-        );
-
-    }
-
-    finally{
-
-        loading.style.display =
-            "none";
-
-    }
-
 }
 
 function checkAIAnswer(){
