@@ -2532,48 +2532,214 @@ def ai_question():
 
         data = request.get_json() or {}
 
-        subject = data.get("subject", "Mathematics")
-        class_name = data.get("class_name", "Class 10")
-        topic = data.get("topic", "Algebra")
-        subtopic = data.get("subtopic", "Factorisation")
-        difficulty = data.get("difficulty", "easy")
+        board = data.get("board", "").strip()
+        subject = data.get("subject", "Mathematics").strip()
+        class_name = data.get("class_name", "Class 10").strip()
+        topic = data.get("topic", "").strip()
+        subtopic = data.get("subtopic", "").strip()
+        difficulty = data.get("difficulty", "easy").strip().lower()
+
+        # -----------------------------------------
+        # VALIDATION
+        # -----------------------------------------
+
+        if not board:
+            return jsonify({
+                "success": False,
+                "error": "Board is required."
+            }), 400
+
+        if not subject:
+            return jsonify({
+                "success": False,
+                "error": "Subject is required."
+            }), 400
+
+        if not topic:
+            return jsonify({
+                "success": False,
+                "error": "Topic is required."
+            }), 400
+
+        if not subtopic:
+            return jsonify({
+                "success": False,
+                "error": "Subtopic is required."
+            }), 400
+
+        if difficulty not in ["easy", "medium", "hard"]:
+            return jsonify({
+                "success": False,
+                "error": "Invalid difficulty."
+            }), 400
+
+        # -----------------------------------------
+        # GET SELECTED SYLLABUS
+        # -----------------------------------------
+
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+        SELECT syllabus_text
+        FROM syllabi
+        WHERE board=?
+        AND class_name=?
+        AND subject=?
+        ORDER BY id DESC
+        LIMIT 1
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+        row = c.fetchone()
+
+        conn.close()
+
+        if not row:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Syllabus not found for the selected Board, Class and Subject."
+            }), 404
+
+        syllabus_text = row["syllabus_text"] or ""
+
+        if not syllabus_text.strip():
+
+            return jsonify({
+                "success": False,
+                "error": "Uploaded syllabus is empty."
+            }), 400
+
+        # -----------------------------------------
+        # LIMIT SYLLABUS SIZE
+        # -----------------------------------------
+
+        syllabus_context = syllabus_text[:30000]
+
+        # -----------------------------------------
+        # AI PROMPT
+        # -----------------------------------------
 
         prompt = f"""
-You are an expert school mathematics teacher.
 
-Generate ONE original multiple-choice question for:
+You are an expert school mathematics teacher and assessment designer.
 
-Subject: {subject}
-Class: {class_name}
-Topic: {topic}
-Subtopic: {subtopic}
-Difficulty: {difficulty}
+Generate ONE ORIGINAL multiple-choice question for a school
+learning platform.
 
-Requirements:
-- Suitable for a Class 10 student.
-- The question must be mathematically correct.
-- Provide exactly 4 options.
-- Only ONE option must be correct.
-- Provide a short explanation suitable for a student.
-- Do not copy a famous textbook question verbatim.
-- Return only valid JSON.
+STUDENT SELECTION
+-------------------------
 
-JSON format:
+Board:
+{board}
+
+Class:
+{class_name}
+
+Subject:
+{subject}
+
+Topic:
+{topic}
+
+Subtopic:
+{subtopic}
+
+Difficulty:
+{difficulty}
+
+SUPPLIED SYLLABUS
+-------------------------
+
+{syllabus_context}
+
+IMPORTANT RULES
+-------------------------
+
+1. Generate exactly ONE question.
+
+2. The question MUST be directly related to:
+   - the selected subject
+   - the selected topic
+   - the selected subtopic.
+
+3. Use ONLY concepts that are supported by the supplied syllabus.
+
+4. Do NOT introduce an unrelated chapter or concept.
+
+5. The question must be ORIGINAL.
+   Do not copy a textbook, website, sample paper,
+   or previously published question verbatim.
+
+6. Create exactly FOUR options.
+
+7. Only ONE option must be correct.
+
+8. The correct answer must be mathematically verified.
+
+9. Difficulty must match the selected level.
+
+EASY:
+- fundamental concept
+- direct application
+- simple calculation
+
+MEDIUM:
+- concept application
+- multi-step reasoning
+- moderate calculation
+
+HARD:
+- deeper reasoning
+- multi-step problem solving
+- challenging application
+
+10. Provide a short student-friendly explanation.
+
+11. Provide a useful short hint WITHOUT revealing
+    the complete answer.
+
+12. Return ONLY valid JSON.
+
+13. Do NOT use markdown or code fences.
+
+JSON FORMAT
+-------------------------
 
 {{
-    "question": "question text",
+    "question": "Question text",
+
     "options": [
-        "option 1",
-        "option 2",
-        "option 3",
-        "option 4"
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4"
     ],
+
     "correct_answer": 0,
-    "explanation": "short explanation",
-    "topic": "{subtopic}",
+
+    "hint": "Short helpful hint",
+
+    "explanation": "Clear student-friendly explanation",
+
+    "topic": "{topic}",
+
+    "subtopic": "{subtopic}",
+
     "difficulty": "{difficulty}"
 }}
+
 """
+
+        # -----------------------------------------
+        # AI CALL
+        # -----------------------------------------
 
         response = client.responses.create(
             model="gpt-5.6-luna",
@@ -2582,13 +2748,74 @@ JSON format:
 
         result = response.output_text.strip()
 
-        # Remove markdown code fences if returned
+        # -----------------------------------------
+        # REMOVE CODE FENCES IF AI RETURNS THEM
+        # -----------------------------------------
+
         if result.startswith("```"):
+
             result = result.replace("```json", "")
             result = result.replace("```", "")
             result = result.strip()
 
+        # -----------------------------------------
+        # PARSE JSON
+        # -----------------------------------------
+
         question_data = json.loads(result)
+
+        # -----------------------------------------
+        # VALIDATE QUESTION
+        # -----------------------------------------
+
+        if not question_data.get("question"):
+            raise ValueError(
+                "AI did not return a question."
+            )
+
+        options = question_data.get("options")
+
+        if not isinstance(options, list):
+            raise ValueError(
+                "AI returned invalid options."
+            )
+
+        if len(options) != 4:
+            raise ValueError(
+                "AI must return exactly 4 options."
+            )
+
+        correct_answer = question_data.get(
+            "correct_answer"
+        )
+
+        if correct_answer not in [0, 1, 2, 3]:
+            raise ValueError(
+                "Invalid correct answer index."
+            )
+
+        if not question_data.get("explanation"):
+            raise ValueError(
+                "AI did not return an explanation."
+            )
+
+        if not question_data.get("hint"):
+            question_data["hint"] = (
+                "Think about the main concept used "
+                "in this question."
+            )
+
+        # -----------------------------------------
+        # FORCE SELECTED METADATA
+        # -----------------------------------------
+
+        question_data["topic"] = topic
+        question_data["subtopic"] = subtopic
+        question_data["difficulty"] = difficulty
+
+        # -----------------------------------------
+        # RETURN QUESTION
+        # -----------------------------------------
 
         return jsonify({
             "success": True,
@@ -2597,12 +2824,238 @@ JSON format:
 
     except Exception as e:
 
-        print("AI QUESTION ERROR:", e)
+        print(
+            "AI QUESTION ERROR:",
+            e
+        )
 
         return jsonify({
             "success": False,
             "error": str(e)
         }), 500
+
+@app.route("/api/ai-attempt", methods=["POST"])
+def save_ai_attempt():
+    try:
+        data = request.get_json() or {}
+
+        phone = session.get("phone") or data.get("phone")
+
+        board = data.get("board")
+        class_name = data.get("class_name")
+        subject = data.get("subject")
+        topic = data.get("topic")
+        subtopic = data.get("subtopic")
+        difficulty = data.get("difficulty")
+
+        correct_answers = int(data.get("correct_answers", 0))
+        incorrect_answers = int(data.get("incorrect_answers", 0))
+        score = int(data.get("score", 0))
+        percentage = float(data.get("percentage", 0))
+
+        question_data = data.get("question_data", [])
+
+        if not phone:
+            return jsonify({
+                "success": False,
+                "error": "Student login required"
+            }), 401
+
+        if not all([
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty
+        ]):
+            return jsonify({
+                "success": False,
+                "error": "Required learning details are missing"
+            }), 400
+
+        if not isinstance(question_data, list):
+            return jsonify({
+                "success": False,
+                "error": "Invalid question data"
+            }), 400
+
+        # Maximum 25 questions
+        question_data = question_data[:25]
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        # -------------------------------------------------
+        # 1. SAVE COMPLETE ATTEMPT
+        # -------------------------------------------------
+
+        c.execute("""
+            INSERT INTO ai_attempts
+            (
+                phone,
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic,
+                difficulty,
+                total_questions,
+                total_marks,
+                correct_answers,
+                incorrect_answers,
+                score,
+                percentage,
+                question_data,
+                completed_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+        """, (
+            phone,
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty,
+            25,
+            50,
+            correct_answers,
+            incorrect_answers,
+            score,
+            percentage,
+            json.dumps(question_data, ensure_ascii=False)
+        ))
+
+        # -------------------------------------------------
+        # 2. CHECK EXISTING PERFORMANCE RECORD
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT
+                id,
+                total_questions,
+                correct_answers,
+                incorrect_answers,
+                score
+            FROM ai_topic_performance
+            WHERE phone = ?
+              AND board = ?
+              AND class_name = ?
+              AND subject = ?
+              AND topic = ?
+              AND subtopic = ?
+              AND difficulty = ?
+        """, (
+            phone,
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty
+        ))
+
+        existing = c.fetchone()
+
+        # -------------------------------------------------
+        # 3. UPDATE EXISTING PERFORMANCE
+        # -------------------------------------------------
+
+        if existing:
+
+            performance_id = existing[0]
+
+            old_total = existing[1] or 0
+            old_correct = existing[2] or 0
+            old_incorrect = existing[3] or 0
+            old_score = existing[4] or 0
+
+            new_total = old_total + 25
+            new_correct = old_correct + correct_answers
+            new_incorrect = old_incorrect + incorrect_answers
+            new_score = old_score + score
+
+            new_percentage = (
+                (new_correct / new_total) * 100
+                if new_total > 0 else 0
+            )
+
+            c.execute("""
+                UPDATE ai_topic_performance
+                SET
+                    total_questions = ?,
+                    correct_answers = ?,
+                    incorrect_answers = ?,
+                    score = ?,
+                    percentage = ?,
+                    last_attempt = datetime('now')
+                WHERE id = ?
+            """, (
+                new_total,
+                new_correct,
+                new_incorrect,
+                new_score,
+                new_percentage,
+                performance_id
+            ))
+
+        # -------------------------------------------------
+        # 4. CREATE FIRST PERFORMANCE RECORD
+        # -------------------------------------------------
+
+        else:
+
+            c.execute("""
+                INSERT INTO ai_topic_performance
+                (
+                    phone,
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    difficulty,
+                    total_questions,
+                    correct_answers,
+                    incorrect_answers,
+                    score,
+                    percentage,
+                    last_attempt
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+            """, (
+                phone,
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic,
+                difficulty,
+                25,
+                correct_answers,
+                incorrect_answers,
+                score,
+                percentage
+            ))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "message": "AI practice attempt saved successfully"
+        })
+
+    except Exception as e:
+
+        print("AI ATTEMPT SAVE ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+        
 
 # =====================================================
 # AI DIAGNOSTIC QUESTION
