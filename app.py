@@ -2840,10 +2840,7 @@ def ai_diagnostic_question():
             )
 
 
-        correct_answer =
-            question_data.get(
-                "correct_answer"
-            )
+        correct_answer = question_data.get("correct_answer")
 
 
         if correct_answer not in [
