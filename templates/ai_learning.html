@@ -3417,7 +3417,12 @@ async function loadAITopics(){
         return;
 
     }
-
+        topicSection.style.display = "block";
+        
+        topicSelect.innerHTML =
+            '<option value="">⏳ Loading Chapters...</option>';
+        
+        topicSelect.disabled = true;
 
     try{
 
@@ -3625,47 +3630,36 @@ function loadAISubtopics(){
 // ENABLE START BUTTON
 // -----------------------------------------------------
 
+// -----------------------------------------------------
+// ENABLE START BUTTON
+// -----------------------------------------------------
+
 function enableAIStart(){
 
-    selectedAISubject =
-        document.getElementById(
-            "aiSubject"
-        ).value;
-
-
-    // When Subject changes,
-    // load chapters from syllabus
-
-    if(selectedAISubject){
-
-        loadAITopics();
-
-    }
-
+    const subject =
+        document.getElementById("aiSubject").value;
 
     const topic =
-        document.getElementById(
-            "aiTopic"
-        ).value;
+        document.getElementById("aiTopic").value;
 
     const subtopic =
-        document.getElementById(
-            "aiSubtopic"
-        ).value;
+        document.getElementById("aiSubtopic").value;
 
+
+    selectedAISubject = subject;
+
+
+    // Enable Start button only after
+    // Subject + Chapter + Subtopic are selected
 
     document.getElementById(
         "startAIButton"
     ).disabled =
-        !selectedAISubject ||
+        !subject ||
         !topic ||
         !subtopic;
 
 }
-
-// -----------------------------------------------------
-// START AI LEARNING
-// -----------------------------------------------------
 
 // -----------------------------------------------------
 // START AI LEARNING
