@@ -2692,8 +2692,7 @@ def ai_diagnostic_question():
             }), 400
 
 
-        syllabus_context =
-            syllabus_text[:30000]
+        syllabus_context = syllabus_text[:30000]
 
 
         # -----------------------------------------
