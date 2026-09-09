@@ -887,22 +887,111 @@
     </div>
 
 
-    <div id="mathSection" class="hidden">
+   <div id="mathSection" class="hidden">
 
-        <h3 style="margin-top:30px;">
-            Class 10 Mathematics
-        </h3>
+    <h3 style="margin-top:30px;">
+        🎓 Select Your Class & Subject
+    </h3>
 
-        <div class="selection">
+    <div style="
+        display:grid;
+        grid-template-columns:
+        repeat(auto-fit,minmax(220px,1fr));
+        gap:18px;
+        margin-top:20px;
+    ">
 
-            <button onclick="startDiagnostic()">
-                Algebra<br>
-                <small>Factorisation</small>
-            </button>
+        <div>
+            <label><strong>🏫 Board</strong></label>
 
+            <select
+                id="aiBoard"
+                onchange="loadAIClasses()"
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-top:8px;
+                    border-radius:12px;
+                    border:1px solid #cbd5e1;
+                    font-size:16px;
+                ">
+
+                <option value="">
+                    Select Board
+                </option>
+
+            </select>
+        </div>
+
+
+        <div>
+            <label><strong>🎓 Class</strong></label>
+
+            <select
+                id="aiClass"
+                onchange="loadAISubjects()"
+                disabled
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-top:8px;
+                    border-radius:12px;
+                    border:1px solid #cbd5e1;
+                    font-size:16px;
+                ">
+
+                <option value="">
+                    Select Class
+                </option>
+
+            </select>
+        </div>
+
+
+        <div>
+            <label><strong>📚 Subject</strong></label>
+
+            <select
+                id="aiSubject"
+                onchange="enableAIStart()"
+                disabled
+                style="
+                    width:100%;
+                    padding:14px;
+                    margin-top:8px;
+                    border-radius:12px;
+                    border:1px solid #cbd5e1;
+                    font-size:16px;
+                ">
+
+                <option value="">
+                    Select Subject
+                </option>
+
+            </select>
         </div>
 
     </div>
+
+
+    <div style="
+        margin-top:25px;
+        text-align:center;
+    ">
+
+        <button
+            id="startAIButton"
+            class="primary-btn"
+            onclick="startAISubject()"
+            disabled>
+
+            🚀 Start AI Learning
+
+        </button>
+
+    </div>
+
+</div>
 
 </div>
 
@@ -2097,6 +2186,332 @@ function showAISessionResult(){
         " | Marks: " + (aiScore * 2) + "/" + (AI_TOTAL_QUESTIONS * 2);
 }
 
+
+
+// =====================================================
+// AI LEARNING - DYNAMIC SYLLABUS OPTIONS
+// =====================================================
+
+let aiSyllabusOptions = [];
+
+let selectedAIBoard = "";
+let selectedAIClass = "";
+let selectedAISubject = "";
+
+
+// -----------------------------------------------------
+// LOAD SYLLABUS OPTIONS
+// -----------------------------------------------------
+
+async function loadAISyllabusOptions(){
+
+    try{
+
+        const response =
+            await fetch("/api/ai-learning-options");
+
+        const data =
+            await response.json();
+
+        if(!data.success){
+
+            alert(
+                "Unable to load syllabus options."
+            );
+
+            return;
+        }
+
+        aiSyllabusOptions =
+            data.options || [];
+
+        const boardSelect =
+            document.getElementById("aiBoard");
+
+        boardSelect.innerHTML =
+            '<option value="">Select Board</option>';
+
+        const boards =
+            [
+                ...new Set(
+                    aiSyllabusOptions.map(
+                        item => item.board
+                    )
+                )
+            ];
+
+        boards.forEach(board => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = board;
+            option.textContent = board;
+
+            boardSelect.appendChild(option);
+
+        });
+
+    }
+    catch(error){
+
+        console.error(
+            "SYLLABUS OPTIONS ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to load syllabus."
+        );
+
+    }
+
+}
+
+
+// -----------------------------------------------------
+// LOAD CLASSES
+// -----------------------------------------------------
+
+function loadAIClasses(){
+
+    selectedAIBoard =
+        document.getElementById(
+            "aiBoard"
+        ).value;
+
+    const classSelect =
+        document.getElementById(
+            "aiClass"
+        );
+
+    const subjectSelect =
+        document.getElementById(
+            "aiSubject"
+        );
+
+    classSelect.innerHTML =
+        '<option value="">Select Class</option>';
+
+    subjectSelect.innerHTML =
+        '<option value="">Select Subject</option>';
+
+    subjectSelect.disabled = true;
+
+    document.getElementById(
+        "startAIButton"
+    ).disabled = true;
+
+
+    if(!selectedAIBoard){
+
+        classSelect.disabled = true;
+        return;
+
+    }
+
+
+    const classes =
+        [
+            ...new Set(
+
+                aiSyllabusOptions
+
+                .filter(
+                    item =>
+                    item.board === selectedAIBoard
+                )
+
+                .map(
+                    item =>
+                    item.class_name
+                )
+
+            )
+        ];
+
+
+    classes.forEach(className => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = className;
+        option.textContent = className;
+
+        classSelect.appendChild(option);
+
+    });
+
+
+    classSelect.disabled = false;
+
+}
+
+
+// -----------------------------------------------------
+// LOAD SUBJECTS
+// -----------------------------------------------------
+
+function loadAISubjects(){
+
+    selectedAIClass =
+        document.getElementById(
+            "aiClass"
+        ).value;
+
+    const subjectSelect =
+        document.getElementById(
+            "aiSubject"
+        );
+
+    subjectSelect.innerHTML =
+        '<option value="">Select Subject</option>';
+
+
+    if(!selectedAIClass){
+
+        subjectSelect.disabled = true;
+        return;
+
+    }
+
+
+    const subjects =
+        [
+            ...new Set(
+
+                aiSyllabusOptions
+
+                .filter(
+                    item =>
+                    item.board === selectedAIBoard
+                    &&
+                    item.class_name === selectedAIClass
+                )
+
+                .map(
+                    item =>
+                    item.subject
+                )
+
+            )
+        ];
+
+
+    subjects.forEach(subject => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = subject;
+        option.textContent = subject;
+
+        subjectSelect.appendChild(option);
+
+    });
+
+
+    subjectSelect.disabled = false;
+
+}
+
+
+// -----------------------------------------------------
+// ENABLE START BUTTON
+// -----------------------------------------------------
+
+function enableAIStart(){
+
+    selectedAISubject =
+        document.getElementById(
+            "aiSubject"
+        ).value;
+
+    document.getElementById(
+        "startAIButton"
+    ).disabled =
+        !selectedAISubject;
+
+}
+
+
+// -----------------------------------------------------
+// START AI LEARNING
+// -----------------------------------------------------
+
+function startAISubject(){
+
+    selectedAIBoard =
+        document.getElementById(
+            "aiBoard"
+        ).value;
+
+    selectedAIClass =
+        document.getElementById(
+            "aiClass"
+        ).value;
+
+    selectedAISubject =
+        document.getElementById(
+            "aiSubject"
+        ).value;
+
+
+    if(
+        !selectedAIBoard ||
+        !selectedAIClass ||
+        !selectedAISubject
+    ){
+
+        alert(
+            "Please select Board, Class and Subject."
+        );
+
+        return;
+
+    }
+
+
+    // Store selected values globally
+    window.aiLearningSelection = {
+
+        board: selectedAIBoard,
+
+        class_name: selectedAIClass,
+
+        subject: selectedAISubject
+
+    };
+
+
+    // Continue to diagnostic
+    document.getElementById(
+        "testCard"
+    ).classList.remove("hidden");
+
+
+    document.getElementById(
+        "testCard"
+    ).scrollIntoView({
+        behavior:"smooth"
+    });
+
+}
+
+
+// -----------------------------------------------------
+// LOAD WHEN PAGE OPENS
+// -----------------------------------------------------
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        loadAISyllabusOptions();
+
+    }
+);
 </script>
 </body>
 </html>
