@@ -2603,6 +2603,304 @@ JSON format:
             "success": False,
             "error": str(e)
         }), 500
+
+# =====================================================
+# AI DIAGNOSTIC QUESTION
+# =====================================================
+
+@app.route("/api/ai-diagnostic-question", methods=["POST"])
+def ai_diagnostic_question():
+
+    try:
+
+        data = request.get_json() or {}
+
+        board = data.get("board")
+        class_name = data.get("class_name")
+        subject = data.get("subject")
+        topic = data.get("topic")
+        subtopic = data.get("subtopic")
+
+        question_number = int(
+            data.get("question_number", 1)
+        )
+
+
+        # -----------------------------------------
+        # VALIDATION
+        # -----------------------------------------
+
+        if not board or not class_name or not subject:
+            return jsonify({
+                "success": False,
+                "error": "Board, Class and Subject are required."
+            }), 400
+
+
+        if not topic or not subtopic:
+            return jsonify({
+                "success": False,
+                "error": "Chapter and Subtopic are required."
+            }), 400
+
+
+        # -----------------------------------------
+        # GET SYLLABUS
+        # -----------------------------------------
+
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+        c.execute("""
+        SELECT syllabus_text
+        FROM syllabi
+        WHERE board=?
+        AND class_name=?
+        AND subject=?
+        ORDER BY id DESC
+        LIMIT 1
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+        row = c.fetchone()
+
+        conn.close()
+
+
+        if not row:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Syllabus not found for selected subject."
+            }), 404
+
+
+        syllabus_text = row["syllabus_text"] or ""
+
+
+        if not syllabus_text.strip():
+
+            return jsonify({
+                "success": False,
+                "error": "Uploaded syllabus is empty."
+            }), 400
+
+
+        syllabus_context =
+            syllabus_text[:30000]
+
+
+        # -----------------------------------------
+        # DIAGNOSTIC PROMPT
+        # -----------------------------------------
+
+        prompt = f"""
+You are an expert educational assessment designer.
+
+Create ONE diagnostic multiple-choice question
+for a personalised learning system.
+
+STUDENT SELECTION
+
+Board:
+{board}
+
+Class:
+{class_name}
+
+Subject:
+{subject}
+
+Chapter / Topic:
+{topic}
+
+Subtopic:
+{subtopic}
+
+Diagnostic Question Number:
+{question_number}
+
+SUPPLIED SYLLABUS
+-------------------------
+{syllabus_context}
+-------------------------
+
+IMPORTANT RULES:
+
+1. Generate exactly ONE question.
+
+2. The question must be strictly related
+   to the selected subject, topic and subtopic.
+
+3. The question must be based only on
+   concepts available in the supplied syllabus.
+
+4. Do not introduce concepts outside
+   the syllabus.
+
+5. Provide exactly FOUR options.
+
+6. Only ONE option must be correct.
+
+7. The diagnostic test should measure
+   the student's understanding of the selected topic.
+
+8. Use a mixture of difficulty across the
+   10-question diagnostic test.
+
+9. Questions should gradually cover:
+   - basic understanding
+   - concept application
+   - moderate problem solving
+
+10. Do not make every question extremely difficult.
+
+11. The question must be academically correct.
+
+12. Do not copy textbook questions verbatim.
+
+13. Provide a short hint.
+
+14. Provide a clear explanation.
+
+15. Return ONLY valid JSON.
+
+JSON FORMAT:
+
+{{
+    "question": "Question text",
+
+    "options": [
+        "Option 1",
+        "Option 2",
+        "Option 3",
+        "Option 4"
+    ],
+
+    "correct_answer": 0,
+
+    "hint": "Short helpful hint",
+
+    "explanation": "Clear student-friendly explanation",
+
+    "topic": "{topic}",
+
+    "subtopic": "{subtopic}",
+
+    "question_number": {question_number}
+}}
+"""
+
+
+        # -----------------------------------------
+        # AI CALL
+        # -----------------------------------------
+
+        response = client.responses.create(
+
+            model="gpt-5.6-luna",
+
+            input=prompt
+
+        )
+
+
+        result =
+            response.output_text.strip()
+
+
+        # Remove markdown code block
+        if result.startswith("```"):
+
+            result =
+                result.replace(
+                    "```json",
+                    ""
+                )
+
+            result =
+                result.replace(
+                    "```",
+                    ""
+                )
+
+            result =
+                result.strip()
+
+
+        question_data =
+            json.loads(result)
+
+
+        # -----------------------------------------
+        # VALIDATION
+        # -----------------------------------------
+
+        if not isinstance(
+            question_data.get("options"),
+            list
+        ):
+
+            raise ValueError(
+                "AI returned invalid options."
+            )
+
+
+        if len(
+            question_data["options"]
+        ) != 4:
+
+            raise ValueError(
+                "AI must return exactly 4 options."
+            )
+
+
+        correct_answer =
+            question_data.get(
+                "correct_answer"
+            )
+
+
+        if correct_answer not in [
+            0, 1, 2, 3
+        ]:
+
+            raise ValueError(
+                "Invalid correct answer index."
+            )
+
+
+        return jsonify({
+
+            "success": True,
+
+            "question":
+                question_data
+
+        })
+
+
+    except Exception as e:
+
+        print(
+            "AI DIAGNOSTIC ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error": str(e)
+
+        }), 500
+        
 if __name__ == "__main__":
     _load_feedback()
     port = int(os.environ.get("PORT", 10000))
