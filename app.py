@@ -2385,6 +2385,146 @@ def ai_learning_options():
             "error": str(e)
         }), 500
         
+@app.route("/api/ai-learning-topics", methods=["POST"])
+def ai_learning_topics():
+
+    try:
+
+        data = request.get_json() or {}
+
+        board = data.get("board")
+        class_name = data.get("class_name")
+        subject = data.get("subject")
+
+        if not board or not class_name or not subject:
+            return jsonify({
+                "success": False,
+                "error": "Board, Class and Subject are required."
+            }), 400
+
+        # Get syllabus from database
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+        SELECT syllabus_text
+        FROM syllabi
+        WHERE board=?
+        AND class_name=?
+        AND subject=?
+        ORDER BY id DESC
+        LIMIT 1
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+        row = c.fetchone()
+
+        conn.close()
+
+        if not row:
+            return jsonify({
+                "success": False,
+                "error": "Syllabus not found."
+            }), 404
+
+        syllabus_text = row["syllabus_text"] or ""
+
+        if not syllabus_text.strip():
+            return jsonify({
+                "success": False,
+                "error": "Uploaded syllabus is empty."
+            }), 400
+
+        # Limit syllabus size sent to AI
+        syllabus_context = syllabus_text[:30000]
+
+        prompt = f"""
+You are an expert educational curriculum analyzer.
+
+Analyze the following syllabus.
+
+Board:
+{board}
+
+Class:
+{class_name}
+
+Subject:
+{subject}
+
+Your task is to identify the main chapters/topics
+and their important subtopics from ONLY the supplied syllabus.
+
+IMPORTANT RULES:
+
+1. Do not add topics that are not present in the syllabus.
+2. Preserve the terminology used in the syllabus wherever possible.
+3. Organize the syllabus into logical chapters/topics.
+4. Under each topic, provide relevant subtopics.
+5. Return ONLY valid JSON.
+6. Do not include markdown.
+7. Do not include explanations outside JSON.
+
+JSON FORMAT:
+
+{{
+    "topics": [
+        {{
+            "topic": "Chapter / Topic Name",
+            "subtopics": [
+                "Subtopic 1",
+                "Subtopic 2",
+                "Subtopic 3"
+            ]
+        }}
+    ]
+}}
+
+SYLLABUS:
+--------------------
+{syllabus_context}
+--------------------
+"""
+
+        response = client.responses.create(
+            model="gpt-5.6-luna",
+            input=prompt
+        )
+
+        result = response.output_text.strip()
+
+        # Remove markdown code fences if AI returns them
+        if result.startswith("```"):
+            result = result.replace("```json", "")
+            result = result.replace("```", "")
+            result = result.strip()
+
+        topic_data = json.loads(result)
+
+        if "topics" not in topic_data:
+            raise ValueError("AI returned invalid topic structure.")
+
+        if not isinstance(topic_data["topics"], list):
+            raise ValueError("Topics must be a list.")
+
+        return jsonify({
+            "success": True,
+            "topics": topic_data["topics"]
+        })
+
+    except Exception as e:
+
+        print("AI LEARNING TOPICS ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
 @app.route("/api/ai-question", methods=["POST"])
 def ai_question():
 
