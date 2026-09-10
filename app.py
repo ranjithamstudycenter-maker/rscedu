@@ -148,6 +148,37 @@ def init_db():
     )
     """)
 
+    # =====================================================
+    # AI QUESTION BANK
+    # =====================================================
+    
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS ai_question_bank (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+    
+        topic TEXT NOT NULL,
+        subtopic TEXT NOT NULL,
+    
+        mode TEXT NOT NULL,
+        difficulty TEXT NOT NULL,
+    
+        test_number INTEGER DEFAULT 0,
+    
+        question TEXT NOT NULL,
+        options TEXT NOT NULL,
+        correct_answer INTEGER NOT NULL,
+    
+        explanation TEXT DEFAULT '',
+        hint TEXT DEFAULT '',
+    
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+    )
+    """)
+    
     conn.commit()
     conn.close()
 
