@@ -274,7 +274,54 @@ def init_db():
     conn.close()
 
 init_db()
+def initialize_cbse_class10_maths_topics():
 
+    conn = sqlite3.connect("students.db")
+    c = conn.cursor()
+
+    topics = [
+        ("Real Numbers", ["Fundamental Theorem of Arithmetic", "Irrationality of √2, √3 and √5"]),
+        ("Polynomials", ["Zeros of a polynomial", "Relationship between zeros and coefficients"]),
+        ("Pair of Linear Equations in Two Variables", ["Graphical solution", "Consistency and inconsistency", "Substitution method", "Elimination method"]),
+        ("Quadratic Equations", ["Standard form", "Factorization", "Quadratic formula", "Discriminant and nature of roots"]),
+        ("Arithmetic Progressions", ["Nth term", "Sum of first n terms", "Applications"]),
+        ("Coordinate Geometry", ["Distance formula", "Section formula"]),
+        ("Triangles", ["Similarity", "Basic Proportionality Theorem", "Similarity criteria"]),
+        ("Circles", ["Tangents", "Tangent perpendicular to radius", "Equal tangents"]),
+        ("Introduction to Trigonometry", ["Trigonometric ratios", "30°, 45° and 60°"]),
+        ("Trigonometric Identities", ["sin²A + cos²A = 1", "Simple identities"]),
+        ("Heights and Distances", ["Angle of elevation", "Angle of depression"]),
+        ("Areas Related to Circles", ["Circumference", "Sector", "Segment"]),
+        ("Surface Areas and Volumes", ["Combination of solids", "Cube, cuboid, cylinder, cone, sphere and hemisphere"]),
+        ("Statistics and Probability", ["Mean, median and mode", "Classical probability", "Simple events"])
+    ]
+
+    c.execute("""
+        DELETE FROM ai_syllabus_topics
+        WHERE board='CBSE'
+        AND class_name='Class 10'
+        AND subject='Maths'
+    """)
+
+    c.execute("""
+        INSERT INTO ai_syllabus_topics
+        (board, class_name, subject, topics_json, created_at)
+        VALUES (?, ?, ?, ?, datetime('now'))
+    """, (
+        "CBSE",
+        "Class 10",
+        "Maths",
+        json.dumps({"topics": [
+            {"topic": t, "subtopics": s}
+            for t, s in topics
+        ]}, ensure_ascii=False)
+    ))
+
+    conn.commit()
+    conn.close()
+
+    print("CBSE Class 10 Maths topics initialized successfully.")
+    initialize_cbse_class10_maths_topics()
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
