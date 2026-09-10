@@ -833,7 +833,7 @@
 
 <div class="hero">
 
-    <h1>🤖 AI Learning</h1>
+    <h1>🤖 Smart Practice & Learning</h1>
 
     <p>
         Personalized Learning • Adaptive Questions • Smart Performance Analysis
@@ -858,33 +858,90 @@
 
 <div class="card" id="selectionCard">
 
-    <h2>📚 Select Your Learning Module</h2>
+    <h2>📚 Select Your Practicing Module</h2>
 
-    <p>
-        Start your personalized learning journey.
-    </p>
+     <div class="module-grid">
 
+            <!-- MATHEMATICS -->
+            <div class="module-card"
+                 onclick="selectSubjectCard(this, 'math')">
+        
+                <div class="module-icon">📐</div>
+        
+                <h3>Mathematics</h3>
+        
+                <p>
+                    Build concepts, practise problems and improve
+                    mathematical problem-solving skills.
+                </p>
+        
+                <span class="module-badge">
+                    Available
+                </span>
+        
+            </div>
+        
+        
+            <!-- BIOLOGY -->
+            <div class="module-card coming"
+                 onclick="selectSubjectCard(this, 'biology')">
+        
+                <div class="module-icon">🧬</div>
+        
+                <h3>Biology</h3>
+        
+                <p>
+                    Learn biology concepts with syllabus-based
+                    questions and practice.
+                </p>
+        
+                <span class="module-badge">
+                    Coming Soon
+                </span>
+        
+            </div>
+        
+        
+            <!-- SCIENCE -->
+            <div class="module-card coming"
+                 onclick="selectSubjectCard(this, 'science')">
+        
+                <div class="module-icon">🔬</div>
+        
+                <h3>Science</h3>
+        
+                <p>
+                    Build scientific concepts through
+                    syllabus-based practice.
+                </p>
+        
+                <span class="module-badge">
+                    Coming Soon
+                </span>
+        
+            </div>
+        
+        
+            <!-- SOCIAL SCIENCE -->
+            <div class="module-card coming"
+                 onclick="selectSubjectCard(this, 'social_science')">
+        
+                <div class="module-icon">🌍</div>
+        
+                <h3>Social Science</h3>
+        
+                <p>
+                    Explore history, geography, civics and
+                    economics through practice.
+                </p>
+        
+                <span class="module-badge">
+                    Coming Soon
+                </span>
+        
+            </div>
 
-    <div class="module-grid">
-        <div class="module-card" onclick="selectSubjectCard(this, 'math')">
-            <div class="module-icon">📐</div>
-            <h3>Mathematics</h3>
-            <p>Build concepts, practise problems and improve mathematical problem-solving skills.</p>
-            <span class="module-badge">AI Adaptive Learning</span>
-        </div>
-        <div class="module-card" onclick="selectSubjectCard(this, 'science')">
-            <div class="module-icon">🔬</div>
-            <h3>Science</h3>
-            <p>Personalised Science learning with syllabus-based AI questions.</p>
-            <span class="module-badge">Coming Soon</span>
-        </div>
-        <div class="module-card coming">
-            <div class="module-icon">🚀</div>
-            <h3>More Subjects</h3>
-            <p>Physics, Chemistry and additional learning modules will be added soon.</p>
-            <span class="module-badge">Coming Soon</span>
-        </div>
-    </div>
+</div>
 
 
    <div id="mathSection" class="hidden">
