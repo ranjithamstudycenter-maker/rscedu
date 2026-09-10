@@ -3089,6 +3089,7 @@ def save_ai_attempt():
         
 # =====================================================
 # AI 25 QUESTION BATCH
+# QUESTION BANK BASED GENERATION
 # =====================================================
 
 @app.route("/api/ai-question-batch", methods=["POST"])
@@ -3103,164 +3104,525 @@ def ai_question_batch():
         subject = data.get("subject")
         topic = data.get("topic")
         subtopic = data.get("subtopic")
-        difficulty = data.get("difficulty", "easy")
 
-        # -----------------------------------------
+        difficulty = data.get(
+            "difficulty",
+            "easy"
+        )
+
+        # -------------------------------------------------
+        # PRACTICE / MOCK MODE
+        # -------------------------------------------------
+
+        mode = data.get(
+            "mode",
+            "practice"
+        )
+
+        test_number = data.get(
+            "test_number",
+            0
+        )
+
+        # -------------------------------------------------
         # VALIDATION
-        # -----------------------------------------
+        # -------------------------------------------------
 
         if not board or not class_name or not subject:
+
             return jsonify({
+
                 "success": False,
-                "error": "Board, Class and Subject are required."
+
+                "error":
+                    "Board, Class and Subject are required."
+
             }), 400
 
         if not topic or not subtopic:
+
             return jsonify({
+
                 "success": False,
-                "error": "Chapter and Subtopic are required."
+
+                "error":
+                    "Chapter and Subtopic are required."
+
             }), 400
 
-        if difficulty not in ["easy", "medium", "hard"]:
+        if difficulty not in [
+            "easy",
+            "medium",
+            "hard"
+        ]:
+
             return jsonify({
+
                 "success": False,
-                "error": "Invalid difficulty level."
+
+                "error":
+                    "Invalid difficulty level."
+
             }), 400
 
-        # -----------------------------------------
-        # GET SYLLABUS
-        # -----------------------------------------
+        if mode not in [
+            "practice",
+            "mock"
+        ]:
 
-        conn = sqlite3.connect("students.db")
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Invalid mode."
+
+            }), 400
+
+        try:
+
+            test_number = int(test_number)
+
+        except:
+
+            test_number = 0
+
+        # Practice = test_number 0
+        # Mock = test_number 1 or 2
+
+        if mode == "practice":
+
+            test_number = 0
+
+        elif test_number not in [1, 2]:
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Mock Test number must be 1 or 2."
+
+            }), 400
+
+        # -------------------------------------------------
+        # DATABASE CONNECTION
+        # -------------------------------------------------
+
+        conn = sqlite3.connect(
+            "students.db"
+        )
+
         conn.row_factory = sqlite3.Row
+
         c = conn.cursor()
+
+        # -------------------------------------------------
+        # MAKE SURE QUESTION BANK EXISTS
+        # -------------------------------------------------
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS ai_question_bank (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            board TEXT NOT NULL,
+            class_name TEXT NOT NULL,
+            subject TEXT NOT NULL,
+
+            topic TEXT NOT NULL,
+            subtopic TEXT NOT NULL,
+
+            mode TEXT NOT NULL,
+            difficulty TEXT NOT NULL,
+
+            test_number INTEGER DEFAULT 0,
+
+            question TEXT NOT NULL,
+            options TEXT NOT NULL,
+            correct_answer INTEGER NOT NULL,
+
+            explanation TEXT DEFAULT '',
+            hint TEXT DEFAULT '',
+
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+        )
+        """)
+
+        conn.commit()
+
+        # -------------------------------------------------
+        # CHECK EXISTING QUESTION SET
+        # -------------------------------------------------
+
+        c.execute("""
+        SELECT *
+        FROM ai_question_bank
+
+        WHERE board=?
+        AND class_name=?
+        AND subject=?
+        AND topic=?
+        AND subtopic=?
+        AND mode=?
+        AND difficulty=?
+        AND test_number=?
+
+        ORDER BY id ASC
+        """, (
+
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            mode,
+            difficulty,
+            test_number
+
+        ))
+
+        existing_rows = c.fetchall()
+
+        # -------------------------------------------------
+        # IF 25 QUESTIONS ALREADY EXIST
+        # RETURN THEM
+        # -------------------------------------------------
+
+        if len(existing_rows) >= 25:
+
+            questions = []
+
+            for row in existing_rows[:25]:
+
+                try:
+
+                    options = json.loads(
+                        row["options"]
+                    )
+
+                except:
+
+                    options = []
+
+                questions.append({
+
+                    "id":
+                        row["id"],
+
+                    "question":
+                        row["question"],
+
+                    "options":
+                        options,
+
+                    "correct_answer":
+                        row["correct_answer"],
+
+                    "explanation":
+                        row["explanation"] or "",
+
+                    "hint":
+                        row["hint"] or "",
+
+                    "topic":
+                        row["topic"],
+
+                    "subtopic":
+                        row["subtopic"],
+
+                    "difficulty":
+                        row["difficulty"],
+
+                    "mode":
+                        row["mode"],
+
+                    "test_number":
+                        row["test_number"]
+
+                })
+
+            conn.close()
+
+            return jsonify({
+
+                "success": True,
+
+                "source":
+                    "question_bank",
+
+                "mode":
+                    mode,
+
+                "test_number":
+                    test_number,
+
+                "difficulty":
+                    difficulty,
+
+                "questions":
+                    questions
+
+            })
+
+        # -------------------------------------------------
+        # GET SYLLABUS
+        # -------------------------------------------------
 
         c.execute("""
         SELECT syllabus_text
         FROM syllabi
+
         WHERE board=?
         AND class_name=?
         AND subject=?
+
         ORDER BY id DESC
+
         LIMIT 1
         """, (
+
             board,
             class_name,
             subject
+
         ))
 
         row = c.fetchone()
-        conn.close()
 
         if not row:
 
+            conn.close()
+
             return jsonify({
+
                 "success": False,
-                "error": "Syllabus not found for selected subject."
+
+                "error":
+                    "Syllabus not found for selected subject."
+
             }), 404
 
-        syllabus_text = row["syllabus_text"] or ""
+        syllabus_text = (
+            row["syllabus_text"] or ""
+        )
 
         if not syllabus_text.strip():
 
+            conn.close()
+
             return jsonify({
+
                 "success": False,
-                "error": "Uploaded syllabus is empty."
+
+                "error":
+                    "Uploaded syllabus is empty."
+
             }), 400
 
-        syllabus_context = syllabus_text[:30000]
+        syllabus_context = (
+            syllabus_text[:30000]
+        )
 
-        # -----------------------------------------
+        # -------------------------------------------------
         # AI PROMPT
-        # -----------------------------------------
+        # -------------------------------------------------
 
         prompt = f"""
-You are an expert Class 10 Mathematics teacher
-and educational question paper designer.
 
-Generate EXACTLY 25 ORIGINAL multiple-choice
-questions for the following:
+You are an expert school Mathematics teacher,
+curriculum specialist and professional MCQ
+question-paper designer.
+
+Your task is to create EXACTLY 25 ORIGINAL
+multiple-choice questions.
+
+-----------------------------------------
+SELECTED ACADEMIC INFORMATION
+-----------------------------------------
 
 Board: {board}
 Class: {class_name}
 Subject: {subject}
-Chapter/Topic: {topic}
-Subtopic: {subtopic}
-Difficulty: {difficulty}
 
-IMPORTANT REQUIREMENTS:
+Chapter / Topic:
+{topic}
 
-1. Generate exactly 25 questions.
-2. Every question must be relevant to the selected
-   chapter and subtopic.
-3. Difficulty must match {difficulty}.
-4. Each question must have exactly 4 options.
-5. Only ONE option must be correct.
-6. Give correct_answer as an integer from 0 to 3.
-7. Give a short student-friendly explanation.
-8. Give a useful hint.
-9. Questions must be mathematically correct.
-10. Questions must be ORIGINAL.
-11. Do not copy textbook questions verbatim.
-12. Avoid duplicate questions.
-13. Return ONLY valid JSON.
-14. Do not use markdown code fences.
+Subtopic:
+{subtopic}
 
-JSON format:
+Difficulty:
+{difficulty}
+
+Mode:
+{mode}
+
+Test Number:
+{test_number}
+
+-----------------------------------------
+IMPORTANT REQUIREMENTS
+-----------------------------------------
+
+1. Generate EXACTLY 25 questions.
+
+2. Every question MUST be directly related
+   to the selected Chapter/Topic and Subtopic.
+
+3. Use the provided syllabus as the primary
+   academic source.
+
+4. Do NOT generate questions from unrelated
+   chapters.
+
+5. Difficulty MUST match:
+   {difficulty}
+
+6. Every question must have EXACTLY
+   4 options.
+
+7. There must be ONLY ONE correct answer.
+
+8. "correct_answer" MUST be an integer:
+   0, 1, 2 or 3.
+
+9. Questions must be mathematically accurate.
+
+10. Calculations must be checked carefully.
+
+11. Questions must be suitable for the
+    selected Class and Board.
+
+12. Questions must be ORIGINAL.
+
+13. Do NOT copy textbook questions verbatim.
+
+14. Do NOT repeat the same question.
+
+15. Do NOT create duplicate questions with
+    only numbers changed.
+
+16. Avoid ambiguous questions.
+
+17. Avoid two options being mathematically
+    equivalent.
+
+18. Every question must contain enough
+    information for a student to solve it.
+
+19. Provide a short student-friendly
+    explanation.
+
+20. Provide a useful hint.
+
+21. Do NOT reveal the answer inside
+    the question text.
+
+22. Return ONLY valid JSON.
+
+23. Do NOT use Markdown.
+
+24. Do NOT use code fences.
+
+-----------------------------------------
+JSON FORMAT
+-----------------------------------------
 
 {{
     "questions": [
+
         {{
             "question": "Question text",
+
             "options": [
                 "Option 1",
                 "Option 2",
                 "Option 3",
                 "Option 4"
             ],
+
             "correct_answer": 0,
-            "explanation": "Short explanation",
-            "hint": "Short hint"
+
+            "explanation":
+                "Short student-friendly explanation.",
+
+            "hint":
+                "Short useful hint."
         }}
+
     ]
 }}
 
-SYLLABUS:
--------------------------
+-----------------------------------------
+SYLLABUS
+-----------------------------------------
+
 {syllabus_context}
--------------------------
+
+-----------------------------------------
+FINAL INSTRUCTION
+-----------------------------------------
+
+Generate EXACTLY 25 UNIQUE,
+ACADEMICALLY CORRECT MCQs.
+
+Return ONLY the JSON object.
 """
 
-        # -----------------------------------------
-        # AI CALL — ONLY ONE CALL
-        # -----------------------------------------
+        # -------------------------------------------------
+        # AI CALL
+        # -------------------------------------------------
 
         response = client.responses.create(
+
             model="gpt-5.6-luna",
+
             input=prompt
+
         )
 
-        result = response.output_text.strip()
+        result = (
+            response.output_text
+            .strip()
+        )
 
-        # -----------------------------------------
+        # -------------------------------------------------
         # CLEAN JSON
-        # -----------------------------------------
+        # -------------------------------------------------
 
         if result.startswith("```"):
 
-            result = result.replace("```json", "")
-            result = result.replace("```", "")
+            result = result.replace(
+                "```json",
+                ""
+            )
+
+            result = result.replace(
+                "```",
+                ""
+            )
+
             result = result.strip()
 
-        question_data = json.loads(result)
+        question_data = json.loads(
+            result
+        )
 
-        questions = question_data.get("questions", [])
+        questions = (
+            question_data.get(
+                "questions",
+                []
+            )
+        )
 
-        # -----------------------------------------
-        # VALIDATE
-        # -----------------------------------------
+        # -------------------------------------------------
+        # BASIC VALIDATION
+        # -------------------------------------------------
 
-        if not isinstance(questions, list):
+        if not isinstance(
+            questions,
+            list
+        ):
 
             raise ValueError(
                 "AI returned invalid question structure."
@@ -3269,48 +3631,136 @@ SYLLABUS:
         if len(questions) < 25:
 
             raise ValueError(
-                f"AI generated only {len(questions)} questions. "
-                "25 questions are required."
+
+                f"AI generated only "
+                f"{len(questions)} questions. "
+                f"25 questions are required."
+
             )
 
-        # Use exactly first 25
-        questions = questions[:25]
+        # -------------------------------------------------
+        # VALIDATE QUESTIONS
+        # -------------------------------------------------
 
         validated_questions = []
 
+        question_texts = set()
+
         for q in questions:
 
-            if not isinstance(q, dict):
+            if not isinstance(
+                q,
+                dict
+            ):
                 continue
 
-            if not q.get("question"):
+            question_text = str(
+                q.get(
+                    "question",
+                    ""
+                )
+            ).strip()
+
+            options = q.get(
+                "options"
+            )
+
+            correct_answer = q.get(
+                "correct_answer"
+            )
+
+            explanation = str(
+                q.get(
+                    "explanation",
+                    ""
+                )
+            ).strip()
+
+            hint = str(
+                q.get(
+                    "hint",
+                    ""
+                )
+            ).strip()
+
+            # ---------------------------------------------
+            # QUESTION VALIDATION
+            # ---------------------------------------------
+
+            if not question_text:
                 continue
 
-            if not isinstance(q.get("options"), list):
+            if question_text in question_texts:
                 continue
 
-            if len(q["options"]) != 4:
+            if not isinstance(
+                options,
+                list
+            ):
                 continue
 
-            if q.get("correct_answer") not in [0, 1, 2, 3]:
+            if len(options) != 4:
                 continue
+
+            if correct_answer not in [
+                0,
+                1,
+                2,
+                3
+            ]:
+                continue
+
+            # ---------------------------------------------
+            # OPTION VALIDATION
+            # ---------------------------------------------
+
+            cleaned_options = []
+
+            valid_options = True
+
+            for option in options:
+
+                option_text = str(
+                    option
+                ).strip()
+
+                if not option_text:
+
+                    valid_options = False
+
+                    break
+
+                cleaned_options.append(
+                    option_text
+                )
+
+            if not valid_options:
+                continue
+
+            # ---------------------------------------------
+            # SAVE VALID QUESTION
+            # ---------------------------------------------
+
+            question_texts.add(
+                question_text
+            )
 
             validated_questions.append({
 
                 "question":
-                    q["question"],
+                    question_text,
 
                 "options":
-                    q["options"],
+                    cleaned_options,
 
                 "correct_answer":
-                    q["correct_answer"],
+                    correct_answer,
 
                 "explanation":
-                    q.get("explanation", ""),
+                    explanation,
 
                 "hint":
-                    q.get("hint", ""),
+                    hint,
 
                 "topic":
                     topic,
@@ -3319,27 +3769,148 @@ SYLLABUS:
                     subtopic,
 
                 "difficulty":
-                    difficulty
+                    difficulty,
+
+                "mode":
+                    mode,
+
+                "test_number":
+                    test_number
 
             })
 
-        if len(validated_questions) < 25:
+            if len(
+                validated_questions
+            ) == 25:
+
+                break
+
+        # -------------------------------------------------
+        # FINAL VALIDATION
+        # -------------------------------------------------
+
+        if len(
+            validated_questions
+        ) < 25:
+
+            conn.close()
 
             raise ValueError(
-                "AI did not return 25 valid questions."
+
+                "AI did not return "
+                "25 unique valid questions."
+
             )
+
+        # -------------------------------------------------
+        # SAVE QUESTIONS INTO QUESTION BANK
+        # -------------------------------------------------
+
+        saved_questions = []
+
+        for q in validated_questions:
+
+            c.execute("""
+            INSERT INTO ai_question_bank (
+
+                board,
+                class_name,
+                subject,
+
+                topic,
+                subtopic,
+
+                mode,
+                difficulty,
+
+                test_number,
+
+                question,
+                options,
+                correct_answer,
+
+                explanation,
+                hint
+
+            )
+
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+
+            """, (
+
+                board,
+                class_name,
+                subject,
+
+                topic,
+                subtopic,
+
+                mode,
+                difficulty,
+
+                test_number,
+
+                q["question"],
+
+                json.dumps(
+                    q["options"],
+                    ensure_ascii=False
+                ),
+
+                q["correct_answer"],
+
+                q["explanation"],
+
+                q["hint"]
+
+            ))
+
+            question_id = (
+                c.lastrowid
+            )
+
+            q["id"] = question_id
+
+            saved_questions.append(
+                q
+            )
+
+        # -------------------------------------------------
+        # COMMIT
+        # -------------------------------------------------
+
+        conn.commit()
+
+        conn.close()
+
+        # -------------------------------------------------
+        # RETURN
+        # -------------------------------------------------
 
         return jsonify({
 
             "success": True,
 
+            "source":
+                "ai_generated",
+
+            "mode":
+                mode,
+
+            "test_number":
+                test_number,
+
             "difficulty":
                 difficulty,
 
             "questions":
-                validated_questions[:25]
+                saved_questions[:25]
 
         })
+
+    # =====================================================
+    # ERROR HANDLING
+    # =====================================================
 
     except Exception as e:
 
@@ -3350,11 +3921,16 @@ SYLLABUS:
 
         error_message = str(e)
 
-        # -----------------------------------------
+        # -------------------------------------------------
         # RATE LIMIT
-        # -----------------------------------------
+        # -------------------------------------------------
 
-        if "429" in error_message or "rate limit" in error_message.lower():
+        if (
+            "429" in error_message
+            or
+            "rate limit"
+            in error_message.lower()
+        ):
 
             return jsonify({
 
@@ -3364,7 +3940,8 @@ SYLLABUS:
                     "AI service is temporarily busy. "
                     "Please try again after a short while.",
 
-                "rate_limit": True
+                "rate_limit":
+                    True
 
             }), 429
 
