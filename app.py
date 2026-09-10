@@ -178,7 +178,25 @@ def init_db():
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
     """)
-
+    # =====================================================
+    # AI LEARNING - SYLLABUS TOPIC CACHE
+    # =====================================================
+    
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS ai_syllabus_topics (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+    
+        topics_json TEXT NOT NULL,
+    
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+    
+        UNIQUE(board, class_name, subject)
+    )
+    """)
     # =====================================================
     # AI EXAM SESSIONS
     # =====================================================
@@ -2473,29 +2491,109 @@ def ai_learning_topics():
 
         data = request.get_json() or {}
 
-        board = data.get("board")
-        class_name = data.get("class_name")
-        subject = data.get("subject")
+        board = data.get("board", "").strip()
+        class_name = data.get("class_name", "").strip()
+        subject = data.get("subject", "").strip()
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
 
         if not board or not class_name or not subject:
+
             return jsonify({
                 "success": False,
                 "error": "Board, Class and Subject are required."
             }), 400
 
-        # Get syllabus from database
+
+        # -------------------------------------------------
+        # DATABASE
+        # -------------------------------------------------
+
         conn = sqlite3.connect("students.db")
         conn.row_factory = sqlite3.Row
+
         c = conn.cursor()
 
+
+        # -------------------------------------------------
+        # 1. CHECK TOPIC CACHE FIRST
+        # -------------------------------------------------
+
         c.execute("""
-        SELECT syllabus_text
-        FROM syllabi
-        WHERE board=?
-        AND class_name=?
-        AND subject=?
-        ORDER BY id DESC
-        LIMIT 1
+            SELECT topics_json
+            FROM ai_syllabus_topics
+            WHERE board=?
+            AND class_name=?
+            AND subject=?
+            LIMIT 1
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+        cached_row = c.fetchone()
+
+
+        # -------------------------------------------------
+        # IF CACHE EXISTS
+        # -------------------------------------------------
+
+        if cached_row:
+
+            try:
+
+                topic_data = json.loads(
+                    cached_row["topics_json"]
+                )
+
+                conn.close()
+
+                return jsonify({
+                    "success": True,
+                    "source": "database",
+                    "topics": topic_data.get(
+                        "topics",
+                        []
+                    )
+                })
+
+            except Exception as e:
+
+                print(
+                    "TOPIC CACHE JSON ERROR:",
+                    e
+                )
+
+                # Invalid cache → remove it
+                c.execute("""
+                    DELETE FROM ai_syllabus_topics
+                    WHERE board=?
+                    AND class_name=?
+                    AND subject=?
+                """, (
+                    board,
+                    class_name,
+                    subject
+                ))
+
+                conn.commit()
+
+
+        # -------------------------------------------------
+        # 2. GET SYLLABUS
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT syllabus_text
+            FROM syllabi
+            WHERE board=?
+            AND class_name=?
+            AND subject=?
+            ORDER BY id DESC
+            LIMIT 1
         """, (
             board,
             class_name,
@@ -2504,24 +2602,42 @@ def ai_learning_topics():
 
         row = c.fetchone()
 
-        conn.close()
 
         if not row:
+
+            conn.close()
+
             return jsonify({
                 "success": False,
-                "error": "Syllabus not found."
+                "error":
+                    "Syllabus not found for the selected Board, Class and Subject."
             }), 404
+
 
         syllabus_text = row["syllabus_text"] or ""
 
+
         if not syllabus_text.strip():
+
+            conn.close()
+
             return jsonify({
                 "success": False,
-                "error": "Uploaded syllabus is empty."
+                "error":
+                    "Uploaded syllabus is empty."
             }), 400
 
-        # Limit syllabus size sent to AI
+
+        # -------------------------------------------------
+        # 3. LIMIT SYLLABUS SIZE
+        # -------------------------------------------------
+
         syllabus_context = syllabus_text[:30000]
+
+
+        # -------------------------------------------------
+        # 4. GENERATE TOPICS ONLY ONCE
+        # -------------------------------------------------
 
         prompt = f"""
 You are an expert educational curriculum analyzer.
@@ -2543,11 +2659,17 @@ and their important subtopics from ONLY the supplied syllabus.
 IMPORTANT RULES:
 
 1. Do not add topics that are not present in the syllabus.
+
 2. Preserve the terminology used in the syllabus wherever possible.
+
 3. Organize the syllabus into logical chapters/topics.
+
 4. Under each topic, provide relevant subtopics.
+
 5. Return ONLY valid JSON.
+
 6. Do not include markdown.
+
 7. Do not include explanations outside JSON.
 
 JSON FORMAT:
@@ -2571,39 +2693,126 @@ SYLLABUS:
 --------------------
 """
 
+
+        # -------------------------------------------------
+        # 5. GPT CALL
+        # -------------------------------------------------
+
         response = client.responses.create(
             model="gpt-5.6-luna",
             input=prompt
         )
 
+
         result = response.output_text.strip()
 
-        # Remove markdown code fences if AI returns them
+
+        # -------------------------------------------------
+        # 6. CLEAN AI RESPONSE
+        # -------------------------------------------------
+
         if result.startswith("```"):
-            result = result.replace("```json", "")
-            result = result.replace("```", "")
+
+            result = result.replace(
+                "```json",
+                ""
+            )
+
+            result = result.replace(
+                "```",
+                ""
+            )
+
             result = result.strip()
+
 
         topic_data = json.loads(result)
 
-        if "topics" not in topic_data:
-            raise ValueError("AI returned invalid topic structure.")
 
-        if not isinstance(topic_data["topics"], list):
-            raise ValueError("Topics must be a list.")
+        if "topics" not in topic_data:
+
+            raise ValueError(
+                "AI returned invalid topic structure."
+            )
+
+
+        if not isinstance(
+            topic_data["topics"],
+            list
+        ):
+
+            raise ValueError(
+                "Topics must be a list."
+            )
+
+
+        # -------------------------------------------------
+        # 7. SAVE TOPICS TO DATABASE
+        # -------------------------------------------------
+
+        c.execute("""
+            INSERT OR REPLACE INTO ai_syllabus_topics
+            (
+                board,
+                class_name,
+                subject,
+                topics_json,
+                created_at
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            board,
+            class_name,
+            subject,
+            json.dumps(
+                topic_data,
+                ensure_ascii=False
+            ),
+            datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+        ))
+
+
+        conn.commit()
+        conn.close()
+
+
+        # -------------------------------------------------
+        # 8. RETURN TOPICS
+        # -------------------------------------------------
 
         return jsonify({
+
             "success": True,
-            "topics": topic_data["topics"]
+
+            "source":
+                "ai_generated_and_cached",
+
+            "topics":
+                topic_data["topics"]
+
         })
+
+
+    # =====================================================
+    # ERROR HANDLING
+    # =====================================================
 
     except Exception as e:
 
-        print("AI LEARNING TOPICS ERROR:", e)
+        print(
+            "AI LEARNING TOPICS ERROR:",
+            e
+        )
 
         return jsonify({
+
             "success": False,
-            "error": str(e)
+
+            "error":
+                str(e)
+
         }), 500
 
 @app.route("/api/ai-question", methods=["POST"])
