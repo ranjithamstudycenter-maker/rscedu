@@ -793,7 +793,7 @@
             <a href="{{ url_for('about') }}">About</a> 
             <a href="{{ url_for('courses') }}">Class</a> 
             <a href="{{ url_for('materials') }}">Materials</a>
-            <a href="{{ url_for('ai_learning') }}">AI-learning</a>
+            <a href="{{ url_for('ai_learning') }}">Practice</a>
             <a href="{{ url_for('contact') }}">Contact</a> 
         </div> 
         <div class="nav-right">
@@ -1772,17 +1772,68 @@ function selectSubject(button){
 
 function selectSubjectCard(card, subject){
 
-    if(subject !== "math"){
-        alert("🔬 Science AI Learning is coming soon.");
+    // -----------------------------------------
+    // MATHEMATICS - ACTIVE
+    // -----------------------------------------
+
+    if(subject === "math"){
+
+        document.getElementById(
+            "mathSection"
+        ).classList.remove("hidden");
+
+        document.getElementById(
+            "mathSection"
+        ).scrollIntoView({
+            behavior:"smooth",
+            block:"center"
+        });
+
         return;
     }
 
-    document.getElementById("mathSection").classList.remove("hidden");
 
-    document.getElementById("mathSection").scrollIntoView({
-        behavior:"smooth",
-        block:"center"
-    });
+    // -----------------------------------------
+    // BIOLOGY - COMING SOON
+    // -----------------------------------------
+
+    if(subject === "biology"){
+
+        alert(
+            "🧬 Biology AI Learning is coming soon."
+        );
+
+        return;
+    }
+
+
+    // -----------------------------------------
+    // SCIENCE - COMING SOON
+    // -----------------------------------------
+
+    if(subject === "science"){
+
+        alert(
+            "🔬 Science AI Learning is coming soon."
+        );
+
+        return;
+    }
+
+
+    // -----------------------------------------
+    // SOCIAL SCIENCE - COMING SOON
+    // -----------------------------------------
+
+    if(subject === "social_science"){
+
+        alert(
+            "🌍 Social Science AI Learning is coming soon."
+        );
+
+        return;
+    }
+
 }
 
 
