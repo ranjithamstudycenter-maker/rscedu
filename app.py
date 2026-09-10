@@ -178,7 +178,57 @@ def init_db():
         created_at TEXT DEFAULT CURRENT_TIMESTAMP
     )
     """)
+
+    # =====================================================
+    # AI EXAM SESSIONS
+    # =====================================================
     
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS ai_sessions (
+    
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    
+        board TEXT,
+        class_name TEXT,
+        subject TEXT,
+    
+        topic TEXT,
+        subtopic TEXT,
+    
+        difficulty TEXT,
+    
+        mode TEXT,
+    
+        test_number INTEGER DEFAULT 0,
+    
+        total_questions INTEGER DEFAULT 25,
+        total_marks INTEGER DEFAULT 50,
+    
+        question_ids TEXT,
+    
+        answers TEXT,
+    
+        current_question INTEGER DEFAULT 0,
+    
+        status TEXT DEFAULT 'in_progress',
+    
+        started_at TEXT,
+    
+        submitted_at TEXT,
+    
+        score INTEGER DEFAULT 0,
+    
+        correct_answers INTEGER DEFAULT 0,
+    
+        incorrect_answers INTEGER DEFAULT 0,
+    
+        unanswered INTEGER DEFAULT 0,
+    
+        percentage REAL DEFAULT 0
+    
+    )
+    """)
+
     conn.commit()
     conn.close()
 
@@ -3953,6 +4003,1701 @@ Return ONLY the JSON object.
                 error_message
 
         }), 500
+
+# =====================================================
+# AI EXAM SESSION
+# CREATE / RESUME SESSION
+# =====================================================
+
+@app.route("/api/ai-session", methods=["POST"])
+def ai_session():
+
+    try:
+
+        data = request.get_json() or {}
+
+        board = data.get("board")
+        class_name = data.get("class_name")
+        subject = data.get("subject")
+
+        topic = data.get("topic")
+        subtopic = data.get("subtopic")
+
+        difficulty = data.get(
+            "difficulty",
+            "easy"
+        )
+
+        mode = data.get(
+            "mode",
+            "practice"
+        )
+
+        test_number = data.get(
+            "test_number",
+            0
+        )
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
+
+        if not board or not class_name or not subject:
+
+            return jsonify({
+
+                "success": False,
+                "error":
+                    "Board, Class and Subject are required."
+
+            }), 400
+
+        if not topic or not subtopic:
+
+            return jsonify({
+
+                "success": False,
+                "error":
+                    "Topic and Subtopic are required."
+
+            }), 400
+
+        if difficulty not in [
+            "easy",
+            "medium",
+            "hard"
+        ]:
+
+            return jsonify({
+
+                "success": False,
+                "error":
+                    "Invalid difficulty."
+
+            }), 400
+
+        if mode not in [
+            "practice",
+            "mock"
+        ]:
+
+            return jsonify({
+
+                "success": False,
+                "error":
+                    "Invalid mode."
+
+            }), 400
+
+        try:
+
+            test_number = int(
+                test_number
+            )
+
+        except:
+
+            test_number = 0
+
+        # Practice always uses 0
+        if mode == "practice":
+
+            test_number = 0
+
+        # Mock must be Test 1 or Test 2
+        elif test_number not in [1, 2]:
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Mock Test number must be 1 or 2."
+
+            }), 400
+
+        # -------------------------------------------------
+        # DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect(
+            "students.db"
+        )
+
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+        # -------------------------------------------------
+        # MAKE SURE SESSION TABLE EXISTS
+        # -------------------------------------------------
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS ai_sessions (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            board TEXT,
+            class_name TEXT,
+            subject TEXT,
+
+            topic TEXT,
+            subtopic TEXT,
+
+            difficulty TEXT,
+
+            mode TEXT,
+
+            test_number INTEGER DEFAULT 0,
+
+            total_questions INTEGER DEFAULT 25,
+            total_marks INTEGER DEFAULT 50,
+
+            question_ids TEXT,
+
+            answers TEXT,
+
+            current_question INTEGER DEFAULT 0,
+
+            status TEXT DEFAULT 'in_progress',
+
+            started_at TEXT,
+
+            submitted_at TEXT,
+
+            score INTEGER DEFAULT 0,
+
+            correct_answers INTEGER DEFAULT 0,
+
+            incorrect_answers INTEGER DEFAULT 0,
+
+            unanswered INTEGER DEFAULT 0,
+
+            percentage REAL DEFAULT 0
+
+        )
+        """)
+
+        conn.commit()
+
+        # -------------------------------------------------
+        # GET 25 QUESTIONS FROM QUESTION BANK
+        # -------------------------------------------------
+
+        c.execute("""
+        SELECT id
+
+        FROM ai_question_bank
+
+        WHERE board=?
+        AND class_name=?
+        AND subject=?
+        AND topic=?
+        AND subtopic=?
+        AND difficulty=?
+        AND mode=?
+        AND test_number=?
+
+        ORDER BY id ASC
+
+        LIMIT 25
+
+        """, (
+
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty,
+            mode,
+            test_number
+
+        ))
+
+        question_rows = c.fetchall()
+
+        # -------------------------------------------------
+        # QUESTION COUNT CHECK
+        # -------------------------------------------------
+
+        if len(question_rows) != 25:
+
+            conn.close()
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "25 questions are not available "
+                    "for this test."
+
+            }), 404
+
+        question_ids = [
+
+            row["id"]
+
+            for row in question_rows
+
+        ]
+
+        # -------------------------------------------------
+        # CHECK FOR EXISTING IN-PROGRESS SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+        SELECT *
+
+        FROM ai_sessions
+
+        WHERE board=?
+        AND class_name=?
+        AND subject=?
+        AND topic=?
+        AND subtopic=?
+        AND difficulty=?
+        AND mode=?
+        AND test_number=?
+        AND status='in_progress'
+
+        ORDER BY id DESC
+
+        LIMIT 1
+
+        """, (
+
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty,
+            mode,
+            test_number
+
+        ))
+
+        existing_ai_session = c.fetchone()
+
+        # -------------------------------------------------
+        # RESUME EXISTING SESSION
+        # -------------------------------------------------
+
+        if existing_session:
+
+            try:
+
+                saved_question_ids = json.loads(
+                    existing_session["question_ids"]
+                )
+
+            except:
+
+                saved_question_ids = []
+
+            try:
+
+                saved_answers = json.loads(
+                    existing_session["answers"]
+                )
+
+            except:
+
+                saved_answers = {}
+
+            # ---------------------------------------------
+            # Return existing session
+            # ---------------------------------------------
+
+            conn.close()
+
+            return jsonify({
+
+                "success": True,
+
+                "session_id":
+                    existing_session["id"],
+
+                "resumed":
+                    True,
+
+                "status":
+                    existing_session["status"],
+
+                "question_ids":
+                    saved_question_ids,
+
+                "answers":
+                    saved_answers,
+
+                "current_question":
+                    existing_session["current_question"],
+
+                "started_at":
+                    existing_session["started_at"],
+
+                "difficulty":
+                    existing_session["difficulty"],
+
+                "mode":
+                    existing_session["mode"],
+
+                "test_number":
+                    existing_session["test_number"]
+
+            })
+
+        # -------------------------------------------------
+        # CREATE NEW SESSION
+        # -------------------------------------------------
+
+        now = datetime.now().isoformat()
+
+        initial_answers = {}
+
+        c.execute("""
+        INSERT INTO ai_sessions (
+
+            board,
+            class_name,
+            subject,
+
+            topic,
+            subtopic,
+
+            difficulty,
+
+            mode,
+            test_number,
+
+            total_questions,
+            total_marks,
+
+            question_ids,
+            answers,
+
+            current_question,
+
+            status,
+            started_at
+
+        )
+
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+
+        """, (
+
+            board,
+            class_name,
+            subject,
+
+            topic,
+            subtopic,
+
+            difficulty,
+
+            mode,
+            test_number,
+
+            25,
+            50,
+
+            json.dumps(
+                question_ids
+            ),
+
+            json.dumps(
+                initial_answers
+            ),
+
+            0,
+
+            "in_progress",
+
+            now
+
+        ))
+
+        session_id = c.lastrowid
+
+        conn.commit()
+
+        conn.close()
+
+        # -------------------------------------------------
+        # RETURN NEW SESSION
+        # -------------------------------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "session_id":
+                session_id,
+
+            "resumed":
+                False,
+
+            "status":
+                "in_progress",
+
+            "question_ids":
+                question_ids,
+
+            "answers":
+                initial_answers,
+
+            "current_question":
+                0,
+
+            "started_at":
+                now,
+
+            "difficulty":
+                difficulty,
+
+            "mode":
+                mode,
+
+            "test_number":
+                test_number,
+
+            "total_questions":
+                25,
+
+            "total_marks":
+                50
+
+        })
+
+    # =====================================================
+    # ERROR HANDLING
+    # =====================================================
+
+    except Exception as e:
+
+        print(
+            "AI SESSION ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+
+# =====================================================
+# AI SESSION - SAVE ANSWER
+# =====================================================
+
+@app.route("/api/ai-session/save-answer", methods=["POST"])
+def ai_session_save_answer():
+
+    try:
+
+        data = request.get_json() or {}
+
+        session_id = data.get("session_id")
+        question_id = data.get("question_id")
+        answer = data.get("answer")
+        current_question = data.get("current_question")
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
+
+        if not session_id:
+
+            return jsonify({
+                "success": False,
+                "error": "Session ID is required."
+            }), 400
+
+        if not question_id:
+
+            return jsonify({
+                "success": False,
+                "error": "Question ID is required."
+            }), 400
+
+        if answer is None:
+
+            return jsonify({
+                "success": False,
+                "error": "Answer is required."
+            }), 400
+
+        try:
+
+            session_id = int(session_id)
+            question_id = int(question_id)
+            answer = int(answer)
+
+        except:
+
+            return jsonify({
+                "success": False,
+                "error": "Invalid session, question or answer."
+            }), 400
+
+        # Answer must be one of four options
+        if answer not in [0, 1, 2, 3]:
+
+            return jsonify({
+                "success": False,
+                "error": "Invalid answer option."
+            }), 400
+
+        # -------------------------------------------------
+        # DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect(
+            "students.db"
+        )
+
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+        # -------------------------------------------------
+        # GET SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+        SELECT *
+        FROM ai_sessions
+        WHERE id=?
+        LIMIT 1
+        """, (
+            session_id,
+        ))
+
+        ai_session = c.fetchone()
+
+        if not session:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error": "Exam session not found."
+            }), 404
+
+        # -------------------------------------------------
+        # SESSION STATUS
+        # -------------------------------------------------
+
+        if session["status"] != "in_progress":
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error": "This exam session is already completed."
+            }), 400
+
+        # -------------------------------------------------
+        # VERIFY QUESTION BELONGS TO SESSION
+        # -------------------------------------------------
+
+        try:
+
+            session_question_ids = json.loads(
+                session["question_ids"]
+            )
+
+        except:
+
+            session_question_ids = []
+
+        if question_id not in session_question_ids:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "This question does not belong to this exam session."
+            }), 400
+
+        # -------------------------------------------------
+        # LOAD EXISTING ANSWERS
+        # -------------------------------------------------
+
+        try:
+
+            answers = json.loads(
+                session["answers"] or "{}"
+            )
+
+        except:
+
+            answers = {}
+
+        # -------------------------------------------------
+        # SAVE / UPDATE ANSWER
+        # -------------------------------------------------
+
+        answers[str(question_id)] = answer
+
+        # -------------------------------------------------
+        # CURRENT QUESTION
+        # -------------------------------------------------
+
+        if current_question is not None:
+
+            try:
+
+                current_question = int(
+                    current_question
+                )
+
+                if current_question < 0:
+
+                    current_question = 0
+
+                if current_question > 24:
+
+                    current_question = 24
+
+            except:
+
+                current_question = (
+                    session["current_question"] or 0
+                )
+
+        else:
+
+            current_question = (
+                session["current_question"] or 0
+            )
+
+        # -------------------------------------------------
+        # UPDATE SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+        UPDATE ai_sessions
+
+        SET
+            answers=?,
+            current_question=?
+
+        WHERE id=?
+
+        """, (
+
+            json.dumps(
+                answers
+            ),
+
+            current_question,
+
+            session_id
+
+        ))
+
+        conn.commit()
+
+        conn.close()
+
+        # -------------------------------------------------
+        # RETURN SUCCESS
+        # -------------------------------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "session_id":
+                session_id,
+
+            "question_id":
+                question_id,
+
+            "answer":
+                answer,
+
+            "current_question":
+                current_question
+
+        })
+
+    # =====================================================
+    # ERROR HANDLING
+    # =====================================================
+
+    except Exception as e:
+
+        print(
+            "AI SAVE ANSWER ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+
+# =====================================================
+# AI SESSION - GET QUESTIONS
+# =====================================================
+
+@app.route("/api/ai-session/questions", methods=["POST"])
+def ai_session_questions():
+
+    try:
+
+        data = request.get_json() or {}
+
+        session_id = data.get("session_id")
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
+
+        if not session_id:
+
+            return jsonify({
+                "success": False,
+                "error": "Session ID is required."
+            }), 400
+
+        try:
+
+            session_id = int(session_id)
+
+        except:
+
+            return jsonify({
+                "success": False,
+                "error": "Invalid session ID."
+            }), 400
+
+        # -------------------------------------------------
+        # DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect(
+            "students.db"
+        )
+
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+        # -------------------------------------------------
+        # GET SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+        SELECT *
+        FROM ai_sessions
+        WHERE id=?
+        LIMIT 1
+        """, (
+            session_id,
+        ))
+
+        ai_session = c.fetchone()
+
+        if not session:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error": "Exam session not found."
+            }), 404
+
+        # -------------------------------------------------
+        # GET QUESTION IDS
+        # -------------------------------------------------
+
+        try:
+
+            question_ids = json.loads(
+                session["question_ids"] or "[]"
+            )
+
+        except:
+
+            question_ids = []
+
+        if not isinstance(
+            question_ids,
+            list
+        ):
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Invalid question list in exam session."
+            }), 500
+
+        if len(question_ids) != 25:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Exam session does not contain exactly 25 questions."
+            }), 500
+
+        # -------------------------------------------------
+        # GET SAVED ANSWERS
+        # -------------------------------------------------
+
+        try:
+
+            saved_answers = json.loads(
+                session["answers"] or "{}"
+            )
+
+        except:
+
+            saved_answers = {}
+
+        # -------------------------------------------------
+        # GET QUESTIONS
+        # -------------------------------------------------
+
+        questions = []
+
+        for question_id in question_ids:
+
+            try:
+
+                question_id = int(
+                    question_id
+                )
+
+            except:
+
+                continue
+
+            c.execute("""
+            SELECT
+                id,
+                question,
+                options,
+                correct_answer,
+                explanation,
+                hint,
+                topic,
+                subtopic,
+                difficulty,
+                mode,
+                test_number
+
+            FROM ai_question_bank
+
+            WHERE id=?
+
+            LIMIT 1
+            """, (
+                question_id,
+            ))
+
+            row = c.fetchone()
+
+            if not row:
+
+                continue
+
+            try:
+
+                options = json.loads(
+                    row["options"]
+                )
+
+            except:
+
+                options = []
+
+            questions.append({
+
+                "id":
+                    row["id"],
+
+                "question":
+                    row["question"],
+
+                "options":
+                    options,
+
+                "correct_answer":
+                    row["correct_answer"],
+
+                "explanation":
+                    row["explanation"] or "",
+
+                "hint":
+                    row["hint"] or "",
+
+                "topic":
+                    row["topic"],
+
+                "subtopic":
+                    row["subtopic"],
+
+                "difficulty":
+                    row["difficulty"],
+
+                "mode":
+                    row["mode"],
+
+                "test_number":
+                    row["test_number"]
+
+            })
+
+        # -------------------------------------------------
+        # VERIFY 25 QUESTIONS
+        # -------------------------------------------------
+
+        if len(questions) != 25:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Unable to load all 25 questions for this session."
+            }), 500
+
+        # -------------------------------------------------
+        # RETURN SESSION + QUESTIONS
+        # -------------------------------------------------
+
+        response_data = {
+
+            "success":
+                True,
+
+            "session_id":
+                session["id"],
+
+            "status":
+                session["status"],
+
+            "difficulty":
+                session["difficulty"],
+
+            "mode":
+                session["mode"],
+
+            "test_number":
+                session["test_number"],
+
+            "total_questions":
+                session["total_questions"],
+
+            "total_marks":
+                session["total_marks"],
+
+            "question_ids":
+                question_ids,
+
+            "answers":
+                saved_answers,
+
+            "current_question":
+                session["current_question"],
+
+            "started_at":
+                session["started_at"],
+
+            "questions":
+                questions
+
+        }
+
+        conn.close()
+
+        return jsonify(
+            response_data
+        )
+
+    # =====================================================
+    # ERROR HANDLING
+    # =====================================================
+
+    except Exception as e:
+
+        print(
+            "AI SESSION QUESTIONS ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+
+# =====================================================
+# AI SESSION - FINAL SUBMIT
+# SERVER-SIDE SCORING
+# =====================================================
+
+@app.route("/api/ai-session/submit", methods=["POST"])
+def ai_session_submit():
+
+    try:
+
+        data = request.get_json() or {}
+
+        session_id = data.get("session_id")
+
+        submitted_answers = data.get(
+            "answers",
+            {}
+        )
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
+
+        if not session_id:
+
+            return jsonify({
+                "success": False,
+                "error": "Session ID is required."
+            }), 400
+
+        try:
+
+            session_id = int(
+                session_id
+            )
+
+        except:
+
+            return jsonify({
+                "success": False,
+                "error": "Invalid session ID."
+            }), 400
+
+        if not isinstance(
+            submitted_answers,
+            dict
+        ):
+
+            return jsonify({
+                "success": False,
+                "error": "Invalid answer data."
+            }), 400
+
+        # -------------------------------------------------
+        # DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect(
+            "students.db"
+        )
+
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+        # -------------------------------------------------
+        # GET SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+        SELECT *
+        FROM ai_sessions
+        WHERE id=?
+        LIMIT 1
+        """, (
+            session_id,
+        ))
+
+        ai_session = c.fetchone()
+
+        if not session:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error": "Exam session not found."
+            }), 404
+
+        # -------------------------------------------------
+        # CHECK SESSION STATUS
+        # -------------------------------------------------
+
+        if session["status"] == "completed":
+
+            conn.close()
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "This exam has already been submitted."
+
+            }), 400
+
+        if session["status"] != "in_progress":
+
+            conn.close()
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "This exam session is not active."
+
+            }), 400
+
+        # -------------------------------------------------
+        # GET QUESTION IDS
+        # -------------------------------------------------
+
+        try:
+
+            question_ids = json.loads(
+                session["question_ids"] or "[]"
+            )
+
+        except:
+
+            question_ids = []
+
+        if len(question_ids) != 25:
+
+            conn.close()
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Invalid question set."
+
+            }), 500
+
+        # -------------------------------------------------
+        # CLEAN SUBMITTED ANSWERS
+        # -------------------------------------------------
+
+        clean_answers = {}
+
+        for question_id, answer in submitted_answers.items():
+
+            try:
+
+                question_id = int(
+                    question_id
+                )
+
+                answer = int(
+                    answer
+                )
+
+            except:
+
+                continue
+
+            # Only accept questions belonging
+            # to this session
+
+            if question_id not in question_ids:
+
+                continue
+
+            # Only options 0,1,2,3 are valid
+
+            if answer not in [
+                0,
+                1,
+                2,
+                3
+            ]:
+
+                continue
+
+            clean_answers[
+                str(question_id)
+            ] = answer
+
+        # -------------------------------------------------
+        # SERVER-SIDE SCORING
+        # -------------------------------------------------
+
+        correct_count = 0
+
+        incorrect_count = 0
+
+        unanswered_count = 0
+
+        review_data = []
+
+        for question_id in question_ids:
+
+            c.execute("""
+            SELECT
+                id,
+                question,
+                options,
+                correct_answer,
+                explanation,
+                hint
+
+            FROM ai_question_bank
+
+            WHERE id=?
+
+            LIMIT 1
+            """, (
+                question_id,
+            ))
+
+            row = c.fetchone()
+
+            if not row:
+
+                conn.close()
+
+                return jsonify({
+
+                    "success": False,
+
+                    "error":
+                        "A question from this session "
+                        "could not be found."
+
+                }), 500
+
+            correct_answer = int(
+                row["correct_answer"]
+            )
+
+            question_key = str(
+                question_id
+            )
+
+            # -------------------------------------------------
+            # CHECK ANSWER
+            # -------------------------------------------------
+
+            if question_key not in clean_answers:
+
+                unanswered_count += 1
+
+                student_answer = None
+
+                is_correct = False
+
+            else:
+
+                student_answer = clean_answers[
+                    question_key
+                ]
+
+                if student_answer == correct_answer:
+
+                    correct_count += 1
+
+                    is_correct = True
+
+                else:
+
+                    incorrect_count += 1
+
+                    is_correct = False
+
+            # -------------------------------------------------
+            # PREPARE REVIEW DATA
+            # -------------------------------------------------
+
+            try:
+
+                options = json.loads(
+                    row["options"]
+                )
+
+            except:
+
+                options = []
+
+            review_data.append({
+
+                "id":
+                    row["id"],
+
+                "question":
+                    row["question"],
+
+                "options":
+                    options,
+
+                "student_answer":
+                    student_answer,
+
+                "correct_answer":
+                    correct_answer,
+
+                "is_correct":
+                    is_correct,
+
+                "explanation":
+                    row["explanation"] or "",
+
+                "hint":
+                    row["hint"] or ""
+
+            })
+
+        # -------------------------------------------------
+        # MARK CALCULATION
+        # -------------------------------------------------
+
+        total_questions = 25
+
+        total_marks = 50
+
+        score = (
+            correct_count * 2
+        )
+
+        percentage = round(
+            (
+                score /
+                total_marks
+            ) * 100,
+            2
+        )
+
+        # -------------------------------------------------
+        # SAVE ANSWERS
+        # -------------------------------------------------
+
+        c.execute("""
+        UPDATE ai_sessions
+
+        SET
+            answers=?,
+            status='completed',
+            submitted_at=?,
+
+            score=?,
+
+            correct_answers=?,
+            incorrect_answers=?,
+            unanswered=?,
+
+            percentage=?
+
+        WHERE id=?
+
+        """, (
+
+            json.dumps(
+                clean_answers
+            ),
+
+            datetime.now().isoformat(),
+
+            score,
+
+            correct_count,
+
+            incorrect_count,
+
+            unanswered_count,
+
+            percentage,
+
+            session_id
+
+        ))
+
+        # -------------------------------------------------
+        # SAVE TO EXISTING AI ATTEMPTS TABLE
+        # -------------------------------------------------
+
+        try:
+
+            c.execute("""
+            INSERT INTO ai_attempts (
+
+                board,
+                class_name,
+                subject,
+
+                topic,
+                subtopic,
+
+                difficulty,
+
+                total_questions,
+
+                correct_answers,
+                incorrect_answers,
+
+                score,
+                percentage,
+
+                question_data,
+
+                completed_at
+
+            )
+
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+
+            """, (
+
+                session["board"],
+                session["class_name"],
+                session["subject"],
+
+                session["topic"],
+                session["subtopic"],
+
+                session["difficulty"],
+
+                total_questions,
+
+                correct_count,
+
+                incorrect_count,
+
+                score,
+
+                percentage,
+
+                json.dumps(
+                    review_data,
+                    ensure_ascii=False
+                ),
+
+                datetime.now().isoformat()
+
+            ))
+
+        except Exception as attempt_error:
+
+            print(
+                "AI ATTEMPT HISTORY SAVE ERROR:",
+                attempt_error
+            )
+
+         # =====================================================
+        # 3. UPDATE TOPIC PERFORMANCE
+        # =====================================================
+        
+        student_phone = session.get("phone")
+        
+        if student_phone:
+        
+            board = ai_session["board"]
+            class_name = ai_session["class_name"]
+            subject = ai_session["subject"]
+            topic = ai_session["topic"]
+            subtopic = ai_session["subtopic"]
+            difficulty = ai_session["difficulty"]
+        
+            # -------------------------------------------------
+            # CHECK EXISTING PERFORMANCE
+            # -------------------------------------------------
+        
+            c.execute("""
+            SELECT
+                id,
+                total_questions,
+                correct_answers,
+                incorrect_answers,
+                score
+            FROM ai_topic_performance
+            WHERE phone=?
+              AND board=?
+              AND class_name=?
+              AND subject=?
+              AND topic=?
+              AND subtopic=?
+              AND difficulty=?
+            LIMIT 1
+            """, (
+                student_phone,
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic,
+                difficulty
+            ))
+        
+            performance = c.fetchone()
+        
+            # -------------------------------------------------
+            # UPDATE EXISTING PERFORMANCE
+            # -------------------------------------------------
+        
+            if performance:
+        
+                performance_id = performance[0]
+        
+                old_total = performance[1] or 0
+                old_correct = performance[2] or 0
+                old_incorrect = performance[3] or 0
+                old_score = performance[4] or 0
+        
+                new_total = old_total + total_questions
+                new_correct = old_correct + correct_count
+                new_incorrect = old_incorrect + incorrect_count
+                new_score = old_score + score
+        
+                new_percentage = (
+                    (new_correct / new_total) * 100
+                    if new_total > 0 else 0
+                )
+        
+                c.execute("""
+                UPDATE ai_topic_performance
+                SET
+                    total_questions=?,
+                    correct_answers=?,
+                    incorrect_answers=?,
+                    score=?,
+                    percentage=?,
+                    last_attempt=datetime('now')
+                WHERE id=?
+                """, (
+                    new_total,
+                    new_correct,
+                    new_incorrect,
+                    new_score,
+                    round(new_percentage, 2),
+                    performance_id
+                ))
+        
+            # -------------------------------------------------
+            # CREATE FIRST PERFORMANCE RECORD
+            # -------------------------------------------------
+        
+            else:
+        
+                c.execute("""
+                INSERT INTO ai_topic_performance
+                (
+                    phone,
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    difficulty,
+                    total_questions,
+                    correct_answers,
+                    incorrect_answers,
+                    score,
+                    percentage,
+                    last_attempt
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
+                """, (
+                    student_phone,
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    difficulty,
+                    total_questions,
+                    correct_count,
+                    incorrect_count,
+                    score,
+                    percentage
+                ))
+
+             
+                conn.commit()
+                conn.close()
+
+        # -------------------------------------------------
+        # RETURN FINAL RESULT
+        # -------------------------------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "session_id":
+                session_id,
+
+            "status":
+                "completed",
+
+            "total_questions":
+                total_questions,
+
+            "total_marks":
+                total_marks,
+
+            "correct":
+                correct_count,
+
+            "incorrect":
+                incorrect_count,
+
+            "unanswered":
+                unanswered_count,
+
+            "score":
+                score,
+
+            "percentage":
+                percentage,
+
+            "review":
+                review_data
+
+        })
+
+    # =====================================================
+    # ERROR HANDLING
+    # =====================================================
+
+    except Exception as e:
+
+        print(
+            "AI SESSION SUBMIT ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+        
 # =====================================================
 # AI DIAGNOSTIC QUESTION
 # =====================================================
