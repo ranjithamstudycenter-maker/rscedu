@@ -1903,6 +1903,17 @@ def admin_syllabus():
                         )
                     ))
 
+                    c.execute("""
+                        DELETE FROM ai_syllabus_topics
+                        WHERE board=?
+                        AND class_name=?
+                        AND subject=?
+                    """, (
+                        board,
+                        class_name,
+                        subject
+                    ))
+                    
                     conn.commit()
 
                     conn.close()
