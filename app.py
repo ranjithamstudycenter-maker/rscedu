@@ -2919,32 +2919,7 @@ JSON FORMAT:
     ]
 }}
 
-SYLLABUS:
---------------------
-{syllabus_context}
---------------------
-"""
-
-
-        # =================================================
-        # 12. GPT API CALL
-        # =================================================
-
-        response = client.responses.create(
-
-            model="gpt-5.6-luna",
-
-            input=prompt
-
-        )
-
-
-        result = (
-            response.output_text
-            or ""
-        ).strip()
-
-
+       
         # =================================================
         # 13. CLEAN GPT RESPONSE
         # =================================================
