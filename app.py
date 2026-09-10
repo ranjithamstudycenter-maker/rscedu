@@ -274,54 +274,7 @@ def init_db():
     conn.close()
 
 init_db()
-def initialize_cbse_class10_maths_topics():
 
-    conn = sqlite3.connect("students.db")
-    c = conn.cursor()
-
-    topics = [
-        ("Real Numbers", ["Fundamental Theorem of Arithmetic", "Irrationality of √2, √3 and √5"]),
-        ("Polynomials", ["Zeros of a polynomial", "Relationship between zeros and coefficients"]),
-        ("Pair of Linear Equations in Two Variables", ["Graphical solution", "Consistency and inconsistency", "Substitution method", "Elimination method"]),
-        ("Quadratic Equations", ["Standard form", "Factorization", "Quadratic formula", "Discriminant and nature of roots"]),
-        ("Arithmetic Progressions", ["Nth term", "Sum of first n terms", "Applications"]),
-        ("Coordinate Geometry", ["Distance formula", "Section formula"]),
-        ("Triangles", ["Similarity", "Basic Proportionality Theorem", "Similarity criteria"]),
-        ("Circles", ["Tangents", "Tangent perpendicular to radius", "Equal tangents"]),
-        ("Introduction to Trigonometry", ["Trigonometric ratios", "30°, 45° and 60°"]),
-        ("Trigonometric Identities", ["sin²A + cos²A = 1", "Simple identities"]),
-        ("Heights and Distances", ["Angle of elevation", "Angle of depression"]),
-        ("Areas Related to Circles", ["Circumference", "Sector", "Segment"]),
-        ("Surface Areas and Volumes", ["Combination of solids", "Cube, cuboid, cylinder, cone, sphere and hemisphere"]),
-        ("Statistics and Probability", ["Mean, median and mode", "Classical probability", "Simple events"])
-    ]
-
-    c.execute("""
-        DELETE FROM ai_syllabus_topics
-        WHERE board='CBSE'
-        AND class_name='Class 10'
-        AND subject='Maths'
-    """)
-
-    c.execute("""
-        INSERT INTO ai_syllabus_topics
-        (board, class_name, subject, topics_json, created_at)
-        VALUES (?, ?, ?, ?, datetime('now'))
-    """, (
-        "CBSE",
-        "Class 10",
-        "Maths",
-        json.dumps({"topics": [
-            {"topic": t, "subtopics": s}
-            for t, s in topics
-        ]}, ensure_ascii=False)
-    ))
-
-    conn.commit()
-    conn.close()
-
-    print("CBSE Class 10 Maths topics initialized successfully.")
-    initialize_cbse_class10_maths_topics()
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -2880,6 +2833,205 @@ def ai_learning_topics():
                 str(e)
 
         }), 500
+
+# =====================================================
+# TEMPORARY - INITIALIZE CBSE CLASS 10 MATHS TOPICS
+# =====================================================
+
+@app.route("/admin/init-cbse-maths-topics")
+def init_cbse_maths_topics():
+
+    try:
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        topics = [
+            {
+                "topic": "Real Numbers",
+                "subtopics": [
+                    "Fundamental Theorem of Arithmetic",
+                    "Irrationality of √2, √3 and √5"
+                ]
+            },
+            {
+                "topic": "Polynomials",
+                "subtopics": [
+                    "Zeros of a polynomial",
+                    "Relationship between zeros and coefficients of quadratic polynomials"
+                ]
+            },
+            {
+                "topic": "Pair of Linear Equations in Two Variables",
+                "subtopics": [
+                    "Graphical solution",
+                    "Consistency and inconsistency",
+                    "Conditions for number of solutions",
+                    "Substitution method",
+                    "Elimination method",
+                    "Simple situational problems"
+                ]
+            },
+            {
+                "topic": "Quadratic Equations",
+                "subtopics": [
+                    "Standard form",
+                    "Factorization",
+                    "Quadratic formula",
+                    "Discriminant",
+                    "Nature of roots",
+                    "Situational problems"
+                ]
+            },
+            {
+                "topic": "Arithmetic Progressions",
+                "subtopics": [
+                    "Nth term",
+                    "Sum of first n terms",
+                    "Applications"
+                ]
+            },
+            {
+                "topic": "Coordinate Geometry",
+                "subtopics": [
+                    "Distance formula",
+                    "Section formula",
+                    "Internal division"
+                ]
+            },
+            {
+                "topic": "Triangles",
+                "subtopics": [
+                    "Similarity of triangles",
+                    "Basic Proportionality Theorem",
+                    "Converse of Basic Proportionality Theorem",
+                    "Similarity criteria"
+                ]
+            },
+            {
+                "topic": "Circles",
+                "subtopics": [
+                    "Tangents",
+                    "Tangent at the point of contact",
+                    "Tangent perpendicular to radius",
+                    "Equal tangents from an external point"
+                ]
+            },
+            {
+                "topic": "Introduction to Trigonometry",
+                "subtopics": [
+                    "Trigonometric ratios",
+                    "Ratios of 30°, 45° and 60°",
+                    "Relationships between trigonometric ratios"
+                ]
+            },
+            {
+                "topic": "Trigonometric Identities",
+                "subtopics": [
+                    "sin²A + cos²A = 1",
+                    "Simple trigonometric identities"
+                ]
+            },
+            {
+                "topic": "Heights and Distances",
+                "subtopics": [
+                    "Angle of elevation",
+                    "Angle of depression",
+                    "Problems involving 30°, 45° and 60°"
+                ]
+            },
+            {
+                "topic": "Areas Related to Circles",
+                "subtopics": [
+                    "Circumference",
+                    "Area of sector",
+                    "Area of segment",
+                    "Sector and segment problems"
+                ]
+            },
+            {
+                "topic": "Surface Areas and Volumes",
+                "subtopics": [
+                    "Combination of solids",
+                    "Cube and cuboid",
+                    "Cylinder and cone",
+                    "Sphere and hemisphere"
+                ]
+            },
+            {
+                "topic": "Statistics and Probability",
+                "subtopics": [
+                    "Mean of grouped data",
+                    "Median of grouped data",
+                    "Mode of grouped data",
+                    "Classical probability",
+                    "Simple events"
+                ]
+            }
+        ]
+
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS ai_syllabus_topics (
+                id INTEGER PRIMARY KEY AUTOINCREMENT,
+                board TEXT NOT NULL,
+                class_name TEXT NOT NULL,
+                subject TEXT NOT NULL,
+                topics_json TEXT NOT NULL,
+                created_at TEXT
+            )
+        """)
+
+        c.execute("""
+            DELETE FROM ai_syllabus_topics
+            WHERE board=?
+            AND class_name=?
+            AND subject=?
+        """, (
+            "CBSE",
+            "Class 10",
+            "Maths"
+        ))
+
+        c.execute("""
+            INSERT INTO ai_syllabus_topics
+            (
+                board,
+                class_name,
+                subject,
+                topics_json,
+                created_at
+            )
+            VALUES (?, ?, ?, ?, datetime('now'))
+        """, (
+            "CBSE",
+            "Class 10",
+            "Maths",
+            json.dumps(
+                {"topics": topics},
+                ensure_ascii=False
+            )
+        ))
+
+        conn.commit()
+        conn.close()
+
+        return """
+        <h2>✅ CBSE Class 10 Maths Topics Initialized</h2>
+        <p>14 topics inserted successfully.</p>
+        <p>You can now go to Practice → Mathematics.</p>
+        """
+
+    except Exception as e:
+
+        print(
+            "TOPIC INITIALIZATION ERROR:",
+            e
+        )
+
+        return f"""
+        <h2>❌ Error</h2>
+        <p>{str(e)}</p>
+        """, 500
         
 @app.route("/api/ai-question", methods=["POST"])
 def ai_question():
