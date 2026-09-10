@@ -1,4 +1,5 @@
 from flask import Flask, render_template, request, redirect, session, send_from_directory, url_for, abort, jsonify, send_file
+import uuid
 import os
 import razorpay
 import json
@@ -247,10 +248,31 @@ def init_db():
     )
     """)
 
+    # =====================================================
+    # AI LEARNING - ANONYMOUS PRACTICE ID
+    # =====================================================
+    
+    try:
+        c.execute("""
+            ALTER TABLE ai_attempts
+            ADD COLUMN practice_id TEXT
+        """)
+    except sqlite3.OperationalError:
+        pass
+    
+    try:
+        c.execute("""
+            ALTER TABLE ai_topic_performance
+            ADD COLUMN practice_id TEXT
+        """)
+    except sqlite3.OperationalError:
+        pass
+    
     conn.commit()
     conn.close()
 
 init_db()
+
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -370,7 +392,19 @@ price_per_hour = {
 classes_per_month = 12  # 3 days/week * 4 weeks
 
 # -------------------- HELPERS --------------------
+# =====================================================
+# ANONYMOUS PRACTICE ID
+# =====================================================
 
+def get_practice_id():
+    practice_id = session.get("practice_id")
+
+    if not practice_id:
+        practice_id = str(uuid.uuid4())
+        session["practice_id"] = practice_id
+
+    return practice_id
+    
 def get_user(phone):
 
     user = {
@@ -3140,7 +3174,7 @@ def save_ai_attempt():
     try:
         data = request.get_json() or {}
 
-        phone = session.get("phone") or data.get("phone")
+        practice_id = get_practice_id()
 
         board = data.get("board")
         class_name = data.get("class_name")
@@ -3156,11 +3190,7 @@ def save_ai_attempt():
 
         question_data = data.get("question_data", [])
 
-        if not phone:
-            return jsonify({
-                "success": False,
-                "error": "Student login required"
-            }), 401
+        practice_id = get_practice_id()
 
         if not all([
             board,
@@ -3194,7 +3224,7 @@ def save_ai_attempt():
         c.execute("""
             INSERT INTO ai_attempts
             (
-                phone,
+                practice_id,
                 board,
                 class_name,
                 subject,
@@ -3212,21 +3242,21 @@ def save_ai_attempt():
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
         """, (
-            phone,
-            board,
-            class_name,
-            subject,
-            topic,
-            subtopic,
-            difficulty,
-            25,
-            50,
-            correct_answers,
-            incorrect_answers,
-            score,
-            percentage,
-            json.dumps(question_data, ensure_ascii=False)
-        ))
+        practice_id,
+        board,
+        class_name,
+        subject,
+        topic,
+        subtopic,
+        difficulty,
+        25,
+        50,
+        correct_answers,
+        incorrect_answers,
+        score,
+        percentage,
+        json.dumps(question_data, ensure_ascii=False)
+    ))
 
         # -------------------------------------------------
         # 2. CHECK EXISTING PERFORMANCE RECORD
@@ -3240,7 +3270,7 @@ def save_ai_attempt():
                 incorrect_answers,
                 score
             FROM ai_topic_performance
-            WHERE phone = ?
+            WHERE practice_id = ?
               AND board = ?
               AND class_name = ?
               AND subject = ?
@@ -3248,7 +3278,7 @@ def save_ai_attempt():
               AND subtopic = ?
               AND difficulty = ?
         """, (
-            phone,
+            practice_id,
             board,
             class_name,
             subject,
@@ -3310,7 +3340,7 @@ def save_ai_attempt():
             c.execute("""
                 INSERT INTO ai_topic_performance
                 (
-                    phone,
+                    practice_id,
                     board,
                     class_name,
                     subject,
@@ -3323,10 +3353,11 @@ def save_ai_attempt():
                     score,
                     percentage,
                     last_attempt
+                                       
                 )
                 VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
             """, (
-                phone,
+                practice_id,
                 board,
                 class_name,
                 subject,
@@ -5366,7 +5397,7 @@ def ai_session_submit():
         # CHECK SESSION STATUS
         # -------------------------------------------------
 
-        if session["status"] == "completed":
+        if ai_session["status"] == "completed":
 
             conn.close()
 
@@ -5399,7 +5430,7 @@ def ai_session_submit():
         try:
 
             question_ids = json.loads(
-                session["question_ids"] or "[]"
+                ai_session["question_ids"] or "[]"
             )
 
         except:
@@ -5663,7 +5694,7 @@ def ai_session_submit():
 
             c.execute("""
             INSERT INTO ai_attempts (
-
+                practice_id,
                 board,
                 class_name,
                 subject,
@@ -5690,15 +5721,13 @@ def ai_session_submit():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
 
             """, (
-
-                session["board"],
-                session["class_name"],
-                session["subject"],
-
-                session["topic"],
-                session["subtopic"],
-
-                session["difficulty"],
+                practice_id,
+                ai_session["board"],
+                ai_session["class_name"],
+                ai_session["subject"],
+                ai_session["topic"],
+                ai_session["subtopic"],
+                ai_session["difficulty"],
 
                 total_questions,
 
@@ -5730,9 +5759,7 @@ def ai_session_submit():
         # 3. UPDATE TOPIC PERFORMANCE
         # =====================================================
         
-        student_phone = session.get("phone")
-        
-        if student_phone:
+        practice_id = get_practice_id()
         
             board = ai_session["board"]
             class_name = ai_session["class_name"]
@@ -5753,7 +5780,7 @@ def ai_session_submit():
                 incorrect_answers,
                 score
             FROM ai_topic_performance
-            WHERE phone=?
+            WHERE practice_id=?
               AND board=?
               AND class_name=?
               AND subject=?
@@ -5762,7 +5789,7 @@ def ai_session_submit():
               AND difficulty=?
             LIMIT 1
             """, (
-                student_phone,
+                practice_id,
                 board,
                 class_name,
                 subject,
@@ -5930,14 +5957,7 @@ def ai_performance():
         # STUDENT LOGIN
         # -------------------------------------------------
 
-        phone = session.get("phone")
-
-        if not phone:
-            return jsonify({
-                "success": False,
-                "error": "Student login required."
-            }), 401
-
+        practice_id = get_practice_id()
 
         # -------------------------------------------------
         # OPTIONAL FILTERS
@@ -5980,10 +6000,10 @@ def ai_performance():
                 percentage,
                 completed_at
             FROM ai_attempts
-            WHERE phone=?
+            WHERE practice_id=?
         """
 
-        attempt_params = [phone]
+        attempt_params = [practice_id]
 
 
         if board:
@@ -6102,10 +6122,10 @@ def ai_performance():
                 percentage,
                 last_attempt
             FROM ai_topic_performance
-            WHERE phone=?
+            WHERE practice_id=?
         """
 
-        performance_params = [phone]
+        attempt_params = [practice_id]
 
 
         if board:
