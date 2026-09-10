@@ -2535,6 +2535,10 @@ def ai_learning_options():
 # AI LEARNING - GET / GENERATE TOPICS
 # =====================================================
 
+# =====================================================
+# AI LEARNING - GET TOPICS FROM DATABASE ONLY
+# =====================================================
+
 @app.route("/api/ai-learning-topics", methods=["POST"])
 def ai_learning_topics():
 
@@ -2575,7 +2579,7 @@ def ai_learning_topics():
 
 
         # =================================================
-        # 3. DATABASE CONNECTION
+        # 3. DATABASE
         # =================================================
 
         conn = sqlite3.connect(
@@ -2588,7 +2592,7 @@ def ai_learning_topics():
 
 
         # =================================================
-        # 4. MAKE SURE TOPIC CACHE TABLE EXISTS
+        # 4. MAKE SURE CACHE TABLE EXISTS
         # =================================================
 
         c.execute("""
@@ -2604,7 +2608,9 @@ def ai_learning_topics():
 
                 topics_json TEXT NOT NULL,
 
-                created_at TEXT
+                created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+                UNIQUE(board, class_name, subject)
 
             )
         """)
@@ -2613,13 +2619,11 @@ def ai_learning_topics():
 
 
         # =================================================
-        # 5. CHECK DATABASE CACHE FIRST
+        # 5. CHECK DATABASE CACHE
         # =================================================
 
         c.execute("""
-            SELECT
-                id,
-                topics_json
+            SELECT topics_json
             FROM ai_syllabus_topics
             WHERE board=?
             AND class_name=?
@@ -2636,7 +2640,7 @@ def ai_learning_topics():
 
 
         # =================================================
-        # 6. CACHE EXISTS
+        # 6. CACHE FOUND
         # =================================================
 
         if cached_row:
@@ -2654,7 +2658,7 @@ def ai_learning_topics():
 
 
                 # -----------------------------------------
-                # Validate topic structure
+                # Validate topics
                 # -----------------------------------------
 
                 valid_topics = []
@@ -2722,17 +2726,17 @@ def ai_learning_topics():
 
 
                 # -----------------------------------------
-                # VALID CACHE
+                # RETURN DATABASE TOPICS
                 # -----------------------------------------
 
                 if valid_topics:
 
+                    print(
+                        "AI TOPICS: DATABASE CACHE"
+                    )
+
                     conn.close()
                     conn = None
-
-                    print(
-                        "AI TOPICS SOURCE: DATABASE CACHE"
-                    )
 
                     return jsonify({
 
@@ -2748,15 +2752,6 @@ def ai_learning_topics():
                     })
 
 
-                # -----------------------------------------
-                # CACHE EXISTS BUT EMPTY/INVALID
-                # -----------------------------------------
-
-                print(
-                    "AI TOPIC CACHE EMPTY/INVALID - REGENERATING"
-                )
-
-
             except Exception as e:
 
                 print(
@@ -2765,371 +2760,45 @@ def ai_learning_topics():
                 )
 
 
-            # ---------------------------------------------
-            # Delete invalid cache
-            # ---------------------------------------------
-
-            c.execute("""
-                DELETE FROM ai_syllabus_topics
-                WHERE board=?
-                AND class_name=?
-                AND subject=?
-            """, (
-                board,
-                class_name,
-                subject
-            ))
-
-            conn.commit()
-
-
         # =================================================
-        # 7. GET SYLLABUS FROM DATABASE
-        # =================================================
-
-        c.execute("""
-            SELECT
-                syllabus_text
-            FROM syllabi
-            WHERE board=?
-            AND class_name=?
-            AND subject=?
-            ORDER BY id DESC
-            LIMIT 1
-        """, (
-            board,
-            class_name,
-            subject
-        ))
-
-        row = c.fetchone()
-
-
-        # =================================================
-        # 8. SYLLABUS NOT FOUND
-        # =================================================
-
-        if not row:
-
-            conn.close()
-            conn = None
-
-            return jsonify({
-
-                "success":
-                    False,
-
-                "error":
-                    "Syllabus not found for the selected Board, Class and Subject."
-
-            }), 404
-
-
-        syllabus_text = (
-            row["syllabus_text"]
-            or ""
-        )
-
-
-        # =================================================
-        # 9. EMPTY SYLLABUS
-        # =================================================
-
-        if not syllabus_text.strip():
-
-            conn.close()
-            conn = None
-
-            return jsonify({
-
-                "success":
-                    False,
-
-                "error":
-                    "Uploaded syllabus is empty."
-
-            }), 400
-
-
-        # =================================================
-        # 10. LIMIT SYLLABUS SIZE
-        # =================================================
-
-        syllabus_context = syllabus_text[:30000]
-
-
-        # =================================================
-        # 11. GENERATE TOPICS USING GPT
-        #
-        # IMPORTANT:
-        # This happens ONLY when DB cache is missing.
+        # 7. CACHE NOT FOUND
         # =================================================
 
         print(
-            "AI TOPICS SOURCE: GPT GENERATION"
-        )
-
-        prompt = f"""
-You are an expert educational curriculum analyzer.
-
-Analyze the following syllabus.
-
-Board:
-{board}
-
-Class:
-{class_name}
-
-Subject:
-{subject}
-
-Your task is to identify the main chapters/topics
-and their important subtopics from ONLY the supplied syllabus.
-
-IMPORTANT RULES:
-
-1. Do not add topics that are not present in the supplied syllabus.
-
-2. Preserve the terminology used in the syllabus wherever possible.
-
-3. Organize the syllabus into logical chapters/topics.
-
-4. Under each topic, provide relevant subtopics.
-
-5. Do not invent chapters or subtopics.
-
-6. Return ONLY valid JSON.
-
-7. Do not include markdown.
-
-8. Do not include explanations outside JSON.
-
-JSON FORMAT:
-
-{{
-    "topics": [
-        {{
-            "topic": "Chapter / Topic Name",
-            "subtopics": [
-                "Subtopic 1",
-                "Subtopic 2",
-                "Subtopic 3"
-            ]
-        }}
-    ]
-}}
-
-       
-        # =================================================
-        # 13. CLEAN GPT RESPONSE
-        # =================================================
-
-        if result.startswith("```"):
-
-            result = result.replace(
-                "```json",
-                ""
-            )
-
-            result = result.replace(
-                "```JSON",
-                ""
-            )
-
-            result = result.replace(
-                "```",
-                ""
-            )
-
-            result = result.strip()
-
-
-        # =================================================
-        # 14. CONVERT GPT RESPONSE TO JSON
-        # =================================================
-
-        topic_data = json.loads(
-            result
+            "AI TOPICS: CACHE NOT FOUND"
         )
 
 
-        # =================================================
-        # 15. VALIDATE JSON STRUCTURE
-        # =================================================
+        if conn is not None:
 
-        if not isinstance(
-            topic_data,
-            dict
-        ):
+            conn.close()
 
-            raise ValueError(
-                "AI returned invalid JSON structure."
-            )
-
-
-        if "topics" not in topic_data:
-
-            raise ValueError(
-                "AI returned invalid topic structure."
-            )
-
-
-        if not isinstance(
-            topic_data["topics"],
-            list
-        ):
-
-            raise ValueError(
-                "Topics must be a list."
-            )
+            conn = None
 
 
         # =================================================
-        # 16. CLEAN GENERATED TOPICS
+        # IMPORTANT
         # =================================================
-
-        clean_topics = []
-
-        for item in topic_data["topics"]:
-
-            if not isinstance(
-                item,
-                dict
-            ):
-                continue
-
-
-            topic_name = str(
-                item.get(
-                    "topic",
-                    ""
-                )
-            ).strip()
-
-
-            subtopics = item.get(
-                "subtopics",
-                []
-            )
-
-
-            if not topic_name:
-                continue
-
-
-            if not isinstance(
-                subtopics,
-                list
-            ):
-                subtopics = []
-
-
-            clean_subtopics = []
-
-            for subtopic in subtopics:
-
-                subtopic = str(
-                    subtopic
-                ).strip()
-
-                if subtopic:
-
-                    clean_subtopics.append(
-                        subtopic
-                    )
-
-
-            clean_topics.append({
-
-                "topic":
-                    topic_name,
-
-                "subtopics":
-                    clean_subtopics
-
-            })
-
-
-        # =================================================
-        # 17. CHECK GENERATED RESULT
-        # =================================================
-
-        if not clean_topics:
-
-            raise ValueError(
-                "AI did not generate any valid topics."
-            )
-
-
-        # =================================================
-        # 18. FINAL DATA TO SAVE
-        # =================================================
-
-        final_topic_data = {
-
-            "topics":
-                clean_topics
-
-        }
-
-
-        # =================================================
-        # 19. SAVE GENERATED TOPICS TO DATABASE
-        # =================================================
-
-        c.execute("""
-            INSERT OR REPLACE INTO ai_syllabus_topics
-            (
-                board,
-                class_name,
-                subject,
-                topics_json,
-                created_at
-            )
-            VALUES (?, ?, ?, ?, ?)
-        """, (
-            board,
-            class_name,
-            subject,
-
-            json.dumps(
-                final_topic_data,
-                ensure_ascii=False
-            ),
-
-            datetime.now().strftime(
-                "%Y-%m-%d %H:%M:%S"
-            )
-        ))
-
-
-        conn.commit()
-
-
-        # =================================================
-        # 20. CLOSE DATABASE
-        # =================================================
-
-        conn.close()
-        conn = None
-
-
-        # =================================================
-        # 21. RETURN GENERATED TOPICS
+        # DO NOT CALL OPENAI HERE.
+        #
+        # Topics must be initialized separately.
+        #
+        # This prevents student topic requests from
+        # consuming OpenAI TPM.
         # =================================================
 
         return jsonify({
 
             "success":
-                True,
+                False,
 
             "source":
-                "ai_generated_and_cached",
+                "database",
 
-            "topics":
-                clean_topics
+            "error":
+                "Topics are not initialized yet for the selected Board, Class and Subject."
 
-        })
+        }), 404
 
 
     # =====================================================
@@ -3147,8 +2816,11 @@ JSON FORMAT:
         if conn is not None:
 
             try:
+
                 conn.close()
+
             except:
+
                 pass
 
 
@@ -3161,6 +2833,7 @@ JSON FORMAT:
                 str(e)
 
         }), 500
+        
 @app.route("/api/ai-question", methods=["POST"])
 def ai_question():
 
