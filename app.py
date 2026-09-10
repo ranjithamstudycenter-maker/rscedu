@@ -206,7 +206,9 @@ def init_db():
     CREATE TABLE IF NOT EXISTS ai_sessions (
     
         id INTEGER PRIMARY KEY AUTOINCREMENT,
-    
+
+        practice_id TEXT,
+        
         board TEXT,
         class_name TEXT,
         subject TEXT,
@@ -3368,7 +3370,8 @@ def save_ai_attempt():
                 correct_answers,
                 incorrect_answers,
                 score,
-                percentage
+                percentage,
+                datetime.now().isoformat()
             ))
 
         conn.commit()
@@ -4288,7 +4291,12 @@ def ai_session():
             "test_number",
             0
         )
+        # -------------------------------------------------
+        # ANONYMOUS PRACTICE ID
+        # -------------------------------------------------
 
+        practice_id = get_practice_id()
+        
         # -------------------------------------------------
         # VALIDATION
         # -------------------------------------------------
@@ -4387,6 +4395,8 @@ def ai_session():
         CREATE TABLE IF NOT EXISTS ai_sessions (
 
             id INTEGER PRIMARY KEY AUTOINCREMENT,
+            
+            practice_id TEXT,
 
             board TEXT,
             class_name TEXT,
@@ -4432,7 +4442,7 @@ def ai_session():
         conn.commit()
 
         # -------------------------------------------------
-        # GET 25 QUESTIONS FROM QUESTION BANK
+        # GET 25 RANDOM QUESTIONS
         # -------------------------------------------------
 
         c.execute("""
@@ -4447,14 +4457,15 @@ def ai_session():
         AND subtopic=?
         AND difficulty=?
         AND mode=?
-        AND test_number=?
+        AND (
+            mode='practice'
+            OR test_number=?
+        )
 
-        ORDER BY id ASC
+        ORDER BY RANDOM()
 
         LIMIT 25
-
         """, (
-
             board,
             class_name,
             subject,
@@ -4463,36 +4474,29 @@ def ai_session():
             difficulty,
             mode,
             test_number
-
         ))
 
-        question_rows = c.fetchall()
+        rows = c.fetchall()
+
+        question_ids = [
+            row["id"]
+            for row in rows
+        ]
 
         # -------------------------------------------------
         # QUESTION COUNT CHECK
         # -------------------------------------------------
 
-        if len(question_rows) != 25:
+        if len(question_ids) != 25:
 
             conn.close()
 
             return jsonify({
-
                 "success": False,
-
                 "error":
-                    "25 questions are not available "
-                    "for this test."
-
-            }), 404
-
-        question_ids = [
-
-            row["id"]
-
-            for row in question_rows
-
-        ]
+                    f"Only {len(question_ids)} questions are available. "
+                    "Exactly 25 questions are required."
+            }), 400
 
         # -------------------------------------------------
         # CHECK FOR EXISTING IN-PROGRESS SESSION
@@ -4502,7 +4506,9 @@ def ai_session():
         SELECT *
 
         FROM ai_sessions
-
+  
+        WHERE practice_id=?
+      
         WHERE board=?
         AND class_name=?
         AND subject=?
@@ -4518,7 +4524,7 @@ def ai_session():
         LIMIT 1
 
         """, (
-
+            practice_id,
             board,
             class_name,
             subject,
@@ -4530,33 +4536,87 @@ def ai_session():
 
         ))
 
-        existing_ai_session = c.fetchone()
+        existing_session = c.fetchone()
 
-        # -------------------------------------------------
+       # -------------------------------------------------
         # RESUME EXISTING SESSION
         # -------------------------------------------------
 
-        if existing_ai_session:
+        if existing_session:
 
             try:
-
-                saved_question_ids = json.loads(
-                    existing_ai_session["question_ids"]
+                question_ids = json.loads(
+                    existing_session["question_ids"] or "[]"
                 )
-
             except:
-
-                saved_question_ids = []
+                question_ids = []
 
             try:
-
-                saved_answers = json.loads(
-                    existing_ai_session["answers"]
+                answers = json.loads(
+                    existing_session["answers"] or "{}"
                 )
-
             except:
+                answers = {}
 
-                saved_answers = {}
+            response = {
+                "success": True,
+                "resumed": True,
+
+                "session_id":
+                    existing_session["id"],
+
+                "practice_id":
+                    existing_session["practice_id"],
+
+                "board":
+                    existing_session["board"],
+
+                "class_name":
+                    existing_session["class_name"],
+
+                "subject":
+                    existing_session["subject"],
+
+                "topic":
+                    existing_session["topic"],
+
+                "subtopic":
+                    existing_session["subtopic"],
+
+                "difficulty":
+                    existing_session["difficulty"],
+
+                "mode":
+                    existing_session["mode"],
+
+                "test_number":
+                    existing_session["test_number"],
+
+                "total_questions":
+                    existing_session["total_questions"],
+
+                "total_marks":
+                    existing_session["total_marks"],
+
+                "question_ids":
+                    question_ids,
+
+                "answers":
+                    answers,
+
+                "current_question":
+                    existing_session["current_question"],
+
+                "status":
+                    existing_session["status"],
+
+                "started_at":
+                    existing_session["started_at"]
+            }
+
+            conn.close()
+
+            return jsonify(response)
 
             # ---------------------------------------------
             # Return existing session
@@ -4604,12 +4664,14 @@ def ai_session():
         # CREATE NEW SESSION
         # -------------------------------------------------
 
-        now = datetime.now().isoformat()
+        started_at = datetime.now().isoformat()
 
-        initial_answers = {}
+        answers = {}
 
         c.execute("""
         INSERT INTO ai_sessions (
+
+            practice_id,
 
             board,
             class_name,
@@ -4632,13 +4694,41 @@ def ai_session():
             current_question,
 
             status,
-            started_at
 
+            started_at
         )
 
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        VALUES (
 
+            ?,
+
+            ?,
+            ?,
+            ?,
+
+            ?,
+            ?,
+
+            ?,
+
+            ?,
+            ?,
+
+            25,
+            50,
+
+            ?,
+            ?,
+
+            0,
+
+            'in_progress',
+
+            ?
+        )
         """, (
+
+            practice_id,
 
             board,
             class_name,
@@ -4652,23 +4742,11 @@ def ai_session():
             mode,
             test_number,
 
-            25,
-            50,
+            json.dumps(question_ids),
 
-            json.dumps(
-                question_ids
-            ),
+            json.dumps(answers),
 
-            json.dumps(
-                initial_answers
-            ),
-
-            0,
-
-            "in_progress",
-
-            now
-
+            started_at
         ))
 
         session_id = c.lastrowid
@@ -4676,6 +4754,7 @@ def ai_session():
         conn.commit()
 
         conn.close()
+
 
         # -------------------------------------------------
         # RETURN NEW SESSION
@@ -4722,7 +4801,80 @@ def ai_session():
                 50
 
         })
+        # -------------------------------------------------
+        # RESPONSE
+        # -------------------------------------------------
 
+        return jsonify({
+
+            "success": True,
+
+            "resumed": False,
+
+            "session_id":
+                session_id,
+
+            "practice_id":
+                practice_id,
+
+            "board":
+                board,
+
+            "class_name":
+                class_name,
+
+            "subject":
+                subject,
+
+            "topic":
+                topic,
+
+            "subtopic":
+                subtopic,
+
+            "difficulty":
+                difficulty,
+
+            "mode":
+                mode,
+
+            "test_number":
+                test_number,
+
+            "total_questions":
+                25,
+
+            "total_marks":
+                50,
+
+            "question_ids":
+                question_ids,
+
+            "answers":
+                answers,
+
+            "current_question":
+                0,
+
+            "status":
+                "in_progress",
+
+            "started_at":
+                started_at
+        })
+
+    except Exception as e:
+
+        print(
+            "AI SESSION ERROR:",
+            str(e)
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+        
     # =====================================================
     # ERROR HANDLING
     # =====================================================
@@ -4747,6 +4899,10 @@ def ai_session():
 # AI SESSION - SAVE ANSWER
 # =====================================================
 
+# =====================================================
+# AI SESSION - SAVE ANSWER
+# =====================================================
+
 @app.route("/api/ai-session/save-answer", methods=["POST"])
 def ai_session_save_answer():
 
@@ -4758,6 +4914,8 @@ def ai_session_save_answer():
         question_id = data.get("question_id")
         answer = data.get("answer")
         current_question = data.get("current_question")
+
+        practice_id = get_practice_id()
 
         # -------------------------------------------------
         # VALIDATION
@@ -4794,15 +4952,16 @@ def ai_session_save_answer():
 
             return jsonify({
                 "success": False,
-                "error": "Invalid session, question or answer."
+                "error":
+                    "Invalid session, question or answer."
             }), 400
 
-        # Answer must be one of four options
         if answer not in [0, 1, 2, 3]:
 
             return jsonify({
                 "success": False,
-                "error": "Invalid answer option."
+                "error":
+                    "Invalid answer option."
             }), 400
 
         # -------------------------------------------------
@@ -4824,25 +4983,30 @@ def ai_session_save_answer():
         c.execute("""
         SELECT *
         FROM ai_sessions
+
         WHERE id=?
+        AND practice_id=?
+
         LIMIT 1
         """, (
             session_id,
+            practice_id
         ))
 
         ai_session = c.fetchone()
 
-        if not session:
+        if not ai_session:
 
             conn.close()
 
             return jsonify({
                 "success": False,
-                "error": "Exam session not found."
+                "error":
+                    "Exam session not found."
             }), 404
 
         # -------------------------------------------------
-        # SESSION STATUS
+        # CHECK STATUS
         # -------------------------------------------------
 
         if ai_session["status"] != "in_progress":
@@ -4851,17 +5015,18 @@ def ai_session_save_answer():
 
             return jsonify({
                 "success": False,
-                "error": "This exam session is already completed."
+                "error":
+                    "This exam session is already completed."
             }), 400
 
         # -------------------------------------------------
-        # VERIFY QUESTION BELONGS TO SESSION
+        # GET QUESTION IDS
         # -------------------------------------------------
 
         try:
 
             session_question_ids = json.loads(
-                session["question_ids"]
+                ai_session["question_ids"] or "[]"
             )
 
         except:
@@ -4885,7 +5050,7 @@ def ai_session_save_answer():
         try:
 
             answers = json.loads(
-                session["answers"] or "{}"
+                ai_session["answers"] or "{}"
             )
 
         except:
@@ -4911,27 +5076,25 @@ def ai_session_save_answer():
                 )
 
                 if current_question < 0:
-
                     current_question = 0
 
                 if current_question > 24:
-
                     current_question = 24
 
             except:
 
                 current_question = (
-                    session["current_question"] or 0
+                    ai_session["current_question"] or 0
                 )
 
         else:
 
             current_question = (
-                session["current_question"] or 0
+                ai_session["current_question"] or 0
             )
 
         # -------------------------------------------------
-        # UPDATE SESSION
+        # UPDATE
         # -------------------------------------------------
 
         c.execute("""
@@ -4942,26 +5105,21 @@ def ai_session_save_answer():
             current_question=?
 
         WHERE id=?
-
+        AND practice_id=?
         """, (
 
-            json.dumps(
-                answers
-            ),
+            json.dumps(answers),
 
             current_question,
 
-            session_id
+            session_id,
 
+            practice_id
         ))
 
         conn.commit()
 
         conn.close()
-
-        # -------------------------------------------------
-        # RETURN SUCCESS
-        # -------------------------------------------------
 
         return jsonify({
 
@@ -4977,29 +5135,28 @@ def ai_session_save_answer():
                 answer,
 
             "current_question":
-                current_question
+                current_question,
 
+            "answers":
+                answers
         })
-
-    # =====================================================
-    # ERROR HANDLING
-    # =====================================================
 
     except Exception as e:
 
         print(
-            "AI SAVE ANSWER ERROR:",
-            e
+            "SAVE ANSWER ERROR:",
+            str(e)
         )
 
         return jsonify({
-
             "success": False,
-
-            "error":
-                str(e)
-
+            "error": str(e)
         }), 500
+
+        
+# =====================================================
+# AI SESSION - GET QUESTIONS
+# =====================================================
 
 # =====================================================
 # AI SESSION - GET QUESTIONS
@@ -5013,6 +5170,8 @@ def ai_session_questions():
         data = request.get_json() or {}
 
         session_id = data.get("session_id")
+
+        practice_id = get_practice_id()
 
         # -------------------------------------------------
         # VALIDATION
@@ -5033,7 +5192,8 @@ def ai_session_questions():
 
             return jsonify({
                 "success": False,
-                "error": "Invalid session ID."
+                "error":
+                    "Invalid session ID."
             }), 400
 
         # -------------------------------------------------
@@ -5055,10 +5215,14 @@ def ai_session_questions():
         c.execute("""
         SELECT *
         FROM ai_sessions
+
         WHERE id=?
+        AND practice_id=?
+
         LIMIT 1
         """, (
             session_id,
+            practice_id
         ))
 
         ai_session = c.fetchone()
@@ -5069,7 +5233,8 @@ def ai_session_questions():
 
             return jsonify({
                 "success": False,
-                "error": "Exam session not found."
+                "error":
+                    "Exam session not found."
             }), 404
 
         # -------------------------------------------------
@@ -5079,7 +5244,7 @@ def ai_session_questions():
         try:
 
             question_ids = json.loads(
-                session["question_ids"] or "[]"
+                ai_session["question_ids"] or "[]"
             )
 
         except:
@@ -5116,7 +5281,7 @@ def ai_session_questions():
         try:
 
             saved_answers = json.loads(
-                session["answers"] or "{}"
+                ai_session["answers"] or "{}"
             )
 
         except:
@@ -5146,9 +5311,6 @@ def ai_session_questions():
                 id,
                 question,
                 options,
-                correct_answer,
-                explanation,
-                hint,
                 topic,
                 subtopic,
                 difficulty,
@@ -5168,12 +5330,18 @@ def ai_session_questions():
 
             if not row:
 
-                continue
+                conn.close()
+
+                return jsonify({
+                    "success": False,
+                    "error":
+                        f"Question {question_id} not found."
+                }), 500
 
             try:
 
                 options = json.loads(
-                    row["options"]
+                    row["options"] or "[]"
                 )
 
             except:
@@ -5191,15 +5359,6 @@ def ai_session_questions():
                 "options":
                     options,
 
-                "correct_answer":
-                    row["correct_answer"],
-
-                "explanation":
-                    row["explanation"] or "",
-
-                "hint":
-                    row["hint"] or "",
-
                 "topic":
                     row["topic"],
 
@@ -5213,107 +5372,64 @@ def ai_session_questions():
                     row["mode"],
 
                 "test_number":
-                    row["test_number"]
+                    row["test_number"],
 
+                "saved_answer":
+                    saved_answers.get(
+                        str(row["id"])
+                    )
             })
 
-        # -------------------------------------------------
-        # VERIFY 25 QUESTIONS
-        # -------------------------------------------------
-
-        if len(questions) != 25:
-
-            conn.close()
-
-            return jsonify({
-                "success": False,
-                "error":
-                    "Unable to load all 25 questions for this session."
-            }), 500
+        conn.close()
 
         # -------------------------------------------------
-        # RETURN SESSION + QUESTIONS
+        # RETURN
         # -------------------------------------------------
 
-        response_data = {
+        return jsonify({
 
-            "success":
-                True,
+            "success": True,
 
             "session_id":
-                session["id"],
+                session_id,
 
-            "status":
-                session["status"],
+            "practice_id":
+                practice_id,
 
-            "difficulty":
-                session["difficulty"],
-
-            "mode":
-                session["mode"],
-
-            "test_number":
-                session["test_number"],
-
-            "total_questions":
-                session["total_questions"],
-
-            "total_marks":
-                session["total_marks"],
-
-            "question_ids":
-                question_ids,
+            "questions":
+                questions,
 
             "answers":
                 saved_answers,
 
             "current_question":
-                session["current_question"],
+                ai_session["current_question"],
+
+            "status":
+                ai_session["status"],
 
             "started_at":
-                session["started_at"],
+                ai_session["started_at"],
 
-            "questions":
-                questions
+            "total_questions":
+                25,
 
-        }
-
-        conn.close()
-
-        return jsonify(
-            response_data
-        )
-
-    # =====================================================
-    # ERROR HANDLING
-    # =====================================================
+            "total_marks":
+                50
+        })
 
     except Exception as e:
 
         print(
-            "AI SESSION QUESTIONS ERROR:",
-            e
+            "GET QUESTIONS ERROR:",
+            str(e)
         )
 
         return jsonify({
-
             "success": False,
-
-            "error":
-                str(e)
-
+            "error": str(e)
         }), 500
 
-# =====================================================
-# AI SESSION - FINAL SUBMIT
-# SERVER-SIDE SCORING
-# =====================================================
-
-# =====================================================
-# AI SESSION - FINAL SUBMIT
-# SERVER-SIDE SCORING
-# ANONYMOUS PRACTICE TRACKING
-# =====================================================
 
 @app.route("/api/ai-session/submit", methods=["POST"])
 def ai_session_submit():
@@ -5380,6 +5496,7 @@ def ai_session_submit():
         LIMIT 1
         """, (
             session_id,
+            practice_id
         ))
 
         ai_session = c.fetchone()
