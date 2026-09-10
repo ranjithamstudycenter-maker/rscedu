@@ -5309,6 +5309,12 @@ def ai_session_questions():
 # SERVER-SIDE SCORING
 # =====================================================
 
+# =====================================================
+# AI SESSION - FINAL SUBMIT
+# SERVER-SIDE SCORING
+# ANONYMOUS PRACTICE TRACKING
+# =====================================================
+
 @app.route("/api/ai-session/submit", methods=["POST"])
 def ai_session_submit():
 
@@ -5317,11 +5323,13 @@ def ai_session_submit():
         data = request.get_json() or {}
 
         session_id = data.get("session_id")
+        submitted_answers = data.get("answers", {})
 
-        submitted_answers = data.get(
-            "answers",
-            {}
-        )
+        # -------------------------------------------------
+        # GET ANONYMOUS PRACTICE ID
+        # -------------------------------------------------
+
+        practice_id = get_practice_id()
 
         # -------------------------------------------------
         # VALIDATION
@@ -5335,10 +5343,7 @@ def ai_session_submit():
             }), 400
 
         try:
-
-            session_id = int(
-                session_id
-            )
+            session_id = int(session_id)
 
         except:
 
@@ -5347,10 +5352,7 @@ def ai_session_submit():
                 "error": "Invalid session ID."
             }), 400
 
-        if not isinstance(
-            submitted_answers,
-            dict
-        ):
+        if not isinstance(submitted_answers, dict):
 
             return jsonify({
                 "success": False,
@@ -5361,9 +5363,7 @@ def ai_session_submit():
         # DATABASE
         # -------------------------------------------------
 
-        conn = sqlite3.connect(
-            "students.db"
-        )
+        conn = sqlite3.connect("students.db")
 
         conn.row_factory = sqlite3.Row
 
@@ -5402,12 +5402,8 @@ def ai_session_submit():
             conn.close()
 
             return jsonify({
-
                 "success": False,
-
-                "error":
-                    "This exam has already been submitted."
-
+                "error": "This exam has already been submitted."
             }), 400
 
         if ai_session["status"] != "in_progress":
@@ -5415,12 +5411,8 @@ def ai_session_submit():
             conn.close()
 
             return jsonify({
-
                 "success": False,
-
-                "error":
-                    "This exam session is not active."
-
+                "error": "This exam session is not active."
             }), 400
 
         # -------------------------------------------------
@@ -5442,12 +5434,8 @@ def ai_session_submit():
             conn.close()
 
             return jsonify({
-
                 "success": False,
-
-                "error":
-                    "Invalid question set."
-
+                "error": "Invalid question set."
             }), 500
 
         # -------------------------------------------------
@@ -5460,13 +5448,8 @@ def ai_session_submit():
 
             try:
 
-                question_id = int(
-                    question_id
-                )
-
-                answer = int(
-                    answer
-                )
+                question_id = int(question_id)
+                answer = int(answer)
 
             except:
 
@@ -5476,32 +5459,21 @@ def ai_session_submit():
             # to this session
 
             if question_id not in question_ids:
-
                 continue
 
             # Only options 0,1,2,3 are valid
 
-            if answer not in [
-                0,
-                1,
-                2,
-                3
-            ]:
-
+            if answer not in [0, 1, 2, 3]:
                 continue
 
-            clean_answers[
-                str(question_id)
-            ] = answer
+            clean_answers[str(question_id)] = answer
 
         # -------------------------------------------------
         # SERVER-SIDE SCORING
         # -------------------------------------------------
 
         correct_count = 0
-
         incorrect_count = 0
-
         unanswered_count = 0
 
         review_data = []
@@ -5516,11 +5488,8 @@ def ai_session_submit():
                 correct_answer,
                 explanation,
                 hint
-
             FROM ai_question_bank
-
             WHERE id=?
-
             LIMIT 1
             """, (
                 question_id,
@@ -5533,13 +5502,10 @@ def ai_session_submit():
                 conn.close()
 
                 return jsonify({
-
                     "success": False,
-
                     "error":
                         "A question from this session "
                         "could not be found."
-
                 }), 500
 
             correct_answer = int(
@@ -5619,7 +5585,6 @@ def ai_session_submit():
 
                 "hint":
                     row["hint"] or ""
-
             })
 
         # -------------------------------------------------
@@ -5630,20 +5595,15 @@ def ai_session_submit():
 
         total_marks = 50
 
-        score = (
-            correct_count * 2
-        )
+        score = correct_count * 2
 
         percentage = round(
-            (
-                score /
-                total_marks
-            ) * 100,
+            (score / total_marks) * 100,
             2
         )
 
         # -------------------------------------------------
-        # SAVE ANSWERS
+        # SAVE COMPLETED SESSION
         # -------------------------------------------------
 
         c.execute("""
@@ -5653,17 +5613,13 @@ def ai_session_submit():
             answers=?,
             status='completed',
             submitted_at=?,
-
             score=?,
-
             correct_answers=?,
             incorrect_answers=?,
             unanswered=?,
-
             percentage=?
 
         WHERE id=?
-
         """, (
 
             json.dumps(
@@ -5683,25 +5639,25 @@ def ai_session_submit():
             percentage,
 
             session_id
-
         ))
 
         # -------------------------------------------------
-        # SAVE TO EXISTING AI ATTEMPTS TABLE
+        # SAVE ATTEMPT HISTORY
+        # USING PRACTICE_ID
         # -------------------------------------------------
 
         try:
 
             c.execute("""
             INSERT INTO ai_attempts (
+
                 practice_id,
+
                 board,
                 class_name,
                 subject,
-
                 topic,
                 subtopic,
-
                 difficulty,
 
                 total_questions,
@@ -5715,13 +5671,16 @@ def ai_session_submit():
                 question_data,
 
                 completed_at
-
             )
 
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            )
 
             """, (
+
                 practice_id,
+
                 ai_session["board"],
                 ai_session["class_name"],
                 ai_session["subject"],
@@ -5732,11 +5691,9 @@ def ai_session_submit():
                 total_questions,
 
                 correct_count,
-
                 incorrect_count,
 
                 score,
-
                 percentage,
 
                 json.dumps(
@@ -5745,7 +5702,6 @@ def ai_session_submit():
                 ),
 
                 datetime.now().isoformat()
-
             ))
 
         except Exception as attempt_error:
@@ -5755,135 +5711,199 @@ def ai_session_submit():
                 attempt_error
             )
 
-         # =====================================================
-        # 3. UPDATE TOPIC PERFORMANCE
-        # =====================================================
-        
-        practice_id = get_practice_id()
-        
-            board = ai_session["board"]
-            class_name = ai_session["class_name"]
-            subject = ai_session["subject"]
-            topic = ai_session["topic"]
-            subtopic = ai_session["subtopic"]
-            difficulty = ai_session["difficulty"]
-        
-            # -------------------------------------------------
-            # CHECK EXISTING PERFORMANCE
-            # -------------------------------------------------
-        
+        # =================================================
+        # UPDATE TOPIC PERFORMANCE
+        # USING PRACTICE_ID
+        # =================================================
+
+        board = ai_session["board"]
+
+        class_name = ai_session["class_name"]
+
+        subject = ai_session["subject"]
+
+        topic = ai_session["topic"]
+
+        subtopic = ai_session["subtopic"]
+
+        difficulty = ai_session["difficulty"]
+
+        # -------------------------------------------------
+        # CHECK EXISTING PERFORMANCE
+        # -------------------------------------------------
+
+        c.execute("""
+        SELECT
+            id,
+            total_questions,
+            correct_answers,
+            incorrect_answers,
+            score
+
+        FROM ai_topic_performance
+
+        WHERE practice_id=?
+          AND board=?
+          AND class_name=?
+          AND subject=?
+          AND topic=?
+          AND subtopic=?
+          AND difficulty=?
+
+        LIMIT 1
+        """, (
+
+            practice_id,
+
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty
+        ))
+
+        performance = c.fetchone()
+
+        # -------------------------------------------------
+        # UPDATE EXISTING PERFORMANCE
+        # -------------------------------------------------
+
+        if performance:
+
+            performance_id = performance["id"]
+
+            old_total = (
+                performance["total_questions"] or 0
+            )
+
+            old_correct = (
+                performance["correct_answers"] or 0
+            )
+
+            old_incorrect = (
+                performance["incorrect_answers"] or 0
+            )
+
+            old_score = (
+                performance["score"] or 0
+            )
+
+            new_total = (
+                old_total + total_questions
+            )
+
+            new_correct = (
+                old_correct + correct_count
+            )
+
+            new_incorrect = (
+                old_incorrect + incorrect_count
+            )
+
+            new_score = (
+                old_score + score
+            )
+
+            new_percentage = (
+
+                (new_correct / new_total) * 100
+
+                if new_total > 0
+
+                else 0
+            )
+
             c.execute("""
-            SELECT
-                id,
-                total_questions,
-                correct_answers,
-                incorrect_answers,
-                score
-            FROM ai_topic_performance
-            WHERE practice_id=?
-              AND board=?
-              AND class_name=?
-              AND subject=?
-              AND topic=?
-              AND subtopic=?
-              AND difficulty=?
-            LIMIT 1
+            UPDATE ai_topic_performance
+
+            SET
+                total_questions=?,
+                correct_answers=?,
+                incorrect_answers=?,
+                score=?,
+                percentage=?,
+                last_attempt=datetime('now')
+
+            WHERE id=?
             """, (
+
+                new_total,
+
+                new_correct,
+
+                new_incorrect,
+
+                new_score,
+
+                round(
+                    new_percentage,
+                    2
+                ),
+
+                performance_id
+            ))
+
+        # -------------------------------------------------
+        # CREATE FIRST PERFORMANCE RECORD
+        # -------------------------------------------------
+
+        else:
+
+            c.execute("""
+            INSERT INTO ai_topic_performance
+            (
                 practice_id,
+
                 board,
                 class_name,
                 subject,
                 topic,
                 subtopic,
-                difficulty
-            ))
-        
-            performance = c.fetchone()
-        
-            # -------------------------------------------------
-            # UPDATE EXISTING PERFORMANCE
-            # -------------------------------------------------
-        
-            if performance:
-        
-                performance_id = performance[0]
-        
-                old_total = performance[1] or 0
-                old_correct = performance[2] or 0
-                old_incorrect = performance[3] or 0
-                old_score = performance[4] or 0
-        
-                new_total = old_total + total_questions
-                new_correct = old_correct + correct_count
-                new_incorrect = old_incorrect + incorrect_count
-                new_score = old_score + score
-        
-                new_percentage = (
-                    (new_correct / new_total) * 100
-                    if new_total > 0 else 0
-                )
-        
-                c.execute("""
-                UPDATE ai_topic_performance
-                SET
-                    total_questions=?,
-                    correct_answers=?,
-                    incorrect_answers=?,
-                    score=?,
-                    percentage=?,
-                    last_attempt=datetime('now')
-                WHERE id=?
-                """, (
-                    new_total,
-                    new_correct,
-                    new_incorrect,
-                    new_score,
-                    round(new_percentage, 2),
-                    performance_id
-                ))
-        
-            # -------------------------------------------------
-            # CREATE FIRST PERFORMANCE RECORD
-            # -------------------------------------------------
-        
-            else:
-        
-                c.execute("""
-                INSERT INTO ai_topic_performance
-                (
-                    phone,
-                    board,
-                    class_name,
-                    subject,
-                    topic,
-                    subtopic,
-                    difficulty,
-                    total_questions,
-                    correct_answers,
-                    incorrect_answers,
-                    score,
-                    percentage,
-                    last_attempt
-                )
-                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, datetime('now'))
-                """, (
-                    student_phone,
-                    board,
-                    class_name,
-                    subject,
-                    topic,
-                    subtopic,
-                    difficulty,
-                    total_questions,
-                    correct_count,
-                    incorrect_count,
-                    score,
-                    percentage
-                ))
+                difficulty,
 
-             
-                conn.commit()
-                conn.close()
+                total_questions,
+
+                correct_answers,
+                incorrect_answers,
+
+                score,
+                percentage,
+
+                last_attempt
+            )
+
+            VALUES (
+                ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+            )
+
+            """, (
+
+                practice_id,
+
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic,
+                difficulty,
+
+                total_questions,
+
+                correct_count,
+                incorrect_count,
+
+                score,
+                percentage
+            ))
+
+        # -------------------------------------------------
+        # COMMIT EVERYTHING
+        # -------------------------------------------------
+
+        conn.commit()
+
+        conn.close()
 
         # -------------------------------------------------
         # RETURN FINAL RESULT
@@ -5922,7 +5942,6 @@ def ai_session_submit():
 
             "review":
                 review_data
-
         })
 
     # =====================================================
@@ -5942,8 +5961,8 @@ def ai_session_submit():
 
             "error":
                 str(e)
-
         }), 500
+        
  # =====================================================
 # AI LEARNING - STUDENT PERFORMANCE DASHBOARD
 # =====================================================
@@ -6125,7 +6144,7 @@ def ai_performance():
             WHERE practice_id=?
         """
 
-        attempt_params = [practice_id]
+        performance_params = [practice_id]
 
 
         if board:
