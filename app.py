@@ -4505,12 +4505,12 @@ def ai_session():
         # RESUME EXISTING SESSION
         # -------------------------------------------------
 
-        if existing_session:
+        if existing_ai_session:
 
             try:
 
                 saved_question_ids = json.loads(
-                    existing_session["question_ids"]
+                    existing_ai_session["question_ids"]
                 )
 
             except:
@@ -4520,7 +4520,7 @@ def ai_session():
             try:
 
                 saved_answers = json.loads(
-                    existing_session["answers"]
+                    existing_ai_session["answers"]
                 )
 
             except:
@@ -4538,13 +4538,13 @@ def ai_session():
                 "success": True,
 
                 "session_id":
-                    existing_session["id"],
+                    existing_ai_session["id"],
 
                 "resumed":
                     True,
 
                 "status":
-                    existing_session["status"],
+                    existing_ai_session["status"],
 
                 "question_ids":
                     saved_question_ids,
@@ -4553,19 +4553,19 @@ def ai_session():
                     saved_answers,
 
                 "current_question":
-                    existing_session["current_question"],
+                    existing_ai_session["current_question"],
 
                 "started_at":
-                    existing_session["started_at"],
+                    existing_ai_session["started_at"],
 
                 "difficulty":
-                    existing_session["difficulty"],
+                    existing_ai_session["difficulty"],
 
                 "mode":
-                    existing_session["mode"],
+                    existing_ai_session["mode"],
 
                 "test_number":
-                    existing_session["test_number"]
+                    existing_ai_session["test_number"]
 
             })
 
@@ -4814,7 +4814,7 @@ def ai_session_save_answer():
         # SESSION STATUS
         # -------------------------------------------------
 
-        if session["status"] != "in_progress":
+        if ai_session["status"] != "in_progress":
 
             conn.close()
 
@@ -5032,7 +5032,7 @@ def ai_session_questions():
 
         ai_session = c.fetchone()
 
-        if not session:
+        if not ai_session:
 
             conn.close()
 
@@ -5353,7 +5353,7 @@ def ai_session_submit():
 
         ai_session = c.fetchone()
 
-        if not session:
+        if not ai_session:
 
             conn.close()
 
@@ -5379,7 +5379,7 @@ def ai_session_submit():
 
             }), 400
 
-        if session["status"] != "in_progress":
+        if ai_session["status"] != "in_progress":
 
             conn.close()
 
@@ -5906,6 +5906,701 @@ def ai_session_submit():
 
         print(
             "AI SESSION SUBMIT ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+ # =====================================================
+# AI LEARNING - STUDENT PERFORMANCE DASHBOARD
+# =====================================================
+
+@app.route("/api/ai-performance", methods=["GET"])
+def ai_performance():
+
+    try:
+
+        # -------------------------------------------------
+        # STUDENT LOGIN
+        # -------------------------------------------------
+
+        phone = session.get("phone")
+
+        if not phone:
+            return jsonify({
+                "success": False,
+                "error": "Student login required."
+            }), 401
+
+
+        # -------------------------------------------------
+        # OPTIONAL FILTERS
+        # -------------------------------------------------
+
+        board = request.args.get("board", "").strip()
+        class_name = request.args.get("class_name", "").strip()
+        subject = request.args.get("subject", "").strip()
+        topic = request.args.get("topic", "").strip()
+        subtopic = request.args.get("subtopic", "").strip()
+
+
+        # -------------------------------------------------
+        # DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+
+        # =================================================
+        # 1. ATTEMPT HISTORY
+        # =================================================
+
+        attempt_query = """
+            SELECT
+                id,
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic,
+                difficulty,
+                total_questions,
+                total_marks,
+                correct_answers,
+                incorrect_answers,
+                score,
+                percentage,
+                completed_at
+            FROM ai_attempts
+            WHERE phone=?
+        """
+
+        attempt_params = [phone]
+
+
+        if board:
+            attempt_query += " AND board=?"
+            attempt_params.append(board)
+
+        if class_name:
+            attempt_query += " AND class_name=?"
+            attempt_params.append(class_name)
+
+        if subject:
+            attempt_query += " AND subject=?"
+            attempt_params.append(subject)
+
+        if topic:
+            attempt_query += " AND topic=?"
+            attempt_params.append(topic)
+
+        if subtopic:
+            attempt_query += " AND subtopic=?"
+            attempt_params.append(subtopic)
+
+
+        attempt_query += """
+            ORDER BY completed_at DESC
+            LIMIT 50
+        """
+
+
+        c.execute(
+            attempt_query,
+            tuple(attempt_params)
+        )
+
+        attempt_rows = c.fetchall()
+
+
+        attempts = []
+
+        for row in attempt_rows:
+
+            percentage = float(
+                row["percentage"] or 0
+            )
+
+            if percentage >= 80:
+                status = "Strong"
+
+            elif percentage >= 50:
+                status = "Average"
+
+            else:
+                status = "Weak"
+
+
+            attempts.append({
+
+                "id": row["id"],
+
+                "board": row["board"],
+
+                "class_name":
+                    row["class_name"],
+
+                "subject":
+                    row["subject"],
+
+                "topic":
+                    row["topic"],
+
+                "subtopic":
+                    row["subtopic"],
+
+                "difficulty":
+                    row["difficulty"],
+
+                "total_questions":
+                    row["total_questions"],
+
+                "total_marks":
+                    row["total_marks"],
+
+                "correct_answers":
+                    row["correct_answers"],
+
+                "incorrect_answers":
+                    row["incorrect_answers"],
+
+                "score":
+                    row["score"],
+
+                "percentage":
+                    round(percentage, 2),
+
+                "status":
+                    status,
+
+                "completed_at":
+                    row["completed_at"]
+            })
+
+
+        # =================================================
+        # 2. TOPIC / SUBTOPIC PERFORMANCE
+        # =================================================
+
+        performance_query = """
+            SELECT
+                topic,
+                subtopic,
+                difficulty,
+                total_questions,
+                correct_answers,
+                incorrect_answers,
+                score,
+                percentage,
+                last_attempt
+            FROM ai_topic_performance
+            WHERE phone=?
+        """
+
+        performance_params = [phone]
+
+
+        if board:
+            performance_query += " AND board=?"
+            performance_params.append(board)
+
+        if class_name:
+            performance_query += " AND class_name=?"
+            performance_params.append(class_name)
+
+        if subject:
+            performance_query += " AND subject=?"
+            performance_params.append(subject)
+
+        if topic:
+            performance_query += " AND topic=?"
+            performance_params.append(topic)
+
+        if subtopic:
+            performance_query += " AND subtopic=?"
+            performance_params.append(subtopic)
+
+
+        performance_query += """
+            ORDER BY percentage ASC
+        """
+
+
+        c.execute(
+            performance_query,
+            tuple(performance_params)
+        )
+
+        performance_rows = c.fetchall()
+
+
+        # =================================================
+        # 3. AGGREGATE SUBTOPIC PERFORMANCE
+        # =================================================
+
+        subtopic_map = {}
+
+
+        for row in performance_rows:
+
+            key = (
+                row["topic"],
+                row["subtopic"]
+            )
+
+            if key not in subtopic_map:
+
+                subtopic_map[key] = {
+
+                    "topic":
+                        row["topic"],
+
+                    "subtopic":
+                        row["subtopic"],
+
+                    "total_questions":
+                        0,
+
+                    "correct_answers":
+                        0,
+
+                    "incorrect_answers":
+                        0,
+
+                    "score":
+                        0
+                }
+
+
+            item = subtopic_map[key]
+
+
+            item["total_questions"] += (
+                row["total_questions"] or 0
+            )
+
+            item["correct_answers"] += (
+                row["correct_answers"] or 0
+            )
+
+            item["incorrect_answers"] += (
+                row["incorrect_answers"] or 0
+            )
+
+            item["score"] += (
+                row["score"] or 0
+            )
+
+
+        subtopic_performance = []
+
+
+        for item in subtopic_map.values():
+
+            total = item["total_questions"]
+
+            correct = item["correct_answers"]
+
+            percentage = (
+                (correct / total) * 100
+                if total > 0
+                else 0
+            )
+
+            percentage = round(
+                percentage,
+                2
+            )
+
+
+            if percentage >= 80:
+                status = "Strong"
+
+            elif percentage >= 50:
+                status = "Average"
+
+            else:
+                status = "Weak"
+
+
+            item["percentage"] = percentage
+
+            item["status"] = status
+
+            subtopic_performance.append(
+                item
+            )
+
+
+        # Weakest first
+
+        subtopic_performance.sort(
+            key=lambda x: x["percentage"]
+        )
+
+
+        # =================================================
+        # 4. EASY / MEDIUM / HARD PERFORMANCE
+        # =================================================
+
+        difficulty_map = {}
+
+
+        for row in performance_rows:
+
+            difficulty = (
+                row["difficulty"] or ""
+            ).lower()
+
+
+            if difficulty not in difficulty_map:
+
+                difficulty_map[difficulty] = {
+
+                    "difficulty":
+                        difficulty,
+
+                    "total_questions":
+                        0,
+
+                    "correct_answers":
+                        0,
+
+                    "incorrect_answers":
+                        0,
+
+                    "score":
+                        0
+                }
+
+
+            item = difficulty_map[
+                difficulty
+            ]
+
+
+            item["total_questions"] += (
+                row["total_questions"] or 0
+            )
+
+            item["correct_answers"] += (
+                row["correct_answers"] or 0
+            )
+
+            item["incorrect_answers"] += (
+                row["incorrect_answers"] or 0
+            )
+
+            item["score"] += (
+                row["score"] or 0
+            )
+
+
+        difficulty_performance = []
+
+
+        for level in [
+            "easy",
+            "medium",
+            "hard"
+        ]:
+
+            item = difficulty_map.get(
+                level
+            )
+
+            if not item:
+                continue
+
+
+            total = item[
+                "total_questions"
+            ]
+
+            correct = item[
+                "correct_answers"
+            ]
+
+
+            percentage = (
+                (correct / total) * 100
+                if total > 0
+                else 0
+            )
+
+            percentage = round(
+                percentage,
+                2
+            )
+
+
+            if percentage >= 80:
+                status = "Strong"
+
+            elif percentage >= 50:
+                status = "Average"
+
+            else:
+                status = "Weak"
+
+
+            item["percentage"] = (
+                percentage
+            )
+
+            item["status"] = status
+
+
+            difficulty_performance.append(
+                item
+            )
+
+
+        # =================================================
+        # 5. OVERALL PERFORMANCE
+        # =================================================
+
+        overall_total = sum(
+            item["total_questions"]
+            for item in subtopic_performance
+        )
+
+        overall_correct = sum(
+            item["correct_answers"]
+            for item in subtopic_performance
+        )
+
+        overall_score = sum(
+            item["score"]
+            for item in subtopic_performance
+        )
+
+
+        overall_percentage = (
+
+            (
+                overall_correct /
+                overall_total
+            ) * 100
+
+            if overall_total > 0
+
+            else 0
+        )
+
+
+        overall_percentage = round(
+            overall_percentage,
+            2
+        )
+
+
+        if overall_percentage >= 80:
+            overall_status = "Strong"
+
+        elif overall_percentage >= 50:
+            overall_status = "Average"
+
+        else:
+            overall_status = "Weak"
+
+
+        # =================================================
+        # 6. RECOMMENDED LEVEL
+        # =================================================
+
+        difficulty_percentages = {}
+
+        for item in difficulty_performance:
+
+            difficulty_percentages[
+                item["difficulty"]
+            ] = item["percentage"]
+
+
+        easy_percentage = (
+            difficulty_percentages
+            .get("easy")
+        )
+
+        medium_percentage = (
+            difficulty_percentages
+            .get("medium")
+        )
+
+        hard_percentage = (
+            difficulty_percentages
+            .get("hard")
+        )
+
+
+        # Default
+
+        recommended_level = "easy"
+
+
+        if hard_percentage is not None:
+
+            if hard_percentage < 80:
+
+                recommended_level = "hard"
+
+            else:
+
+                recommended_level = "hard"
+
+
+        elif medium_percentage is not None:
+
+            if medium_percentage >= 80:
+
+                recommended_level = "hard"
+
+            else:
+
+                recommended_level = "medium"
+
+
+        elif easy_percentage is not None:
+
+            if easy_percentage >= 80:
+
+                recommended_level = "medium"
+
+            else:
+
+                recommended_level = "easy"
+
+
+        # =================================================
+        # 7. WHAT TO FOCUS ON
+        # =================================================
+
+        focus_items = []
+
+
+        for item in subtopic_performance[:3]:
+
+            if item["status"] == "Weak":
+
+                focus_items.append({
+
+                    "topic":
+                        item["topic"],
+
+                    "subtopic":
+                        item["subtopic"],
+
+                    "percentage":
+                        item["percentage"],
+
+                    "status":
+                        "Weak",
+
+                    "message":
+                        "Strengthen this subtopic before moving to a higher difficulty level."
+                })
+
+
+            elif item["status"] == "Average":
+
+                focus_items.append({
+
+                    "topic":
+                        item["topic"],
+
+                    "subtopic":
+                        item["subtopic"],
+
+                    "percentage":
+                        item["percentage"],
+
+                    "status":
+                        "Average",
+
+                    "message":
+                        "Continue practising this subtopic to improve accuracy."
+                })
+
+
+        if not focus_items:
+
+            focus_items.append({
+
+                "topic": "",
+
+                "subtopic": "",
+
+                "percentage":
+                    overall_percentage,
+
+                "status":
+                    "Strong",
+
+                "message":
+                    "Excellent progress. Continue practising and challenge yourself with higher-level questions."
+            })
+
+
+        conn.close()
+
+
+        # =================================================
+        # FINAL RESPONSE
+        # =================================================
+
+        return jsonify({
+
+            "success": True,
+
+            "attempt_history":
+                attempts,
+
+            "subtopic_performance":
+                subtopic_performance,
+
+            "difficulty_performance":
+                difficulty_performance,
+
+            "overall": {
+
+                "total_questions":
+                    overall_total,
+
+                "correct_answers":
+                    overall_correct,
+
+                "score":
+                    overall_score,
+
+                "percentage":
+                    overall_percentage,
+
+                "status":
+                    overall_status
+            },
+
+            "recommended_level":
+                recommended_level,
+
+            "focus":
+                focus_items
+
+        })
+
+
+    except Exception as e:
+
+        print(
+            "AI PERFORMANCE ERROR:",
             e
         )
 
