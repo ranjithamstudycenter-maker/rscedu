@@ -1197,22 +1197,60 @@
 
     <div class="question-box">
 
+        <!-- QUESTION NUMBER -->
         <div class="question-number"
              id="adaptiveQuestionNumber">
         </div>
 
+        <!-- QUESTION -->
         <div class="question"
              id="adaptiveQuestionText">
         </div>
 
+        <!-- OPTIONS -->
         <div id="adaptiveOptions"></div>
 
-        <button class="primary-btn"
-                onclick="nextAdaptiveQuestion()">
 
-            Next Question →
+        <!-- NAVIGATION BUTTONS -->
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:15px;
+            margin-top:20px;
+        ">
 
-        </button>
+            <button class="primary-btn"
+                    id="aiPreviousBtn"
+                    onclick="previousAIQuestion()">
+
+                ← Previous
+
+            </button>
+
+
+            <button class="primary-btn"
+                    id="aiNextBtn"
+                    onclick="nextAIQuestion()">
+
+                Next →
+
+            </button>
+
+        </div>
+
+
+        <!-- QUESTION PALETTE -->
+        <div id="aiQuestionPalette"
+             style="
+                display:grid;
+                grid-template-columns:repeat(5,1fr);
+                gap:8px;
+                margin-top:25px;
+                padding-top:20px;
+                border-top:1px solid #e5e7eb;
+             ">
+        </div>
 
     </div>
 
@@ -1297,12 +1335,11 @@
         </div>
 
         <button class="primary-btn"
-                onclick="location.reload()">
+                onclick="startAIAgain()">
 
             Start Again
 
         </button>
-
     </div>
 
 </div>
@@ -1651,6 +1688,14 @@ let aiTimeRemaining = 30 * 60; // 30 minutes
 let aiTimerStarted = false;
 const AI_TOTAL_QUESTIONS = 25;
 let aiAttemptQuestions = [];
+
+let aiSessionId = null;
+let aiQuestionBank = [];
+let aiAnswers = {};
+let aiCurrentQuestion = 0;
+let aiExamSubmitted = false;
+let aiStartedAt = null;
+let aiDifficulty = null;
 
 
 /* =====================================================
@@ -2460,17 +2505,25 @@ function showFinalResult(){
    AI 25-QUESTION SESSION
 ===================================================== */
 
-function selectAILevel(level){
+async function selectAILevel(level){
+
+    // =====================================================
+    // SET CURRENT DIFFICULTY
+    // =====================================================
 
     currentAILevel = level;
     adaptiveLevel = level;
+    aiDifficulty = level;
 
-    // -----------------------------------------
-    // RESET CURRENT ATTEMPT
-    // -----------------------------------------
+
+    // =====================================================
+    // RESET OLD FRONTEND VARIABLES
+    // =====================================================
 
     aiQuestionNumber = 0;
     aiScore = 0;
+
+    adaptiveIndex = 0;
     adaptiveScore = 0;
 
     aiCorrectAnswers = 0;
@@ -2480,48 +2533,994 @@ function selectAILevel(level){
     aiAttemptQuestions = [];
 
     window.currentAIQuestion = null;
+
     selectedAnswer = null;
 
+
+    // =====================================================
+    // RESET AI SESSION VARIABLES
+    // =====================================================
+
+    aiSessionId = null;
+
+    aiQuestionBank = [];
+
+    aiAnswers = {};
+
+    aiCurrentQuestion = 0;
+
+    aiExamSubmitted = false;
+
+    aiStartedAt = null;
+
+
+    // =====================================================
+    // STOP PREVIOUS TIMER
+    // =====================================================
+
+    if (aiTimerInterval) {
+
+        clearInterval(aiTimerInterval);
+
+        aiTimerInterval = null;
+    }
+
+    aiTimeRemaining = 30 * 60;
+
+    aiTimerStarted = false;
+
+
+    // =====================================================
+    // GET CURRENT SELECTION
+    // =====================================================
+
+    const board =
+        document.getElementById("aiBoard")?.value || "";
+
+
+    const className =
+        document.getElementById("aiClass")?.value || "";
+
+
+    const subject =
+        document.getElementById("aiSubject")?.value || "";
+
+
+    const topic =
+        document.getElementById("aiTopic")?.value || "";
+
+
+    const subtopic =
+        document.getElementById("aiSubtopic")?.value || "";
+
+
+    console.log(
+        "AI SESSION PARAMETERS:",
+        {
+            board: board,
+            className: className,
+            subject: subject,
+            topic: topic,
+            subtopic: subtopic,
+            difficulty: level
+        }
+    );
+
+
+    // =====================================================
+    // VALIDATE SELECTION
+    // =====================================================
+
+    if (
+        !board ||
+        !className ||
+        !subject ||
+        !topic ||
+        !subtopic
+    ) {
+
+        alert(
+            "Please select Board, Class, Subject, Topic and Subtopic first."
+        );
+
+        return;
+    }
+
+
+    // =====================================================
+    // CREATE / RESUME AI SESSION
+    // =====================================================
+
+    try {
+
+        const sessionResponse =
+            await fetch(
+                "/api/ai-session",
+                {
+                    method: "POST",
+
+                    headers: {
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body: JSON.stringify({
+
+                        board: board,
+
+                        class_name:
+                            className,
+
+                        subject:
+                            subject,
+
+                        topic:
+                            topic,
+
+                        subtopic:
+                            subtopic,
+
+                        difficulty:
+                            level,
+
+                        mode:
+                            "practice",
+
+                        test_number:
+                            0
+
+                    })
+                }
+            );
+
+
+        const sessionData =
+            await sessionResponse.json();
+
+
+        console.log(
+            "AI SESSION RESPONSE:",
+            sessionData
+        );
+
+
+        // =================================================
+        // HANDLE SESSION ERROR
+        // =================================================
+
+        if (!sessionResponse.ok) {
+
+            alert(
+                sessionData.error ||
+                "Unable to create AI session."
+            );
+
+            return;
+        }
+
+
+        // =================================================
+        // SAVE SESSION INFORMATION
+        // =================================================
+
+        aiSessionId =
+            sessionData.session_id;
+
+
+        aiAnswers =
+            sessionData.answers || {};
+
+
+        aiCurrentQuestion =
+            Number(
+                sessionData.current_question ??
+                0
+            );
+
+
+        aiStartedAt =
+            sessionData.started_at ||
+            null;
+
+
+        // =================================================
+        // LOAD QUESTIONS
+        // =================================================
+
+        const questionResponse =
+            await fetch(
+                `/api/ai-session/questions?session_id=${aiSessionId}`
+            );
+
+
+        const questionData =
+            await questionResponse.json();
+
+
+        console.log(
+            "AI SESSION QUESTIONS:",
+            questionData
+        );
+
+
+        // =================================================
+        // HANDLE QUESTION LOAD ERROR
+        // =================================================
+
+        if (!questionResponse.ok) {
+
+            alert(
+                questionData.error ||
+                "Unable to load questions."
+            );
+
+            return;
+        }
+
+
+        // =================================================
+        // SAVE QUESTION BANK
+        // =================================================
+
+        aiQuestionBank =
+            questionData.questions || [];
+
+
+        aiAnswers =
+            questionData.answers ||
+            aiAnswers;
+
+
+        aiCurrentQuestion =
+            Number(
+                questionData.current_question ??
+                aiCurrentQuestion
+            );
+
+
+        aiStartedAt =
+            questionData.started_at ||
+            aiStartedAt;
+
+
+        // =================================================
+        // VERIFY EXACTLY 25 QUESTIONS
+        // =================================================
+
+        if (
+            aiQuestionBank.length !==
+            AI_TOTAL_QUESTIONS
+        ) {
+
+            console.error(
+                "Expected 25 questions but received:",
+                aiQuestionBank.length
+            );
+
+
+            alert(
+                "Unable to prepare the complete 25-question test. Please try again."
+            );
+
+
+            return;
+        }
+
+
+        // =================================================
+        // SAVE SELECTION FOR RESULT / REVIEW
+        // =================================================
+
+        window.aiLearningSelection = {
+
+            board:
+                board,
+
+            class_name:
+                className,
+
+            subject:
+                subject,
+
+            topic:
+                topic,
+
+            subtopic:
+                subtopic
+
+        };
+
+
+        // =================================================
+        // SHOW EXAM CARD
+        // =================================================
+
+        const adaptiveCard =
+            document.getElementById(
+                "adaptiveCard"
+            );
+
+
+        if (adaptiveCard) {
+
+            adaptiveCard.classList.add(
+                "hidden"
+            );
+        }
+
+
+        const questionCard =
+            document.getElementById(
+                "adaptiveQuestionCard"
+            );
+
+
+        if (questionCard) {
+
+            questionCard.classList.remove(
+                "hidden"
+            );
+        }
+
+
+        // =================================================
+        // SHOW SESSION BAR
+        // =================================================
+
+        const sessionBar =
+            document.getElementById(
+                "aiSessionBar"
+            );
+
+
+        if (sessionBar) {
+
+            sessionBar.style.display =
+                "flex";
+        }
+
+
+        // =================================================
+        // START / RESUME TIMER
+        // =================================================
+
+        startAIExamTimer();
+
+
+        // =================================================
+        // SHOW CURRENT QUESTION
+        // =================================================
+
+        showAIExamQuestion();
+
+
+        // =================================================
+        // UPDATE SESSION BAR
+        // =================================================
+
+        updateAISessionBar();
+
+
+        // =================================================
+        // UPDATE QUESTION PALETTE
+        // =================================================
+
+        updateAIQuestionPalette();
+
+
+        // =================================================
+        // DEBUG
+        // =================================================
+
+        console.log(
+            "===================================="
+        );
+
+        console.log(
+            "AI EXAM READY"
+        );
+
+        console.log(
+            "Session ID:",
+            aiSessionId
+        );
+
+        console.log(
+            "Difficulty:",
+            currentAILevel
+        );
+
+        console.log(
+            "Questions:",
+            aiQuestionBank.length
+        );
+
+        console.log(
+            "Current Question:",
+            aiCurrentQuestion + 1
+        );
+
+        console.log(
+            "Started At:",
+            aiStartedAt
+        );
+
+        console.log(
+            "===================================="
+        );
+
+    }
+    catch(error) {
+
+        console.error(
+            "AI SESSION ERROR:",
+            error
+        );
+
+
+        alert(
+            "Unable to start the test. Please try again."
+        );
+    }
+
+}
+
+/* =====================================================
+   SHOW CURRENT AI EXAM QUESTION
+===================================================== */
+
+function showAIExamQuestion() {
+
+    if (!aiQuestionBank || aiQuestionBank.length === 0) {
+        console.error("AI question bank is empty.");
+        return;
+    }
+
+    // Make sure current question stays within range
+    if (aiCurrentQuestion < 0) {
+        aiCurrentQuestion = 0;
+    }
+
+    if (aiCurrentQuestion >= aiQuestionBank.length) {
+        aiCurrentQuestion = aiQuestionBank.length - 1;
+    }
+
+    const question =
+        aiQuestionBank[aiCurrentQuestion];
+
+    if (!question) {
+        console.error(
+            "Question not found:",
+            aiCurrentQuestion
+        );
+        return;
+    }
+
+    console.log(
+        "Showing Question:",
+        aiCurrentQuestion + 1,
+        question
+    );
+
     // -----------------------------------------
-    // START 30 MINUTE TIMER
+    // QUESTION NUMBER
     // -----------------------------------------
 
-    startAITimer();
+    const questionNumber =
+        document.getElementById(
+            "adaptiveQuestionNumber"
+        );
+
+    if (questionNumber) {
+
+        questionNumber.textContent =
+            `Question ${aiCurrentQuestion + 1} / ${AI_TOTAL_QUESTIONS}`;
+    }
 
     // -----------------------------------------
-    // SHOW QUESTION AREA
+    // QUESTION TEXT
     // -----------------------------------------
 
-    document.getElementById("adaptiveQuestionCard")
-        .classList.remove("hidden");
+    const questionText =
+        document.getElementById(
+            "adaptiveQuestionText"
+        );
 
-    document.getElementById("aiSessionBar")
-        .style.display = "flex";
+    if (questionText) {
+
+        questionText.textContent =
+            question.question || "";
+    }
+
+    // -----------------------------------------
+    // OPTIONS
+    // -----------------------------------------
+
+    const optionsContainer =
+        document.getElementById(
+            "adaptiveOptions"
+        );
+
+    if (!optionsContainer) {
+        console.error(
+            "adaptiveOptions element not found."
+        );
+        return;
+    }
+
+    optionsContainer.innerHTML = "";
+
+    const options =
+        question.options || [];
+
+    options.forEach((option, index) => {
+
+        const optionButton =
+            document.createElement("button");
+
+        optionButton.type = "button";
+
+        optionButton.className =
+            "option";
+
+        optionButton.dataset.index =
+            index;
+
+        optionButton.textContent =
+            `${String.fromCharCode(65 + index)}. ${option}`;
+
+        // -------------------------------------
+        // RESTORE SAVED ANSWER
+        // -------------------------------------
+
+        const savedAnswer =
+            aiAnswers[String(question.id)];
+
+        if (
+            savedAnswer !== undefined &&
+            Number(savedAnswer) === index
+        ) {
+
+            optionButton.classList.add(
+                "selected"
+            );
+        }
+
+        // -------------------------------------
+        // OPTION CLICK
+        // -------------------------------------
+
+        optionButton.addEventListener(
+            "click",
+            function () {
+
+                selectAIAnswer(
+                    question.id,
+                    index
+                );
+            }
+        );
+
+        optionsContainer.appendChild(
+            optionButton
+        );
+    });
+
+    // -----------------------------------------
+    // UPDATE NAVIGATION BUTTONS
+    // -----------------------------------------
+
+    updateAIExamNavigation();
+
+    // -----------------------------------------
+    // UPDATE QUESTION PALETTE
+    // -----------------------------------------
+
+    updateAIQuestionPalette();
+
+    // -----------------------------------------
+    // UPDATE SESSION BAR
+    // -----------------------------------------
 
     updateAISessionBar();
+}
+/* =====================================================
+   AI QUESTION PALETTE
+===================================================== */
 
-    // -----------------------------------------
-    // GENERATE FIRST QUESTION
-    // -----------------------------------------
+function updateAIQuestionPalette() {
 
-    generateAIQuestion();
+    const palette =
+        document.getElementById("aiQuestionPalette");
+
+    if (!palette) {
+        return;
+    }
+
+    palette.innerHTML = "";
+
+    if (!aiQuestionBank ||
+        aiQuestionBank.length === 0) {
+        return;
+    }
+
+    aiQuestionBank.forEach((question, index) => {
+
+        const button =
+            document.createElement("button");
+
+        button.type = "button";
+
+        button.textContent =
+            index + 1;
+
+        button.style.padding = "8px";
+
+        button.style.borderRadius = "8px";
+
+        button.style.border =
+            "1px solid #cbd5e1";
+
+        button.style.cursor = "pointer";
+
+        button.style.fontWeight = "700";
+
+        button.style.background = "#ffffff";
+
+        // -----------------------------------------
+        // CURRENT QUESTION
+        // -----------------------------------------
+
+        if (index === aiCurrentQuestion) {
+
+            button.style.border =
+                "2px solid #7c3aed";
+
+            button.style.background =
+                "#ede9fe";
+
+        }
+
+        // -----------------------------------------
+        // ANSWERED QUESTION
+        // -----------------------------------------
+
+        if (
+            aiAnswers[String(question.id)]
+            !== undefined
+        ) {
+
+            button.style.background =
+                "#dcfce7";
+
+            button.style.border =
+                "2px solid #16a34a";
+        }
+
+        // -----------------------------------------
+        // CURRENT QUESTION HAS PRIORITY
+        // -----------------------------------------
+
+        if (index === aiCurrentQuestion) {
+
+            button.style.background =
+                "#ede9fe";
+
+            button.style.border =
+                "2px solid #7c3aed";
+        }
+
+        // -----------------------------------------
+        // CLICK PALETTE NUMBER
+        // -----------------------------------------
+
+        button.onclick = function() {
+
+            if (aiExamSubmitted) {
+                return;
+            }
+
+            aiCurrentQuestion = index;
+
+            showAIExamQuestion();
+
+        };
+
+        palette.appendChild(button);
+
+    });
 }
     
 function updateAISessionBar(){
 
-    document.getElementById("aiSessionLevel").innerText =
-        "🎯 " + currentAILevel.toUpperCase() + " • 2 Marks";
+    const levelElement =
+        document.getElementById("aiSessionLevel");
 
-    document.getElementById("aiSessionProgress").innerText =
-        "Question " +
-        Math.min(aiQuestionNumber + 1, AI_TOTAL_QUESTIONS) +
-        " / " + AI_TOTAL_QUESTIONS;
+    const progressElement =
+        document.getElementById("aiSessionProgress");
+
+    if (levelElement) {
+
+        levelElement.innerText =
+            "🎯 " +
+            currentAILevel.toUpperCase() +
+            " • 2 Marks";
+    }
+
+    if (progressElement) {
+
+        progressElement.innerText =
+            "Question " +
+            (aiCurrentQuestion + 1) +
+            " / " +
+            AI_TOTAL_QUESTIONS;
+    }
+}
+/* =====================================================
+   SELECT AI ANSWER
+===================================================== */
+
+async function selectAIAnswer(questionId, answerIndex) {
+
+    if (!aiSessionId) {
+        console.error("AI session ID missing.");
+        return;
+    }
+
+    if (aiExamSubmitted) {
+        return;
+    }
+
+    // -----------------------------------------
+    // SAVE ANSWER LOCALLY FIRST
+    // -----------------------------------------
+
+    aiAnswers[String(questionId)] =
+        Number(answerIndex);
+
+    // -----------------------------------------
+    // UPDATE OPTION UI
+    // -----------------------------------------
+
+    const optionsContainer =
+        document.getElementById(
+            "adaptiveOptions"
+        );
+
+    if (optionsContainer) {
+
+        const options =
+            optionsContainer.querySelectorAll(
+                ".option"
+            );
+
+        options.forEach((option, index) => {
+
+            option.classList.remove(
+                "selected"
+            );
+
+            if (index === Number(answerIndex)) {
+
+                option.classList.add(
+                    "selected"
+                );
+            }
+        });
+    }
+
+    // -----------------------------------------
+    // SAVE ANSWER TO SERVER
+    // -----------------------------------------
+
+    try {
+
+        const response = await fetch(
+            "/api/ai-session/save-answer",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    session_id: aiSessionId,
+
+                    question_id: questionId,
+
+                    answer: Number(answerIndex),
+
+                    current_question:
+                        aiCurrentQuestion
+
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        console.log(
+            "ANSWER SAVED:",
+            data
+        );
+
+        if (!response.ok) {
+
+            console.error(
+                "Answer save failed:",
+                data.error
+            );
+
+            return;
+        }
+
+        // Update current question returned by server
+        if (
+            data.current_question !== undefined
+        ) {
+
+            aiCurrentQuestion =
+                Number(data.current_question);
+        }
+
+        updateAIQuestionPalette();
+
+        updateAISessionBar();
+
+    } catch (error) {
+
+        console.error(
+            "SAVE ANSWER ERROR:",
+            error
+        );
+    }
+}
+/* =====================================================
+   NEXT AI QUESTION
+===================================================== */
+
+function nextAIQuestion() {
+
+    if (aiExamSubmitted) {
+        return;
+    }
+
+
+    /*
+        If not the last question
+    */
+
+    if (
+        aiCurrentQuestion <
+        aiQuestionBank.length - 1
+    ) {
+
+        aiCurrentQuestion++;
+
+        showAIExamQuestion();
+
+        return;
+    }
+
+
+    /*
+        Last question
+        Show submit confirmation
+    */
+
+    showAISubmitConfirmation();
 }
 
-// -----------------------------------------------------
-// GENERATE AI QUESTION
-// -----------------------------------------------------
+function showAISubmitConfirmation() {
 
+    const total =
+        aiQuestionBank.length;
+
+    let answered = 0;
+
+
+    aiQuestionBank.forEach(question => {
+
+        if (
+            aiAnswers[String(question.id)]
+            !== undefined
+        ) {
+
+            answered++;
+        }
+
+    });
+
+
+    const unanswered =
+        total - answered;
+
+
+    const message =
+        "Submit your test?\n\n" +
+
+        "Total Questions: " +
+        total +
+
+        "\nAnswered: " +
+        answered +
+
+        "\nUnanswered: " +
+        unanswered;
+
+
+    const confirmSubmit =
+        confirm(message);
+
+
+    if (!confirmSubmit) {
+
+        return;
+    }
+
+
+    submitAISession(false);
+}
+    
+/* =====================================================
+   PREVIOUS AI QUESTION
+===================================================== */
+
+function previousAIQuestion() {
+
+    if (aiExamSubmitted) {
+        return;
+    }
+
+    if (aiCurrentQuestion > 0) {
+
+        aiCurrentQuestion--;
+
+        showAIExamQuestion();
+    }
+}
+/* =====================================================
+   UPDATE PREVIOUS / NEXT BUTTONS
+===================================================== */
+
+function updateAIExamNavigation() {
+
+    const previousButton =
+        document.getElementById(
+            "aiPreviousBtn"
+        );
+
+    const nextButton =
+        document.getElementById(
+            "aiNextBtn"
+        );
+
+    if (previousButton) {
+
+        previousButton.disabled =
+            (aiCurrentQuestion === 0);
+    }
+
+    if (nextButton) {
+
+        if (
+            aiCurrentQuestion ===
+            aiQuestionBank.length - 1
+        ) {
+
+            nextButton.textContent =
+                "Submit Test";
+
+        } else {
+
+            nextButton.textContent =
+                "Next";
+        }
+    }
+}    
 // -----------------------------------------------------
 // GENERATE AI QUESTION - 25 QUESTION SESSION
 // -----------------------------------------------------
@@ -2847,30 +3846,100 @@ async function generateAIQuestion() {
     }
 }
 
-    function startAITimer() {
+function startAIExamTimer() {
 
-    // Prevent multiple timers
+    // Stop any previous timer
     if (aiTimerInterval) {
         clearInterval(aiTimerInterval);
+        aiTimerInterval = null;
     }
 
-    aiTimeRemaining = 30 * 60;
-    aiTimerStarted = true;
+    // Test already submitted
+    if (aiExamSubmitted) {
+        return;
+    }
+
+    // No session
+    if (!aiSessionId) {
+        console.warn("AI session ID missing");
+        return;
+    }
+
+    /*
+        Calculate remaining time from server/session start time.
+
+        30 minutes = 1800 seconds
+    */
+
+    const TOTAL_TIME = 30 * 60;
+
+    if (aiStartedAt) {
+
+        const startedTime =
+            new Date(aiStartedAt).getTime();
+
+        const currentTime =
+            Date.now();
+
+        const elapsedSeconds =
+            Math.floor(
+                (currentTime - startedTime) / 1000
+            );
+
+        aiTimeRemaining =
+            Math.max(
+                0,
+                TOTAL_TIME - elapsedSeconds
+            );
+
+    } else {
+
+        // Fallback
+        aiTimeRemaining = TOTAL_TIME;
+    }
 
     updateAITimerDisplay();
 
+    // Already expired
+    if (aiTimeRemaining <= 0) {
+
+        aiTimeRemaining = 0;
+
+        updateAITimerDisplay();
+
+        autoSubmitAITest();
+
+        return;
+    }
+
+    aiTimerStarted = true;
+
     aiTimerInterval = setInterval(() => {
+
+        if (aiExamSubmitted) {
+
+            clearInterval(aiTimerInterval);
+
+            aiTimerInterval = null;
+
+            return;
+        }
 
         aiTimeRemaining--;
 
         updateAITimerDisplay();
 
+        /*
+            Time over
+        */
+
         if (aiTimeRemaining <= 0) {
 
-            clearInterval(aiTimerInterval);
-            aiTimerInterval = null;
-
             aiTimeRemaining = 0;
+
+            clearInterval(aiTimerInterval);
+
+            aiTimerInterval = null;
 
             updateAITimerDisplay();
 
@@ -2880,65 +3949,171 @@ async function generateAIQuestion() {
     }, 1000);
 }
 
-
 function updateAITimerDisplay() {
 
-    const timerElement = document.getElementById("aiTimer");
+    const timerElement =
+        document.getElementById("aiTimer");
 
     if (!timerElement) {
         return;
     }
 
-    const minutes = Math.floor(aiTimeRemaining / 60);
-    const seconds = aiTimeRemaining % 60;
+    const totalSeconds =
+        Math.max(0, aiTimeRemaining);
 
-    timerElement.textContent =
-        `${String(minutes).padStart(2, "0")}:${String(seconds).padStart(2, "0")}`;
+    const minutes =
+        Math.floor(totalSeconds / 60);
 
-    // Normal state
-    timerElement.classList.remove(
-        "timer-warning",
-        "timer-urgent"
-    );
+    const seconds =
+        totalSeconds % 60;
 
-    // Warning: 10 minutes
-    if (aiTimeRemaining <= 10 * 60 &&
-        aiTimeRemaining > 5 * 60) {
+    timerElement.innerText =
+        String(minutes).padStart(2, "0") +
+        ":" +
+        String(seconds).padStart(2, "0");
 
-        timerElement.classList.add("timer-warning");
-    }
+    /*
+        Timer warning
+    */
 
-    // Urgent: 5 minutes
-    if (aiTimeRemaining <= 5 * 60) {
+    if (totalSeconds <= 60) {
 
-        timerElement.classList.add("timer-urgent");
+        timerElement.style.fontWeight = "800";
+
+    } else {
+
+        timerElement.style.fontWeight = "700";
     }
 }
-
 
 function stopAITimer() {
 
     if (aiTimerInterval) {
 
         clearInterval(aiTimerInterval);
+
         aiTimerInterval = null;
     }
 
     aiTimerStarted = false;
 }
 
-
 function autoSubmitAITest() {
 
-    console.log("AI TEST TIME OVER");
+    if (aiExamSubmitted) {
+        return;
+    }
 
-    alert("⏰ Time is over! Your test will be submitted automatically.");
+    aiExamSubmitted = true;
 
     stopAITimer();
 
-    showAISessionResult();
-}
+    alert(
+        "⏰ Time is over! Your test will be submitted automatically."
+    );
 
+    submitAISession(true);
+}
+async function submitAISession(autoSubmit = false) {
+
+    if (!aiSessionId) {
+
+        alert("Test session not found.");
+
+        aiExamSubmitted = false;
+
+        return;
+    }
+
+
+    if (aiExamSubmitted && !autoSubmit) {
+
+        return;
+    }
+
+
+    /*
+        Prevent duplicate submission
+    */
+
+    aiExamSubmitted = true;
+
+    stopAITimer();
+
+
+    try {
+
+        const response =
+            await fetch("/api/ai-session/submit", {
+
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    session_id: aiSessionId,
+
+                    answers: aiAnswers
+
+                })
+
+            });
+
+
+        const data =
+            await response.json();
+
+
+        if (!response.ok) {
+
+            console.error(
+                "AI SUBMIT ERROR:",
+                data
+            );
+
+            alert(
+                data.error ||
+                "Unable to submit the test."
+            );
+
+            aiExamSubmitted = false;
+
+            return;
+        }
+
+
+        /*
+            Store server result
+        */
+
+        window.aiFinalResult = data;
+
+
+        /*
+            Show result
+        */
+
+        showAISessionResult(data);
+
+
+    } catch (error) {
+
+        console.error(
+            "AI SUBMIT NETWORK ERROR:",
+            error
+        );
+
+        alert(
+            "Something went wrong while submitting the test."
+        );
+
+        aiExamSubmitted = false;
+    }
+}
+    
 function checkAIAnswer(){
 
     if(selectedAnswer === null){
@@ -3007,88 +4182,221 @@ function checkAIAnswer(){
     }
 }
 
-function showAISessionResult(){
+function showAISessionResult(data) {
 
-    // Stop timer
+    /*
+        If server result is not provided,
+        stop here.
+    */
+
+    if (!data) {
+
+        console.error(
+            "AI result data missing"
+        );
+
+        return;
+    }
+
+
+    // -----------------------------------------
+    // STOP TIMER
+    // -----------------------------------------
+
     stopAITimer();
 
-    // Hide question cards
-    document.getElementById("adaptiveCard").classList.add("hidden");
-    document.getElementById("adaptiveQuestionCard").classList.add("hidden");
-
-    // Show final result
-    document.getElementById("finalCard").classList.remove("hidden");
 
     // -----------------------------------------
-    // RESULT CALCULATION
+    // HIDE EXAM SECTIONS
     // -----------------------------------------
 
-    const totalQuestions = AI_TOTAL_QUESTIONS;
+    const adaptiveCard =
+        document.getElementById("adaptiveCard");
 
-    const correct = aiScore;
+    if (adaptiveCard) {
+
+        adaptiveCard.classList.add("hidden");
+    }
+
+
+    const questionCard =
+        document.getElementById(
+            "adaptiveQuestionCard"
+        );
+
+    if (questionCard) {
+
+        questionCard.classList.add("hidden");
+    }
+
+
+    const sessionBar =
+        document.getElementById(
+            "aiSessionBar"
+        );
+
+    if (sessionBar) {
+
+        sessionBar.classList.add("hidden");
+    }
+
+
+    // -----------------------------------------
+    // SHOW FINAL RESULT
+    // -----------------------------------------
+
+    const finalCard =
+        document.getElementById("finalCard");
+
+    if (finalCard) {
+
+        finalCard.classList.remove("hidden");
+    }
+
+
+    // -----------------------------------------
+    // SERVER-SIDE RESULT
+    // -----------------------------------------
+
+    const result =
+        data.result || data;
+
+
+    const score =
+        Number(result.score || 0);
+
+
+    const correct =
+        Number(
+            result.correct_answers || 0
+        );
+
 
     const incorrect =
-        totalQuestions - correct;
+        Number(
+            result.incorrect_answers || 0
+        );
 
-    const marks =
-        correct * 2;
 
-    const totalMarks =
-        totalQuestions * 2;
+    const unanswered =
+        Number(
+            result.unanswered || 0
+        );
+
 
     const percentage =
-        Math.round(
-            (marks / totalMarks) * 100
+        Number(
+            result.percentage || 0
         );
+
 
     // -----------------------------------------
     // MAIN SCORE
     // -----------------------------------------
 
-    document.getElementById("finalScore").innerText =
-        marks + " / " + totalMarks +
-        " (" + percentage + "%)";
+    const finalScore =
+        document.getElementById(
+            "finalScore"
+        );
+
+    if (finalScore) {
+
+        finalScore.innerText =
+            score +
+            " / 50" +
+            " (" +
+            percentage.toFixed(1) +
+            "%)";
+    }
+
 
     // -----------------------------------------
-    // CORRECT / INCORRECT / MARKS
+    // CORRECT COUNT
     // -----------------------------------------
 
-    document.getElementById("correctCount").innerText =
-        correct;
+    const correctCount =
+        document.getElementById(
+            "correctCount"
+        );
 
-    document.getElementById("incorrectCount").innerText =
-        incorrect;
+    if (correctCount) {
 
-    document.getElementById("marksCount").innerText =
-        marks + " / " + totalMarks;
+        correctCount.innerText =
+            correct;
+    }
+
+
+    // -----------------------------------------
+    // INCORRECT COUNT
+    // -----------------------------------------
+
+    const incorrectCount =
+        document.getElementById(
+            "incorrectCount"
+        );
+
+    if (incorrectCount) {
+
+        incorrectCount.innerText =
+            incorrect;
+    }
+
+
+    // -----------------------------------------
+    // MARKS
+    // -----------------------------------------
+
+    const marksCount =
+        document.getElementById(
+            "marksCount"
+        );
+
+    if (marksCount) {
+
+        marksCount.innerText =
+            score +
+            " / 50";
+    }
+
 
     // -----------------------------------------
     // PERFORMANCE MESSAGE
     // -----------------------------------------
 
-    let message = "";
+    const finalMessage =
+        document.getElementById(
+            "finalMessage"
+        );
 
-    if(percentage >= 80){
+    if (finalMessage) {
 
-        message =
-            "Excellent performance! You are ready for more challenging questions.";
+        let message = "";
 
+
+        if (percentage >= 80) {
+
+            message =
+                "Excellent performance! You are ready for more challenging questions.";
+
+        }
+        else if (percentage >= 50) {
+
+            message =
+                "Good progress. Continue practising to strengthen your concepts.";
+
+        }
+        else {
+
+            message =
+                "More practice is recommended. Strengthen your fundamentals before moving to a higher level.";
+
+        }
+
+
+        finalMessage.innerText =
+            message;
     }
-    else if(percentage >= 50){
 
-        message =
-            "Good progress. Continue practising to strengthen your concepts.";
-
-    }
-    else{
-
-        message =
-            "More practice is recommended. Strengthen your fundamentals before moving to a higher level.";
-
-    }
-
-    document.getElementById("finalMessage").innerText =
-        message;
 
     // -----------------------------------------
     // CURRENT SELECTION
@@ -3097,42 +4405,399 @@ function showAISessionResult(){
     const selection =
         window.aiLearningSelection || {};
 
+
     const subject =
-        selection.subject || "Mathematics";
+        result.subject ||
+        selection.subject ||
+        "Mathematics";
+
 
     const topic =
-        selection.topic || "-";
+        result.topic ||
+        selection.topic ||
+        "-";
+
 
     const subtopic =
-        selection.subtopic || "-";
+        result.subtopic ||
+        selection.subtopic ||
+        "-";
+
+    const difficulty =
+        result.difficulty ||
+        currentAILevel ||
+        "easy";
 
     // -----------------------------------------
-    // LEARNING PROFILE
+    // LEARNING PROFILE / TEST SUMMARY
     // -----------------------------------------
 
-    document.getElementById("learningProfile").innerText =
+    const learningProfile =
+        document.getElementById(
+            "learningProfile"
+        );
 
-        "Subject: " + subject +
 
-        " | Topic: " + topic +
+    if (learningProfile) {
 
-        " | Subtopic: " + subtopic +
+        learningProfile.innerHTML =
 
-        " | Difficulty: " +
-        currentAILevel.toUpperCase() +
+            "<strong>Test Summary</strong><br><br>" +
 
-        " | Correct: " + correct +
+            "Subject: " +
+            escapeAIReviewText(subject) +
 
-        " | Incorrect: " + incorrect +
+            "<br>Topic: " +
+            escapeAIReviewText(topic) +
 
-        " | Score: " +
-        marks + "/" + totalMarks +
+            "<br>Subtopic: " +
+            escapeAIReviewText(subtopic) +
 
-        " | Percentage: " +
-        percentage + "%";
+            "<br>Difficulty: " +
+            currentAILevel.toUpperCase() +
+
+            "<br><br>Correct: " +
+            correct +
+
+            "<br>Incorrect: " +
+            incorrect +
+
+            "<br>Unanswered: " +
+            unanswered +
+
+            "<br>Score: " +
+            score +
+            " / 50" +
+
+            "<br>Percentage: " +
+            percentage.toFixed(1) +
+            "%";
+    }
+
+
+    // -----------------------------------------
+    // QUESTION REVIEW
+    // -----------------------------------------
+
+    renderAIQuestionReview(
+        data.review || []
+    );
+
 }
 
+function renderAIQuestionReview(review) {
 
+    /*
+        Find or create review container
+    */
+
+    let reviewContainer =
+        document.getElementById(
+            "aiQuestionReview"
+        );
+
+
+    if (!reviewContainer) {
+
+        reviewContainer =
+            document.createElement("div");
+
+        reviewContainer.id =
+            "aiQuestionReview";
+
+
+        const finalCard =
+            document.getElementById(
+                "finalCard"
+            );
+
+
+        if (finalCard) {
+
+            finalCard.appendChild(
+                reviewContainer
+            );
+        }
+    }
+
+
+    if (!reviewContainer) {
+        return;
+    }
+
+
+    reviewContainer.innerHTML = "";
+
+
+    /*
+        Review heading
+    */
+
+    const heading =
+        document.createElement("h3");
+
+    heading.innerText =
+        "📘 Question Review";
+
+    heading.style.marginTop =
+        "30px";
+
+    reviewContainer.appendChild(
+        heading
+    );
+
+
+    /*
+        Render all questions
+    */
+
+    review.forEach((item, index) => {
+
+        const box =
+            document.createElement("div");
+
+
+        box.style.marginTop =
+            "20px";
+
+        box.style.padding =
+            "18px";
+
+        box.style.border =
+            "1px solid #e5e7eb";
+
+        box.style.borderRadius =
+            "12px";
+
+
+        /*
+            Question
+        */
+
+        const question =
+            document.createElement("div");
+
+        question.innerHTML =
+            "<strong>Question " +
+            (index + 1) +
+            "</strong><br><br>" +
+
+            escapeAIReviewText(
+                item.question
+            );
+
+
+        box.appendChild(
+            question
+        );
+
+
+        /*
+            Student answer
+        */
+
+        const studentAnswer =
+            document.createElement("div");
+
+        studentAnswer.style.marginTop =
+            "12px";
+
+
+        if (
+            item.student_answer === null ||
+            item.student_answer === undefined
+        ) {
+
+            studentAnswer.innerHTML =
+                "<strong>Your Answer:</strong> " +
+                "Not Answered";
+
+        } else {
+
+            studentAnswer.innerHTML =
+                "<strong>Your Answer:</strong> " +
+                escapeAIReviewText(
+                    getAIOptionText(
+                        item.options,
+                        item.student_answer
+                    )
+                );
+        }
+
+
+        box.appendChild(
+            studentAnswer
+        );
+
+
+        /*
+            Correct answer
+        */
+
+        const correctAnswer =
+            document.createElement("div");
+
+        correctAnswer.style.marginTop =
+            "8px";
+
+        correctAnswer.innerHTML =
+            "<strong>Correct Answer:</strong> " +
+
+            escapeAIReviewText(
+                getAIOptionText(
+                    item.options,
+                    item.correct_answer
+                )
+            );
+
+
+        box.appendChild(
+            correctAnswer
+        );
+
+
+        /*
+            Result
+        */
+
+        const result =
+            document.createElement("div");
+
+        result.style.marginTop =
+            "10px";
+
+        result.style.fontWeight =
+            "700";
+
+
+        if (item.is_correct) {
+
+            result.innerText =
+                "✓ Correct";
+
+        } else if (
+            item.student_answer === null ||
+            item.student_answer === undefined
+        ) {
+
+            result.innerText =
+                "— Unanswered";
+
+        } else {
+
+            result.innerText =
+                "✗ Incorrect";
+        }
+
+
+        box.appendChild(
+            result
+        );
+
+
+        /*
+            Explanation
+        */
+
+        if (item.explanation) {
+
+            const explanation =
+                document.createElement("div");
+
+            explanation.style.marginTop =
+                "12px";
+
+            explanation.innerHTML =
+                "<strong>Explanation:</strong><br>" +
+
+                escapeAIReviewText(
+                    item.explanation
+                );
+
+
+            box.appendChild(
+                explanation
+            );
+        }
+
+
+        /*
+            Hint
+        */
+
+        if (item.hint) {
+
+            const hint =
+                document.createElement("div");
+
+            hint.style.marginTop =
+                "10px";
+
+            hint.innerHTML =
+                "<strong>💡 Hint:</strong><br>" +
+
+                escapeAIReviewText(
+                    item.hint
+                );
+
+
+            box.appendChild(
+                hint
+            );
+        }
+
+
+        reviewContainer.appendChild(
+            box
+        );
+
+    });
+}
+function getAIOptionText(options, index) {
+
+    if (
+        !options ||
+        index === null ||
+        index === undefined
+    ) {
+
+        return "Not Answered";
+    }
+
+
+    if (
+        index < 0 ||
+        index >= options.length
+    ) {
+
+        return "Unknown Answer";
+    }
+
+
+    return options[index];
+}
+ function escapeAIReviewText(text) {
+
+    if (
+        text === null ||
+        text === undefined
+    ) {
+
+        return "";
+    }
+
+
+    const div =
+        document.createElement("div");
+
+
+    div.textContent =
+        String(text);
+
+
+    return div.innerHTML;
+}
+    
 
 // =====================================================
 // AI LEARNING - DYNAMIC SYLLABUS OPTIONS
@@ -3849,6 +5514,150 @@ document.addEventListener(
 
     }
 );
+function startAIAgain() {
+
+    // Stop previous timer
+    stopAITimer();
+
+
+    // -----------------------------------------
+    // RESET CURRENT ATTEMPT STATE
+    // -----------------------------------------
+
+    aiSessionId = null;
+
+    aiQuestionBank = [];
+
+    aiAnswers = {};
+
+    aiCurrentQuestion = 0;
+
+    aiExamSubmitted = false;
+
+    aiStartedAt = null;
+
+    aiTimeRemaining = 30 * 60;
+
+    aiTimerStarted = false;
+
+
+    // Reset old variables also
+    aiScore = 0;
+
+    adaptiveIndex = 0;
+
+    adaptiveScore = 0;
+
+    aiQuestionNumber = 0;
+
+
+    // -----------------------------------------
+    // HIDE RESULT
+    // -----------------------------------------
+
+    const finalCard =
+        document.getElementById("finalCard");
+
+    if (finalCard) {
+
+        finalCard.classList.add("hidden");
+    }
+
+
+    // -----------------------------------------
+    // CLEAR OLD REVIEW
+    // -----------------------------------------
+
+    const review =
+        document.getElementById(
+            "aiQuestionReview"
+        );
+
+    if (review) {
+
+        review.innerHTML = "";
+    }
+
+
+    // -----------------------------------------
+    // RESET TIMER DISPLAY
+    // -----------------------------------------
+
+    const timer =
+        document.getElementById("aiTimer");
+
+    if (timer) {
+
+        timer.innerText = "30:00";
+    }
+
+
+    // -----------------------------------------
+    // SHOW DIFFICULTY SELECTION
+    // -----------------------------------------
+
+    const adaptiveCard =
+        document.getElementById(
+            "adaptiveCard"
+        );
+
+    if (adaptiveCard) {
+
+        adaptiveCard.classList.remove(
+            "hidden"
+        );
+    }
+
+
+    // -----------------------------------------
+    // HIDE QUESTION CARD
+    // -----------------------------------------
+
+    const questionCard =
+        document.getElementById(
+            "adaptiveQuestionCard"
+        );
+
+    if (questionCard) {
+
+        questionCard.classList.add(
+            "hidden"
+        );
+    }
+
+
+    // -----------------------------------------
+    // HIDE SESSION BAR
+    // -----------------------------------------
+
+    const sessionBar =
+        document.getElementById(
+            "aiSessionBar"
+        );
+
+    if (sessionBar) {
+
+        sessionBar.classList.add(
+            "hidden"
+        );
+    }
+
+
+    // -----------------------------------------
+    // CLEAR QUESTION PALETTE
+    // -----------------------------------------
+
+    const palette =
+        document.getElementById(
+            "aiQuestionPalette"
+        );
+
+    if (palette) {
+
+        palette.innerHTML = "";
+    }
+
+}    
 </script>
 </body>
 </html>
