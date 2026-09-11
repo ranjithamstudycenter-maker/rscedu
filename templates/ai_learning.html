@@ -2734,7 +2734,100 @@ async function selectAILevel(level){
         return;
     }
 
+        // =====================================================
+    // GENERATE / LOAD 25 AI QUESTIONS
+    // =====================================================
 
+    try {
+
+        const batchResponse = await fetch(
+            "/api/ai-question-batch",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    board: board,
+
+                    class_name: className,
+
+                    subject: subject,
+
+                    topic: topic,
+
+                    subtopic: subtopic,
+
+                    difficulty: level,
+
+                    mode: "practice",
+
+                    test_number: 0
+
+                })
+            }
+        );
+
+        const batchData =
+            await batchResponse.json();
+
+        console.log(
+            "AI QUESTION BATCH RESPONSE:",
+            batchData
+        );
+
+        // ---------------------------------------------
+        // HANDLE AI QUESTION GENERATION ERROR
+        // ---------------------------------------------
+
+        if (!batchResponse.ok) {
+
+            alert(
+                batchData.error ||
+                "Unable to generate questions."
+            );
+
+            return;
+        }
+
+        // ---------------------------------------------
+        // VERIFY 25 QUESTIONS
+        // ---------------------------------------------
+
+        const generatedQuestions =
+            batchData.questions || [];
+
+        if (generatedQuestions.length !== 25) {
+
+            alert(
+                "Unable to prepare exactly 25 questions."
+            );
+
+            return;
+        }
+
+        console.log(
+            "25 AI QUESTIONS READY:",
+            generatedQuestions.length
+        );
+
+    }
+    catch(error) {
+
+        console.error(
+            "AI QUESTION GENERATION ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to generate questions. Please try again."
+        );
+
+        return;
+    }
     // =====================================================
     // CREATE / RESUME AI SESSION
     // =====================================================
