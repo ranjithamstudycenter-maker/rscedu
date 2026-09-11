@@ -2820,7 +2820,7 @@ def ai_learning_topics():
         # =================================================
 
         syllabus_context = (
-            syllabus_text[:40000]
+            syllabus_text[:10000]
         )
 
 
@@ -3229,11 +3229,11 @@ Return ONLY the JSON object.
 
     except Exception as e:
 
-        print(
-            "AI TOPICS ERROR:",
-            str(e)
-        )
-
+        print("========================================")
+        print("AI TOPICS ERROR")
+        print("ERROR TYPE:", type(e).__name__)
+        print("ERROR DETAILS:", str(e))
+        print("========================================")
 
         if conn is not None:
 
@@ -3505,7 +3505,8 @@ JSON FORMAT
 
         response = client.responses.create(
             model="gpt-5.6-luna",
-            input=prompt
+            input=prompt,
+            max_output_tokens=2500
         )
 
         result = response.output_text.strip()
@@ -4150,7 +4151,7 @@ def ai_question_batch():
             }), 400
 
         syllabus_context = (
-            syllabus_text[:30000]
+            syllabus_text[:10000]
         )
 
         # -------------------------------------------------
@@ -4306,7 +4307,8 @@ Return ONLY the JSON object.
 
             model="gpt-5.6-luna",
 
-            input=prompt
+            input=prompt,
+            max_output_tokens=2500
 
         )
 
@@ -6492,10 +6494,11 @@ def ai_session_submit():
 
     except Exception as e:
 
-        print(
-            "AI SESSION SUBMIT ERROR:",
-            e
-        )
+        print("========================================")
+        print("AI TOPICS ERROR")
+        print("ERROR TYPE:", type(e).__name__)
+        print("ERROR DETAILS:", str(e))
+        print("========================================")
 
         return jsonify({
 
