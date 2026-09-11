@@ -2532,11 +2532,7 @@ def ai_learning_options():
         }), 500
         
 # =====================================================
-# AI LEARNING - GET / GENERATE TOPICS
-# =====================================================
-
-# =====================================================
-# AI LEARNING - GET TOPICS FROM DATABASE ONLY
+# AI LEARNING - AI GENERATED CHAPTERS + SUBTOPICS
 # =====================================================
 
 @app.route("/api/ai-learning-topics", methods=["POST"])
@@ -2579,7 +2575,7 @@ def ai_learning_topics():
 
 
         # =================================================
-        # 3. DATABASE
+        # 3. DATABASE CONNECTION
         # =================================================
 
         conn = sqlite3.connect(
@@ -2592,7 +2588,7 @@ def ai_learning_topics():
 
 
         # =================================================
-        # 4. MAKE SURE CACHE TABLE EXISTS
+        # 4. MAKE SURE TOPIC CACHE TABLE EXISTS
         # =================================================
 
         c.execute("""
@@ -2619,7 +2615,7 @@ def ai_learning_topics():
 
 
         # =================================================
-        # 5. CHECK DATABASE CACHE
+        # 5. CHECK EXISTING AI GENERATED TOPICS
         # =================================================
 
         c.execute("""
@@ -2640,7 +2636,8 @@ def ai_learning_topics():
 
 
         # =================================================
-        # 6. CACHE FOUND
+        # 6. IF TOPICS ALREADY EXIST
+        #    → DO NOT CALL AI AGAIN
         # =================================================
 
         if cached_row:
@@ -2656,11 +2653,6 @@ def ai_learning_topics():
                     []
                 )
 
-
-                # -----------------------------------------
-                # Validate topics
-                # -----------------------------------------
-
                 valid_topics = []
 
                 if isinstance(topics, list):
@@ -2673,7 +2665,6 @@ def ai_learning_topics():
                         ):
                             continue
 
-
                         topic_name = str(
                             item.get(
                                 "topic",
@@ -2681,23 +2672,19 @@ def ai_learning_topics():
                             )
                         ).strip()
 
-
                         subtopics = item.get(
                             "subtopics",
                             []
                         )
 
-
                         if not topic_name:
                             continue
-
 
                         if not isinstance(
                             subtopics,
                             list
                         ):
                             subtopics = []
-
 
                         clean_subtopics = []
 
@@ -2713,7 +2700,6 @@ def ai_learning_topics():
                                     subtopic
                                 )
 
-
                         valid_topics.append({
 
                             "topic":
@@ -2725,14 +2711,10 @@ def ai_learning_topics():
                         })
 
 
-                # -----------------------------------------
-                # RETURN DATABASE TOPICS
-                # -----------------------------------------
-
                 if valid_topics:
 
                     print(
-                        "AI TOPICS: DATABASE CACHE"
+                        "AI TOPICS: DATABASE CACHE USED"
                     )
 
                     conn.close()
@@ -2740,11 +2722,13 @@ def ai_learning_topics():
 
                     return jsonify({
 
-                        "success":
-                            True,
+                        "success": True,
 
                         "source":
                             "database",
+
+                        "ai_generated":
+                            True,
 
                         "topics":
                             valid_topics
@@ -2759,247 +2743,495 @@ def ai_learning_topics():
                     e
                 )
 
-                  # =================================================
-        # 6B. DEFAULT CBSE CLASS 10 MATHS TOPICS
-        # =================================================
 
-        if (
-            board == "CBSE"
-            and class_name == "Class 10"
-            and subject == "Maths"
-        ):
-
-            default_topics = {
-                "topics": [
-
-                    {
-                        "topic": "Real Numbers",
-                        "subtopics": [
-                            "Fundamental Theorem of Arithmetic",
-                            "Irrationality of √2, √3 and √5"
-                        ]
-                    },
-
-                    {
-                        "topic": "Polynomials",
-                        "subtopics": [
-                            "Zeros of a Polynomial",
-                            "Relationship between Zeros and Coefficients"
-                        ]
-                    },
-
-                    {
-                        "topic": "Pair of Linear Equations in Two Variables",
-                        "subtopics": [
-                            "Graphical Solution",
-                            "Consistency and Inconsistency",
-                            "Conditions for Number of Solutions",
-                            "Substitution Method",
-                            "Elimination Method",
-                            "Situational Problems"
-                        ]
-                    },
-
-                    {
-                        "topic": "Quadratic Equations",
-                        "subtopics": [
-                            "Standard Form",
-                            "Factorisation",
-                            "Quadratic Formula",
-                            "Discriminant",
-                            "Nature of Roots",
-                            "Situational Problems"
-                        ]
-                    },
-
-                    {
-                        "topic": "Arithmetic Progressions",
-                        "subtopics": [
-                            "nth Term",
-                            "Sum of First n Terms",
-                            "Applications of Arithmetic Progressions"
-                        ]
-                    },
-
-                    {
-                        "topic": "Coordinate Geometry",
-                        "subtopics": [
-                            "Distance Formula",
-                            "Section Formula",
-                            "Internal Division"
-                        ]
-                    },
-
-                    {
-                        "topic": "Triangles",
-                        "subtopics": [
-                            "Similarity of Triangles",
-                            "Basic Proportionality Theorem",
-                            "Converse of BPT",
-                            "Criteria for Similarity"
-                        ]
-                    },
-
-                    {
-                        "topic": "Circles",
-                        "subtopics": [
-                            "Tangents to a Circle",
-                            "Tangent at the Point of Contact",
-                            "Tangent Perpendicular to Radius",
-                            "Equal Tangents"
-                        ]
-                    },
-
-                    {
-                        "topic": "Introduction to Trigonometry",
-                        "subtopics": [
-                            "Trigonometric Ratios",
-                            "Trigonometric Ratios of 30°, 45° and 60°",
-                            "Relationships Between Trigonometric Ratios"
-                        ]
-                    },
-
-                    {
-                        "topic": "Trigonometric Identities",
-                        "subtopics": [
-                            "sin²A + cos²A = 1",
-                            "Simple Trigonometric Identities"
-                        ]
-                    },
-
-                    {
-                        "topic": "Heights and Distances",
-                        "subtopics": [
-                            "Angle of Elevation",
-                            "Angle of Depression",
-                            "Problems using 30°, 45° and 60°"
-                        ]
-                    },
-
-                    {
-                        "topic": "Areas Related to Circles",
-                        "subtopics": [
-                            "Circumference",
-                            "Area of Sector",
-                            "Area of Segment"
-                        ]
-                    },
-
-                    {
-                        "topic": "Surface Areas and Volumes",
-                        "subtopics": [
-                            "Combination of Solids",
-                            "Cube and Cuboid",
-                            "Cylinder",
-                            "Cone",
-                            "Sphere",
-                            "Hemisphere"
-                        ]
-                    },
-
-                    {
-                        "topic": "Statistics and Probability",
-                        "subtopics": [
-                            "Mean of Grouped Data",
-                            "Median of Grouped Data",
-                            "Mode of Grouped Data",
-                            "Classical Probability",
-                            "Simple Events"
-                        ]
-                    }
-                ]
-            }
-
-            # Save default topics permanently in database
-            c.execute("""
-                INSERT OR REPLACE INTO ai_syllabus_topics
-                (
-                    board,
-                    class_name,
-                    subject,
-                    topics_json,
-                    created_at
-                )
-                VALUES (?, ?, ?, ?, ?)
-            """, (
-                board,
-                class_name,
-                subject,
-                json.dumps(
-                    default_topics,
-                    ensure_ascii=False
-                ),
-                datetime.now().strftime(
-                    "%Y-%m-%d %H:%M:%S"
-                )
-            ))
-
-            conn.commit()
-
-            print(
-                "AI TOPICS: DEFAULT CBSE CLASS 10 MATHS LOADED"
-            )
-
-            conn.close()
-            conn = None
-
-            return jsonify({
-                "success": True,
-                "source": "default_database_seed",
-                "topics": default_topics["topics"]
-            })
-
-     
         # =================================================
         # 7. CACHE NOT FOUND
+        #    → NOW AI WILL GENERATE TOPICS
         # =================================================
 
         print(
             "AI TOPICS: CACHE NOT FOUND"
         )
 
+        print(
+            "AI TOPICS: STARTING OPENAI GENERATION"
+        )
 
-        if conn is not None:
+
+        # =================================================
+        # 8. GET UPLOADED SYLLABUS
+        # =================================================
+
+        c.execute("""
+            SELECT syllabus_text
+            FROM syllabi
+            WHERE board=?
+            AND class_name=?
+            AND subject=?
+            ORDER BY id DESC
+            LIMIT 1
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+        syllabus_row = c.fetchone()
+
+
+        if not syllabus_row:
 
             conn.close()
-
             conn = None
 
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Syllabus not found for the selected Board, Class and Subject."
+
+            }), 404
+
+
+        syllabus_text = (
+            syllabus_row["syllabus_text"]
+            or ""
+        )
+
+
+        if not syllabus_text.strip():
+
+            conn.close()
+            conn = None
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Uploaded syllabus is empty."
+
+            }), 400
+
 
         # =================================================
-        # IMPORTANT
+        # 9. LIMIT SYLLABUS SIZE
         # =================================================
-        # DO NOT CALL OPENAI HERE.
-        #
-        # Topics must be initialized separately.
-        #
-        # This prevents student topic requests from
-        # consuming OpenAI TPM.
+
+        syllabus_context = (
+            syllabus_text[:40000]
+        )
+
+
+        # =================================================
+        # 10. AI PROMPT
+        # =================================================
+
+        prompt = f"""
+
+You are an expert school curriculum specialist,
+Mathematics teacher and syllabus analyst.
+
+Your task is to analyse the supplied official
+school syllabus and generate a COMPLETE and
+STRUCTURED list of Chapters/Topics and their
+Subtopics for an online learning platform.
+
+-----------------------------------------
+SELECTED ACADEMIC INFORMATION
+-----------------------------------------
+
+Board:
+{board}
+
+Class:
+{class_name}
+
+Subject:
+{subject}
+
+-----------------------------------------
+MAIN OBJECTIVE
+-----------------------------------------
+
+Read the supplied syllabus carefully.
+
+Extract ALL relevant chapters, units,
+topics and subtopics that students should
+study for the selected Board, Class and Subject.
+
+The output will be used directly in a student
+learning website.
+
+Therefore the chapter structure must be:
+
+Chapter / Topic
+    ↓
+Subtopics
+
+-----------------------------------------
+IMPORTANT RULES
+-----------------------------------------
+
+1. Use the supplied syllabus as the PRIMARY
+   academic source.
+
+2. Include ALL major chapters/topics that
+   are present in the syllabus.
+
+3. Do NOT unnecessarily omit chapters.
+
+4. Do NOT create unrelated chapters.
+
+5. Do NOT introduce concepts that are clearly
+   outside the supplied syllabus.
+
+6. Preserve the academic meaning and terminology
+   of the syllabus.
+
+7. Break large chapters into meaningful
+   student-friendly subtopics.
+
+8. If a chapter contains multiple concepts,
+   include each important concept as a separate
+   subtopic.
+
+9. Do not create meaningless or duplicate
+   subtopics.
+
+10. Avoid duplicate chapter names.
+
+11. Avoid duplicate subtopic names within
+    the same chapter.
+
+12. The structure should be comprehensive enough
+    for students to practise individual concepts.
+
+13. For Mathematics, include important areas such as
+    definitions, theorems, formulas, methods,
+    applications and problem-solving concepts
+    whenever they are explicitly supported by
+    the syllabus.
+
+14. Do not generate questions.
+    ONLY generate Chapters and Subtopics.
+
+15. Return ONLY valid JSON.
+
+16. Do NOT use Markdown.
+
+17. Do NOT use code fences.
+
+-----------------------------------------
+REQUIRED JSON FORMAT
+-----------------------------------------
+
+{{
+    "topics": [
+        {{
+            "topic": "Chapter Name",
+            "subtopics": [
+                "Subtopic 1",
+                "Subtopic 2",
+                "Subtopic 3"
+            ]
+        }}
+    ]
+}}
+
+-----------------------------------------
+SUPPLIED SYLLABUS
+-----------------------------------------
+
+{syllabus_context}
+
+-----------------------------------------
+FINAL INSTRUCTION
+-----------------------------------------
+
+Analyse the complete supplied syllabus and
+return the most complete accurate chapter and
+subtopic structure possible.
+
+Return ONLY the JSON object.
+"""
+
+
+        # =================================================
+        # 11. CLOSE DB BEFORE AI CALL
+        # =================================================
+
+        conn.close()
+        conn = None
+
+
+        # =================================================
+        # 12. OPENAI AI GENERATION
+        # =================================================
+
+        print(
+            "AI TOPICS: CALLING GPT-5.6-LUNA"
+        )
+
+        response = client.responses.create(
+
+            model="gpt-5.6-luna",
+
+            input=prompt
+
+        )
+
+
+        result = (
+            response.output_text
+            .strip()
+        )
+
+
+        print(
+            "AI TOPICS: RESPONSE RECEIVED"
+        )
+
+
+        # =================================================
+        # 13. REMOVE CODE FENCES IF ANY
+        # =================================================
+
+        if result.startswith("```"):
+
+            result = result.replace(
+                "```json",
+                ""
+            )
+
+            result = result.replace(
+                "```",
+                ""
+            )
+
+            result = result.strip()
+
+
+        # =================================================
+        # 14. PARSE JSON
+        # =================================================
+
+        topic_data = json.loads(
+            result
+        )
+
+
+        topics = topic_data.get(
+            "topics",
+            []
+        )
+
+
+        # =================================================
+        # 15. VALIDATE AI RESPONSE
+        # =================================================
+
+        if not isinstance(
+            topics,
+            list
+        ):
+
+            raise ValueError(
+                "AI returned invalid topics structure."
+            )
+
+
+        valid_topics = []
+
+
+        for item in topics:
+
+            if not isinstance(
+                item,
+                dict
+            ):
+                continue
+
+
+            topic_name = str(
+                item.get(
+                    "topic",
+                    ""
+                )
+            ).strip()
+
+
+            subtopics = item.get(
+                "subtopics",
+                []
+            )
+
+
+            if not topic_name:
+                continue
+
+
+            if not isinstance(
+                subtopics,
+                list
+            ):
+
+                subtopics = []
+
+
+            clean_subtopics = []
+
+
+            for subtopic in subtopics:
+
+                subtopic = str(
+                    subtopic
+                ).strip()
+
+
+                if not subtopic:
+                    continue
+
+
+                if subtopic.lower() in [
+                    x.lower()
+                    for x in clean_subtopics
+                ]:
+                    continue
+
+
+                clean_subtopics.append(
+                    subtopic
+                )
+
+
+            valid_topics.append({
+
+                "topic":
+                    topic_name,
+
+                "subtopics":
+                    clean_subtopics
+
+            })
+
+
+        # =================================================
+        # 16. FINAL VALIDATION
+        # =================================================
+
+        if len(valid_topics) == 0:
+
+            raise ValueError(
+                "AI did not generate any valid chapters."
+            )
+
+
+        # =================================================
+        # 17. SAVE AI GENERATED TOPICS
+        # =================================================
+
+        conn = sqlite3.connect(
+            "students.db"
+        )
+
+        c = conn.cursor()
+
+
+        # Remove old cache if any
+        c.execute("""
+            DELETE FROM ai_syllabus_topics
+            WHERE board=?
+            AND class_name=?
+            AND subject=?
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+
+        # Insert NEW AI generated topics
+        c.execute("""
+            INSERT INTO ai_syllabus_topics
+            (
+                board,
+                class_name,
+                subject,
+                topics_json,
+                created_at
+            )
+            VALUES (?, ?, ?, ?, ?)
+        """, (
+            board,
+            class_name,
+            subject,
+
+            json.dumps(
+                {
+                    "topics":
+                        valid_topics
+                },
+                ensure_ascii=False
+            ),
+
+            datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+        ))
+
+
+        conn.commit()
+
+
+        print(
+            "AI TOPICS: SAVED TO DATABASE"
+        )
+
+        print(
+            "AI TOPICS: CHAPTER COUNT =",
+            len(valid_topics)
+        )
+
+
+        # =================================================
+        # 18. CLOSE DATABASE
+        # =================================================
+
+        conn.close()
+        conn = None
+
+
+        # =================================================
+        # 19. RETURN AI GENERATED TOPICS
         # =================================================
 
         return jsonify({
 
-            "success":
-                False,
+            "success": True,
 
             "source":
-                "database",
+                "openai",
 
-            "error":
-                "Topics are not initialized yet for the selected Board, Class and Subject."
+            "ai_generated":
+                True,
 
-        }), 404
+            "topics":
+                valid_topics
+
+        })
 
 
     # =====================================================
-    # ERROR HANDLING
+    # RATE LIMIT / OPENAI ERROR
     # =====================================================
 
     except Exception as e:
 
         print(
-            "AI LEARNING TOPICS ERROR:",
-            e
+            "AI TOPICS ERROR:",
+            str(e)
         )
 
 
@@ -3014,214 +3246,46 @@ def ai_learning_topics():
                 pass
 
 
+        error_text = str(e)
+
+
+        # -----------------------------------------
+        # RATE LIMIT
+        # -----------------------------------------
+
+        if (
+            "429" in error_text
+            or
+            "rate limit" in error_text.lower()
+            or
+            "tokens per min" in error_text.lower()
+        ):
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "AI rate limit reached. Please try again later."
+
+            }), 429
+
+
+        # -----------------------------------------
+        # GENERAL ERROR
+        # -----------------------------------------
+
         return jsonify({
 
-            "success":
-                False,
+            "success": False,
 
             "error":
-                str(e)
+                "AI topic generation failed: "
+                + error_text
 
         }), 500
+        
 
-# =====================================================
-# TEMPORARY - INITIALIZE CBSE CLASS 10 MATHS TOPICS
-# =====================================================
-
-@app.route("/admin/init-cbse-maths-topics")
-def init_cbse_maths_topics():
-
-    try:
-
-        conn = sqlite3.connect("students.db")
-        c = conn.cursor()
-
-        topics = [
-            {
-                "topic": "Real Numbers",
-                "subtopics": [
-                    "Fundamental Theorem of Arithmetic",
-                    "Irrationality of √2, √3 and √5"
-                ]
-            },
-            {
-                "topic": "Polynomials",
-                "subtopics": [
-                    "Zeros of a polynomial",
-                    "Relationship between zeros and coefficients of quadratic polynomials"
-                ]
-            },
-            {
-                "topic": "Pair of Linear Equations in Two Variables",
-                "subtopics": [
-                    "Graphical solution",
-                    "Consistency and inconsistency",
-                    "Conditions for number of solutions",
-                    "Substitution method",
-                    "Elimination method",
-                    "Simple situational problems"
-                ]
-            },
-            {
-                "topic": "Quadratic Equations",
-                "subtopics": [
-                    "Standard form",
-                    "Factorization",
-                    "Quadratic formula",
-                    "Discriminant",
-                    "Nature of roots",
-                    "Situational problems"
-                ]
-            },
-            {
-                "topic": "Arithmetic Progressions",
-                "subtopics": [
-                    "Nth term",
-                    "Sum of first n terms",
-                    "Applications"
-                ]
-            },
-            {
-                "topic": "Coordinate Geometry",
-                "subtopics": [
-                    "Distance formula",
-                    "Section formula",
-                    "Internal division"
-                ]
-            },
-            {
-                "topic": "Triangles",
-                "subtopics": [
-                    "Similarity of triangles",
-                    "Basic Proportionality Theorem",
-                    "Converse of Basic Proportionality Theorem",
-                    "Similarity criteria"
-                ]
-            },
-            {
-                "topic": "Circles",
-                "subtopics": [
-                    "Tangents",
-                    "Tangent at the point of contact",
-                    "Tangent perpendicular to radius",
-                    "Equal tangents from an external point"
-                ]
-            },
-            {
-                "topic": "Introduction to Trigonometry",
-                "subtopics": [
-                    "Trigonometric ratios",
-                    "Ratios of 30°, 45° and 60°",
-                    "Relationships between trigonometric ratios"
-                ]
-            },
-            {
-                "topic": "Trigonometric Identities",
-                "subtopics": [
-                    "sin²A + cos²A = 1",
-                    "Simple trigonometric identities"
-                ]
-            },
-            {
-                "topic": "Heights and Distances",
-                "subtopics": [
-                    "Angle of elevation",
-                    "Angle of depression",
-                    "Problems involving 30°, 45° and 60°"
-                ]
-            },
-            {
-                "topic": "Areas Related to Circles",
-                "subtopics": [
-                    "Circumference",
-                    "Area of sector",
-                    "Area of segment",
-                    "Sector and segment problems"
-                ]
-            },
-            {
-                "topic": "Surface Areas and Volumes",
-                "subtopics": [
-                    "Combination of solids",
-                    "Cube and cuboid",
-                    "Cylinder and cone",
-                    "Sphere and hemisphere"
-                ]
-            },
-            {
-                "topic": "Statistics and Probability",
-                "subtopics": [
-                    "Mean of grouped data",
-                    "Median of grouped data",
-                    "Mode of grouped data",
-                    "Classical probability",
-                    "Simple events"
-                ]
-            }
-        ]
-
-        c.execute("""
-            CREATE TABLE IF NOT EXISTS ai_syllabus_topics (
-                id INTEGER PRIMARY KEY AUTOINCREMENT,
-                board TEXT NOT NULL,
-                class_name TEXT NOT NULL,
-                subject TEXT NOT NULL,
-                topics_json TEXT NOT NULL,
-                created_at TEXT
-            )
-        """)
-
-        c.execute("""
-            DELETE FROM ai_syllabus_topics
-            WHERE board=?
-            AND class_name=?
-            AND subject=?
-        """, (
-            "CBSE",
-            "Class 10",
-            "Maths"
-        ))
-
-        c.execute("""
-            INSERT INTO ai_syllabus_topics
-            (
-                board,
-                class_name,
-                subject,
-                topics_json,
-                created_at
-            )
-            VALUES (?, ?, ?, ?, datetime('now'))
-        """, (
-            "CBSE",
-            "Class 10",
-            "Maths",
-            json.dumps(
-                {"topics": topics},
-                ensure_ascii=False
-            )
-        ))
-
-        conn.commit()
-        conn.close()
-
-        return """
-        <h2>✅ CBSE Class 10 Maths Topics Initialized</h2>
-        <p>14 topics inserted successfully.</p>
-        <p>You can now go to Practice → Mathematics.</p>
-        """
-
-    except Exception as e:
-
-        print(
-            "TOPIC INITIALIZATION ERROR:",
-            e
-        )
-
-        return f"""
-        <h2>❌ Error</h2>
-        <p>{str(e)}</p>
-        """, 500
         
 @app.route("/api/ai-question", methods=["POST"])
 def ai_question():
