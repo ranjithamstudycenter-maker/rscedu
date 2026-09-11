@@ -2978,7 +2978,8 @@ Return ONLY the JSON object.
 
             model="gpt-5.6-luna",
 
-            input=prompt
+            input=prompt,
+            max_output_tokens=1500
 
         )
 
