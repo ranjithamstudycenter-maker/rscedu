@@ -2759,7 +2759,197 @@ def ai_learning_topics():
                     e
                 )
 
+                  # =================================================
+        # 6B. DEFAULT CBSE CLASS 10 MATHS TOPICS
+        # =================================================
 
+        if (
+            board == "CBSE"
+            and class_name == "Class 10"
+            and subject == "Maths"
+        ):
+
+            default_topics = {
+                "topics": [
+
+                    {
+                        "topic": "Real Numbers",
+                        "subtopics": [
+                            "Fundamental Theorem of Arithmetic",
+                            "Irrationality of √2, √3 and √5"
+                        ]
+                    },
+
+                    {
+                        "topic": "Polynomials",
+                        "subtopics": [
+                            "Zeros of a Polynomial",
+                            "Relationship between Zeros and Coefficients"
+                        ]
+                    },
+
+                    {
+                        "topic": "Pair of Linear Equations in Two Variables",
+                        "subtopics": [
+                            "Graphical Solution",
+                            "Consistency and Inconsistency",
+                            "Conditions for Number of Solutions",
+                            "Substitution Method",
+                            "Elimination Method",
+                            "Situational Problems"
+                        ]
+                    },
+
+                    {
+                        "topic": "Quadratic Equations",
+                        "subtopics": [
+                            "Standard Form",
+                            "Factorisation",
+                            "Quadratic Formula",
+                            "Discriminant",
+                            "Nature of Roots",
+                            "Situational Problems"
+                        ]
+                    },
+
+                    {
+                        "topic": "Arithmetic Progressions",
+                        "subtopics": [
+                            "nth Term",
+                            "Sum of First n Terms",
+                            "Applications of Arithmetic Progressions"
+                        ]
+                    },
+
+                    {
+                        "topic": "Coordinate Geometry",
+                        "subtopics": [
+                            "Distance Formula",
+                            "Section Formula",
+                            "Internal Division"
+                        ]
+                    },
+
+                    {
+                        "topic": "Triangles",
+                        "subtopics": [
+                            "Similarity of Triangles",
+                            "Basic Proportionality Theorem",
+                            "Converse of BPT",
+                            "Criteria for Similarity"
+                        ]
+                    },
+
+                    {
+                        "topic": "Circles",
+                        "subtopics": [
+                            "Tangents to a Circle",
+                            "Tangent at the Point of Contact",
+                            "Tangent Perpendicular to Radius",
+                            "Equal Tangents"
+                        ]
+                    },
+
+                    {
+                        "topic": "Introduction to Trigonometry",
+                        "subtopics": [
+                            "Trigonometric Ratios",
+                            "Trigonometric Ratios of 30°, 45° and 60°",
+                            "Relationships Between Trigonometric Ratios"
+                        ]
+                    },
+
+                    {
+                        "topic": "Trigonometric Identities",
+                        "subtopics": [
+                            "sin²A + cos²A = 1",
+                            "Simple Trigonometric Identities"
+                        ]
+                    },
+
+                    {
+                        "topic": "Heights and Distances",
+                        "subtopics": [
+                            "Angle of Elevation",
+                            "Angle of Depression",
+                            "Problems using 30°, 45° and 60°"
+                        ]
+                    },
+
+                    {
+                        "topic": "Areas Related to Circles",
+                        "subtopics": [
+                            "Circumference",
+                            "Area of Sector",
+                            "Area of Segment"
+                        ]
+                    },
+
+                    {
+                        "topic": "Surface Areas and Volumes",
+                        "subtopics": [
+                            "Combination of Solids",
+                            "Cube and Cuboid",
+                            "Cylinder",
+                            "Cone",
+                            "Sphere",
+                            "Hemisphere"
+                        ]
+                    },
+
+                    {
+                        "topic": "Statistics and Probability",
+                        "subtopics": [
+                            "Mean of Grouped Data",
+                            "Median of Grouped Data",
+                            "Mode of Grouped Data",
+                            "Classical Probability",
+                            "Simple Events"
+                        ]
+                    }
+                ]
+            }
+
+            # Save default topics permanently in database
+            c.execute("""
+                INSERT OR REPLACE INTO ai_syllabus_topics
+                (
+                    board,
+                    class_name,
+                    subject,
+                    topics_json,
+                    created_at
+                )
+                VALUES (?, ?, ?, ?, ?)
+            """, (
+                board,
+                class_name,
+                subject,
+                json.dumps(
+                    default_topics,
+                    ensure_ascii=False
+                ),
+                datetime.now().strftime(
+                    "%Y-%m-%d %H:%M:%S"
+                )
+            ))
+
+            conn.commit()
+
+            print(
+                "AI TOPICS: DEFAULT CBSE CLASS 10 MATHS LOADED"
+            )
+
+            conn.close()
+            conn = None
+
+            return jsonify({
+                "success": True,
+                "source": "default_database_seed",
+                "topics": default_topics["topics"]
+            })
+
+     
         # =================================================
         # 7. CACHE NOT FOUND
         # =================================================
