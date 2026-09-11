@@ -3254,23 +3254,17 @@ Return ONLY the JSON object.
         # RATE LIMIT
         # -----------------------------------------
 
-        if (
+       if (
             "429" in error_text
             or
             "rate limit" in error_text.lower()
             or
             "tokens per min" in error_text.lower()
         ):
-
             return jsonify({
-
                 "success": False,
-
-                "error":
-                    "AI rate limit reached. Please try again later."
-
+                "error": "OPENAI ERROR: " + error_text
             }), 429
-
 
         # -----------------------------------------
         # GENERAL ERROR
