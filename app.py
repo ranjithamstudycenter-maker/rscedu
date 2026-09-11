@@ -3249,12 +3249,11 @@ Return ONLY the JSON object.
 
         error_text = str(e)
 
-
         # -----------------------------------------
         # RATE LIMIT
         # -----------------------------------------
 
-       if (
+        if (
             "429" in error_text
             or
             "rate limit" in error_text.lower()
@@ -3265,7 +3264,7 @@ Return ONLY the JSON object.
                 "success": False,
                 "error": "OPENAI ERROR: " + error_text
             }), 429
-
+            
         # -----------------------------------------
         # GENERAL ERROR
         # -----------------------------------------
