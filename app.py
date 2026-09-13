@@ -2416,6 +2416,466 @@ def delete_syllabus(syllabus_id):
         return jsonify({
             "error": str(e)
         }), 500
+# =====================================================
+# ADMIN - PRACTICE QUESTION BANK
+# =====================================================
+
+@app.route("/admin/practice-questions", methods=["GET"])
+def admin_practice_questions():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+        board = request.args.get("board", "").strip()
+        class_name = request.args.get("class_name", "").strip()
+        subject = request.args.get("subject", "").strip()
+        topic = request.args.get("topic", "").strip()
+        subtopic = request.args.get("subtopic", "").strip()
+        difficulty = request.args.get("difficulty", "").strip().lower()
+
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        query = """
+            SELECT
+                id,
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic,
+                difficulty,
+                question,
+                option_a,
+                option_b,
+                option_c,
+                option_d,
+                correct_answer,
+                explanation,
+                hint,
+                marks,
+                active,
+                created_at
+            FROM practice_questions
+            WHERE 1=1
+        """
+
+        params = []
+
+        if board:
+            query += " AND board=?"
+            params.append(board)
+
+        if class_name:
+            query += " AND class_name=?"
+            params.append(class_name)
+
+        if subject:
+            query += " AND subject=?"
+            params.append(subject)
+
+        if topic:
+            query += " AND topic=?"
+            params.append(topic)
+
+        if subtopic:
+            query += " AND subtopic=?"
+            params.append(subtopic)
+
+        if difficulty:
+            query += " AND difficulty=?"
+            params.append(difficulty)
+
+        query += " ORDER BY id DESC"
+
+        c.execute(query, params)
+
+        rows = c.fetchall()
+
+        questions = []
+
+        for row in rows:
+            questions.append({
+                "id": row["id"],
+                "board": row["board"],
+                "class_name": row["class_name"],
+                "subject": row["subject"],
+                "topic": row["topic"],
+                "subtopic": row["subtopic"],
+                "difficulty": row["difficulty"],
+                "question": row["question"],
+                "option_a": row["option_a"],
+                "option_b": row["option_b"],
+                "option_c": row["option_c"],
+                "option_d": row["option_d"],
+                "correct_answer": row["correct_answer"],
+                "explanation": row["explanation"] or "",
+                "hint": row["hint"] or "",
+                "marks": row["marks"],
+                "active": bool(row["active"]),
+                "created_at": row["created_at"]
+            })
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "questions": questions,
+            "count": len(questions)
+        })
+
+    except Exception as e:
+
+        print("ADMIN PRACTICE QUESTIONS ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# =====================================================
+# ADMIN - ADD PRACTICE QUESTION
+# =====================================================
+
+@app.route("/admin/practice-questions/add", methods=["POST"])
+def add_practice_question():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        data = request.get_json() or {}
+
+        board = data.get("board", "").strip()
+        class_name = data.get("class_name", "").strip()
+        subject = data.get("subject", "").strip()
+        topic = data.get("topic", "").strip()
+        subtopic = data.get("subtopic", "").strip()
+        difficulty = data.get("difficulty", "").strip().lower()
+
+        question = data.get("question", "").strip()
+
+        option_a = data.get("option_a", "").strip()
+        option_b = data.get("option_b", "").strip()
+        option_c = data.get("option_c", "").strip()
+        option_d = data.get("option_d", "").strip()
+
+        correct_answer = data.get(
+            "correct_answer",
+            ""
+        ).strip().upper()
+
+        explanation = data.get(
+            "explanation",
+            ""
+        ).strip()
+
+        hint = data.get(
+            "hint",
+            ""
+        ).strip()
+
+        # =================================================
+        # VALIDATION
+        # =================================================
+
+        if not board:
+            return jsonify({
+                "success": False,
+                "error": "Board is required."
+            }), 400
+
+        if not class_name:
+            return jsonify({
+                "success": False,
+                "error": "Class is required."
+            }), 400
+
+        if not subject:
+            return jsonify({
+                "success": False,
+                "error": "Subject is required."
+            }), 400
+
+        if not topic:
+            return jsonify({
+                "success": False,
+                "error": "Chapter / Topic is required."
+            }), 400
+
+        if not subtopic:
+            return jsonify({
+                "success": False,
+                "error": "Subtopic is required."
+            }), 400
+
+        if difficulty not in [
+            "easy",
+            "medium",
+            "hard"
+        ]:
+            return jsonify({
+                "success": False,
+                "error": "Difficulty must be Easy, Medium or Hard."
+            }), 400
+
+        if not question:
+            return jsonify({
+                "success": False,
+                "error": "Question is required."
+            }), 400
+
+        if not option_a or not option_b or not option_c or not option_d:
+            return jsonify({
+                "success": False,
+                "error": "All four options are required."
+            }), 400
+
+        if correct_answer not in [
+            "A",
+            "B",
+            "C",
+            "D"
+        ]:
+            return jsonify({
+                "success": False,
+                "error": "Correct answer must be A, B, C or D."
+            }), 400
+
+        # =================================================
+        # SAVE QUESTION
+        # =================================================
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        c.execute("""
+            INSERT INTO practice_questions
+            (
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic,
+                difficulty,
+                question,
+                option_a,
+                option_b,
+                option_c,
+                option_d,
+                correct_answer,
+                explanation,
+                hint,
+                marks,
+                active
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty,
+            question,
+            option_a,
+            option_b,
+            option_c,
+            option_d,
+            correct_answer,
+            explanation,
+            hint,
+            2,
+            1
+        ))
+
+        question_id = c.lastrowid
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "message": "Practice question added successfully.",
+            "question_id": question_id
+        })
+
+    except Exception as e:
+
+        print("ADD PRACTICE QUESTION ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# =====================================================
+# ADMIN - DELETE PRACTICE QUESTION
+# =====================================================
+
+@app.route(
+    "/admin/practice-questions/delete/<int:question_id>",
+    methods=["POST"]
+)
+def delete_practice_question(question_id):
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT id
+            FROM practice_questions
+            WHERE id=?
+        """, (question_id,))
+
+        row = c.fetchone()
+
+        if not row:
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error": "Question not found."
+            }), 404
+
+        c.execute("""
+            DELETE FROM practice_questions
+            WHERE id=?
+        """, (question_id,))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "message": "Practice question deleted successfully."
+        })
+
+    except Exception as e:
+
+        print("DELETE PRACTICE QUESTION ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# =====================================================
+# ADMIN - PRACTICE QUESTION BANK COUNTS
+# =====================================================
+
+@app.route("/admin/practice-question-count")
+def practice_question_count():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        board = request.args.get("board", "").strip()
+        class_name = request.args.get("class_name", "").strip()
+        subject = request.args.get("subject", "").strip()
+        topic = request.args.get("topic", "").strip()
+        subtopic = request.args.get("subtopic", "").strip()
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        query = """
+            SELECT difficulty, COUNT(*)
+            FROM practice_questions
+            WHERE active=1
+        """
+
+        params = []
+
+        if board:
+            query += " AND board=?"
+            params.append(board)
+
+        if class_name:
+            query += " AND class_name=?"
+            params.append(class_name)
+
+        if subject:
+            query += " AND subject=?"
+            params.append(subject)
+
+        if topic:
+            query += " AND topic=?"
+            params.append(topic)
+
+        if subtopic:
+            query += " AND subtopic=?"
+            params.append(subtopic)
+
+        query += """
+            GROUP BY difficulty
+        """
+
+        c.execute(query, params)
+
+        rows = c.fetchall()
+
+        result = {
+            "easy": 0,
+            "medium": 0,
+            "hard": 0,
+            "total": 0
+        }
+
+        for difficulty, count in rows:
+
+            difficulty = (
+                difficulty or ""
+            ).lower()
+
+            if difficulty in result:
+                result[difficulty] = count
+
+            result["total"] += count
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "counts": result
+        })
+
+    except Exception as e:
+
+        print(
+            "PRACTICE QUESTION COUNT ERROR:",
+            e
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
         
 @app.route("/admin/students")
 def admin_students():
