@@ -269,10 +269,360 @@ def init_db():
         """)
     except sqlite3.OperationalError:
         pass
-    
+        # =====================================================
+    # RSC PRACTICE + MOCK TEST DATABASE
+    # =====================================================
+
+    # -----------------------------------------------------
+    # 1. PRACTICE QUESTION BANK
+    # -----------------------------------------------------
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS practice_questions (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+
+        topic TEXT NOT NULL,
+        subtopic TEXT NOT NULL,
+
+        difficulty TEXT NOT NULL,
+
+        question TEXT NOT NULL,
+
+        option_a TEXT NOT NULL,
+        option_b TEXT NOT NULL,
+        option_c TEXT NOT NULL,
+        option_d TEXT NOT NULL,
+
+        correct_answer TEXT NOT NULL,
+
+        explanation TEXT DEFAULT '',
+        hint TEXT DEFAULT '',
+
+        marks INTEGER DEFAULT 2,
+
+        active INTEGER DEFAULT 1,
+
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+    )
+    """)
+
+
+    # -----------------------------------------------------
+    # 2. MOCK TEST CONFIGURATION
+    # -----------------------------------------------------
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS mock_tests (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        mock_test_no INTEGER NOT NULL,
+
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+
+        test_name TEXT NOT NULL,
+
+        syllabus_scope TEXT DEFAULT '',
+
+        total_questions INTEGER DEFAULT 50,
+
+        total_marks INTEGER DEFAULT 100,
+
+        duration_minutes INTEGER DEFAULT 60,
+
+        price_inr REAL DEFAULT 0,
+
+        attempt_limit INTEGER DEFAULT 1,
+
+        active INTEGER DEFAULT 0,
+
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+        UNIQUE(
+            mock_test_no,
+            board,
+            class_name,
+            subject
+        )
+
+    )
+    """)
+
+
+    # -----------------------------------------------------
+    # 3. MOCK QUESTION BANK
+    # -----------------------------------------------------
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS mock_questions (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        mock_test_id INTEGER NOT NULL,
+
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+
+        topic TEXT NOT NULL,
+        subtopic TEXT NOT NULL,
+
+        difficulty TEXT NOT NULL,
+
+        question TEXT NOT NULL,
+
+        option_a TEXT NOT NULL,
+        option_b TEXT NOT NULL,
+        option_c TEXT NOT NULL,
+        option_d TEXT NOT NULL,
+
+        correct_answer TEXT NOT NULL,
+
+        explanation TEXT DEFAULT '',
+        hint TEXT DEFAULT '',
+
+        marks INTEGER DEFAULT 2,
+
+        active INTEGER DEFAULT 1,
+
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+        FOREIGN KEY(mock_test_id)
+            REFERENCES mock_tests(id)
+
+    )
+    """)
+
+
+    # -----------------------------------------------------
+    # 4. PRACTICE EXAM SESSIONS
+    # -----------------------------------------------------
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS practice_sessions (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        practice_id TEXT NOT NULL,
+
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+
+        topic TEXT NOT NULL,
+        subtopic TEXT NOT NULL,
+
+        difficulty TEXT NOT NULL,
+
+        total_questions INTEGER DEFAULT 25,
+        total_marks INTEGER DEFAULT 50,
+
+        question_ids TEXT NOT NULL,
+
+        answers TEXT DEFAULT '{}',
+
+        current_question INTEGER DEFAULT 0,
+
+        status TEXT DEFAULT 'in_progress',
+
+        started_at TEXT,
+
+        submitted_at TEXT,
+
+        score INTEGER DEFAULT 0,
+
+        correct_answers INTEGER DEFAULT 0,
+
+        incorrect_answers INTEGER DEFAULT 0,
+
+        unanswered INTEGER DEFAULT 0,
+
+        percentage REAL DEFAULT 0
+
+    )
+    """)
+
+
+    # -----------------------------------------------------
+    # 5. PRACTICE ATTEMPT HISTORY
+    # -----------------------------------------------------
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS practice_attempts (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        practice_id TEXT NOT NULL,
+
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+
+        topic TEXT NOT NULL,
+        subtopic TEXT NOT NULL,
+
+        difficulty TEXT NOT NULL,
+
+        total_questions INTEGER DEFAULT 25,
+        total_marks INTEGER DEFAULT 50,
+
+        correct_answers INTEGER DEFAULT 0,
+        incorrect_answers INTEGER DEFAULT 0,
+        unanswered INTEGER DEFAULT 0,
+
+        score INTEGER DEFAULT 0,
+
+        percentage REAL DEFAULT 0,
+
+        question_data TEXT,
+
+        completed_at TEXT
+
+    )
+    """)
+
+
+    # -----------------------------------------------------
+    # 6. PRACTICE PERFORMANCE
+    # -----------------------------------------------------
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS practice_performance (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        practice_id TEXT NOT NULL,
+
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+
+        topic TEXT NOT NULL,
+        subtopic TEXT NOT NULL,
+
+        difficulty TEXT NOT NULL,
+
+        total_questions INTEGER DEFAULT 0,
+
+        correct_answers INTEGER DEFAULT 0,
+
+        incorrect_answers INTEGER DEFAULT 0,
+
+        score INTEGER DEFAULT 0,
+
+        percentage REAL DEFAULT 0,
+
+        status TEXT DEFAULT 'New',
+
+        last_attempt TEXT
+
+    )
+    """)
+
+
+    # -----------------------------------------------------
+    # 7. MOCK TEST ATTEMPTS
+    # -----------------------------------------------------
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS mock_attempts (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        practice_id TEXT NOT NULL,
+
+        mock_test_id INTEGER NOT NULL,
+
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+
+        question_ids TEXT,
+
+        answers TEXT DEFAULT '{}',
+
+        status TEXT DEFAULT 'payment_pending',
+
+        payment_status TEXT DEFAULT 'pending',
+
+        payment_id TEXT,
+
+        total_questions INTEGER DEFAULT 50,
+
+        total_marks INTEGER DEFAULT 100,
+
+        correct_answers INTEGER DEFAULT 0,
+
+        incorrect_answers INTEGER DEFAULT 0,
+
+        unanswered INTEGER DEFAULT 0,
+
+        score INTEGER DEFAULT 0,
+
+        percentage REAL DEFAULT 0,
+
+        rank INTEGER,
+
+        started_at TEXT,
+
+        submitted_at TEXT,
+
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+        UNIQUE(
+            practice_id,
+            mock_test_id
+        )
+
+    )
+    """)
+
+
+    # -----------------------------------------------------
+    # 8. MOCK TEST PERFORMANCE / LEADERBOARD
+    # -----------------------------------------------------
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS mock_results (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        mock_test_id INTEGER NOT NULL,
+
+        practice_id TEXT NOT NULL,
+
+        score INTEGER DEFAULT 0,
+
+        percentage REAL DEFAULT 0,
+
+        correct_answers INTEGER DEFAULT 0,
+
+        incorrect_answers INTEGER DEFAULT 0,
+
+        unanswered INTEGER DEFAULT 0,
+
+        rank INTEGER,
+
+        submitted_at TEXT,
+
+        UNIQUE(
+            mock_test_id,
+            practice_id
+        )
+
+    )
+    """)
     conn.commit()
     conn.close()
-
+     
 init_db()
 
 # -------------------- APP INIT --------------------
