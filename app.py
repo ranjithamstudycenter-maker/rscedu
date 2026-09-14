@@ -2876,7 +2876,1802 @@ def practice_question_count():
             "success": False,
             "error": str(e)
         }), 500
-        
+
+# =====================================================
+# RSC PRACTICE - CREATE / RESUME SESSION
+# =====================================================
+
+@app.route("/api/practice/session", methods=["POST"])
+def practice_create_session():
+
+    conn = None
+
+    try:
+
+        data = request.get_json() or {}
+
+        # -------------------------------------------------
+        # 1. GET PRACTICE ID
+        # -------------------------------------------------
+
+        practice_id = get_practice_id()
+
+        # -------------------------------------------------
+        # 2. GET REQUEST DATA
+        # -------------------------------------------------
+
+        board = str(
+            data.get("board", "")
+        ).strip()
+
+        class_name = str(
+            data.get("class_name", "")
+        ).strip()
+
+        subject = str(
+            data.get("subject", "")
+        ).strip()
+
+        topic = str(
+            data.get("topic", "")
+        ).strip()
+
+        subtopic = str(
+            data.get("subtopic", "")
+        ).strip()
+
+        difficulty = str(
+            data.get("difficulty", "")
+        ).strip().lower()
+
+        # -------------------------------------------------
+        # 3. VALIDATION
+        # -------------------------------------------------
+
+        if not board:
+            return jsonify({
+                "success": False,
+                "error": "Board is required."
+            }), 400
+
+        if not class_name:
+            return jsonify({
+                "success": False,
+                "error": "Class is required."
+            }), 400
+
+        if not subject:
+            return jsonify({
+                "success": False,
+                "error": "Subject is required."
+            }), 400
+
+        if not topic:
+            return jsonify({
+                "success": False,
+                "error": "Topic is required."
+            }), 400
+
+        if not subtopic:
+            return jsonify({
+                "success": False,
+                "error": "Subtopic is required."
+            }), 400
+
+        if difficulty not in [
+            "easy",
+            "medium",
+            "hard"
+        ]:
+            return jsonify({
+                "success": False,
+                "error":
+                    "Difficulty must be Easy, Medium or Hard."
+            }), 400
+
+        # -------------------------------------------------
+        # 4. DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect("students.db")
+
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+        # -------------------------------------------------
+        # 5. CHECK EXISTING IN-PROGRESS SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT *
+            FROM practice_sessions
+            WHERE practice_id=?
+            AND board=?
+            AND class_name=?
+            AND subject=?
+            AND topic=?
+            AND subtopic=?
+            AND difficulty=?
+            AND status='in_progress'
+            ORDER BY id DESC
+            LIMIT 1
+        """, (
+            practice_id,
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty
+        ))
+
+        existing = c.fetchone()
+
+        # -------------------------------------------------
+        # 6. RESUME EXISTING SESSION
+        # -------------------------------------------------
+
+        if existing:
+
+            try:
+                question_ids = json.loads(
+                    existing["question_ids"] or "[]"
+                )
+            except:
+                question_ids = []
+
+            try:
+                answers = json.loads(
+                    existing["answers"] or "{}"
+                )
+            except:
+                answers = {}
+
+            conn.close()
+
+            return jsonify({
+
+                "success": True,
+
+                "resumed": True,
+
+                "session_id":
+                    existing["id"],
+
+                "practice_id":
+                    practice_id,
+
+                "board":
+                    existing["board"],
+
+                "class_name":
+                    existing["class_name"],
+
+                "subject":
+                    existing["subject"],
+
+                "topic":
+                    existing["topic"],
+
+                "subtopic":
+                    existing["subtopic"],
+
+                "difficulty":
+                    existing["difficulty"],
+
+                "total_questions":
+                    existing["total_questions"],
+
+                "total_marks":
+                    existing["total_marks"],
+
+                "question_ids":
+                    question_ids,
+
+                "answers":
+                    answers,
+
+                "current_question":
+                    existing["current_question"] or 0,
+
+                "status":
+                    existing["status"],
+
+                "started_at":
+                    existing["started_at"]
+
+            })
+
+        # -------------------------------------------------
+        # 7. CHECK QUESTION BANK
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT COUNT(*)
+            FROM practice_questions
+            WHERE board=?
+            AND class_name=?
+            AND subject=?
+            AND topic=?
+            AND subtopic=?
+            AND difficulty=?
+            AND active=1
+        """, (
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty
+        ))
+
+        question_count = c.fetchone()[0]
+
+        # -------------------------------------------------
+        # 8. MINIMUM 25 QUESTIONS REQUIRED
+        # -------------------------------------------------
+
+        if question_count < 25:
+
+            conn.close()
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    f"Only {question_count} active questions "
+                    f"are available. Minimum 25 questions "
+                    f"are required for this Practice test.",
+
+                "available":
+                    question_count,
+
+                "required":
+                    25
+
+            }), 400
+
+        # -------------------------------------------------
+        # 9. RANDOMLY SELECT EXACTLY 25 QUESTIONS
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT id
+            FROM practice_questions
+            WHERE board=?
+            AND class_name=?
+            AND subject=?
+            AND topic=?
+            AND subtopic=?
+            AND difficulty=?
+            AND active=1
+            ORDER BY RANDOM()
+            LIMIT 25
+        """, (
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty
+        ))
+
+        rows = c.fetchall()
+
+        question_ids = [
+            row["id"]
+            for row in rows
+        ]
+
+        # Safety check
+        if len(question_ids) != 25:
+
+            conn.close()
+
+            return jsonify({
+
+                "success": False,
+
+                "error":
+                    "Unable to create 25-question Practice session."
+
+            }), 500
+
+        # -------------------------------------------------
+        # 10. INITIAL ANSWERS
+        # -------------------------------------------------
+
+        answers = {}
+
+        # -------------------------------------------------
+        # 11. START TIME
+        # -------------------------------------------------
+
+        started_at = datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+
+        # -------------------------------------------------
+        # 12. CREATE NEW SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+            INSERT INTO practice_sessions
+            (
+                practice_id,
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic,
+                difficulty,
+                total_questions,
+                total_marks,
+                question_ids,
+                answers,
+                current_question,
+                status,
+                started_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            practice_id,
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty,
+            25,
+            50,
+            json.dumps(question_ids),
+            json.dumps(answers),
+            0,
+            "in_progress",
+            started_at
+        ))
+
+        session_id = c.lastrowid
+
+        conn.commit()
+
+        conn.close()
+
+        # -------------------------------------------------
+        # 13. RETURN NEW SESSION
+        # -------------------------------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "resumed": False,
+
+            "session_id":
+                session_id,
+
+            "practice_id":
+                practice_id,
+
+            "board":
+                board,
+
+            "class_name":
+                class_name,
+
+            "subject":
+                subject,
+
+            "topic":
+                topic,
+
+            "subtopic":
+                subtopic,
+
+            "difficulty":
+                difficulty,
+
+            "total_questions":
+                25,
+
+            "total_marks":
+                50,
+
+            "question_ids":
+                question_ids,
+
+            "answers":
+                answers,
+
+            "current_question":
+                0,
+
+            "status":
+                "in_progress",
+
+            "started_at":
+                started_at
+
+        })
+
+    except Exception as e:
+
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
+
+        print(
+            "PRACTICE CREATE SESSION ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+# =====================================================
+# RSC PRACTICE - GET SESSION QUESTIONS
+# =====================================================
+
+@app.route("/api/practice/session/questions", methods=["GET"])
+def practice_session_questions():
+
+    conn = None
+
+    try:
+
+        # -------------------------------------------------
+        # 1. PRACTICE ID
+        # -------------------------------------------------
+
+        practice_id = get_practice_id()
+
+        # -------------------------------------------------
+        # 2. SESSION ID
+        # -------------------------------------------------
+
+        session_id = request.args.get(
+            "session_id"
+        )
+
+        if not session_id:
+
+            return jsonify({
+                "success": False,
+                "error": "Session ID is required."
+            }), 400
+
+        try:
+
+            session_id = int(
+                session_id
+            )
+
+        except:
+
+            return jsonify({
+                "success": False,
+                "error": "Invalid session ID."
+            }), 400
+
+        # -------------------------------------------------
+        # 3. DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect(
+            "students.db"
+        )
+
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+        # -------------------------------------------------
+        # 4. GET SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT *
+            FROM practice_sessions
+            WHERE id=?
+            AND practice_id=?
+            LIMIT 1
+        """, (
+            session_id,
+            practice_id
+        ))
+
+        practice_session = c.fetchone()
+
+        if not practice_session:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error": "Practice session not found."
+            }), 404
+
+        # -------------------------------------------------
+        # 5. QUESTION IDS
+        # -------------------------------------------------
+
+        try:
+
+            question_ids = json.loads(
+                practice_session["question_ids"]
+                or "[]"
+            )
+
+        except:
+
+            question_ids = []
+
+        if not isinstance(
+            question_ids,
+            list
+        ) or len(question_ids) != 25:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Invalid question list in Practice session."
+            }), 500
+
+        # -------------------------------------------------
+        # 6. SAVED ANSWERS
+        # -------------------------------------------------
+
+        try:
+
+            saved_answers = json.loads(
+                practice_session["answers"]
+                or "{}"
+            )
+
+        except:
+
+            saved_answers = {}
+
+        # -------------------------------------------------
+        # 7. LOAD QUESTIONS
+        # -------------------------------------------------
+
+        questions = []
+
+        for question_id in question_ids:
+
+            try:
+
+                question_id = int(
+                    question_id
+                )
+
+            except:
+
+                continue
+
+            c.execute("""
+                SELECT
+                    id,
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    difficulty,
+                    question,
+                    option_a,
+                    option_b,
+                    option_c,
+                    option_d,
+                    marks
+                FROM practice_questions
+                WHERE id=?
+                AND active=1
+                LIMIT 1
+            """, (
+                question_id,
+            ))
+
+            row = c.fetchone()
+
+            if not row:
+
+                conn.close()
+
+                return jsonify({
+                    "success": False,
+                    "error":
+                        f"Question {question_id} not found."
+                }), 500
+
+            # -------------------------------------------------
+            # IMPORTANT
+            # -------------------------------------------------
+            # DO NOT SEND correct_answer
+            # during exam.
+            # -------------------------------------------------
+
+            questions.append({
+
+                "id":
+                    row["id"],
+
+                "question":
+                    row["question"],
+
+                "options": [
+
+                    row["option_a"],
+
+                    row["option_b"],
+
+                    row["option_c"],
+
+                    row["option_d"]
+
+                ],
+
+                "topic":
+                    row["topic"],
+
+                "subtopic":
+                    row["subtopic"],
+
+                "difficulty":
+                    row["difficulty"],
+
+                "marks":
+                    row["marks"] or 2,
+
+                "saved_answer":
+                    saved_answers.get(
+                        str(row["id"])
+                    )
+
+            })
+
+        conn.close()
+
+        # -------------------------------------------------
+        # 8. RETURN
+        # -------------------------------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "session_id":
+                session_id,
+
+            "practice_id":
+                practice_id,
+
+            "questions":
+                questions,
+
+            "answers":
+                saved_answers,
+
+            "current_question":
+                practice_session[
+                    "current_question"
+                ] or 0,
+
+            "status":
+                practice_session[
+                    "status"
+                ],
+
+            "started_at":
+                practice_session[
+                    "started_at"
+                ],
+
+            "total_questions":
+                25,
+
+            "total_marks":
+                50
+
+        })
+
+    except Exception as e:
+
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
+
+        print(
+            "PRACTICE GET QUESTIONS ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+# =====================================================
+# RSC PRACTICE - SAVE ANSWER
+# =====================================================
+
+@app.route("/api/practice/session/save-answer", methods=["POST"])
+def practice_session_save_answer():
+
+    conn = None
+
+    try:
+
+        data = request.get_json() or {}
+
+        practice_id = get_practice_id()
+
+        session_id = data.get(
+            "session_id"
+        )
+
+        question_id = data.get(
+            "question_id"
+        )
+
+        answer = data.get(
+            "answer"
+        )
+
+        current_question = data.get(
+            "current_question"
+        )
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
+
+        if not session_id:
+
+            return jsonify({
+                "success": False,
+                "error": "Session ID is required."
+            }), 400
+
+        if not question_id:
+
+            return jsonify({
+                "success": False,
+                "error": "Question ID is required."
+            }), 400
+
+        if answer is None:
+
+            return jsonify({
+                "success": False,
+                "error": "Answer is required."
+            }), 400
+
+        try:
+
+            session_id = int(
+                session_id
+            )
+
+            question_id = int(
+                question_id
+            )
+
+            answer = int(
+                answer
+            )
+
+        except:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Invalid session, question or answer."
+            }), 400
+
+        # Answer index:
+        # 0 = A
+        # 1 = B
+        # 2 = C
+        # 3 = D
+
+        if answer not in [
+            0,
+            1,
+            2,
+            3
+        ]:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Invalid answer option."
+            }), 400
+
+        # -------------------------------------------------
+        # DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect(
+            "students.db"
+        )
+
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+        # -------------------------------------------------
+        # GET SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT *
+            FROM practice_sessions
+            WHERE id=?
+            AND practice_id=?
+            LIMIT 1
+        """, (
+            session_id,
+            practice_id
+        ))
+
+        practice_session = c.fetchone()
+
+        if not practice_session:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Practice session not found."
+            }), 404
+
+        # -------------------------------------------------
+        # SESSION STATUS
+        # -------------------------------------------------
+
+        if practice_session["status"] != "in_progress":
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "This Practice session is already completed."
+            }), 400
+
+        # -------------------------------------------------
+        # QUESTION IDS
+        # -------------------------------------------------
+
+        try:
+
+            question_ids = json.loads(
+                practice_session["question_ids"]
+                or "[]"
+            )
+
+        except:
+
+            question_ids = []
+
+        if question_id not in [
+            int(x)
+            for x in question_ids
+        ]:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "This question does not belong "
+                    "to this Practice session."
+            }), 400
+
+        # -------------------------------------------------
+        # LOAD EXISTING ANSWERS
+        # -------------------------------------------------
+
+        try:
+
+            answers = json.loads(
+                practice_session["answers"]
+                or "{}"
+            )
+
+        except:
+
+            answers = {}
+
+        # -------------------------------------------------
+        # SAVE / UPDATE ANSWER
+        # -------------------------------------------------
+
+        answers[
+            str(question_id)
+        ] = answer
+
+        # -------------------------------------------------
+        # CURRENT QUESTION
+        # -------------------------------------------------
+
+        if current_question is not None:
+
+            try:
+
+                current_question = int(
+                    current_question
+                )
+
+            except:
+
+                current_question = (
+                    practice_session[
+                        "current_question"
+                    ] or 0
+                )
+
+        else:
+
+            current_question = (
+                practice_session[
+                    "current_question"
+                ] or 0
+            )
+
+        # Safety limit
+
+        if current_question < 0:
+            current_question = 0
+
+        if current_question > 24:
+            current_question = 24
+
+        # -------------------------------------------------
+        # UPDATE SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+            UPDATE practice_sessions
+
+            SET
+                answers=?,
+                current_question=?
+
+            WHERE id=?
+            AND practice_id=?
+        """, (
+            json.dumps(answers),
+            current_question,
+            session_id,
+            practice_id
+        ))
+
+        conn.commit()
+
+        conn.close()
+
+        # -------------------------------------------------
+        # RETURN
+        # -------------------------------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "session_id":
+                session_id,
+
+            "question_id":
+                question_id,
+
+            "answer":
+                answer,
+
+            "current_question":
+                current_question,
+
+            "answers":
+                answers
+
+        })
+
+    except Exception as e:
+
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
+
+        print(
+            "PRACTICE SAVE ANSWER ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+# =====================================================
+# RSC PRACTICE - SUBMIT SESSION
+# =====================================================
+
+@app.route("/api/practice/session/submit", methods=["POST"])
+def practice_session_submit():
+
+    conn = None
+
+    try:
+
+        data = request.get_json() or {}
+
+        practice_id = get_practice_id()
+
+        session_id = data.get(
+            "session_id"
+        )
+
+        submitted_answers = data.get(
+            "answers",
+            {}
+        )
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
+
+        if not session_id:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Session ID is required."
+            }), 400
+
+        try:
+
+            session_id = int(
+                session_id
+            )
+
+        except:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Invalid session ID."
+            }), 400
+
+        if not isinstance(
+            submitted_answers,
+            dict
+        ):
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Invalid answer data."
+            }), 400
+
+        # -------------------------------------------------
+        # DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect(
+            "students.db"
+        )
+
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+        # -------------------------------------------------
+        # GET SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT *
+            FROM practice_sessions
+            WHERE id=?
+            AND practice_id=?
+            LIMIT 1
+        """, (
+            session_id,
+            practice_id
+        ))
+
+        practice_session = c.fetchone()
+
+        if not practice_session:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Practice session not found."
+            }), 404
+
+        # -------------------------------------------------
+        # ALREADY COMPLETED
+        # -------------------------------------------------
+
+        if practice_session["status"] == "completed":
+
+            conn.close()
+
+            return jsonify({
+
+                "success": True,
+
+                "already_completed": True,
+
+                "session_id":
+                    session_id,
+
+                "score":
+                    practice_session["score"],
+
+                "correct_answers":
+                    practice_session[
+                        "correct_answers"
+                    ],
+
+                "incorrect_answers":
+                    practice_session[
+                        "incorrect_answers"
+                    ],
+
+                "unanswered":
+                    practice_session[
+                        "unanswered"
+                    ],
+
+                "percentage":
+                    practice_session[
+                        "percentage"
+                    ]
+
+            })
+
+        # -------------------------------------------------
+        # GET QUESTION IDS
+        # -------------------------------------------------
+
+        try:
+
+            question_ids = json.loads(
+                practice_session[
+                    "question_ids"
+                ] or "[]"
+            )
+
+        except:
+
+            question_ids = []
+
+        if len(question_ids) != 25:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Invalid question list."
+            }), 500
+
+        # -------------------------------------------------
+        # COMBINE SERVER SAVED ANSWERS
+        # WITH SUBMITTED ANSWERS
+        # -------------------------------------------------
+
+        try:
+
+            saved_answers = json.loads(
+                practice_session[
+                    "answers"
+                ] or "{}"
+            )
+
+        except:
+
+            saved_answers = {}
+
+        final_answers = dict(
+            saved_answers
+        )
+
+        for key, value in submitted_answers.items():
+
+            try:
+
+                answer_value = int(
+                    value
+                )
+
+            except:
+
+                continue
+
+            if answer_value in [
+                0,
+                1,
+                2,
+                3
+            ]:
+
+                final_answers[
+                    str(key)
+                ] = answer_value
+
+        # -------------------------------------------------
+        # SCORE VARIABLES
+        # -------------------------------------------------
+
+        correct_answers = 0
+
+        incorrect_answers = 0
+
+        unanswered = 0
+
+        score = 0
+
+        review = []
+
+        # -------------------------------------------------
+        # EVALUATE 25 QUESTIONS
+        # -------------------------------------------------
+
+        for question_id in question_ids:
+
+            try:
+
+                question_id = int(
+                    question_id
+                )
+
+            except:
+
+                continue
+
+            c.execute("""
+                SELECT
+                    id,
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    difficulty,
+                    question,
+                    option_a,
+                    option_b,
+                    option_c,
+                    option_d,
+                    correct_answer,
+                    explanation,
+                    hint,
+                    marks
+                FROM practice_questions
+                WHERE id=?
+                LIMIT 1
+            """, (
+                question_id,
+            ))
+
+            row = c.fetchone()
+
+            if not row:
+
+                continue
+
+            # -------------------------------------------------
+            # DATABASE CORRECT ANSWER
+            # A/B/C/D
+            # -------------------------------------------------
+
+            correct_letter = (
+                row["correct_answer"]
+                or ""
+            ).strip().upper()
+
+            letter_to_index = {
+                "A": 0,
+                "B": 1,
+                "C": 2,
+                "D": 3
+            }
+
+            correct_index = (
+                letter_to_index.get(
+                    correct_letter
+                )
+            )
+
+            # -------------------------------------------------
+            # STUDENT ANSWER
+            # -------------------------------------------------
+
+            student_answer = final_answers.get(
+                str(question_id)
+            )
+
+            # -------------------------------------------------
+            # UNANSWERED
+            # -------------------------------------------------
+
+            if student_answer is None:
+
+                unanswered += 1
+
+                result_status = "unanswered"
+
+            # -------------------------------------------------
+            # CORRECT
+            # -------------------------------------------------
+
+            elif student_answer == correct_index:
+
+                correct_answers += 1
+
+                marks = row["marks"] or 2
+
+                score += int(
+                    marks
+                )
+
+                result_status = "correct"
+
+            # -------------------------------------------------
+            # INCORRECT
+            # -------------------------------------------------
+
+            else:
+
+                incorrect_answers += 1
+
+                result_status = "incorrect"
+
+            # -------------------------------------------------
+            # REVIEW DATA
+            # -------------------------------------------------
+
+            options = [
+
+                row["option_a"],
+
+                row["option_b"],
+
+                row["option_c"],
+
+                row["option_d"]
+
+            ]
+
+            review.append({
+
+                "id":
+                    row["id"],
+
+                "question":
+                    row["question"],
+
+                "options":
+                    options,
+
+                "student_answer":
+                    student_answer,
+
+                "correct_answer":
+                    correct_index,
+
+                "correct_letter":
+                    correct_letter,
+
+                "result":
+                    result_status,
+
+                "explanation":
+                    row["explanation"] or "",
+
+                "hint":
+                    row["hint"] or "",
+
+                "topic":
+                    row["topic"],
+
+                "subtopic":
+                    row["subtopic"],
+
+                "difficulty":
+                    row["difficulty"],
+
+                "marks":
+                    row["marks"] or 2
+
+            })
+
+        # -------------------------------------------------
+        # PERCENTAGE
+        # -------------------------------------------------
+
+        percentage = round(
+            (score / 50) * 100,
+            2
+        )
+
+        submitted_at = datetime.now().strftime(
+            "%Y-%m-%d %H:%M:%S"
+        )
+
+        # -------------------------------------------------
+        # UPDATE SESSION
+        # -------------------------------------------------
+
+        c.execute("""
+            UPDATE practice_sessions
+
+            SET
+                answers=?,
+                status='completed',
+                submitted_at=?,
+                score=?,
+                correct_answers=?,
+                incorrect_answers=?,
+                unanswered=?,
+                percentage=?
+
+            WHERE id=?
+            AND practice_id=?
+        """, (
+
+            json.dumps(
+                final_answers
+            ),
+
+            submitted_at,
+
+            score,
+
+            correct_answers,
+
+            incorrect_answers,
+
+            unanswered,
+
+            percentage,
+
+            session_id,
+
+            practice_id
+
+        ))
+
+        # -------------------------------------------------
+        # SAVE ATTEMPT HISTORY
+        # -------------------------------------------------
+
+        question_data = json.dumps(
+            review,
+            ensure_ascii=False
+        )
+
+        c.execute("""
+            INSERT INTO practice_attempts
+            (
+                practice_id,
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic,
+                difficulty,
+                total_questions,
+                total_marks,
+                correct_answers,
+                incorrect_answers,
+                unanswered,
+                score,
+                percentage,
+                question_data,
+                completed_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+
+            practice_id,
+
+            practice_session["board"],
+
+            practice_session["class_name"],
+
+            practice_session["subject"],
+
+            practice_session["topic"],
+
+            practice_session["subtopic"],
+
+            practice_session["difficulty"],
+
+            25,
+
+            50,
+
+            correct_answers,
+
+            incorrect_answers,
+
+            unanswered,
+
+            score,
+
+            percentage,
+
+            question_data,
+
+            submitted_at
+
+        ))
+
+        attempt_id = c.lastrowid
+
+        # -------------------------------------------------
+        # PERFORMANCE STATUS
+        # -------------------------------------------------
+
+        if percentage >= 80:
+
+            performance_status = "Strong"
+
+        elif percentage >= 50:
+
+            performance_status = "Average"
+
+        else:
+
+            performance_status = "Weak"
+
+        # -------------------------------------------------
+        # CHECK PERFORMANCE ROW
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT id
+            FROM practice_performance
+            WHERE practice_id=?
+            AND board=?
+            AND class_name=?
+            AND subject=?
+            AND topic=?
+            AND subtopic=?
+            AND difficulty=?
+            LIMIT 1
+        """, (
+
+            practice_id,
+
+            practice_session["board"],
+
+            practice_session["class_name"],
+
+            practice_session["subject"],
+
+            practice_session["topic"],
+
+            practice_session["subtopic"],
+
+            practice_session["difficulty"]
+
+        ))
+
+        performance_row = c.fetchone()
+
+        # -------------------------------------------------
+        # CREATE PERFORMANCE
+        # -------------------------------------------------
+
+        if not performance_row:
+
+            c.execute("""
+                INSERT INTO practice_performance
+                (
+                    practice_id,
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    difficulty,
+                    total_questions,
+                    correct_answers,
+                    incorrect_answers,
+                    score,
+                    percentage,
+                    status,
+                    last_attempt
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+
+                practice_id,
+
+                practice_session["board"],
+
+                practice_session["class_name"],
+
+                practice_session["subject"],
+
+                practice_session["topic"],
+
+                practice_session["subtopic"],
+
+                practice_session["difficulty"],
+
+                25,
+
+                correct_answers,
+
+                incorrect_answers,
+
+                score,
+
+                percentage,
+
+                performance_status,
+
+                submitted_at
+
+            ))
+
+        # -------------------------------------------------
+        # UPDATE PERFORMANCE
+        # -------------------------------------------------
+
+        else:
+
+            c.execute("""
+                UPDATE practice_performance
+
+                SET
+                    total_questions =
+                        total_questions + ?,
+
+                    correct_answers =
+                        correct_answers + ?,
+
+                    incorrect_answers =
+                        incorrect_answers + ?,
+
+                    score =
+                        score + ?,
+
+                    percentage=?,
+
+                    status=?,
+
+                    last_attempt=?
+
+                WHERE id=?
+            """, (
+
+                25,
+
+                correct_answers,
+
+                incorrect_answers,
+
+                score,
+
+                percentage,
+
+                performance_status,
+
+                submitted_at,
+
+                performance_row["id"]
+
+            ))
+
+        # -------------------------------------------------
+        # COMMIT
+        # -------------------------------------------------
+
+        conn.commit()
+
+        conn.close()
+
+        # -------------------------------------------------
+        # RETURN RESULT + REVIEW
+        # -------------------------------------------------
+
+        return jsonify({
+
+            "success": True,
+
+            "already_completed":
+                False,
+
+            "attempt_id":
+                attempt_id,
+
+            "session_id":
+                session_id,
+
+            "total_questions":
+                25,
+
+            "total_marks":
+                50,
+
+            "correct_answers":
+                correct_answers,
+
+            "incorrect_answers":
+                incorrect_answers,
+
+            "unanswered":
+                unanswered,
+
+            "score":
+                score,
+
+            "percentage":
+                percentage,
+
+            "status":
+                performance_status,
+
+            "review":
+                review
+
+        })
+
+    except Exception as e:
+
+        if conn:
+            try:
+                conn.close()
+            except:
+                pass
+
+        print(
+            "PRACTICE SUBMIT ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+      
 @app.route("/admin/students")
 def admin_students():
     if not session.get("admin"):
