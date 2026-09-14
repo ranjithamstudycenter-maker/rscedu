@@ -2610,10 +2610,10 @@ function showFinalResult(){
 
 
 /* =====================================================
-   AI 25-QUESTION SESSION
+   PRACTICE - START / RESUME 25 QUESTION SESSION
 ===================================================== */
 
-async function selectAILevel(level){
+async function selectAILevel(level) {
 
     // =====================================================
     // SET CURRENT DIFFICULTY
@@ -2646,7 +2646,7 @@ async function selectAILevel(level){
 
 
     // =====================================================
-    // RESET AI SESSION VARIABLES
+    // RESET PRACTICE SESSION VARIABLES
     // =====================================================
 
     aiSessionId = null;
@@ -2703,7 +2703,7 @@ async function selectAILevel(level){
 
 
     console.log(
-        "AI SESSION PARAMETERS:",
+        "PRACTICE SESSION PARAMETERS:",
         {
             board: board,
             className: className,
@@ -2734,109 +2734,16 @@ async function selectAILevel(level){
         return;
     }
 
-        // =====================================================
-    // GENERATE / LOAD 25 AI QUESTIONS
+
     // =====================================================
-
-    try {
-
-        const batchResponse = await fetch(
-            "/api/ai-question-batch",
-            {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    board: board,
-
-                    class_name: className,
-
-                    subject: subject,
-
-                    topic: topic,
-
-                    subtopic: subtopic,
-
-                    difficulty: level,
-
-                    mode: "practice",
-
-                    test_number: 0
-
-                })
-            }
-        );
-
-        const batchData =
-            await batchResponse.json();
-
-        console.log(
-            "AI QUESTION BATCH RESPONSE:",
-            batchData
-        );
-
-        // ---------------------------------------------
-        // HANDLE AI QUESTION GENERATION ERROR
-        // ---------------------------------------------
-
-        if (!batchResponse.ok) {
-
-            alert(
-                batchData.error ||
-                "Unable to generate questions."
-            );
-
-            return;
-        }
-
-        // ---------------------------------------------
-        // VERIFY 25 QUESTIONS
-        // ---------------------------------------------
-
-        const generatedQuestions =
-            batchData.questions || [];
-
-        if (generatedQuestions.length !== 25) {
-
-            alert(
-                "Unable to prepare exactly 25 questions."
-            );
-
-            return;
-        }
-
-        console.log(
-            "25 AI QUESTIONS READY:",
-            generatedQuestions.length
-        );
-
-    }
-    catch(error) {
-
-        console.error(
-            "AI QUESTION GENERATION ERROR:",
-            error
-        );
-
-        alert(
-            "Unable to generate questions. Please try again."
-        );
-
-        return;
-    }
-    // =====================================================
-    // CREATE / RESUME AI SESSION
+    // CREATE / RESUME NEW PRACTICE SESSION
     // =====================================================
 
     try {
 
         const sessionResponse =
             await fetch(
-                "/api/ai-session",
+                "/api/practice/session",
                 {
                     method: "POST",
 
@@ -2847,7 +2754,8 @@ async function selectAILevel(level){
 
                     body: JSON.stringify({
 
-                        board: board,
+                        board:
+                            board,
 
                         class_name:
                             className,
@@ -2862,13 +2770,7 @@ async function selectAILevel(level){
                             subtopic,
 
                         difficulty:
-                            level,
-
-                        mode:
-                            "practice",
-
-                        test_number:
-                            0
+                            level
 
                     })
                 }
@@ -2880,7 +2782,7 @@ async function selectAILevel(level){
 
 
         console.log(
-            "AI SESSION RESPONSE:",
+            "PRACTICE SESSION RESPONSE:",
             sessionData
         );
 
@@ -2889,11 +2791,14 @@ async function selectAILevel(level){
         // HANDLE SESSION ERROR
         // =================================================
 
-        if (!sessionResponse.ok) {
+        if (
+            !sessionResponse.ok ||
+            !sessionData.success
+        ) {
 
             alert(
                 sessionData.error ||
-                "Unable to create AI session."
+                "Unable to create Practice session."
             );
 
             return;
@@ -2901,7 +2806,7 @@ async function selectAILevel(level){
 
 
         // =================================================
-        // SAVE SESSION INFORMATION
+        // SAVE NEW PRACTICE SESSION INFORMATION
         // =================================================
 
         aiSessionId =
@@ -2914,8 +2819,7 @@ async function selectAILevel(level){
 
         aiCurrentQuestion =
             Number(
-                sessionData.current_question ??
-                0
+                sessionData.current_question ?? 0
             );
 
 
@@ -2925,12 +2829,68 @@ async function selectAILevel(level){
 
 
         // =================================================
-        // LOAD QUESTIONS
+        // SAVE PRACTICE SESSION VARIABLES
+        // =================================================
+
+        window.practiceSessionId =
+            sessionData.session_id;
+
+
+        window.practiceQuestionIds =
+            sessionData.question_ids || [];
+
+
+        window.practiceAnswers =
+            sessionData.answers || {};
+
+
+        window.practiceCurrentQuestion =
+            Number(
+                sessionData.current_question ?? 0
+            );
+
+
+        window.practiceStartedAt =
+            sessionData.started_at ||
+            null;
+
+
+        window.practiceResumed =
+            sessionData.resumed ||
+            false;
+
+
+        // =================================================
+        // SAVE SELECTION FOR RESULT / REVIEW
+        // =================================================
+
+        window.aiLearningSelection = {
+
+            board:
+                board,
+
+            class_name:
+                className,
+
+            subject:
+                subject,
+
+            topic:
+                topic,
+
+            subtopic:
+                subtopic
+
+        };
+
+
+        // =================================================
+        // LOAD QUESTIONS FROM NEW PRACTICE SESSION
         // =================================================
 
         const questionResponse =
             await fetch(
-                `/api/ai-session/questions?session_id=${aiSessionId}`
+                `/api/practice/session/questions?session_id=${encodeURIComponent(aiSessionId)}`
             );
 
 
@@ -2939,7 +2899,7 @@ async function selectAILevel(level){
 
 
         console.log(
-            "AI SESSION QUESTIONS:",
+            "PRACTICE SESSION QUESTIONS:",
             questionData
         );
 
@@ -2948,11 +2908,14 @@ async function selectAILevel(level){
         // HANDLE QUESTION LOAD ERROR
         // =================================================
 
-        if (!questionResponse.ok) {
+        if (
+            !questionResponse.ok ||
+            !questionData.success
+        ) {
 
             alert(
                 questionData.error ||
-                "Unable to load questions."
+                "Unable to load Practice questions."
             );
 
             return;
@@ -2985,6 +2948,22 @@ async function selectAILevel(level){
 
 
         // =================================================
+        // SAVE UPDATED PRACTICE DATA
+        // =================================================
+
+        window.practiceAnswers =
+            aiAnswers;
+
+
+        window.practiceCurrentQuestion =
+            aiCurrentQuestion;
+
+
+        window.practiceStartedAt =
+            aiStartedAt;
+
+
+        // =================================================
         // VERIFY EXACTLY 25 QUESTIONS
         // =================================================
 
@@ -2994,42 +2973,17 @@ async function selectAILevel(level){
         ) {
 
             console.error(
-                "Expected 25 questions but received:",
+                "Expected 25 Practice questions but received:",
                 aiQuestionBank.length
             );
 
 
             alert(
-                "Unable to prepare the complete 25-question test. Please try again."
+                "Unable to prepare the complete 25-question Practice test."
             );
-
 
             return;
         }
-
-
-        // =================================================
-        // SAVE SELECTION FOR RESULT / REVIEW
-        // =================================================
-
-        window.aiLearningSelection = {
-
-            board:
-                board,
-
-            class_name:
-                className,
-
-            subject:
-                subject,
-
-            topic:
-                topic,
-
-            subtopic:
-                subtopic
-
-        };
 
 
         // =================================================
@@ -3082,14 +3036,14 @@ async function selectAILevel(level){
 
 
         // =================================================
-        // START / RESUME TIMER
+        // START / RESUME 30 MINUTE TIMER
         // =================================================
 
         startAIExamTimer();
 
 
         // =================================================
-        // SHOW CURRENT QUESTION
+        // SHOW CURRENT / RESUMED QUESTION
         // =================================================
 
         showAIExamQuestion();
@@ -3110,7 +3064,7 @@ async function selectAILevel(level){
 
 
         // =================================================
-        // DEBUG
+        // DEBUG INFORMATION
         // =================================================
 
         console.log(
@@ -3118,11 +3072,11 @@ async function selectAILevel(level){
         );
 
         console.log(
-            "AI EXAM READY"
+            "PRACTICE EXAM READY"
         );
 
         console.log(
-            "Session ID:",
+            "Practice Session ID:",
             aiSessionId
         );
 
@@ -3147,23 +3101,141 @@ async function selectAILevel(level){
         );
 
         console.log(
+            "Resumed:",
+            sessionData.resumed
+        );
+
+        console.log(
             "===================================="
         );
 
     }
+
     catch(error) {
 
         console.error(
-            "AI SESSION ERROR:",
+            "PRACTICE SESSION ERROR:",
             error
         );
 
 
         alert(
-            "Unable to start the test. Please try again."
+            "Unable to start the Practice test. Please try again."
         );
+
     }
 
+}
+
+/* =====================================================
+   PRACTICE - LOAD SESSION QUESTIONS
+===================================================== */
+
+async function loadPracticeSessionQuestions() {
+
+    const sessionId =
+        window.practiceSessionId;
+
+    if (!sessionId) {
+
+        alert(
+            "Practice session ID is missing."
+        );
+
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/api/practice/session/questions?session_id=" +
+            encodeURIComponent(sessionId)
+        );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            throw new Error(
+                data.error ||
+                "Unable to load Practice questions."
+            );
+
+        }
+
+        /* -------------------------------------------------
+           SAVE QUESTIONS
+        ------------------------------------------------- */
+
+        aiQuestionBank =
+            data.questions || [];
+
+        aiAnswers =
+            data.answers || {};
+
+        aiCurrentQuestion =
+            Number(
+                data.current_question || 0
+            );
+
+        aiQuestionNumber =
+            aiCurrentQuestion;
+
+        /* -------------------------------------------------
+           SAFETY CHECK
+        ------------------------------------------------- */
+
+        if (
+            aiQuestionBank.length !== 25
+        ) {
+
+            throw new Error(
+                "Practice test must contain exactly 25 questions."
+            );
+
+        }
+
+        /* -------------------------------------------------
+           UPDATE SESSION BAR
+        ------------------------------------------------- */
+
+        updateAISessionBar();
+
+        /* -------------------------------------------------
+           SHOW FIRST / RESUMED QUESTION
+        ------------------------------------------------- */
+
+        showAIExamQuestion();
+
+        /* -------------------------------------------------
+           START / RESUME TIMER
+        ------------------------------------------------- */
+
+        startPracticeTimer(
+            data.started_at
+        );
+
+        console.log(
+            "Practice questions loaded:",
+            aiQuestionBank.length
+        );
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "LOAD PRACTICE QUESTIONS ERROR:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Unable to load Practice questions."
+        );
+
+    }
 }
 
 /* =====================================================
@@ -3325,6 +3397,92 @@ function showAIExamQuestion() {
 
     updateAISessionBar();
 }
+/* =====================================================
+   PRACTICE - SAVE ANSWER TO SERVER
+===================================================== */
+
+async function savePracticeAnswer(
+    questionId,
+    answerIndex
+) {
+
+    const sessionId =
+        window.practiceSessionId;
+
+    if (!sessionId) {
+
+        console.error(
+            "Practice session ID missing."
+        );
+
+        return;
+
+    }
+
+    try {
+
+        const response = await fetch(
+            "/api/practice/session/save-answer",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    session_id:
+                        sessionId,
+
+                    question_id:
+                        questionId,
+
+                    answer:
+                        answerIndex,
+
+                    current_question:
+                        aiCurrentQuestion
+
+                })
+            }
+        );
+
+        const data =
+            await response.json();
+
+        if (!response.ok || !data.success) {
+
+            console.error(
+                "Practice answer save failed:",
+                data.error
+            );
+
+            return;
+
+        }
+
+        /* Update local copy */
+
+        aiAnswers =
+            data.answers || aiAnswers;
+
+        window.practiceAnswers =
+            aiAnswers;
+
+    }
+
+    catch (error) {
+
+        console.error(
+            "SAVE PRACTICE ANSWER ERROR:",
+            error
+        );
+
+    }
+}
+
 /* =====================================================
    AI QUESTION PALETTE
 ===================================================== */
@@ -4215,104 +4373,246 @@ function autoSubmitAITest() {
 
     submitAISession(true);
 }
+/* =====================================================
+   PRACTICE - SUBMIT TEST
+===================================================== */
+
 async function submitAISession(autoSubmit = false) {
 
-    if (!aiSessionId) {
-
-        alert("Test session not found.");
-
-        aiExamSubmitted = false;
+    if (window.practiceSubmitting) {
 
         return;
+
     }
 
+    const sessionId =
+        window.practiceSessionId;
 
-    if (aiExamSubmitted && !autoSubmit) {
+    if (!sessionId) {
+
+        alert(
+            "Practice session not found."
+        );
 
         return;
+
     }
 
+    /* -------------------------------------------------
+       STOP DUPLICATE SUBMISSION
+    ------------------------------------------------- */
 
-    /*
-        Prevent duplicate submission
-    */
-
-    aiExamSubmitted = true;
-
-    stopAITimer();
-
+    window.practiceSubmitting = true;
 
     try {
 
-        const response =
-            await fetch("/api/ai-session/submit", {
-
+        const response = await fetch(
+            "/api/practice/session/submit",
+            {
                 method: "POST",
 
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type":
+                        "application/json"
                 },
 
                 body: JSON.stringify({
 
-                    session_id: aiSessionId,
+                    session_id:
+                        sessionId,
 
-                    answers: aiAnswers
+                    answers:
+                        aiAnswers || {}
 
                 })
-
-            });
-
+            }
+        );
 
         const data =
             await response.json();
 
+        if (!response.ok || !data.success) {
 
-        if (!response.ok) {
-
-            console.error(
-                "AI SUBMIT ERROR:",
-                data
-            );
-
-            alert(
+            throw new Error(
                 data.error ||
-                "Unable to submit the test."
+                "Unable to submit Practice test."
             );
 
-            aiExamSubmitted = false;
-
-            return;
         }
 
+        /* -------------------------------------------------
+           MARK SUBMITTED
+        ------------------------------------------------- */
 
-        /*
-            Store server result
-        */
+        aiExamSubmitted =
+            true;
 
-        window.aiFinalResult = data;
+        window.practiceCompleted =
+            true;
 
+        /* -------------------------------------------------
+           STOP TIMER
+        ------------------------------------------------- */
 
-        /*
-            Show result
-        */
+        if (
+            typeof practiceTimerInterval !==
+            "undefined" &&
+            practiceTimerInterval
+        ) {
 
-        showAISessionResult(data);
+            clearInterval(
+                practiceTimerInterval
+            );
 
+            practiceTimerInterval =
+                null;
 
-    } catch (error) {
+        }
+
+        /* -------------------------------------------------
+           SAVE RESULT
+        ------------------------------------------------- */
+
+        window.practiceResult =
+            data;
+
+        /* -------------------------------------------------
+           SHOW RESULT
+        ------------------------------------------------- */
+
+        showPracticeResult(
+            data
+        );
+
+    }
+
+    catch (error) {
 
         console.error(
-            "AI SUBMIT NETWORK ERROR:",
+            "PRACTICE SUBMIT ERROR:",
             error
         );
 
         alert(
-            "Something went wrong while submitting the test."
+            error.message ||
+            "Unable to submit Practice test."
         );
 
-        aiExamSubmitted = false;
+        window.practiceSubmitting =
+            false;
+
+        return;
     }
+
+    window.practiceSubmitting =
+        false;
+}
+
+/* =====================================================
+   PRACTICE - 30 MINUTE TIMER
+===================================================== */
+
+let practiceTimerInterval = null;
+
+function startPracticeTimer(startedAt) {
+
+    if (practiceTimerInterval) {
+
+        clearInterval(
+            practiceTimerInterval
+        );
+
+    }
+
+    const startTime =
+        new Date(
+            startedAt.replace(" ", "T")
+        ).getTime();
+
+    const totalSeconds =
+        30 * 60;
+
+    function updateTimer() {
+
+        const now =
+            Date.now();
+
+        const elapsedSeconds =
+            Math.floor(
+                (now - startTime) / 1000
+            );
+
+        let remaining =
+            totalSeconds -
+            elapsedSeconds;
+
+        if (remaining < 0) {
+
+            remaining = 0;
+
+        }
+
+        const minutes =
+            Math.floor(
+                remaining / 60
+            );
+
+        const seconds =
+            remaining % 60;
+
+        /* -------------------------------------------------
+           FIND EXISTING TIMER ELEMENT
+        ------------------------------------------------- */
+
+        const timerElement =
+            document.getElementById(
+                "aiTimer"
+            );
+
+        if (timerElement) {
+
+            timerElement.innerText =
+
+                String(minutes)
+                    .padStart(2, "0")
+
+                + ":" +
+
+                String(seconds)
+                    .padStart(2, "0");
+
+        }
+
+        /* -------------------------------------------------
+           TIME OVER
+        ------------------------------------------------- */
+
+        if (remaining <= 0) {
+
+            clearInterval(
+                practiceTimerInterval
+            );
+
+            practiceTimerInterval =
+                null;
+
+            if (!aiExamSubmitted) {
+
+                submitAISession(true);
+
+            }
+
+        }
+
+    }
+
+    updateTimer();
+
+    practiceTimerInterval =
+        setInterval(
+            updateTimer,
+            1000
+        );
 }
     
 function checkAIAnswer(){
