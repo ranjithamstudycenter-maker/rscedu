@@ -3,3 +3,5 @@ razorpay
 gunicorn
 openai
 PyPDF2
+pandas
+openpyxl
