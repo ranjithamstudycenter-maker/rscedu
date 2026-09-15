@@ -5289,9 +5289,9 @@ def about():
 
 # -------------------- AI LEARNING --------------------
 
-@app.route("/ai_learning")
-def ai_learning():
-    return render_template("ai_learning.html")
+@app.route("/practice")
+def practice():
+    return render_template("practice.html")
     
 @app.route("/courses")
 def courses():
