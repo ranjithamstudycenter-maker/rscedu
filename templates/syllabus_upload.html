@@ -413,7 +413,62 @@ th{
         padding:20px;
         margin-top:20px;
     ">
+        <!-- =====================================================
+     EXCEL QUESTION IMPORT
+     ===================================================== -->
 
+<div style="
+    border:1px solid #ddd;
+    border-radius:10px;
+    padding:20px;
+    margin-top:20px;
+    background:#fafafa;
+">
+
+    <h3>📥 Import Practice Questions from Excel</h3>
+
+    <p style="color:#666;">
+        Upload an Excel file containing Practice MCQ questions.
+        Questions will be added directly to the Practice Question Bank.
+    </p>
+
+    <input
+        type="file"
+        id="practiceExcelFile"
+        accept=".xlsx,.xls"
+        style="
+            width:100%;
+            padding:10px;
+            margin:10px 0;
+        "
+    >
+
+    <button
+        type="button"
+        onclick="importPracticeExcel()"
+        style="
+            padding:12px 25px;
+            border:none;
+            border-radius:8px;
+            cursor:pointer;
+            font-size:16px;
+            background:#16a34a;
+            color:white;
+            font-weight:700;
+        "
+    >
+        📥 Import Excel Questions
+    </button>
+
+    <div
+        id="excelImportMessage"
+        style="
+            margin-top:15px;
+            font-weight:bold;
+        "
+    ></div>
+
+</div>
         <h3>➕ Add Practice Question</h3>
 
 
@@ -785,7 +840,147 @@ async function loadPracticeQuestionCount() {
 
 }
 
+// =====================================================
+// IMPORT PRACTICE QUESTIONS FROM EXCEL
+// =====================================================
 
+async function importPracticeExcel() {
+
+    const fileInput =
+        document.getElementById(
+            "practiceExcelFile"
+        );
+
+    const messageBox =
+        document.getElementById(
+            "excelImportMessage"
+        );
+
+    if (!fileInput.files.length) {
+
+        messageBox.style.color = "red";
+
+        messageBox.textContent =
+            "❌ Please select an Excel file.";
+
+        return;
+    }
+
+
+    const file =
+        fileInput.files[0];
+
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "excel_file",
+        file
+    );
+
+
+    messageBox.style.color = "#4338ca";
+
+    messageBox.textContent =
+        "⏳ Importing questions...";
+
+
+    try {
+
+        const response =
+            await fetch(
+                "/admin/practice-questions/import-excel",
+                {
+                    method: "POST",
+                    body: formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if (!data.success) {
+
+            messageBox.style.color =
+                "red";
+
+            messageBox.textContent =
+                "❌ " +
+                (
+                    data.error ||
+                    "Excel import failed."
+                );
+
+            return;
+        }
+
+
+        messageBox.style.color =
+            "green";
+
+
+        let msg =
+            "✅ Import completed! " +
+            data.imported +
+            " question(s) imported.";
+
+
+        if (data.skipped > 0) {
+
+            msg +=
+                " " +
+                data.skipped +
+                " skipped.";
+        }
+
+
+        if (
+            data.errors &&
+            data.errors.length > 0
+        ) {
+
+            console.warn(
+                "Excel import errors:",
+                data.errors
+            );
+        }
+
+
+        messageBox.textContent =
+            msg;
+
+
+        // Clear file selection
+        fileInput.value = "";
+
+
+        // Refresh counts
+        loadPracticeQuestionCount();
+
+
+        // Refresh question list
+        loadPracticeQuestions();
+
+
+    } catch (error) {
+
+        console.error(
+            "Excel import error:",
+            error
+        );
+
+
+        messageBox.style.color =
+            "red";
+
+        messageBox.textContent =
+            "❌ Server error during Excel import.";
+    }
+}
+    
 /* =====================================================
    ADD QUESTION
    ===================================================== */
