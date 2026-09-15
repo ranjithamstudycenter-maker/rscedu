@@ -1,0 +1,1489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Ranjitham Study Center | Practice</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="description" content="Ranjitham Study Center Mathematics Practice - chapter-wise MCQs, timed practice tests and performance review.">
+<link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.jpg') }}">
+<link rel="shortcut icon" href="{{ url_for('static', filename='images/logo.jpg') }}">
+<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0;font-family:'Poppins',sans-serif}
+body{background:#f8fafc;color:#333;overflow-x:hidden}
+a{text-decoration:none}
+.navbar{background:#fff;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;position:relative;z-index:1000;box-shadow:0 4px 12px rgba(0,0,0,.08);flex-wrap:wrap}
+.nav-left{display:flex;align-items:center;gap:15px}
+.nav-right{display:flex;align-items:center}
+.logo{height:90px}
+.brand-text h1{color:#0b5394;font-size:26px;font-weight:700}
+.brand-text p{color:#0b5394;font-size:13px}
+.nav-center a{margin:0 15px;color:#0b5394;font-weight:600}
+.nav-center a:hover{text-decoration:underline}
+.demo-btn{background:linear-gradient(45deg,#ff2d55,#7b2cbf);color:#fff;padding:8px 18px;border-radius:25px;font-weight:600;animation:blink 2s infinite}
+@keyframes blink{50%{opacity:0}}
+@media(max-width:768px){
+.navbar{flex-direction:column;align-items:center}
+.nav-left{width:100%;justify-content:flex-start}
+.logo{height:55px}
+.brand-text h1{font-size:18px}
+.brand-text p{font-size:11px}
+.nav-center{width:100%;display:flex;justify-content:center;gap:6px;margin-top:8px;flex-wrap:nowrap}
+.nav-center a{font-size:12px;margin:0 4px;white-space:nowrap}
+.nav-right{width:100%;justify-content:center;margin-top:8px}
+.demo-btn{font-size:13px}
+}
+
+<style>
+/* =========================================================
+   RSC PRACTICE PAGE — PROFESSIONAL STUDENT EXPERIENCE
+   ========================================================= */
+.practice-page{
+    max-width:1180px;
+    margin:38px auto 60px;
+    padding:0 20px;
+}
+.practice-hero{
+    position:relative;
+    overflow:hidden;
+    border-radius:28px;
+    padding:48px 34px;
+    color:#fff;
+    background:
+      radial-gradient(circle at 10% 10%,rgba(255,255,255,.22),transparent 28%),
+      radial-gradient(circle at 90% 85%,rgba(255,255,255,.14),transparent 30%),
+      linear-gradient(135deg,#1d4ed8 0%,#6d28d9 52%,#db2777 100%);
+    box-shadow:0 18px 45px rgba(37,99,235,.22);
+}
+.practice-hero:after{
+    content:"";
+    position:absolute;
+    width:220px;height:220px;
+    border:1px solid rgba(255,255,255,.16);
+    border-radius:50%;
+    right:-70px;top:-70px;
+}
+.practice-hero-inner{position:relative;z-index:1;text-align:center}
+.practice-eyebrow{
+    display:inline-flex;align-items:center;gap:7px;
+    padding:7px 14px;border-radius:999px;
+    background:rgba(255,255,255,.15);
+    border:1px solid rgba(255,255,255,.25);
+    font-size:12px;font-weight:700;letter-spacing:.8px;
+    text-transform:uppercase;
+}
+.practice-hero h1{font-size:38px;margin:15px 0 8px;font-weight:800}
+.practice-hero p{font-size:16px;margin:0 auto;max-width:720px;opacity:.92;line-height:1.7}
+.hero-stats{
+    display:flex;justify-content:center;gap:12px;flex-wrap:wrap;margin-top:25px
+}
+.hero-stat{
+    min-width:135px;padding:12px 15px;border-radius:15px;
+    background:rgba(255,255,255,.12);
+    border:1px solid rgba(255,255,255,.2);
+    backdrop-filter:blur(8px);
+}
+.hero-stat strong{display:block;font-size:19px}
+.hero-stat span{font-size:11px;opacity:.85}
+
+/* MODE SWITCH */
+.mode-switch{
+    display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+    margin:25px 0;
+}
+.mode-btn{
+    border:1px solid #dbe3ef;background:#fff;color:#334155;
+    padding:12px 24px;border-radius:999px;font-weight:800;
+    cursor:pointer;transition:.25s;
+    box-shadow:0 6px 18px rgba(15,23,42,.06);
+}
+.mode-btn.active{
+    color:#fff;border-color:#4f46e5;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    box-shadow:0 10px 25px rgba(79,70,229,.22);
+}
+
+/* SECTION CARDS */
+.p-card{
+    background:#fff;border:1px solid #e8edf5;border-radius:24px;
+    padding:30px;margin-bottom:24px;
+    box-shadow:0 10px 30px rgba(15,23,42,.07);
+}
+.section-head{
+    display:flex;align-items:flex-start;justify-content:space-between;
+    gap:15px;margin-bottom:20px;
+}
+.section-head h2{margin:0;color:#172554;font-size:24px}
+.section-head p{margin:6px 0 0;color:#64748b;font-size:14px;line-height:1.6}
+.step-pill{
+    flex:none;padding:7px 11px;border-radius:999px;
+    background:#eef2ff;color:#4338ca;font-size:11px;font-weight:800;
+}
+
+/* SUBJECT CARDS */
+.subject-grid{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:16px;
+}
+.subject-card{
+    position:relative;border:1px solid #e2e8f0;border-radius:20px;
+    padding:22px;background:linear-gradient(145deg,#fff,#f8fafc);
+    cursor:pointer;transition:.25s;min-height:185px;
+}
+.subject-card:hover{
+    transform:translateY(-5px);border-color:#818cf8;
+    box-shadow:0 14px 30px rgba(79,70,229,.13);
+}
+.subject-card.active{
+    border:2px solid #6366f1;
+    box-shadow:0 14px 30px rgba(99,102,241,.15);
+}
+.subject-icon{
+    width:52px;height:52px;border-radius:16px;
+    display:flex;align-items:center;justify-content:center;
+    font-size:27px;background:#eef2ff;margin-bottom:14px;
+}
+.subject-card h3{margin:0 0 7px;color:#1e3a8a;font-size:18px}
+.subject-card p{margin:0;color:#64748b;font-size:13px;line-height:1.55}
+.subject-status{
+    display:inline-block;margin-top:15px;padding:5px 10px;
+    border-radius:999px;font-size:11px;font-weight:800;
+    background:#dcfce7;color:#15803d;
+}
+.subject-card.soon{opacity:.68;cursor:not-allowed}
+.subject-card.soon .subject-status{background:#f1f5f9;color:#64748b}
+
+/* SELECTION */
+.selection-grid{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:16px;
+}
+.field label{
+    display:block;font-size:13px;font-weight:800;color:#334155;margin-bottom:7px;
+}
+.field select{
+    width:100%;padding:14px 15px;border-radius:13px;
+    border:1px solid #d7deea;background:#fff;color:#1e293b;
+    font-size:14px;outline:none;transition:.2s;
+}
+.field select:focus{border-color:#6366f1;box-shadow:0 0 0 4px rgba(99,102,241,.10)}
+.field.full{grid-column:1/-1}
+
+/* SELECTION SUMMARY */
+.selection-summary{
+    margin-top:18px;padding:15px 17px;border-radius:15px;
+    background:linear-gradient(135deg,#eef2ff,#faf5ff);
+    border:1px solid #ddd6fe;color:#3730a3;
+    display:none;
+}
+.selection-summary strong{color:#312e81}
+
+/* DIFFICULTY */
+.difficulty-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
+.difficulty-card{
+    position:relative;overflow:hidden;border-radius:22px;padding:25px;
+    cursor:pointer;transition:.25s;border:2px solid transparent;
+}
+.difficulty-card:hover{transform:translateY(-5px);box-shadow:0 16px 34px rgba(15,23,42,.11)}
+.difficulty-card.easy{background:linear-gradient(145deg,#ecfdf5,#fff);border-color:#86efac}
+.difficulty-card.medium{background:linear-gradient(145deg,#fffbeb,#fff);border-color:#fcd34d}
+.difficulty-card.hard{background:linear-gradient(145deg,#fef2f2,#fff);border-color:#fca5a5}
+.difficulty-icon{font-size:32px;margin-bottom:12px}
+.difficulty-card h3{margin:0 0 7px;color:#172554;font-size:21px}
+.difficulty-card p{margin:0;color:#64748b;font-size:13px;line-height:1.6}
+.difficulty-meta{
+    display:flex;gap:7px;flex-wrap:wrap;margin-top:17px
+}
+.difficulty-meta span{
+    padding:6px 9px;border-radius:999px;background:#fff;
+    border:1px solid #e2e8f0;color:#475569;font-size:10px;font-weight:800
+}
+.level-action{
+    display:block;margin-top:17px;font-size:13px;font-weight:800;color:#4338ca
+}
+.difficulty-card.disabled{opacity:.55;cursor:not-allowed}
+
+/* EXAM */
+.exam-shell{display:none}
+.exam-top{
+    display:grid;grid-template-columns:1fr auto;gap:15px;align-items:center;
+    margin-bottom:18px;
+}
+.exam-title h2{margin:0;color:#172554}
+.exam-title p{margin:5px 0 0;color:#64748b;font-size:13px}
+.timer{
+    min-width:145px;text-align:center;padding:13px 18px;border-radius:15px;
+    background:#0f172a;color:#fff;font-weight:900;font-size:21px;
+    box-shadow:0 8px 20px rgba(15,23,42,.16);
+}
+.timer.warning{background:#b91c1c;animation:pulseTimer 1s infinite}
+@keyframes pulseTimer{50%{transform:scale(1.03)}}
+.progress-wrap{margin-bottom:18px}
+.progress-label{display:flex;justify-content:space-between;color:#64748b;font-size:12px;font-weight:700;margin-bottom:7px}
+.progress-track{height:9px;background:#e2e8f0;border-radius:999px;overflow:hidden}
+.progress-fill{height:100%;width:0;background:linear-gradient(90deg,#2563eb,#7c3aed,#db2777);transition:.25s}
+
+.exam-layout{
+    display:grid;grid-template-columns:minmax(0,1fr) 260px;gap:20px;align-items:start;
+}
+.question-panel{
+    border:1px solid #e5e7eb;border-radius:20px;padding:25px;background:#fff;
+}
+.question-tag{
+    display:flex;justify-content:space-between;align-items:center;gap:10px;
+    margin-bottom:15px;
+}
+.q-number{font-size:13px;font-weight:800;color:#4f46e5}
+.q-marks{font-size:11px;font-weight:800;color:#64748b;background:#f8fafc;padding:6px 9px;border-radius:999px}
+.question-text{font-size:22px;font-weight:800;color:#172033;line-height:1.55;margin-bottom:22px}
+.options{display:grid;gap:11px}
+.exam-option{
+    width:100%;text-align:left;border:2px solid #e2e8f0;background:#fff;
+    border-radius:14px;padding:15px 16px;cursor:pointer;
+    font-size:15px;color:#334155;transition:.2s;
+}
+.exam-option:hover{border-color:#818cf8;background:#fafaff}
+.exam-option.selected{border-color:#6366f1;background:#eef2ff;color:#312e81;font-weight:700}
+.exam-option .letter{
+    display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;
+    border-radius:9px;background:#f1f5f9;margin-right:10px;font-weight:900;color:#475569;
+}
+.exam-option.selected .letter{background:#6366f1;color:#fff}
+.exam-nav{
+    display:flex;justify-content:space-between;gap:10px;margin-top:22px;
+}
+.nav-btn,.submit-btn{
+    border:none;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;
+}
+.nav-btn{background:#eef2ff;color:#4338ca}
+.nav-btn:disabled{opacity:.4;cursor:not-allowed}
+.submit-btn{background:linear-gradient(135deg,#16a34a,#059669);color:#fff}
+.palette-panel{
+    position:sticky;top:15px;border:1px solid #e5e7eb;border-radius:20px;
+    padding:18px;background:#f8fafc;
+}
+.palette-panel h3{margin:0;color:#172554;font-size:16px}
+.palette-note{font-size:11px;color:#64748b;line-height:1.5;margin:7px 0 14px}
+.palette{display:grid;grid-template-columns:repeat(5,1fr);gap:7px}
+.palette button{
+    height:36px;border-radius:9px;border:1px solid #dbe3ef;background:#fff;
+    color:#334155;font-weight:800;cursor:pointer;
+}
+.palette button.answered{background:#dcfce7;border-color:#22c55e;color:#166534}
+.palette button.current{background:#4f46e5;border-color:#4f46e5;color:#fff}
+.palette-legend{display:grid;gap:7px;margin-top:15px;font-size:10px;color:#64748b}
+.legend-dot{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:6px;vertical-align:middle}
+.legend-current{background:#4f46e5}.legend-answered{background:#22c55e}.legend-unanswered{background:#fff;border:1px solid #cbd5e1}
+
+/* RESULT */
+.result-shell{display:none}
+.result-banner{
+    text-align:center;border-radius:22px;padding:30px;
+    background:linear-gradient(135deg,#eef2ff,#fdf2f8);
+    border:1px solid #ddd6fe;
+}
+.result-banner .result-icon{font-size:45px}
+.result-banner h2{margin:8px 0;color:#172554;font-size:28px}
+.result-score{font-size:42px;font-weight:900;color:#4f46e5}
+.result-sub{color:#64748b;font-size:13px}
+.result-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:20px 0}
+.result-stat{padding:18px;border-radius:16px;text-align:center;border:1px solid #e5e7eb;background:#fff}
+.result-stat strong{display:block;font-size:25px;color:#172554}
+.result-stat span{font-size:11px;color:#64748b;font-weight:700}
+.review-head{display:flex;justify-content:space-between;align-items:center;gap:10px;margin:25px 0 12px}
+.review-head h3{margin:0;color:#172554}
+.review-item{
+    border:1px solid #e2e8f0;border-radius:16px;margin-bottom:11px;
+    overflow:hidden;background:#fff;
+}
+.review-summary{
+    padding:15px 17px;cursor:pointer;display:flex;align-items:center;
+    justify-content:space-between;gap:10px;font-weight:800;color:#334155;
+}
+.review-summary.correct{border-left:5px solid #22c55e}
+.review-summary.wrong{border-left:5px solid #ef4444}
+.review-summary.unanswered{border-left:5px solid #94a3b8}
+.review-body{display:none;padding:18px;border-top:1px solid #edf2f7;background:#fafafa}
+.review-body.open{display:block}
+.review-q{font-weight:800;color:#172033;line-height:1.55;margin-bottom:12px}
+.review-line{font-size:13px;color:#475569;margin:7px 0}
+.review-answer{font-weight:800}
+.explanation,.hint{
+    margin-top:12px;padding:12px 14px;border-radius:12px;font-size:12px;line-height:1.6
+}
+.explanation{background:#eff6ff;border:1px solid #bfdbfe;color:#1e40af}
+.hint{background:#fffbeb;border:1px solid #fde68a;color:#92400e}
+.result-actions{display:flex;justify-content:center;gap:10px;flex-wrap:wrap;margin-top:25px}
+.action-primary,.action-secondary{
+    border:none;border-radius:12px;padding:13px 20px;font-weight:800;cursor:pointer
+}
+.action-primary{color:#fff;background:linear-gradient(135deg,#4f46e5,#7c3aed)}
+.action-secondary{background:#f1f5f9;color:#334155}
+
+/* MOCK */
+.mock-shell{display:none}
+.mock-card{
+    padding:34px;border-radius:24px;
+    background:linear-gradient(145deg,#fff7ed,#fff,#eef2ff);
+    border:1px solid #e2e8f0;text-align:center;
+}
+.mock-icon{font-size:55px}
+.mock-card h2{color:#172554;margin:10px 0}
+.mock-card p{color:#64748b;max-width:650px;margin:0 auto;line-height:1.7}
+.mock-features{
+    display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin:25px 0;
+}
+.mock-feature{padding:15px;border-radius:15px;background:#fff;border:1px solid #e5e7eb}
+.mock-feature strong{display:block;font-size:20px;color:#4f46e5}
+.mock-feature span{font-size:11px;color:#64748b}
+.coming-pill{
+    display:inline-block;padding:9px 16px;border-radius:999px;
+    background:#e0e7ff;color:#3730a3;font-size:12px;font-weight:900
+}
+
+/* LOADING */
+.loading-overlay{
+    display:none;text-align:center;padding:25px;color:#4f46e5;font-weight:800
+}
+.spinner{
+    display:inline-block;width:22px;height:22px;border:3px solid #ddd6fe;
+    border-top-color:#4f46e5;border-radius:50%;animation:spin .8s linear infinite;
+    vertical-align:middle;margin-right:8px
+}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+@media(max-width:900px){
+    .subject-grid{grid-template-columns:repeat(2,1fr)}
+    .exam-layout{grid-template-columns:1fr}
+    .palette-panel{position:static}
+    .palette{grid-template-columns:repeat(10,1fr)}
+    .mock-features{grid-template-columns:repeat(2,1fr)}
+}
+@media(max-width:700px){
+    .practice-page{padding:0 12px;margin-top:22px}
+    .practice-hero{padding:35px 20px}
+    .practice-hero h1{font-size:29px}
+    .practice-hero p{font-size:14px}
+    .hero-stat{min-width:105px}
+    .p-card{padding:20px;border-radius:20px}
+    .selection-grid,.difficulty-grid{grid-template-columns:1fr}
+    .subject-grid{grid-template-columns:1fr}
+    .exam-top{grid-template-columns:1fr}
+    .timer{width:100%}
+    .question-text{font-size:18px}
+    .result-stats{grid-template-columns:repeat(2,1fr)}
+    .palette{grid-template-columns:repeat(5,1fr)}
+    .mock-features{grid-template-columns:1fr 1fr}
+}
+</style>
+
+</style>
+</head>
+<body>
+
+ 
+
+    <!-- ==========================
+         NAVBAR
+    ========================== -->
+    <nav class="navbar"> 
+        <div class="nav-left"> 
+            <img src="{{ url_for('static', filename='images/logo.jpg') }}" alt="Logo" class="logo"> 
+            <div class="brand-text"> 
+                <h1>RANJITHAM STUDY CENTER</h1> 
+                <p>Learn • Practice • Excel in Mathematics</p> 
+            </div>
+        </div>
+        <div class="nav-center"> 
+            <a href="{{ url_for('home') }}">Home</a> 
+            <a href="{{ url_for('about') }}">About</a> 
+            <a href="{{ url_for('courses') }}">Class</a> 
+            <a href="{{ url_for('materials') }}">Materials</a>
+            <a href="{{ url_for('practice') }}">Practice</a>
+            <a href="{{ url_for('contact') }}">Contact</a> 
+        </div> 
+        <div class="nav-right">
+        <a href="/contact" class="demo-btn">Free demo class</a>
+        </div>
+    </nav>
+
+<style>
+#selectionCard .module-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:25px}
+#selectionCard .module-card{border:1px solid #e2e8f0;border-radius:20px;padding:24px 20px;background:linear-gradient(145deg,#fff,#f8fafc);cursor:pointer;text-align:left;transition:.25s ease;box-shadow:0 8px 25px rgba(15,23,42,.07)}
+#selectionCard .module-card:hover{transform:translateY(-5px);box-shadow:0 15px 35px rgba(79,70,229,.16);border-color:#818cf8}
+#selectionCard .module-icon{width:52px;height:52px;border-radius:15px;display:flex;align-items:center;justify-content:center;font-size:27px;margin-bottom:15px;background:#eef2ff}
+#selectionCard .module-card h3{margin:0 0 7px;color:#1e3a8a;font-size:19px}
+#selectionCard .module-card p{margin:0;color:#64748b;font-size:14px;line-height:1.5}
+#selectionCard .module-badge{display:inline-block;margin-top:15px;padding:5px 10px;border-radius:999px;font-size:12px;font-weight:700;background:#eef2ff;color:#4338ca}
+#selectionCard .module-card.coming{opacity:.72;cursor:not-allowed}
+.ai-level-heading{margin-top:28px;color:#172554}
+.ai-level-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.ai-level-card{border:2px solid transparent;border-radius:22px;padding:22px;cursor:pointer;text-align:left;background:#fff;box-shadow:0 10px 30px rgba(15,23,42,.08);transition:.25s ease}
+.ai-level-card:hover{transform:translateY(-5px)}
+.ai-level-card.easy{background:linear-gradient(145deg,#ecfdf5,#fff);border-color:#86efac}
+.ai-level-card.medium{background:linear-gradient(145deg,#fffbeb,#fff);border-color:#fcd34d}
+.ai-level-card.hard{background:linear-gradient(145deg,#fef2f2,#fff);border-color:#fca5a5}
+.ai-level-icon{font-size:30px;margin-bottom:10px}
+.ai-level-card h3{margin:0 0 7px;color:#172554}
+.ai-level-card p{color:#64748b;font-size:14px;line-height:1.5;margin:0}
+.ai-question-count{display:inline-block;margin-top:14px;padding:6px 11px;border-radius:999px;background:#f1f5f9;color:#334155;font-size:12px;font-weight:700}
+.ai-recommended{margin-top:18px;padding:14px 16px;border-radius:14px;background:#eef2ff;color:#3730a3;font-weight:600}
+.ai-session-bar{display:flex;justify-content:space-between;align-items:center;gap:12px;margin:15px 0;padding:12px 15px;border-radius:14px;background:#f8fafc;font-weight:700;color:#334155}
+@media(max-width:800px){ #selectionCard .module-grid,.ai-level-grid{grid-template-columns:1fr} }
+</style>
+
+
+
+<main class="practice-page">
+
+    <section class="practice-hero">
+        <div class="practice-hero-inner">
+            <span class="practice-eyebrow">✨ RSC Digital Learning</span>
+            <h1>📘 Smart Practice</h1>
+            <p>
+                Practice chapter-wise Mathematics with structured MCQs,
+                timed online tests and detailed performance review.
+            </p>
+            <div class="hero-stats">
+                <div class="hero-stat"><strong>25</strong><span>Questions / Attempt</span></div>
+                <div class="hero-stat"><strong>50</strong><span>Total Marks</span></div>
+                <div class="hero-stat"><strong>30 min</strong><span>Practice Time</span></div>
+                <div class="hero-stat"><strong>∞</strong><span>Practice Attempts</span></div>
+            </div>
+        </div>
+    </section>
+
+    <div class="mode-switch">
+        <button class="mode-btn active" id="practiceModeBtn" onclick="showMode('practice')">
+            📘 Practice
+        </button>
+        <button class="mode-btn" id="mockModeBtn" onclick="showMode('mock')">
+            🏆 Mock Test
+        </button>
+    </div>
+
+    <!-- PRACTICE -->
+    <section id="practiceShell">
+
+        <div class="p-card" id="setupCard">
+            <div class="section-head">
+                <div>
+                    <h2>🎯 Build Your Practice Test</h2>
+                    <p>Select the exact syllabus area you want to practise.</p>
+                </div>
+                <span class="step-pill">STEP 1</span>
+            </div>
+
+            <div class="subject-grid">
+                <div class="subject-card active" onclick="selectSubject('math',this)">
+                    <div class="subject-icon">📐</div>
+                    <h3>Mathematics</h3>
+                    <p>Chapter-wise MCQ practice for concepts, application and problem solving.</p>
+                    <span class="subject-status">Available Now</span>
+                </div>
+
+                <div class="subject-card soon" onclick="comingSoon('Biology')">
+                    <div class="subject-icon">🧬</div>
+                    <h3>Biology</h3>
+                    <p>Syllabus-based practice modules will be added soon.</p>
+                    <span class="subject-status">Coming Soon</span>
+                </div>
+
+                <div class="subject-card soon" onclick="comingSoon('Science')">
+                    <div class="subject-icon">🔬</div>
+                    <h3>Science</h3>
+                    <p>Syllabus-based practice modules will be added soon.</p>
+                    <span class="subject-status">Coming Soon</span>
+                </div>
+
+                <div class="subject-card soon" onclick="comingSoon('Social Science')">
+                    <div class="subject-icon">🌍</div>
+                    <h3>Social Science</h3>
+                    <p>Syllabus-based practice modules will be added soon.</p>
+                    <span class="subject-status">Coming Soon</span>
+                </div>
+            </div>
+
+            <div id="mathSetup" style="margin-top:28px;">
+                <div class="section-head" style="margin-top:8px;">
+                    <div>
+                        <h2 style="font-size:20px;">📚 Select Syllabus</h2>
+                        <p>Questions are loaded from the RSC Practice Question Bank.</p>
+                    </div>
+                    <span class="step-pill">STEP 2</span>
+                </div>
+
+                <div class="selection-grid">
+                    <div class="field">
+                        <label>🏫 Board</label>
+                        <select id="practiceBoard" onchange="loadPracticeClasses()">
+                            <option value="">Loading boards...</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>🎓 Class</label>
+                        <select id="practiceClass" onchange="loadPracticeSubjects()" disabled>
+                            <option value="">Select Class</option>
+                        </select>
+                    </div>
+
+                    <div class="field">
+                        <label>📚 Subject</label>
+                        <select id="practiceSubject" onchange="loadPracticeTopics()" disabled>
+                            <option value="">Select Subject</option>
+                        </select>
+                    </div>
+
+                    <div class="field full">
+                        <label>📖 Chapter / Topic</label>
+                        <select id="practiceTopic" onchange="loadPracticeSubtopics()" disabled>
+                            <option value="">Select Chapter / Topic</option>
+                        </select>
+                    </div>
+
+                    <div class="field full">
+                        <label>📝 Subtopic</label>
+                        <select id="practiceSubtopic" onchange="updateSelectionSummary()" disabled>
+                            <option value="">Select Subtopic</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="selection-summary" id="selectionSummary">
+                    <strong>Selected:</strong>
+                    <span id="selectionSummaryText"></span>
+                </div>
+            </div>
+        </div>
+
+        <div class="p-card" id="difficultyCard">
+            <div class="section-head">
+                <div>
+                    <h2>⚡ Choose Difficulty</h2>
+                    <p>Each attempt contains 25 MCQs. Choose the level that matches your preparation.</p>
+                </div>
+                <span class="step-pill">STEP 3</span>
+            </div>
+
+            <div class="difficulty-grid">
+                <div class="difficulty-card easy" onclick="startPractice('easy')">
+                    <div class="difficulty-icon">🌱</div>
+                    <h3>Easy</h3>
+                    <p>Strengthen fundamentals and build confidence with basic concept-focused questions.</p>
+                    <div class="difficulty-meta">
+                        <span>25 MCQs</span><span>50 Marks</span><span>30 Minutes</span>
+                    </div>
+                    <span class="level-action">Start Easy Practice →</span>
+                </div>
+
+                <div class="difficulty-card medium" onclick="startPractice('medium')">
+                    <div class="difficulty-icon">⚡</div>
+                    <h3>Medium</h3>
+                    <p>Improve application skills with moderate-level questions and problem solving.</p>
+                    <div class="difficulty-meta">
+                        <span>25 MCQs</span><span>50 Marks</span><span>30 Minutes</span>
+                    </div>
+                    <span class="level-action">Start Medium Practice →</span>
+                </div>
+
+                <div class="difficulty-card hard" onclick="startPractice('hard')">
+                    <div class="difficulty-icon">🔥</div>
+                    <h3>Hard</h3>
+                    <p>Challenge yourself with advanced and higher-order Mathematics problems.</p>
+                    <div class="difficulty-meta">
+                        <span>25 MCQs</span><span>50 Marks</span><span>30 Minutes</span>
+                    </div>
+                    <span class="level-action">Start Hard Practice →</span>
+                </div>
+            </div>
+
+            <div class="loading-overlay" id="practiceLoading">
+                <span class="spinner"></span> Preparing your Practice test...
+            </div>
+        </div>
+
+        <!-- EXAM -->
+        <div class="p-card exam-shell" id="examShell">
+            <div class="exam-top">
+                <div class="exam-title">
+                    <h2>📝 Mathematics Practice Test</h2>
+                    <p id="examSubtitle">25 Questions • 50 Marks</p>
+                </div>
+                <div class="timer" id="practiceTimer">30:00</div>
+            </div>
+
+            <div class="progress-wrap">
+                <div class="progress-label">
+                    <span id="progressText">Question 1 of 25</span>
+                    <span id="answeredText">0 Answered</span>
+                </div>
+                <div class="progress-track">
+                    <div class="progress-fill" id="progressFill"></div>
+                </div>
+            </div>
+
+            <div class="exam-layout">
+                <div class="question-panel">
+                    <div class="question-tag">
+                        <span class="q-number" id="questionNumber">Question 1 of 25</span>
+                        <span class="q-marks">2 Marks</span>
+                    </div>
+
+                    <div class="question-text" id="questionText"></div>
+                    <div class="options" id="options"></div>
+
+                    <div class="exam-nav">
+                        <button class="nav-btn" id="previousBtn" onclick="previousQuestion()">← Previous</button>
+                        <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Next →</button>
+                    </div>
+
+                    <div style="text-align:center;margin-top:16px;">
+                        <button class="submit-btn" onclick="confirmSubmit()">✓ Submit Test</button>
+                    </div>
+                </div>
+
+                <aside class="palette-panel">
+                    <h3>Question Palette</h3>
+                    <p class="palette-note">Green = answered. Purple = current question. You can change any answer before submission.</p>
+                    <div class="palette" id="questionPalette"></div>
+                    <div class="palette-legend">
+                        <div><span class="legend-dot legend-current"></span> Current</div>
+                        <div><span class="legend-dot legend-answered"></span> Answered</div>
+                        <div><span class="legend-dot legend-unanswered"></span> Unanswered</div>
+                    </div>
+                </aside>
+            </div>
+        </div>
+
+        <!-- RESULT -->
+        <div class="p-card result-shell" id="resultShell">
+            <div class="result-banner">
+                <div class="result-icon">🏆</div>
+                <h2>Practice Completed</h2>
+                <div class="result-score" id="resultScore">0 / 50</div>
+                <div class="result-sub" id="resultPercentage">0%</div>
+                <p id="resultMessage" style="margin:10px 0 0;color:#475569;font-weight:600;"></p>
+            </div>
+
+            <div class="result-stats">
+                <div class="result-stat"><strong id="correctCount">0</strong><span>Correct</span></div>
+                <div class="result-stat"><strong id="wrongCount">0</strong><span>Incorrect</span></div>
+                <div class="result-stat"><strong id="unansweredCount">0</strong><span>Unanswered</span></div>
+                <div class="result-stat"><strong id="statusText">—</strong><span>Performance</span></div>
+            </div>
+
+            <div class="review-head">
+                <h3>🔍 Review All 25 Questions</h3>
+                <span class="step-pill">AFTER TEST</span>
+            </div>
+
+            <div id="reviewContainer"></div>
+
+            <div class="result-actions">
+                <button class="action-primary" onclick="startNewAttempt()">🔄 Start New Attempt</button>
+                <button class="action-secondary" onclick="backToSetup()">← Back to Selection</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- MOCK -->
+    <section class="mock-shell" id="mockShell">
+        <div class="p-card">
+            <div class="mock-card">
+                <div class="mock-icon">🏆</div>
+                <h2>RSC Mock Test</h2>
+                <p>
+                    A full exam-style Mathematics assessment with mixed-difficulty questions,
+                    fixed duration and a single-attempt examination experience.
+                </p>
+
+                <div class="mock-features">
+                    <div class="mock-feature"><strong>50</strong><span>Questions</span></div>
+                    <div class="mock-feature"><strong>100</strong><span>Marks</span></div>
+                    <div class="mock-feature"><strong>60 min</strong><span>Duration</span></div>
+                    <div class="mock-feature"><strong>1</strong><span>Attempt</span></div>
+                </div>
+
+                <span class="coming-pill">🔒 Paid Mock Test — Coming Soon</span>
+            </div>
+        </div>
+    </section>
+
+</main>
+
+<!-- ==========================
+         CTA SECTION
+    ========================== -->
+    <section class="cta-section">
+        <div class="cta-box">
+            <p class="cta-small">Best Maths Tuition in Medavakkam </p>
+            <h2>Ready to improve your Maths?</h2>
+            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with good guidance.</p>
+            <a href="/contact" class="cta-btn">Enroll Now</a>
+        </div>
+    </section>
+
+    <!-- ==========================
+         CONTACT & FOOTER
+    ========================== -->
+    <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-box">
+                <h3>RANJITHAM STUDY CENTER</h3>
+                <p>Focused maths coaching for Class 6–12 students</p>
+            </div>
+            <div class="footer-box">
+                <h3>Quick Links</h3>
+                <a href="/">Home</a>
+                <a href="/about">About</a>
+                <a href="/courses">Courses</a>
+                <a href="/materials">Materials</a>
+                <a href="/contact">Contact</a>
+                <a href="/admin">Admin</a>
+                <a href="/privacy">Privacy policy</a>
+                <a href="/terms">Terms and Conditions</a>
+            </div>
+            <div class="footer-box">
+                <h3>Contact Details</h3>
+                <p>📞 7702616245</p>
+                <p>📧 ranjithamstudycenter@gmail.com</p>
+           </div>
+        </div>
+                    <div class="footer-bottom">
+                      © 2026 Ranjitham Study Center. All Rights Reserved. | Designed for Quality Education
+                    </div>
+        </footer>
+ <div class="privacy-section">
+  <h3>🔒 <strong>Your Privacy </strong></h3><br> 
+  <p>
+    We collect your name, contact number, email, and feedback solely for communication purposes. 
+    This information is used to provide you with relevant educational updates and materials. 
+    Your data is securely stored and will not be shared with any third parties.
+  </p>
+</div>
+
+  
+ 
+    <!-- ==========================
+         WHATSAPP FLOAT BUTTON
+    ========================== -->
+    <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
+
+
+<script>
+/* =========================================================
+   RSC PRACTICE — DATABASE QUESTION BANK ONLY
+   No AI question generation is used on this page.
+   ========================================================= */
+
+let syllabusOptions = [];
+let topicData = [];
+
+let practiceSessionId = null;
+let practiceQuestions = [];
+let practiceAnswers = {};
+let currentQuestion = 0;
+let practiceTimerInterval = null;
+let practiceSubmitted = false;
+let currentDifficulty = "";
+
+function showMode(mode){
+    const practice = document.getElementById("practiceShell");
+    const mock = document.getElementById("mockShell");
+    const pBtn = document.getElementById("practiceModeBtn");
+    const mBtn = document.getElementById("mockModeBtn");
+
+    if(mode === "mock"){
+        practice.style.display = "none";
+        mock.style.display = "block";
+        pBtn.classList.remove("active");
+        mBtn.classList.add("active");
+        window.scrollTo({top:0, behavior:"smooth"});
+        return;
+    }
+
+    mock.style.display = "none";
+    practice.style.display = "block";
+    mBtn.classList.remove("active");
+    pBtn.classList.add("active");
+}
+
+/* ---------- SUBJECT ---------- */
+function selectSubject(subject, card){
+    if(subject !== "math") return;
+
+    document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
+    card.classList.add("active");
+
+    document.getElementById("mathSetup").style.display = "block";
+}
+
+function comingSoon(name){
+    alert("📚 " + name + " Practice is coming soon.");
+}
+
+/* ---------- SYLLABUS OPTIONS ---------- */
+async function loadPracticeOptions(){
+    const board = document.getElementById("practiceBoard");
+
+    try{
+        const response = await fetch("/api/practice/options", {cache:"no-store"});
+        const data = await response.json();
+
+        if(!response.ok || !data.success){
+            throw new Error(data.error || "Unable to load Practice options.");
+        }
+
+        syllabusOptions = data.options || [];
+
+        const boards = [...new Set(syllabusOptions.map(x => x.board).filter(Boolean))];
+
+        board.innerHTML = '<option value="">Select Board</option>';
+
+        boards.forEach(b => {
+            const opt = document.createElement("option");
+            opt.value = b;
+            opt.textContent = b;
+            board.appendChild(opt);
+        });
+
+        if(boards.length === 1){
+            board.value = boards[0];
+            loadPracticeClasses();
+        }
+    }catch(error){
+        console.error("PRACTICE OPTIONS ERROR:", error);
+        board.innerHTML = '<option value="">Unable to load</option>';
+        alert(error.message);
+    }
+}
+
+function loadPracticeClasses(){
+    const board = document.getElementById("practiceBoard").value;
+    const cls = document.getElementById("practiceClass");
+    const subject = document.getElementById("practiceSubject");
+    const topic = document.getElementById("practiceTopic");
+    const subtopic = document.getElementById("practiceSubtopic");
+
+    cls.innerHTML = '<option value="">Select Class</option>';
+    subject.innerHTML = '<option value="">Select Subject</option>';
+    topic.innerHTML = '<option value="">Select Chapter / Topic</option>';
+    subtopic.innerHTML = '<option value="">Select Subtopic</option>';
+
+    cls.disabled = true;
+    subject.disabled = true;
+    topic.disabled = true;
+    subtopic.disabled = true;
+    document.getElementById("selectionSummary").style.display = "none";
+
+    if(!board) return;
+
+    const classes = [...new Set(
+        syllabusOptions
+            .filter(x => x.board === board)
+            .map(x => x.class_name)
+            .filter(Boolean)
+    )];
+
+    classes.forEach(c => {
+        const opt = document.createElement("option");
+        opt.value = c;
+        opt.textContent = c;
+        cls.appendChild(opt);
+    });
+
+    cls.disabled = false;
+
+    if(classes.length === 1){
+        cls.value = classes[0];
+        loadPracticeSubjects();
+    }
+}
+
+function loadPracticeSubjects(){
+    const board = document.getElementById("practiceBoard").value;
+    const className = document.getElementById("practiceClass").value;
+    const subject = document.getElementById("practiceSubject");
+
+    subject.innerHTML = '<option value="">Select Subject</option>';
+    subject.disabled = true;
+
+    document.getElementById("practiceTopic").innerHTML = '<option value="">Select Chapter / Topic</option>';
+    document.getElementById("practiceTopic").disabled = true;
+    document.getElementById("practiceSubtopic").innerHTML = '<option value="">Select Subtopic</option>';
+    document.getElementById("practiceSubtopic").disabled = true;
+
+    if(!board || !className) return;
+
+    const subjects = [...new Set(
+        syllabusOptions
+            .filter(x => x.board === board && x.class_name === className)
+            .map(x => x.subject)
+            .filter(Boolean)
+    )];
+
+    subjects.forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s;
+        opt.textContent = s;
+        subject.appendChild(opt);
+    });
+
+    subject.disabled = false;
+
+    if(subjects.length === 1){
+        subject.value = subjects[0];
+        loadPracticeTopics();
+    }
+}
+
+async function loadPracticeTopics(){
+    const board = document.getElementById("practiceBoard").value;
+    const className = document.getElementById("practiceClass").value;
+    const subject = document.getElementById("practiceSubject").value;
+    const topic = document.getElementById("practiceTopic");
+    const subtopic = document.getElementById("practiceSubtopic");
+
+    topic.innerHTML = '<option value="">Loading chapters...</option>';
+    topic.disabled = true;
+    subtopic.innerHTML = '<option value="">Select Subtopic</option>';
+    subtopic.disabled = true;
+
+    if(!board || !className || !subject) return;
+
+    try{
+        const response = await fetch("/api/practice/topics", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                board: board,
+                class_name: className,
+                subject: subject
+            })
+        });
+
+        const data = await response.json();
+
+        if(!response.ok || !data.success){
+            throw new Error(data.error || "Unable to load chapters.");
+        }
+
+        topicData = data.topics || [];
+        topic.innerHTML = '<option value="">Select Chapter / Topic</option>';
+
+        topicData.forEach((item, index) => {
+            const opt = document.createElement("option");
+            opt.value = index;
+            opt.textContent = item.topic;
+            topic.appendChild(opt);
+        });
+
+        topic.disabled = false;
+    }catch(error){
+        console.error("PRACTICE TOPICS ERROR:", error);
+        topic.innerHTML = '<option value="">Unable to load</option>';
+        alert(error.message);
+    }
+}
+
+function loadPracticeSubtopics(){
+    const index = document.getElementById("practiceTopic").value;
+    const subtopic = document.getElementById("practiceSubtopic");
+
+    subtopic.innerHTML = '<option value="">Select Subtopic</option>';
+    subtopic.disabled = true;
+
+    if(index === "" || !topicData[index]) return;
+
+    (topicData[index].subtopics || []).forEach(s => {
+        const opt = document.createElement("option");
+        opt.value = s;
+        opt.textContent = s;
+        subtopic.appendChild(opt);
+    });
+
+    subtopic.disabled = false;
+    updateSelectionSummary();
+}
+
+function updateSelectionSummary(){
+    const board = document.getElementById("practiceBoard").value;
+    const cls = document.getElementById("practiceClass").value;
+    const subject = document.getElementById("practiceSubject").value;
+    const topicIndex = document.getElementById("practiceTopic").value;
+    const subtopic = document.getElementById("practiceSubtopic").value;
+    const summary = document.getElementById("selectionSummary");
+    const text = document.getElementById("selectionSummaryText");
+
+    if(board && cls && subject && topicIndex !== "" && subtopic){
+        const topic = topicData[Number(topicIndex)]?.topic || "";
+        text.textContent = `${board} • ${cls} • ${subject} • ${topic} • ${subtopic}`;
+        summary.style.display = "block";
+    }else{
+        summary.style.display = "none";
+    }
+}
+
+/* ---------- PRACTICE SESSION ---------- */
+async function startPractice(level){
+    const board = document.getElementById("practiceBoard").value;
+    const className = document.getElementById("practiceClass").value;
+    const subject = document.getElementById("practiceSubject").value;
+    const topicIndex = document.getElementById("practiceTopic").value;
+    const subtopic = document.getElementById("practiceSubtopic").value;
+
+    if(!board || !className || !subject || topicIndex === "" || !subtopic){
+        alert("Please select Board, Class, Subject, Chapter and Subtopic first.");
+        return;
+    }
+
+    const topic = topicData[Number(topicIndex)]?.topic;
+    if(!topic){
+        alert("Selected chapter is not available.");
+        return;
+    }
+
+    currentDifficulty = level;
+
+    document.getElementById("practiceLoading").style.display = "block";
+
+    try{
+        const response = await fetch("/api/practice/session", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                board: board,
+                class_name: className,
+                subject: subject,
+                topic: topic,
+                subtopic: subtopic,
+                difficulty: level
+            })
+        });
+
+        const data = await response.json();
+
+        if(!response.ok || !data.success){
+            throw new Error(data.error || "Unable to start Practice test.");
+        }
+
+        practiceSessionId = data.session_id;
+        practiceAnswers = data.answers || {};
+        currentQuestion = Number(data.current_question || 0);
+        practiceSubmitted = false;
+
+        await loadPracticeQuestions(data);
+
+    }catch(error){
+        console.error("START PRACTICE ERROR:", error);
+        alert(error.message);
+    }finally{
+        document.getElementById("practiceLoading").style.display = "none";
+    }
+}
+
+async function loadPracticeQuestions(sessionData){
+    const response = await fetch(
+        "/api/practice/session/questions?session_id=" +
+        encodeURIComponent(practiceSessionId),
+        {cache:"no-store"}
+    );
+
+    const data = await response.json();
+
+    if(!response.ok || !data.success){
+        throw new Error(data.error || "Unable to load Practice questions.");
+    }
+
+    practiceQuestions = data.questions || [];
+    practiceAnswers = data.answers || practiceAnswers || {};
+    currentQuestion = Number(data.current_question || 0);
+
+    if(practiceQuestions.length !== 25){
+        throw new Error("Practice test must contain exactly 25 questions.");
+    }
+
+    document.getElementById("setupCard").style.display = "none";
+    document.getElementById("difficultyCard").style.display = "none";
+    document.getElementById("resultShell").style.display = "none";
+    document.getElementById("examShell").style.display = "block";
+
+    const label = currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
+    document.getElementById("examSubtitle").textContent =
+        `${label} Practice • 25 Questions • 50 Marks • 30 Minutes`;
+
+    renderQuestion();
+    startPracticeTimer(data.started_at);
+
+    document.getElementById("examShell").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+/* ---------- QUESTION RENDER ---------- */
+function renderQuestion(){
+    if(!practiceQuestions.length) return;
+
+    if(currentQuestion < 0) currentQuestion = 0;
+    if(currentQuestion > 24) currentQuestion = 24;
+
+    const q = practiceQuestions[currentQuestion];
+
+    document.getElementById("questionNumber").textContent =
+        `Question ${currentQuestion + 1} of 25`;
+
+    document.getElementById("progressText").textContent =
+        `Question ${currentQuestion + 1} of 25`;
+
+    const answeredCount = Object.keys(practiceAnswers || {}).length;
+    document.getElementById("answeredText").textContent =
+        `${answeredCount} Answered`;
+
+    document.getElementById("progressFill").style.width =
+        `${((currentQuestion + 1) / 25) * 100}%`;
+
+    document.getElementById("questionText").textContent =
+        q.question || "";
+
+    const options = document.getElementById("options");
+    options.innerHTML = "";
+
+    (q.options || []).forEach((option, index) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "exam-option";
+
+        if(Number(practiceAnswers[String(q.id)]) === index){
+            btn.classList.add("selected");
+        }
+
+        const letter = document.createElement("span");
+        letter.className = "letter";
+        letter.textContent = String.fromCharCode(65 + index);
+
+        btn.appendChild(letter);
+        btn.appendChild(document.createTextNode(option));
+
+        btn.onclick = () => selectAnswer(q.id, index);
+        options.appendChild(btn);
+    });
+
+    document.getElementById("previousBtn").disabled = currentQuestion === 0;
+    document.getElementById("nextBtn").textContent =
+        currentQuestion === 24 ? "Review & Submit →" : "Next →";
+
+    renderPalette();
+}
+
+async function selectAnswer(questionId, answerIndex){
+    practiceAnswers[String(questionId)] = answerIndex;
+    renderQuestion();
+
+    try{
+        const response = await fetch("/api/practice/session/save-answer", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                session_id: practiceSessionId,
+                question_id: questionId,
+                answer: answerIndex,
+                current_question: currentQuestion
+            })
+        });
+
+        const data = await response.json();
+
+        if(response.ok && data.success){
+            practiceAnswers = data.answers || practiceAnswers;
+            renderPalette();
+        }
+    }catch(error){
+        console.error("SAVE ANSWER ERROR:", error);
+    }
+}
+
+function previousQuestion(){
+    if(currentQuestion > 0){
+        currentQuestion--;
+        renderQuestion();
+    }
+}
+
+function nextQuestion(){
+    if(currentQuestion < 24){
+        currentQuestion++;
+        renderQuestion();
+    }else{
+        confirmSubmit();
+    }
+}
+
+function renderPalette(){
+    const palette = document.getElementById("questionPalette");
+    palette.innerHTML = "";
+
+    practiceQuestions.forEach((q, index) => {
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.textContent = index + 1;
+
+        if(practiceAnswers[String(q.id)] !== undefined){
+            btn.classList.add("answered");
+        }
+        if(index === currentQuestion){
+            btn.classList.remove("answered");
+            btn.classList.add("current");
+        }
+
+        btn.onclick = () => {
+            currentQuestion = index;
+            renderQuestion();
+        };
+
+        palette.appendChild(btn);
+    });
+}
+
+/* ---------- TIMER ---------- */
+function startPracticeTimer(startedAt){
+    stopPracticeTimer();
+
+    const start = new Date(startedAt.replace(" ","T")).getTime();
+    const duration = 30 * 60 * 1000;
+
+    function tick(){
+        const elapsed = Date.now() - start;
+        let remaining = Math.max(0, duration - elapsed);
+
+        const minutes = Math.floor(remaining / 60000);
+        const seconds = Math.floor((remaining % 60000) / 1000);
+
+        const timer = document.getElementById("practiceTimer");
+        timer.textContent =
+            String(minutes).padStart(2,"0") + ":" +
+            String(seconds).padStart(2,"0");
+
+        if(remaining <= 5 * 60 * 1000){
+            timer.classList.add("warning");
+        }
+
+        if(remaining <= 0){
+            stopPracticeTimer();
+            submitPractice(true);
+        }
+    }
+
+    tick();
+    practiceTimerInterval = setInterval(tick,1000);
+}
+
+function stopPracticeTimer(){
+    if(practiceTimerInterval){
+        clearInterval(practiceTimerInterval);
+        practiceTimerInterval = null;
+    }
+}
+
+/* ---------- SUBMIT ---------- */
+function confirmSubmit(){
+    if(practiceSubmitted) return;
+
+    const answered = Object.keys(practiceAnswers || {}).length;
+    const unanswered = 25 - answered;
+
+    const ok = confirm(
+        `Submit Practice Test?\n\n` +
+        `Answered: ${answered}\n` +
+        `Unanswered: ${unanswered}\n\n` +
+        `You cannot change answers after submission.`
+    );
+
+    if(ok) submitPractice(false);
+}
+
+async function submitPractice(autoSubmit){
+    if(practiceSubmitted || !practiceSessionId) return;
+
+    practiceSubmitted = true;
+    stopPracticeTimer();
+
+    try{
+        const response = await fetch("/api/practice/session/submit", {
+            method:"POST",
+            headers:{"Content-Type":"application/json"},
+            body:JSON.stringify({
+                session_id: practiceSessionId,
+                answers: practiceAnswers || {}
+            })
+        });
+
+        const data = await response.json();
+
+        if(!response.ok || !data.success){
+            practiceSubmitted = false;
+            throw new Error(data.error || "Unable to submit Practice test.");
+        }
+
+        showResult(data, autoSubmit);
+
+    }catch(error){
+        practiceSubmitted = false;
+        console.error("SUBMIT PRACTICE ERROR:", error);
+        alert(error.message);
+    }
+}
+
+/* ---------- RESULT + REVIEW ---------- */
+function showResult(data, autoSubmit){
+    document.getElementById("examShell").style.display = "none";
+    document.getElementById("resultShell").style.display = "block";
+
+    const score = Number(data.score || 0);
+    const percentage = Number(data.percentage || 0);
+    const correct = Number(data.correct_answers || 0);
+    const incorrect = Number(data.incorrect_answers || 0);
+    const unanswered = Number(data.unanswered || 0);
+    const status = data.status || "—";
+
+    document.getElementById("resultScore").textContent =
+        `${score} / 50`;
+
+    document.getElementById("resultPercentage").textContent =
+        `${percentage.toFixed(1)}%`;
+
+    document.getElementById("correctCount").textContent = correct;
+    document.getElementById("wrongCount").textContent = incorrect;
+    document.getElementById("unansweredCount").textContent = unanswered;
+    document.getElementById("statusText").textContent = status;
+
+    let message = "";
+    if(autoSubmit){
+        message = "⏰ Time is over. Your test was submitted automatically.";
+    }else if(percentage >= 80){
+        message = "Excellent work! You are showing strong command of this topic.";
+    }else if(percentage >= 50){
+        message = "Good progress. Review the incorrect questions and keep practising.";
+    }else{
+        message = "More practice is recommended. Focus on the concepts shown in the review.";
+    }
+
+    document.getElementById("resultMessage").textContent = message;
+
+    renderReview(data.review || []);
+    document.getElementById("resultShell").scrollIntoView({behavior:"smooth",block:"start"});
+}
+
+function renderReview(review){
+    const container = document.getElementById("reviewContainer");
+    container.innerHTML = "";
+
+    if(!review.length){
+        container.innerHTML =
+            '<p style="color:#64748b;">Review information is not available.</p>';
+        return;
+    }
+
+    review.forEach((item,index) => {
+        const wrapper = document.createElement("div");
+        wrapper.className = "review-item";
+
+        const state = item.is_correct
+            ? "correct"
+            : (item.student_answer === null || item.student_answer === undefined ? "unanswered" : "wrong");
+
+        const title = document.createElement("div");
+        title.className = "review-summary " + state;
+
+        const label = item.is_correct
+            ? "✓ Correct"
+            : (state === "unanswered" ? "— Unanswered" : "✕ Incorrect");
+
+        title.innerHTML =
+            `<span>Question ${index + 1} — ${label}</span><span>＋</span>`;
+
+        const body = document.createElement("div");
+        body.className = "review-body";
+
+        const question = document.createElement("div");
+        question.className = "review-q";
+        question.textContent = item.question || "";
+
+        const studentAnswer = document.createElement("div");
+        studentAnswer.className = "review-line";
+        studentAnswer.innerHTML =
+            "<span class='review-answer'>Your answer:</span> " +
+            escapeHtml(item.student_answer_text ?? "Not answered");
+
+        const correctAnswer = document.createElement("div");
+        correctAnswer.className = "review-line";
+        correctAnswer.innerHTML =
+            "<span class='review-answer'>Correct answer:</span> " +
+            escapeHtml(item.correct_answer_text ?? "");
+
+        body.appendChild(question);
+        body.appendChild(studentAnswer);
+        body.appendChild(correctAnswer);
+
+        if(item.explanation){
+            const exp = document.createElement("div");
+            exp.className = "explanation";
+            exp.innerHTML = "<strong>💡 Explanation:</strong><br>" +
+                escapeHtml(item.explanation);
+            body.appendChild(exp);
+        }
+
+        if(item.hint){
+            const hint = document.createElement("div");
+            hint.className = "hint";
+            hint.innerHTML = "<strong>🧠 Hint:</strong><br>" +
+                escapeHtml(item.hint);
+            body.appendChild(hint);
+        }
+
+        title.onclick = () => body.classList.toggle("open");
+
+        wrapper.appendChild(title);
+        wrapper.appendChild(body);
+        container.appendChild(wrapper);
+    });
+}
+
+function escapeHtml(value){
+    const div = document.createElement("div");
+    div.textContent = String(value ?? "");
+    return div.innerHTML;
+}
+
+/* ---------- NEW ATTEMPT ---------- */
+function startNewAttempt(){
+    practiceSessionId = null;
+    practiceAnswers = {};
+    practiceQuestions = [];
+    currentQuestion = 0;
+    practiceSubmitted = false;
+
+    stopPracticeTimer();
+
+    document.getElementById("resultShell").style.display = "none";
+    document.getElementById("setupCard").style.display = "block";
+    document.getElementById("difficultyCard").style.display = "block";
+
+    document.getElementById("difficultyCard").scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
+
+function backToSetup(){
+    startNewAttempt();
+    document.getElementById("setupCard").scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
+
+/* ---------- INITIAL LOAD ---------- */
+document.addEventListener("DOMContentLoaded", function(){
+    loadPracticeOptions();
+});
+</script>
+
+</body>
+</html>
