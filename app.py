@@ -9,6 +9,7 @@ import sqlite3
 import csv
 import random
 import requests
+import pandas as pd
 import smtplib
 from openai import OpenAI
 from email.mime.text import MIMEText
@@ -2538,7 +2539,310 @@ def admin_practice_questions():
             "error": str(e)
         }), 500
 
+# =====================================================
+# ADMIN - IMPORT PRACTICE QUESTIONS FROM EXCEL
+# =====================================================
 
+@app.route("/admin/practice-questions/import-excel", methods=["POST"])
+def import_practice_questions_excel():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        # -------------------------------------------------
+        # 1. CHECK FILE
+        # -------------------------------------------------
+
+        if "excel_file" not in request.files:
+            return jsonify({
+                "success": False,
+                "error": "Excel file not selected."
+            }), 400
+
+        file = request.files["excel_file"]
+
+        if not file or not file.filename:
+            return jsonify({
+                "success": False,
+                "error": "Excel file not selected."
+            }), 400
+
+        if not file.filename.lower().endswith((".xlsx", ".xls")):
+            return jsonify({
+                "success": False,
+                "error": "Please upload an Excel file (.xlsx or .xls)."
+            }), 400
+
+
+        # -------------------------------------------------
+        # 2. READ EXCEL
+        # -------------------------------------------------
+
+        df = pd.read_excel(file)
+
+        # Remove completely empty rows
+        df = df.dropna(how="all")
+
+
+        # -------------------------------------------------
+        # 3. REQUIRED COLUMNS
+        # -------------------------------------------------
+
+        required_columns = [
+            "Board",
+            "Class",
+            "Subject",
+            "Topic",
+            "Subtopic",
+            "Difficulty",
+            "Question",
+            "A",
+            "B",
+            "C",
+            "D",
+            "Answer"
+        ]
+
+        missing_columns = [
+            col for col in required_columns
+            if col not in df.columns
+        ]
+
+        if missing_columns:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Missing Excel columns: "
+                    + ", ".join(missing_columns)
+            }), 400
+
+
+        # -------------------------------------------------
+        # 4. DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+
+        imported = 0
+        skipped = 0
+        errors = []
+
+
+        # -------------------------------------------------
+        # 5. PROCESS EACH ROW
+        # -------------------------------------------------
+
+        for excel_row, row in df.iterrows():
+
+            row_number = excel_row + 2
+
+            try:
+
+                board = str(row["Board"]).strip()
+                class_name = str(row["Class"]).strip()
+                subject = str(row["Subject"]).strip()
+                topic = str(row["Topic"]).strip()
+                subtopic = str(row["Subtopic"]).strip()
+                difficulty = str(row["Difficulty"]).strip().lower()
+
+                question = str(row["Question"]).strip()
+
+                option_a = str(row["A"]).strip()
+                option_b = str(row["B"]).strip()
+                option_c = str(row["C"]).strip()
+                option_d = str(row["D"]).strip()
+
+                correct_answer = str(row["Answer"]).strip().upper()
+
+                explanation = ""
+
+                if "Explanation" in df.columns:
+                    value = row["Explanation"]
+
+                    if pd.notna(value):
+                        explanation = str(value).strip()
+
+                hint = ""
+
+                if "Hint" in df.columns:
+                    value = row["Hint"]
+
+                    if pd.notna(value):
+                        hint = str(value).strip()
+
+
+                # -------------------------------------------------
+                # 6. VALIDATION
+                # -------------------------------------------------
+
+                if difficulty not in ["easy", "medium", "hard"]:
+                    errors.append(
+                        f"Row {row_number}: Invalid difficulty."
+                    )
+                    skipped += 1
+                    continue
+
+
+                if correct_answer not in ["A", "B", "C", "D"]:
+                    errors.append(
+                        f"Row {row_number}: Invalid answer."
+                    )
+                    skipped += 1
+                    continue
+
+
+                required_values = [
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    question,
+                    option_a,
+                    option_b,
+                    option_c,
+                    option_d
+                ]
+
+                if not all(required_values):
+                    errors.append(
+                        f"Row {row_number}: Required field is empty."
+                    )
+                    skipped += 1
+                    continue
+
+
+                # -------------------------------------------------
+                # 7. DUPLICATE CHECK
+                # -------------------------------------------------
+
+                c.execute("""
+                    SELECT id
+                    FROM practice_questions
+                    WHERE board=?
+                    AND class_name=?
+                    AND subject=?
+                    AND topic=?
+                    AND subtopic=?
+                    AND difficulty=?
+                    AND question=?
+                    LIMIT 1
+                """, (
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    difficulty,
+                    question
+                ))
+
+                existing = c.fetchone()
+
+
+                if existing:
+
+                    skipped += 1
+                    continue
+
+
+                # -------------------------------------------------
+                # 8. INSERT
+                # -------------------------------------------------
+
+                c.execute("""
+                    INSERT INTO practice_questions
+                    (
+                        board,
+                        class_name,
+                        subject,
+                        topic,
+                        subtopic,
+                        difficulty,
+                        question,
+                        option_a,
+                        option_b,
+                        option_c,
+                        option_d,
+                        correct_answer,
+                        explanation,
+                        hint,
+                        marks,
+                        active
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    difficulty,
+                    question,
+                    option_a,
+                    option_b,
+                    option_c,
+                    option_d,
+                    correct_answer,
+                    explanation,
+                    hint,
+                    2,
+                    1
+                ))
+
+                imported += 1
+
+
+            except Exception as row_error:
+
+                errors.append(
+                    f"Row {row_number}: {str(row_error)}"
+                )
+
+                skipped += 1
+
+
+        # -------------------------------------------------
+        # 9. SAVE
+        # -------------------------------------------------
+
+        conn.commit()
+        conn.close()
+
+
+        # -------------------------------------------------
+        # 10. RESPONSE
+        # -------------------------------------------------
+
+        return jsonify({
+            "success": True,
+            "message": "Excel import completed.",
+            "imported": imported,
+            "skipped": skipped,
+            "errors": errors
+        })
+
+
+    except Exception as e:
+
+        print(
+            "IMPORT PRACTICE EXCEL ERROR:",
+            e
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+        
 # =====================================================
 # ADMIN - ADD PRACTICE QUESTION
 # =====================================================
