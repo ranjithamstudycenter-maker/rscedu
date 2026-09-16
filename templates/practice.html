@@ -707,6 +707,7 @@ a{text-decoration:none}
 
 </main>
 
+
 <script>
 /* =========================================================
    RSC PRACTICE — DATABASE QUESTION BANK ONLY
@@ -723,6 +724,8 @@ let currentQuestion = 0;
 let practiceTimerInterval = null;
 let practiceSubmitted = false;
 let currentDifficulty = "";
+let restoringPracticeState = false;
+const PRACTICE_STATE_KEY = "rsc_practice_selection_v1";
 
 function showMode(mode){
     const practice = document.getElementById("practiceShell");
@@ -758,14 +761,107 @@ function selectSubject(subject, card){
     mathSetup.style.display = "block";
     difficulty.style.display = "none";
 
-    mathSetup.scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-    });
+    savePracticeSelection();
+
+    if(!restoringPracticeState){
+        mathSetup.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+    }
 }
 
 function comingSoon(name){
     alert("📚 " + name + " Practice is coming soon.");
+}
+
+/* ---------- REMEMBER SELECTION ---------- */
+function savePracticeSelection(){
+    if(restoringPracticeState) return;
+
+    const state = {
+        subject: document.querySelector('.subject-card.active') ? 'math' : '',
+        board: document.getElementById("practiceBoard")?.value || "",
+        class_name: document.getElementById("practiceClass")?.value || "",
+        subject_value: document.getElementById("practiceSubject")?.value || "",
+        topic_index: document.getElementById("practiceTopic")?.value || "",
+        subtopic: document.getElementById("practiceSubtopic")?.value || ""
+    };
+
+    try{
+        localStorage.setItem(PRACTICE_STATE_KEY, JSON.stringify(state));
+    }catch(e){}
+}
+
+function getSavedPracticeSelection(){
+    try{
+        return JSON.parse(localStorage.getItem(PRACTICE_STATE_KEY) || "null");
+    }catch(e){
+        return null;
+    }
+}
+
+function clearSavedPracticeSelection(){
+    try{ localStorage.removeItem(PRACTICE_STATE_KEY); }catch(e){}
+}
+
+async function restorePracticeSelection(){
+    const state = getSavedPracticeSelection();
+    if(!state || state.subject !== "math") return;
+
+    restoringPracticeState = true;
+
+    try{
+        const mathCard = document.querySelector('.subject-card[onclick*="selectSubject(\'math\'"]');
+        if(mathCard){
+            document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
+            mathCard.classList.add("active");
+        }
+
+        const mathSetup = document.getElementById("mathSetup");
+        mathSetup.style.display = "block";
+
+        const board = document.getElementById("practiceBoard");
+        const cls = document.getElementById("practiceClass");
+        const subject = document.getElementById("practiceSubject");
+        const topic = document.getElementById("practiceTopic");
+        const subtopic = document.getElementById("practiceSubtopic");
+
+        // Restore Board
+        if(state.board){
+            board.value = state.board;
+            loadPracticeClasses();
+        }
+
+        // Restore Class
+        if(state.class_name && [...cls.options].some(o => o.value === state.class_name)){
+            cls.value = state.class_name;
+            loadPracticeSubjects();
+        }
+
+        // Restore Subject and load chapters
+        if(state.subject_value && [...subject.options].some(o => o.value === state.subject_value)){
+            subject.value = state.subject_value;
+            await loadPracticeTopics();
+        }
+
+        // Restore Chapter and Subtopic
+        if(state.topic_index !== "" && topicData[Number(state.topic_index)]){
+            topic.value = state.topic_index;
+            loadPracticeSubtopics();
+
+            if(state.subtopic && [...subtopic.options].some(o => o.value === state.subtopic)){
+                subtopic.value = state.subtopic;
+            }
+        }
+
+        updateSelectionSummary(false);
+
+    }catch(error){
+        console.warn("PRACTICE STATE RESTORE ERROR:", error);
+    }finally{
+        restoringPracticeState = false;
+    }
 }
 
 /* ---------- SYLLABUS OPTIONS ---------- */
@@ -807,6 +903,8 @@ async function loadPracticeOptions(){
             board.value = boards[0];
             loadPracticeClasses();
         }
+
+        await restorePracticeSelection();
     }catch(error){
         console.error("PRACTICE OPTIONS ERROR:", error);
         board.innerHTML = '<option value="">Unable to load</option>';
@@ -855,6 +953,8 @@ function loadPracticeClasses(){
         cls.value = classes[0];
         loadPracticeSubjects();
     }
+
+    savePracticeSelection();
 }
 
 function loadPracticeSubjects(){
@@ -894,6 +994,8 @@ function loadPracticeSubjects(){
         subject.value = subjects[0];
         loadPracticeTopics();
     }
+
+    savePracticeSelection();
 }
 
 async function loadPracticeTopics(){
@@ -950,6 +1052,7 @@ async function loadPracticeTopics(){
         });
 
         topic.disabled = false;
+        savePracticeSelection();
     }catch(error){
         console.error("PRACTICE TOPICS ERROR:", error);
         topic.innerHTML = '<option value="">Unable to load</option>';
@@ -975,9 +1078,10 @@ function loadPracticeSubtopics(){
 
     subtopic.disabled = false;
     updateSelectionSummary();
+    savePracticeSelection();
 }
 
-function updateSelectionSummary(){
+function updateSelectionSummary(shouldScroll = true){
     const board = document.getElementById("practiceBoard").value;
     const cls = document.getElementById("practiceClass").value;
     const subject = document.getElementById("practiceSubject").value;
@@ -995,16 +1099,20 @@ function updateSelectionSummary(){
 
         // STEP 3 appears only after the complete syllabus selection.
         difficultyCard.style.display = "block";
-        setTimeout(() => {
-            difficultyCard.scrollIntoView({
-                behavior:"smooth",
-                block:"start"
-            });
-        }, 100);
+        if(shouldScroll && !restoringPracticeState){
+            setTimeout(() => {
+                difficultyCard.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+            }, 100);
+        }
     }else{
         summary.style.display = "none";
         difficultyCard.style.display = "none";
     }
+
+    savePracticeSelection();
 }
 
 /* ---------- PRACTICE SESSION ---------- */
@@ -1471,6 +1579,13 @@ function backToSetup(){
 /* ---------- INITIAL LOAD ---------- */
 document.addEventListener("DOMContentLoaded", function(){
     loadPracticeOptions();
+});
+
+// Browser Back/Forward Cache: restore the same selection when returning.
+window.addEventListener("pageshow", function(event){
+    if(event.persisted){
+        restorePracticeSelection();
+    }
 });
 </script>
 
