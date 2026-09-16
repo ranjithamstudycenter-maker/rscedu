@@ -115,7 +115,10 @@ a{text-decoration:none}
 }
 .section-head h2{margin:0;color:#172554;font-size:24px}
 .section-head p{margin:6px 0 0;color:#64748b;font-size:14px;line-height:1.6}
-.step-pill{display:none}
+.step-pill{
+    flex:none;padding:7px 11px;border-radius:999px;
+    background:#eef2ff;color:#4338ca;font-size:11px;font-weight:800;
+}
 
 /* SUBJECT CARDS */
 .subject-grid{
@@ -197,6 +200,11 @@ a{text-decoration:none}
     display:block;margin-top:17px;font-size:13px;font-weight:800;color:#4338ca
 }
 .difficulty-card.disabled{opacity:.55;cursor:not-allowed}
+
+.difficulty-grid.locked{opacity:.55;filter:saturate(.75)}
+.difficulty-grid.locked .difficulty-card{cursor:not-allowed;transform:none !important;box-shadow:none !important}
+.difficulty-grid.locked .level-action:after{content:"  • Complete syllabus selection first";font-weight:700;color:#64748b}
+
 
 /* EXAM */
 .exam-shell{display:none}
@@ -372,64 +380,135 @@ a{text-decoration:none}
 }
 </style>
 
-</style>
-
+<style>
 /* =========================================================
-   EXAM MODE LOCK
-   During an active test, only the exam interface is usable.
+   RSC PRACTICE — TRUE ONLINE EXAM MODE
    ========================================================= */
 body.exam-running{
-    background:#f8fafc;
+    background:#f1f5f9;
 }
 body.exam-running .navbar,
 body.exam-running .practice-hero,
 body.exam-running .mode-switch,
-body.exam-running #setupCard,
-body.exam-running #difficultyCard,
-body.exam-running #mockShell,
-body.exam-running footer,
+body.exam-running .cta-section,
+body.exam-running .footer,
 body.exam-running .privacy-section,
 body.exam-running .whatsapp{
-    pointer-events:none !important;
-    opacity:.35 !important;
+    display:none !important;
 }
-body.exam-running .navbar a,
-body.exam-running .mode-switch button{
-    pointer-events:none !important;
+body.exam-running .practice-page{
+    max-width:1280px;
+    margin:0 auto;
+    padding:18px 18px 40px;
 }
-body.exam-running #examShell,
-body.exam-running #examShell *{
-    pointer-events:auto !important;
+body.exam-running #practiceShell{
+    display:block !important;
 }
-body.exam-running #examShell{
-    position:relative;
-    z-index:10000;
+body.exam-running #setupCard,
+body.exam-running #difficultyCard,
+body.exam-running #resultShell,
+body.exam-running #mockShell{
+    display:none !important;
 }
-.exam-lock-notice{
+body.exam-running .exam-shell{
+    display:block !important;
+}
+body.exam-running .exam-layout{
+    grid-template-columns:minmax(0,1fr) 285px;
+}
+body.exam-running .question-panel{
+    min-height:520px;
+}
+body.exam-running .exam-option{
+    min-height:58px;
+}
+.exam-lock-bar{
     display:none;
 }
-body.exam-running .exam-lock-notice{
-    display:block;
-    position:fixed;
-    top:10px;
-    right:14px;
-    z-index:20000;
-    padding:7px 12px;
-    border-radius:999px;
-    background:#172554;
-    color:#fff;
-    font-size:11px;
-    font-weight:700;
-    box-shadow:0 8px 20px rgba(15,23,42,.18);
+body.exam-running .exam-lock-bar{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:14px;
+    padding:10px 16px;
+    margin-bottom:12px;
+    border-radius:14px;
+    background:#fff7ed;
+    border:1px solid #fed7aa;
+    color:#9a3412;
+    font-size:12px;
+    font-weight:800;
 }
+.start-test-modal{
+    position:fixed;
+    inset:0;
+    z-index:5000;
+    display:none;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    background:rgba(15,23,42,.62);
+    backdrop-filter:blur(5px);
+}
+.start-test-modal.show{display:flex}
+.start-test-dialog{
+    width:min(520px,100%);
+    background:#fff;
+    border-radius:24px;
+    padding:30px;
+    box-shadow:0 30px 80px rgba(15,23,42,.30);
+    border:1px solid #e2e8f0;
+}
+.start-test-icon{
+    width:58px;height:58px;border-radius:17px;
+    display:flex;align-items:center;justify-content:center;
+    background:#eef2ff;font-size:30px;margin-bottom:15px;
+}
+.start-test-dialog h2{color:#172554;margin-bottom:8px;font-size:25px}
+.start-test-dialog p{color:#64748b;line-height:1.65;font-size:13px;margin-bottom:18px}
+.start-test-info{
+    display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin:18px 0;
+}
+.start-test-info div{
+    padding:13px 10px;text-align:center;border-radius:14px;
+    background:#f8fafc;border:1px solid #e2e8f0;
+}
+.start-test-info strong{display:block;color:#312e81;font-size:18px}
+.start-test-info span{display:block;color:#64748b;font-size:10px;margin-top:3px;font-weight:700}
+.start-test-warning{
+    padding:13px 14px;border-radius:13px;
+    background:#fff7ed;border:1px solid #fed7aa;
+    color:#9a3412;font-size:12px;font-weight:700;line-height:1.55;
+}
+.start-test-actions{
+    display:flex;justify-content:flex-end;gap:10px;margin-top:22px;
+}
+.start-test-actions button{
+    border:0;border-radius:12px;padding:12px 20px;font-weight:800;cursor:pointer;
+}
+.start-cancel{background:#f1f5f9;color:#334155}
+.start-confirm{background:linear-gradient(135deg,#4f46e5,#7c3aed);color:#fff}
+.exam-submit-wrap{
+    position:sticky;bottom:10px;
+    display:flex;justify-content:center;
+    margin-top:20px;
+    padding:8px;
+    background:rgba(255,255,255,.92);
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    backdrop-filter:blur(8px);
+}
+@media(max-width:700px){
+    .start-test-info{grid-template-columns:1fr 1fr 1fr}
+    body.exam-running .practice-page{padding:10px}
+    body.exam-running .exam-layout{grid-template-columns:1fr}
+}
+</style>
 
 </head>
 <body>
-<div class="exam-lock-notice">🔒 Test Mode — Navigation Locked</div>
 
- 
-
-    <!-- ==========================
+     <!-- ==========================
          NAVBAR
     ========================== -->
     <nav class="navbar"> 
@@ -480,6 +559,33 @@ body.exam-running .exam-lock-notice{
 
 
 
+
+<!-- START TEST CONFIRMATION -->
+<div class="start-test-modal" id="startTestModal" aria-hidden="true">
+    <div class="start-test-dialog" role="dialog" aria-modal="true" aria-labelledby="startTestTitle">
+        <div class="start-test-icon">📝</div>
+        <h2 id="startTestTitle">Start Practice Test?</h2>
+        <p>
+            You are about to start your Mathematics Practice test.
+            Once you click <strong>Start Test</strong>, the 30-minute timer will begin
+            and your selected 25 questions will be fixed for this attempt.
+        </p>
+        <div class="start-test-info">
+            <div><strong>25</strong><span>Questions</span></div>
+            <div><strong>50</strong><span>Marks</span></div>
+            <div><strong>30 min</strong><span>Time</span></div>
+        </div>
+        <div class="start-test-warning">
+            ⚠️ During the test, use only the question navigation and Submit Test.
+            You can change answers until final submission.
+        </div>
+        <div class="start-test-actions">
+            <button class="start-cancel" onclick="closeStartTestModal()">Cancel</button>
+            <button class="start-confirm" onclick="confirmStartPractice()">Start Test →</button>
+        </div>
+    </div>
+</div>
+
 <main class="practice-page">
 
     <section class="practice-hero">
@@ -514,14 +620,14 @@ body.exam-running .exam-lock-notice{
         <div class="p-card" id="setupCard">
             <div class="section-head">
                 <div>
-                    <h2>🎯 Choose Your Practice</h2>
-                    <p>Select a subject to continue.</p>
+                    <h2>🎯 Build Your Practice Test</h2>
+                    <p>Select the exact syllabus area you want to practise.</p>
                 </div>
                 <span class="step-pill">STEP 1</span>
             </div>
 
             <div class="subject-grid">
-                <div class="subject-card" onclick="selectSubject('math',this)">
+                <div class="subject-card active" onclick="selectSubject('math',this)">
                     <div class="subject-icon">📐</div>
                     <h3>Mathematics</h3>
                     <p>Chapter-wise MCQ practice for concepts, application and problem solving.</p>
@@ -550,7 +656,7 @@ body.exam-running .exam-lock-notice{
                 </div>
             </div>
 
-            <div id="mathSetup" style="margin-top:28px;display:none;">
+            <div id="mathSetup" style="margin-top:28px;">
                 <div class="section-head" style="margin-top:8px;">
                     <div>
                         <h2 style="font-size:20px;">📚 Select Syllabus</h2>
@@ -603,7 +709,7 @@ body.exam-running .exam-lock-notice{
             </div>
         </div>
 
-        <div class="p-card" id="difficultyCard" style="display:none;">
+        <div class="p-card" id="difficultyCard">
             <div class="section-head">
                 <div>
                     <h2>⚡ Choose Difficulty</h2>
@@ -651,6 +757,10 @@ body.exam-running .exam-lock-notice{
 
         <!-- EXAM -->
         <div class="p-card exam-shell" id="examShell">
+            <div class="exam-lock-bar">
+                <span>🔒 Exam Mode Active — navigation outside the test is disabled.</span>
+                <span>Submit Test when you finish.</span>
+            </div>
             <div class="exam-top">
                 <div class="exam-title">
                     <h2>📝 Mathematics Practice Test</h2>
@@ -684,7 +794,7 @@ body.exam-running .exam-lock-notice{
                         <button class="nav-btn" id="nextBtn" onclick="nextQuestion()">Next →</button>
                     </div>
 
-                    <div style="text-align:center;margin-top:16px;">
+                    <div class="exam-submit-wrap">
                         <button class="submit-btn" onclick="confirmSubmit()">✓ Submit Test</button>
                     </div>
                 </div>
@@ -733,32 +843,6 @@ body.exam-running .exam-lock-notice{
         </div>
     </section>
 
-    <!-- MOCK -->
-    <section class="mock-shell" id="mockShell">
-        <div class="p-card">
-            <div class="mock-card">
-                <div class="mock-icon">🏆</div>
-                <h2>RSC Mock Test</h2>
-                <p>
-                    A full exam-style Mathematics assessment with mixed-difficulty questions,
-                    fixed duration and a single-attempt examination experience.
-                </p>
-
-                <div class="mock-features">
-                    <div class="mock-feature"><strong>50</strong><span>Questions</span></div>
-                    <div class="mock-feature"><strong>100</strong><span>Marks</span></div>
-                    <div class="mock-feature"><strong>60 min</strong><span>Duration</span></div>
-                    <div class="mock-feature"><strong>1</strong><span>Attempt</span></div>
-                </div>
-
-                <span class="coming-pill">🔒 Paid Mock Test — Coming Soon</span>
-            </div>
-        </div>
-    </section>
-
-</main>
-
-
 <script>
 /* =========================================================
    RSC PRACTICE — DATABASE QUESTION BANK ONLY
@@ -775,13 +859,15 @@ let currentQuestion = 0;
 let practiceTimerInterval = null;
 let practiceSubmitted = false;
 let currentDifficulty = "";
-let restoringPracticeState = false;
-const PRACTICE_STATE_KEY = "rsc_practice_selection_v1";
-const PRACTICE_HISTORY_KEY = "rsc_practice_history_v1";
-let examRunning = false;
-let examWasHidden = false;
+let pendingDifficulty = "";
+let examLockActive = false;
 
 function showMode(mode){
+    if(examLockActive){
+        alert("🔒 Your Practice test is in progress. Please finish and submit the test first.");
+        return;
+    }
+
     const practice = document.getElementById("practiceShell");
     const mock = document.getElementById("mockShell");
     const pBtn = document.getElementById("practiceModeBtn");
@@ -802,249 +888,32 @@ function showMode(mode){
     pBtn.classList.add("active");
 }
 
+function updateDifficultyState(){
+    const ready =
+        !!document.getElementById("practiceBoard").value &&
+        !!document.getElementById("practiceClass").value &&
+        !!document.getElementById("practiceSubject").value &&
+        document.getElementById("practiceTopic").value !== "" &&
+        !!document.getElementById("practiceSubtopic").value;
+
+    const grid = document.querySelector(".difficulty-grid");
+    if(grid) grid.classList.toggle("locked", !ready);
+    return ready;
+}
+
 /* ---------- SUBJECT ---------- */
 function selectSubject(subject, card){
-    if(subject !== "math" || examRunning) return;
+    if(subject !== "math") return;
 
     document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
     card.classList.add("active");
 
-    const mathSetup = document.getElementById("mathSetup");
-    const difficulty = document.getElementById("difficultyCard");
-
-    mathSetup.style.display = "block";
-    difficulty.style.display = "none";
-
-    savePracticeSelection();
-    pushPracticeHistory(2);
-
-    if(!restoringPracticeState){
-        mathSetup.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-        });
-    }
+    document.getElementById("mathSetup").style.display = "block";
+    updateDifficultyState();
 }
 
 function comingSoon(name){
     alert("📚 " + name + " Practice is coming soon.");
-}
-
-
-/* ---------- SEQUENTIAL BROWSER HISTORY ---------- */
-function getPracticeSelectionSnapshot(){
-    return {
-        subject: document.querySelector('.subject-card.active') ? 'math' : '',
-        board: document.getElementById("practiceBoard")?.value || "",
-        class_name: document.getElementById("practiceClass")?.value || "",
-        subject_value: document.getElementById("practiceSubject")?.value || "",
-        topic_index: document.getElementById("practiceTopic")?.value || "",
-        subtopic: document.getElementById("practiceSubtopic")?.value || ""
-    };
-}
-
-function pushPracticeHistory(stage){
-    if(restoringPracticeState || examRunning) return;
-
-    const snapshot = getPracticeSelectionSnapshot();
-
-    try{
-        history.pushState({
-            rscPractice: true,
-            stage: stage,
-            selection: snapshot
-        }, "", window.location.href);
-    }catch(e){}
-}
-
-async function restoreHistorySnapshot(state){
-    if(!state || !state.rscPractice) return;
-
-    restoringPracticeState = true;
-
-    try{
-        const stage = Number(state.stage || 1);
-        const s = state.selection || {};
-
-        const mathCard = document.querySelector('.subject-card[onclick*="selectSubject(\'math\'"]');
-        const mathSetup = document.getElementById("mathSetup");
-        const difficulty = document.getElementById("difficultyCard");
-
-        if(stage <= 1 || s.subject !== "math"){
-            document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
-            mathSetup.style.display = "none";
-            difficulty.style.display = "none";
-            document.getElementById("selectionSummary").style.display = "none";
-            return;
-        }
-
-        if(mathCard){
-            document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
-            mathCard.classList.add("active");
-        }
-        mathSetup.style.display = "block";
-
-        const board = document.getElementById("practiceBoard");
-        const cls = document.getElementById("practiceClass");
-        const subject = document.getElementById("practiceSubject");
-        const topic = document.getElementById("practiceTopic");
-        const subtopic = document.getElementById("practiceSubtopic");
-
-        board.value = s.board || "";
-        loadPracticeClasses();
-
-        if(stage >= 3 && s.class_name && [...cls.options].some(o => o.value === s.class_name)){
-            cls.value = s.class_name;
-            loadPracticeSubjects();
-        }
-
-        if(stage >= 4 && s.subject_value && [...subject.options].some(o => o.value === s.subject_value)){
-            subject.value = s.subject_value;
-            await loadPracticeTopics();
-        }
-
-        if(stage >= 5 && s.topic_index !== "" && topicData[Number(s.topic_index)]){
-            topic.value = s.topic_index;
-            loadPracticeSubtopics();
-        }
-
-        if(stage >= 6 && s.subtopic && [...subtopic.options].some(o => o.value === s.subtopic)){
-            subtopic.value = s.subtopic;
-        }
-
-        updateSelectionSummary(false);
-
-        if(stage < 6){
-            difficulty.style.display = "none";
-        }
-    }catch(e){
-        console.warn("HISTORY RESTORE ERROR:", e);
-    }finally{
-        restoringPracticeState = false;
-        savePracticeSelection();
-    }
-}
-
-function initialisePracticeHistory(){
-    try{
-        history.replaceState({
-            rscPractice:true,
-            stage:1,
-            selection:getPracticeSelectionSnapshot()
-        }, "", window.location.href);
-    }catch(e){}
-}
-
-window.addEventListener("popstate", function(event){
-    if(examRunning){
-        // Never leave the active test through browser Back.
-        history.pushState({
-            rscPractice:true,
-            stage:7,
-            exam:true
-        }, "", window.location.href);
-        return;
-    }
-
-    if(event.state && event.state.rscPractice){
-        restoreHistorySnapshot(event.state);
-    }
-});
-
-window.addEventListener("beforeunload", function(event){
-    if(examRunning && !practiceSubmitted){
-        event.preventDefault();
-        event.returnValue = "";
-    }
-});
-
-/* ---------- REMEMBER SELECTION ---------- */
-function savePracticeSelection(){
-    if(restoringPracticeState) return;
-
-    const state = {
-        subject: document.querySelector('.subject-card.active') ? 'math' : '',
-        board: document.getElementById("practiceBoard")?.value || "",
-        class_name: document.getElementById("practiceClass")?.value || "",
-        subject_value: document.getElementById("practiceSubject")?.value || "",
-        topic_index: document.getElementById("practiceTopic")?.value || "",
-        subtopic: document.getElementById("practiceSubtopic")?.value || ""
-    };
-
-    try{
-        localStorage.setItem(PRACTICE_STATE_KEY, JSON.stringify(state));
-    }catch(e){}
-}
-
-function getSavedPracticeSelection(){
-    try{
-        return JSON.parse(localStorage.getItem(PRACTICE_STATE_KEY) || "null");
-    }catch(e){
-        return null;
-    }
-}
-
-function clearSavedPracticeSelection(){
-    try{ localStorage.removeItem(PRACTICE_STATE_KEY); }catch(e){}
-}
-
-async function restorePracticeSelection(){
-    const state = getSavedPracticeSelection();
-    if(!state || state.subject !== "math") return;
-
-    restoringPracticeState = true;
-
-    try{
-        const mathCard = document.querySelector('.subject-card[onclick*="selectSubject(\'math\'"]');
-        if(mathCard){
-            document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
-            mathCard.classList.add("active");
-        }
-
-        const mathSetup = document.getElementById("mathSetup");
-        mathSetup.style.display = "block";
-
-        const board = document.getElementById("practiceBoard");
-        const cls = document.getElementById("practiceClass");
-        const subject = document.getElementById("practiceSubject");
-        const topic = document.getElementById("practiceTopic");
-        const subtopic = document.getElementById("practiceSubtopic");
-
-        // Restore Board
-        if(state.board){
-            board.value = state.board;
-            loadPracticeClasses();
-        }
-
-        // Restore Class
-        if(state.class_name && [...cls.options].some(o => o.value === state.class_name)){
-            cls.value = state.class_name;
-            loadPracticeSubjects();
-        }
-
-        // Restore Subject and load chapters
-        if(state.subject_value && [...subject.options].some(o => o.value === state.subject_value)){
-            subject.value = state.subject_value;
-            await loadPracticeTopics();
-        }
-
-        // Restore Chapter and Subtopic
-        if(state.topic_index !== "" && topicData[Number(state.topic_index)]){
-            topic.value = state.topic_index;
-            loadPracticeSubtopics();
-
-            if(state.subtopic && [...subtopic.options].some(o => o.value === state.subtopic)){
-                subtopic.value = state.subtopic;
-            }
-        }
-
-        updateSelectionSummary(false);
-
-    }catch(error){
-        console.warn("PRACTICE STATE RESTORE ERROR:", error);
-    }finally{
-        restoringPracticeState = false;
-    }
 }
 
 /* ---------- SYLLABUS OPTIONS ---------- */
@@ -1053,17 +922,7 @@ async function loadPracticeOptions(){
 
     try{
         const response = await fetch("/api/practice/options", {cache:"no-store"});
-        const contentType = response.headers.get("content-type") || "";
-        const raw = await response.text();
-
-        if(!contentType.includes("application/json")){
-            throw new Error(
-                `Practice API returned ${response.status} ${response.statusText}. ` +
-                `The /api/practice/options backend route is missing or returning HTML.`
-            );
-        }
-
-        const data = JSON.parse(raw);
+        const data = await response.json();
 
         if(!response.ok || !data.success){
             throw new Error(data.error || "Unable to load Practice options.");
@@ -1086,8 +945,6 @@ async function loadPracticeOptions(){
             board.value = boards[0];
             loadPracticeClasses();
         }
-
-        await restorePracticeSelection();
     }catch(error){
         console.error("PRACTICE OPTIONS ERROR:", error);
         board.innerHTML = '<option value="">Unable to load</option>';
@@ -1096,7 +953,6 @@ async function loadPracticeOptions(){
 }
 
 function loadPracticeClasses(){
-    if(examRunning) return;
     const board = document.getElementById("practiceBoard").value;
     const cls = document.getElementById("practiceClass");
     const subject = document.getElementById("practiceSubject");
@@ -1113,9 +969,11 @@ function loadPracticeClasses(){
     topic.disabled = true;
     subtopic.disabled = true;
     document.getElementById("selectionSummary").style.display = "none";
-    document.getElementById("difficultyCard").style.display = "none";
 
-    if(!board) return;
+    if(!board){
+        updateDifficultyState();
+        return;
+    }
 
     const classes = [...new Set(
         syllabusOptions
@@ -1137,13 +995,9 @@ function loadPracticeClasses(){
         cls.value = classes[0];
         loadPracticeSubjects();
     }
-
-    savePracticeSelection();
-    if(!restoringPracticeState) pushPracticeHistory(2);
 }
 
 function loadPracticeSubjects(){
-    if(examRunning) return;
     const board = document.getElementById("practiceBoard").value;
     const className = document.getElementById("practiceClass").value;
     const subject = document.getElementById("practiceSubject");
@@ -1155,10 +1009,11 @@ function loadPracticeSubjects(){
     document.getElementById("practiceTopic").disabled = true;
     document.getElementById("practiceSubtopic").innerHTML = '<option value="">Select Subtopic</option>';
     document.getElementById("practiceSubtopic").disabled = true;
-    document.getElementById("difficultyCard").style.display = "none";
-    document.getElementById("selectionSummary").style.display = "none";
 
-    if(!board || !className) return;
+    if(!board || !className){
+        updateDifficultyState();
+        return;
+    }
 
     const subjects = [...new Set(
         syllabusOptions
@@ -1180,9 +1035,6 @@ function loadPracticeSubjects(){
         subject.value = subjects[0];
         loadPracticeTopics();
     }
-
-    savePracticeSelection();
-    if(!restoringPracticeState) pushPracticeHistory(3);
 }
 
 async function loadPracticeTopics(){
@@ -1196,10 +1048,11 @@ async function loadPracticeTopics(){
     topic.disabled = true;
     subtopic.innerHTML = '<option value="">Select Subtopic</option>';
     subtopic.disabled = true;
-    document.getElementById("difficultyCard").style.display = "none";
-    document.getElementById("selectionSummary").style.display = "none";
 
-    if(!board || !className || !subject) return;
+    if(!board || !className || !subject){
+        updateDifficultyState();
+        return;
+    }
 
     try{
         const response = await fetch("/api/practice/topics", {
@@ -1212,17 +1065,7 @@ async function loadPracticeTopics(){
             })
         });
 
-        const contentType = response.headers.get("content-type") || "";
-        const raw = await response.text();
-
-        if(!contentType.includes("application/json")){
-            throw new Error(
-                `Practice API returned ${response.status} ${response.statusText}. ` +
-                `The /api/practice/topics backend route is missing or returning HTML.`
-            );
-        }
-
-        const data = JSON.parse(raw);
+        const data = await response.json();
 
         if(!response.ok || !data.success){
             throw new Error(data.error || "Unable to load chapters.");
@@ -1239,8 +1082,6 @@ async function loadPracticeTopics(){
         });
 
         topic.disabled = false;
-        savePracticeSelection();
-        if(!restoringPracticeState) pushPracticeHistory(4);
     }catch(error){
         console.error("PRACTICE TOPICS ERROR:", error);
         topic.innerHTML = '<option value="">Unable to load</option>';
@@ -1265,11 +1106,11 @@ function loadPracticeSubtopics(){
     });
 
     subtopic.disabled = false;
-    savePracticeSelection();
-    if(!restoringPracticeState) pushPracticeHistory(5);
+    updateSelectionSummary();
+    updateDifficultyState();
 }
 
-function updateSelectionSummary(shouldScroll = true){
+function updateSelectionSummary(){
     const board = document.getElementById("practiceBoard").value;
     const cls = document.getElementById("practiceClass").value;
     const subject = document.getElementById("practiceSubject").value;
@@ -1278,35 +1119,50 @@ function updateSelectionSummary(shouldScroll = true){
     const summary = document.getElementById("selectionSummary");
     const text = document.getElementById("selectionSummaryText");
 
-    const difficultyCard = document.getElementById("difficultyCard");
-
     if(board && cls && subject && topicIndex !== "" && subtopic){
         const topic = topicData[Number(topicIndex)]?.topic || "";
         text.textContent = `${board} • ${cls} • ${subject} • ${topic} • ${subtopic}`;
         summary.style.display = "block";
-
-        // STEP 3 appears only after the complete syllabus selection.
-        difficultyCard.style.display = "block";
-        if(!restoringPracticeState) pushPracticeHistory(6);
-        if(shouldScroll && !restoringPracticeState){
-            setTimeout(() => {
-                difficultyCard.scrollIntoView({
-                    behavior:"smooth",
-                    block:"start"
-                });
-            }, 100);
-        }
     }else{
         summary.style.display = "none";
-        difficultyCard.style.display = "none";
     }
-
-    savePracticeSelection();
+    updateDifficultyState();
 }
 
 /* ---------- PRACTICE SESSION ---------- */
-async function startPractice(level){
-    if(examRunning) return;
+function startPractice(level){
+    const board = document.getElementById("practiceBoard").value;
+    const className = document.getElementById("practiceClass").value;
+    const subject = document.getElementById("practiceSubject").value;
+    const topicIndex = document.getElementById("practiceTopic").value;
+    const subtopic = document.getElementById("practiceSubtopic").value;
+
+    if(!board || !className || !subject || topicIndex === "" || !subtopic){
+        alert("Please select Board, Class, Subject, Chapter and Subtopic first.");
+        return;
+    }
+
+    pendingDifficulty = level;
+    const modal = document.getElementById("startTestModal");
+    modal.classList.add("show");
+    modal.setAttribute("aria-hidden","false");
+}
+
+function closeStartTestModal(){
+    pendingDifficulty = "";
+    const modal = document.getElementById("startTestModal");
+    modal.classList.remove("show");
+    modal.setAttribute("aria-hidden","true");
+}
+
+function confirmStartPractice(){
+    if(!pendingDifficulty) return;
+    const level = pendingDifficulty;
+    closeStartTestModal();
+    beginPracticeSession(level);
+}
+
+async function beginPracticeSession(level){
     const board = document.getElementById("practiceBoard").value;
     const className = document.getElementById("practiceClass").value;
     const subject = document.getElementById("practiceSubject").value;
@@ -1354,7 +1210,6 @@ async function startPractice(level){
         practiceSubmitted = false;
 
         await loadPracticeQuestions(data);
-        lockPracticeExam();
 
     }catch(error){
         console.error("START PRACTICE ERROR:", error);
@@ -1362,34 +1217,6 @@ async function startPractice(level){
     }finally{
         document.getElementById("practiceLoading").style.display = "none";
     }
-}
-
-
-/* ---------- ACTIVE EXAM LOCK ---------- */
-function lockPracticeExam(){
-    examRunning = true;
-    document.body.classList.add("exam-running");
-
-    try{
-        history.pushState({
-            rscPractice:true,
-            stage:7,
-            exam:true
-        }, "", window.location.href);
-    }catch(e){}
-
-    // Prevent accidental clicks on all non-exam page controls.
-    document.querySelectorAll(
-        ".navbar a, .mode-switch button, #setupCard, #difficultyCard, footer a, .whatsapp"
-    ).forEach(el => {
-        el.setAttribute("data-exam-disabled","1");
-    });
-}
-
-function unlockPracticeExam(){
-    examRunning = false;
-    document.body.classList.remove("exam-running");
-    examWasHidden = false;
 }
 
 async function loadPracticeQuestions(sessionData){
@@ -1417,6 +1244,8 @@ async function loadPracticeQuestions(sessionData){
     document.getElementById("difficultyCard").style.display = "none";
     document.getElementById("resultShell").style.display = "none";
     document.getElementById("examShell").style.display = "block";
+
+    enterExamLock();
 
     const label = currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
     document.getElementById("examSubtitle").textContent =
@@ -1477,8 +1306,9 @@ function renderQuestion(){
     });
 
     document.getElementById("previousBtn").disabled = currentQuestion === 0;
-    document.getElementById("nextBtn").textContent =
-        currentQuestion === 24 ? "Review & Submit →" : "Next →";
+    const nextBtn = document.getElementById("nextBtn");
+    nextBtn.textContent = currentQuestion === 24 ? "Last Question" : "Next →";
+    nextBtn.disabled = currentQuestion === 24;
 
     renderPalette();
 }
@@ -1521,8 +1351,6 @@ function nextQuestion(){
     if(currentQuestion < 24){
         currentQuestion++;
         renderQuestion();
-    }else{
-        confirmSubmit();
     }
 }
 
@@ -1577,7 +1405,9 @@ function startPracticeTimer(startedAt){
 
         if(remaining <= 0){
             stopPracticeTimer();
-            submitPractice(true);
+            document.getElementById("practiceTimer").textContent = "00:00";
+            alert("⏰ Time is over. Your answers can no longer be changed. Please submit the test.");
+            disableExamInputs();
         }
     }
 
@@ -1641,9 +1471,51 @@ async function submitPractice(autoSubmit){
     }
 }
 
+
+/* ---------- EXAM LOCK ---------- */
+function enterExamLock(){
+    examLockActive = true;
+    document.body.classList.add("exam-running");
+
+    try{
+        history.pushState({rscExam:true}, "", window.location.href);
+    }catch(e){}
+
+    window.onbeforeunload = function(e){
+        if(!practiceSubmitted){
+            e.preventDefault();
+            e.returnValue = "";
+            return "";
+        }
+    };
+}
+
+function exitExamLock(){
+    examLockActive = false;
+    document.body.classList.remove("exam-running");
+    window.onbeforeunload = null;
+}
+
+window.addEventListener("popstate", function(){
+    if(examLockActive && !practiceSubmitted){
+        try{
+            history.pushState({rscExam:true}, "", window.location.href);
+        }catch(e){}
+        alert("🔒 Exam Mode is active. Please submit the test before leaving.");
+    }
+});
+
+function disableExamInputs(){
+    document.querySelectorAll("#options .exam-option").forEach(btn => {
+        btn.disabled = true;
+        btn.style.opacity = ".55";
+        btn.style.cursor = "not-allowed";
+    });
+}
+
 /* ---------- RESULT + REVIEW ---------- */
 function showResult(data, autoSubmit){
-    unlockPracticeExam();
+    exitExamLock();
     document.getElementById("examShell").style.display = "none";
     document.getElementById("resultShell").style.display = "block";
 
@@ -1764,69 +1636,89 @@ function escapeHtml(value){
 }
 
 /* ---------- NEW ATTEMPT ---------- */
+function resetPracticeSelection(){
+    const board = document.getElementById("practiceBoard");
+    const cls = document.getElementById("practiceClass");
+    const subject = document.getElementById("practiceSubject");
+    const topic = document.getElementById("practiceTopic");
+    const subtopic = document.getElementById("practiceSubtopic");
+
+    board.value = "";
+    cls.innerHTML = '<option value="">Select Class</option>';
+    subject.innerHTML = '<option value="">Select Subject</option>';
+    topic.innerHTML = '<option value="">Select Chapter / Topic</option>';
+    subtopic.innerHTML = '<option value="">Select Subtopic</option>';
+
+    cls.disabled = true;
+    subject.disabled = true;
+    topic.disabled = true;
+    subtopic.disabled = true;
+
+    document.getElementById("selectionSummary").style.display = "none";
+
+    // Mathematics remains the selected/active subject.
+    document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
+    const mathCard = document.querySelector(".subject-card[onclick*=\"selectSubject('math'\"]");
+    if(mathCard) mathCard.classList.add("active");
+    document.getElementById("mathSetup").style.display = "block";
+    updateDifficultyState();
+}
+
 function startNewAttempt(){
-    unlockPracticeExam();
+    // New attempt = keep the current Board/Class/Subject/Chapter/Subtopic,
+    // but create a fresh 25-question session after the student chooses a level.
     practiceSessionId = null;
     practiceAnswers = {};
     practiceQuestions = [];
     currentQuestion = 0;
     practiceSubmitted = false;
+    pendingDifficulty = "";
 
     stopPracticeTimer();
+    exitExamLock();
 
     document.getElementById("resultShell").style.display = "none";
-    document.getElementById("setupCard").style.display = "block";
     document.getElementById("examShell").style.display = "none";
+    document.getElementById("setupCard").style.display = "block";
+    document.getElementById("difficultyCard").style.display = "block";
 
-    // Return to the beginning of the sequential flow.
-    document.getElementById("mathSetup").style.display = "none";
-    document.getElementById("difficultyCard").style.display = "none";
-    document.getElementById("selectionSummary").style.display = "none";
+    updateDifficultyState();
 
-    document.getElementById("setupCard").scrollIntoView({
+    document.getElementById("difficultyCard").scrollIntoView({
         behavior:"smooth",
         block:"start"
     });
 }
 
 function backToSetup(){
+    // Back to Selection = reset the syllabus dropdowns.
     startNewAttempt();
+    resetPracticeSelection();
+    updateDifficultyState();
     document.getElementById("setupCard").scrollIntoView({
         behavior:"smooth",
         block:"start"
     });
 }
 
-
-/* ---------- TAB VISIBILITY ---------- */
-document.addEventListener("visibilitychange", function(){
-    if(!examRunning) return;
-
-    if(document.hidden){
-        examWasHidden = true;
-        return;
-    }
-
-    if(examWasHidden && !practiceSubmitted){
-        examWasHidden = false;
-        // The browser cannot physically disable switching to another tab.
-        // When the student returns, keep the same exam and timer running.
-        console.warn("Student returned to the active Practice test.");
-    }
-});
-
 /* ---------- INITIAL LOAD ---------- */
 document.addEventListener("DOMContentLoaded", function(){
-    initialisePracticeHistory();
     loadPracticeOptions();
 });
 
-// Browser Back/Forward Cache: restore the same selection when returning.
-window.addEventListener("pageshow", function(event){
-    if(event.persisted){
-        restorePracticeSelection();
+document.addEventListener("keydown", function(e){
+    if(e.key === "Escape"){
+        const modal = document.getElementById("startTestModal");
+        if(modal && modal.classList.contains("show")){
+            closeStartTestModal();
+        }
     }
 });
+
+document.getElementById("startTestModal")?.addEventListener("click", function(e){
+    if(e.target === this) closeStartTestModal();
+});
+
 </script>
 
 </body>
