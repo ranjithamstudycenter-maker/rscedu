@@ -3310,82 +3310,67 @@ def practice_create_session():
             difficulty
         ))
 
-        existing = c.fetchone()
-
         # -------------------------------------------------
-        # 6. RESUME EXISTING SESSION
+        # 6. RESUME ONLY A LIVE SESSION
         # -------------------------------------------------
-
+        # Resume only while the original 30-minute window is active.
         if existing:
+            session_is_active = False
 
             try:
-                question_ids = json.loads(
-                    existing["question_ids"] or "[]"
+                started_dt = datetime.strptime(
+                    existing["started_at"],
+                    "%Y-%m-%d %H:%M:%S"
                 )
-            except:
-                question_ids = []
+                elapsed_seconds = (datetime.now() - started_dt).total_seconds()
+                session_is_active = 0 <= elapsed_seconds < (30 * 60)
+            except Exception as session_time_error:
+                print("PRACTICE SESSION TIME CHECK ERROR:", session_time_error)
 
-            try:
-                answers = json.loads(
-                    existing["answers"] or "{}"
-                )
-            except:
-                answers = {}
+            if session_is_active:
+                try:
+                    question_ids = json.loads(
+                        existing["question_ids"] or "[]"
+                    )
+                except:
+                    question_ids = []
 
-            conn.close()
+                try:
+                    answers = json.loads(
+                        existing["answers"] or "{}"
+                    )
+                except:
+                    answers = {}
 
-            return jsonify({
+                conn.close()
 
-                "success": True,
+                return jsonify({
+                    "success": True,
+                    "resumed": True,
+                    "session_id": existing["id"],
+                    "practice_id": practice_id,
+                    "board": existing["board"],
+                    "class_name": existing["class_name"],
+                    "subject": existing["subject"],
+                    "topic": existing["topic"],
+                    "subtopic": existing["subtopic"],
+                    "difficulty": existing["difficulty"],
+                    "total_questions": existing["total_questions"],
+                    "total_marks": existing["total_marks"],
+                    "question_ids": question_ids,
+                    "answers": answers,
+                    "current_question": existing["current_question"] or 0,
+                    "status": existing["status"],
+                    "started_at": existing["started_at"]
+                })
 
-                "resumed": True,
-
-                "session_id":
-                    existing["id"],
-
-                "practice_id":
-                    practice_id,
-
-                "board":
-                    existing["board"],
-
-                "class_name":
-                    existing["class_name"],
-
-                "subject":
-                    existing["subject"],
-
-                "topic":
-                    existing["topic"],
-
-                "subtopic":
-                    existing["subtopic"],
-
-                "difficulty":
-                    existing["difficulty"],
-
-                "total_questions":
-                    existing["total_questions"],
-
-                "total_marks":
-                    existing["total_marks"],
-
-                "question_ids":
-                    question_ids,
-
-                "answers":
-                    answers,
-
-                "current_question":
-                    existing["current_question"] or 0,
-
-                "status":
-                    existing["status"],
-
-                "started_at":
-                    existing["started_at"]
-
-            })
+            # Old session: expire it and create a fresh session below.
+            c.execute("""
+                UPDATE practice_sessions
+                SET status='expired'
+                WHERE id=? AND status='in_progress'
+            """, (existing["id"],))
+            conn.commit()
 
         # -------------------------------------------------
         # 7. CHECK QUESTION BANK
