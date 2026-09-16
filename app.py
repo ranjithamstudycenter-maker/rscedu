@@ -621,9 +621,46 @@ def init_db():
 
     )
     """)
+    
+    # -----------------------------------------------------
+    # 9. MOCK TEST PACKAGE PURCHASES
+    # -----------------------------------------------------
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS mock_purchases (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        practice_id TEXT NOT NULL,
+
+        phone TEXT,
+
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+
+        amount REAL DEFAULT 299,
+
+        razorpay_order_id TEXT UNIQUE,
+        razorpay_payment_id TEXT,
+
+        payment_status TEXT DEFAULT 'pending',
+
+        purchased_at TEXT,
+
+        created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+        UNIQUE(
+            practice_id,
+            board,
+            class_name,
+            subject
+        )
+    )
+    """)
     conn.commit()
     conn.close()
-     
+    
 init_db()
 
 # -------------------- APP INIT --------------------
