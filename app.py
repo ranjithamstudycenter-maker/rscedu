@@ -3313,35 +3313,60 @@ def practice_create_session():
         existing = c.fetchone()
         
         # -------------------------------------------------
-        # 6. RESUME ONLY A LIVE SESSION
+        # 6. CHECK SESSION TIME AND RESUME / EXPIRE
         # -------------------------------------------------
-        # Resume only while the original 30-minute window is active.
+
         if existing:
+
             session_is_active = False
 
+            # ---------------------------------------------
+            # CHECK ORIGINAL SESSION START TIME
+            # ---------------------------------------------
+
             try:
-                started_dt = datetime.strptime(
-                    existing["started_at"],
-                    "%Y-%m-%d %H:%M:%S"
-                )
-                elapsed_seconds = (datetime.now() - started_dt).total_seconds()
-                session_is_active = 0 <= elapsed_seconds < (30 * 60)
+                started_at = existing["started_at"]
+
+                if started_at:
+                    started_dt = datetime.strptime(
+                        started_at,
+                        "%Y-%m-%d %H:%M:%S"
+                    )
+
+                    elapsed_seconds = (
+                        datetime.now() - started_dt
+                    ).total_seconds()
+
+                    # Session is active only for 30 minutes
+                    session_is_active = (
+                        0 <= elapsed_seconds < (30 * 60)
+                    )
+
             except Exception as session_time_error:
-                print("PRACTICE SESSION TIME CHECK ERROR:", session_time_error)
+                print(
+                    "PRACTICE SESSION TIME CHECK ERROR:",
+                    session_time_error
+                )
+                session_is_active = False
+
+            # ---------------------------------------------
+            # ACTIVE SESSION → RESUME
+            # ---------------------------------------------
 
             if session_is_active:
+
                 try:
                     question_ids = json.loads(
                         existing["question_ids"] or "[]"
                     )
-                except:
+                except Exception:
                     question_ids = []
 
                 try:
                     answers = json.loads(
                         existing["answers"] or "{}"
                     )
-                except:
+                except Exception:
                     answers = {}
 
                 conn.close()
@@ -3361,19 +3386,33 @@ def practice_create_session():
                     "total_marks": existing["total_marks"],
                     "question_ids": question_ids,
                     "answers": answers,
-                    "current_question": existing["current_question"] or 0,
+                    "current_question":
+                        existing["current_question"] or 0,
                     "status": existing["status"],
                     "started_at": existing["started_at"]
                 })
 
-            # Old session: expire it and create a fresh session below.
+            # ---------------------------------------------
+            # OLD / EXPIRED SESSION → MARK AS EXPIRED
+            # ---------------------------------------------
+
             c.execute("""
                 UPDATE practice_sessions
                 SET status='expired'
-                WHERE id=? AND status='in_progress'
-            """, (existing["id"],))
+                WHERE id=?
+                AND status='in_progress'
+            """, (
+                existing["id"],
+            ))
+
             conn.commit()
 
+            print(
+                "OLD PRACTICE SESSION EXPIRED:",
+                existing["id"]
+            )
+
+      
         # -------------------------------------------------
         # 7. CHECK QUESTION BANK
         # -------------------------------------------------
