@@ -325,6 +325,114 @@ a{text-decoration:none}
 
 /* MOCK */
 .mock-shell{display:none}
+/* =========================
+   MOCK TEST OPTIONS
+========================= */
+
+.mock-test-grid{
+    display:grid;
+    grid-template-columns:repeat(3,1fr);
+    gap:18px;
+}
+
+.mock-test-option{
+    border:2px solid #e2e8f0;
+    border-radius:22px;
+    padding:25px;
+    background:#fff;
+    cursor:pointer;
+    transition:.25s ease;
+}
+
+.mock-test-option:hover{
+    transform:translateY(-5px);
+    box-shadow:0 16px 35px rgba(79,70,229,.13);
+}
+
+.mock-test-option.chapter{
+    border-color:#93c5fd;
+    background:linear-gradient(145deg,#eff6ff,#fff);
+}
+
+.mock-test-option.combined{
+    border-color:#c4b5fd;
+    background:linear-gradient(145deg,#f5f3ff,#fff);
+}
+
+.mock-test-option.final{
+    border-color:#fbbf24;
+    background:linear-gradient(145deg,#fffbeb,#fff);
+}
+
+.mock-test-icon{
+    font-size:34px;
+    margin-bottom:12px;
+}
+
+.mock-test-option h3{
+    color:#172554;
+    margin-bottom:8px;
+    font-size:20px;
+}
+
+.mock-test-option p{
+    color:#64748b;
+    font-size:13px;
+    line-height:1.6;
+    min-height:62px;
+}
+
+.mock-test-meta{
+    display:flex;
+    gap:7px;
+    flex-wrap:wrap;
+    margin-top:16px;
+}
+
+.mock-test-meta span{
+    padding:6px 9px;
+    border-radius:999px;
+    background:#fff;
+    border:1px solid #e2e8f0;
+    color:#475569;
+    font-size:10px;
+    font-weight:800;
+}
+
+.mock-test-action{
+    margin-top:18px;
+    color:#4338ca;
+    font-size:13px;
+    font-weight:800;
+}
+
+.mock-list-title{
+    color:#172554;
+    margin-bottom:15px;
+}
+
+.mock-list-option{
+    border:1px solid #e2e8f0;
+    border-radius:16px;
+    padding:16px 18px;
+    margin-bottom:10px;
+    background:#fff;
+    cursor:pointer;
+    font-weight:800;
+    color:#334155;
+    transition:.2s;
+}
+
+.mock-list-option:hover{
+    border-color:#6366f1;
+    background:#eef2ff;
+}
+
+@media(max-width:900px){
+    .mock-test-grid{
+        grid-template-columns:1fr;
+    }
+}   
 .mock-card{
     padding:34px;border-radius:24px;
     background:linear-gradient(145deg,#fff7ed,#fff,#eef2ff);
@@ -842,7 +950,199 @@ body.exam-running .exam-lock-bar{
             </div>
         </div>
     </section>
+<!-- =========================
+     MOCK TEST
+========================= -->
+<section id="mockShell" style="display:none;">
 
+    <div class="p-card" id="mockSetupCard">
+
+        <div class="section-head">
+            <div>
+                <h2>🏆 Build Your Mock Test</h2>
+                <p>
+                    Complete your chapter practice and test your preparation
+                    with chapter, 4-chapter and full-syllabus mock tests.
+                </p>
+            </div>
+        </div>
+
+        <!-- SAME SYLLABUS SELECTION -->
+        <div class="selection-grid">
+
+            <div class="field">
+                <label>🏫 Board</label>
+                <select id="mockBoard" onchange="loadMockClasses()">
+                    <option value="">Select Board</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>🎓 Class</label>
+                <select id="mockClass"
+                        onchange="loadMockSubjects()"
+                        disabled>
+                    <option value="">Select Class</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>📚 Subject</label>
+                <select id="mockSubject"
+                        onchange="loadMockTopics()"
+                        disabled>
+                    <option value="">Select Subject</option>
+                </select>
+            </div>
+
+            <div class="field full">
+                <label>📖 Chapter / Topic</label>
+                <select id="mockTopic"
+                        onchange="loadMockSubtopics()"
+                        disabled>
+                    <option value="">Select Chapter / Topic</option>
+                </select>
+            </div>
+
+            <div class="field full">
+                <label>📝 Subtopic</label>
+                <select id="mockSubtopic"
+                        onchange="updateMockSelection()"
+                        disabled>
+                    <option value="">Select Subtopic</option>
+                </select>
+            </div>
+
+        </div>
+
+        <div class="selection-summary" id="mockSelectionSummary">
+            <strong>Selected:</strong>
+            <span id="mockSelectionSummaryText"></span>
+        </div>
+
+    </div>
+
+
+    <!-- MOCK TYPE -->
+    <div class="p-card"
+         id="mockTypeCard"
+         style="display:none;">
+
+        <div class="section-head">
+            <div>
+                <h2>🏆 Choose Mock Test</h2>
+                <p>
+                    Select the test according to your preparation stage.
+                </p>
+            </div>
+        </div>
+
+        <div class="mock-test-grid">
+
+            <!-- CHAPTER MOCK -->
+            <div class="mock-test-option chapter"
+                 onclick="selectMockType('chapter')">
+
+                <div class="mock-test-icon">📘</div>
+
+                <h3>Chapter Mock Test</h3>
+
+                <p>
+                    Test your preparation after completing a chapter.
+                </p>
+
+                <div class="mock-test-meta">
+                    <span>50 Questions</span>
+                    <span>100 Marks</span>
+                    <span>60 Minutes</span>
+                </div>
+
+                <div class="mock-test-action">
+                    Choose Chapter Mock →
+                </div>
+
+            </div>
+
+
+            <!-- 4 CHAPTER MOCK -->
+            <div class="mock-test-option combined"
+                 onclick="selectMockType('four_chapter')">
+
+                <div class="mock-test-icon">📚</div>
+
+                <h3>4-Chapter Mock Test</h3>
+
+                <p>
+                    Test yourself after completing a group of four chapters.
+                </p>
+
+                <div class="mock-test-meta">
+                    <span>50 Questions</span>
+                    <span>100 Marks</span>
+                    <span>60 Minutes</span>
+                </div>
+
+                <div class="mock-test-action">
+                    Choose 4-Chapter Mock →
+                </div>
+
+            </div>
+
+
+            <!-- FINAL -->
+            <div class="mock-test-option final"
+                 onclick="selectMockType('final')">
+
+                <div class="mock-test-icon">🏆</div>
+
+                <h3>Final Full-Syllabus Test</h3>
+
+                <p>
+                    Complete examination covering the full syllabus.
+                </p>
+
+                <div class="mock-test-meta">
+                    <span>50 Questions</span>
+                    <span>100 Marks</span>
+                    <span>60 Minutes</span>
+                </div>
+
+                <div class="mock-test-action">
+                    Start Final Test →
+                </div>
+
+            </div>
+
+        </div>
+
+        <!-- CHAPTER MOCK LIST -->
+        <div id="chapterMockList"
+             style="display:none;margin-top:25px;">
+
+            <h3 class="mock-list-title">
+                📘 Select Chapter Mock
+            </h3>
+
+            <div id="chapterMockOptions"></div>
+
+        </div>
+
+
+        <!-- 4 CHAPTER MOCK LIST -->
+        <div id="fourChapterMockList"
+             style="display:none;margin-top:25px;">
+
+            <h3 class="mock-list-title">
+                📚 Select 4-Chapter Mock
+            </h3>
+
+            <div id="fourChapterMockOptions"></div>
+
+        </div>
+
+    </div>
+
+</section>
 <script>
 /* =========================================================
    RSC PRACTICE — DATABASE QUESTION BANK ONLY
@@ -863,30 +1163,617 @@ let pendingDifficulty = "";
 let examLockActive = false;
 
 function showMode(mode){
+
     if(examLockActive){
-        alert("🔒 Your Practice test is in progress. Please finish and submit the test first.");
+        alert(
+            "🔒 Your test is in progress. Please finish and submit the test first."
+        );
         return;
     }
 
-    const practice = document.getElementById("practiceShell");
-    const mock = document.getElementById("mockShell");
-    const pBtn = document.getElementById("practiceModeBtn");
-    const mBtn = document.getElementById("mockModeBtn");
+    const practice =
+        document.getElementById("practiceShell");
+
+    const mock =
+        document.getElementById("mockShell");
+
+    const pBtn =
+        document.getElementById("practiceModeBtn");
+
+    const mBtn =
+        document.getElementById("mockModeBtn");
+
 
     if(mode === "mock"){
+
         practice.style.display = "none";
+
         mock.style.display = "block";
+
         pBtn.classList.remove("active");
+
         mBtn.classList.add("active");
-        window.scrollTo({top:0, behavior:"smooth"});
+
+        loadMockOptions();
+
+        window.scrollTo({
+            top:0,
+            behavior:"smooth"
+        });
+
         return;
     }
 
+
     mock.style.display = "none";
+
     practice.style.display = "block";
+
     mBtn.classList.remove("active");
+
     pBtn.classList.add("active");
 }
+/* =========================================================
+   MOCK TEST SELECTION
+========================================================= */
+
+let mockTopicData = [];
+let selectedMockType = "";
+
+
+/* ---------- LOAD MOCK OPTIONS ---------- */
+
+function loadMockOptions(){
+
+    const mockBoard =
+        document.getElementById("mockBoard");
+
+    if(!mockBoard) return;
+
+
+    mockBoard.innerHTML =
+        '<option value="">Select Board</option>';
+
+
+    const boards = [
+        ...new Set(
+            syllabusOptions
+                .map(x => x.board)
+                .filter(Boolean)
+        )
+    ];
+
+
+    boards.forEach(boardName => {
+
+        const opt =
+            document.createElement("option");
+
+        opt.value = boardName;
+        opt.textContent = boardName;
+
+        mockBoard.appendChild(opt);
+
+    });
+
+
+    resetMockSelection();
+
+}
+
+
+/* ---------- MOCK CLASS ---------- */
+
+function loadMockClasses(){
+
+    const board =
+        document.getElementById("mockBoard").value;
+
+    const cls =
+        document.getElementById("mockClass");
+
+    const subject =
+        document.getElementById("mockSubject");
+
+    const topic =
+        document.getElementById("mockTopic");
+
+    const subtopic =
+        document.getElementById("mockSubtopic");
+
+
+    cls.innerHTML =
+        '<option value="">Select Class</option>';
+
+    subject.innerHTML =
+        '<option value="">Select Subject</option>';
+
+    topic.innerHTML =
+        '<option value="">Select Chapter / Topic</option>';
+
+    subtopic.innerHTML =
+        '<option value="">Select Subtopic</option>';
+
+
+    cls.disabled = true;
+    subject.disabled = true;
+    topic.disabled = true;
+    subtopic.disabled = true;
+
+
+    document.getElementById(
+        "mockSelectionSummary"
+    ).style.display = "none";
+
+    document.getElementById(
+        "mockTypeCard"
+    ).style.display = "none";
+
+
+    if(!board) return;
+
+
+    const classes = [
+        ...new Set(
+            syllabusOptions
+                .filter(x => x.board === board)
+                .map(x => x.class_name)
+                .filter(Boolean)
+        )
+    ];
+
+
+    classes.forEach(className => {
+
+        const opt =
+            document.createElement("option");
+
+        opt.value = className;
+        opt.textContent = className;
+
+        cls.appendChild(opt);
+
+    });
+
+
+    cls.disabled = false;
+}
+
+
+/* ---------- MOCK SUBJECT ---------- */
+
+function loadMockSubjects(){
+
+    const board =
+        document.getElementById("mockBoard").value;
+
+    const className =
+        document.getElementById("mockClass").value;
+
+    const subject =
+        document.getElementById("mockSubject");
+
+    const topic =
+        document.getElementById("mockTopic");
+
+    const subtopic =
+        document.getElementById("mockSubtopic");
+
+
+    subject.innerHTML =
+        '<option value="">Select Subject</option>';
+
+    topic.innerHTML =
+        '<option value="">Select Chapter / Topic</option>';
+
+    subtopic.innerHTML =
+        '<option value="">Select Subtopic</option>';
+
+
+    subject.disabled = true;
+    topic.disabled = true;
+    subtopic.disabled = true;
+
+
+    document.getElementById(
+        "mockSelectionSummary"
+    ).style.display = "none";
+
+    document.getElementById(
+        "mockTypeCard"
+    ).style.display = "none";
+
+
+    if(!board || !className) return;
+
+
+    const subjects = [
+        ...new Set(
+            syllabusOptions
+                .filter(
+                    x =>
+                    x.board === board &&
+                    x.class_name === className
+                )
+                .map(x => x.subject)
+                .filter(Boolean)
+        )
+    ];
+
+
+    subjects.forEach(subjectName => {
+
+        const opt =
+            document.createElement("option");
+
+        opt.value = subjectName;
+        opt.textContent = subjectName;
+
+        subject.appendChild(opt);
+
+    });
+
+
+    subject.disabled = false;
+}
+
+
+/* ---------- MOCK TOPICS ---------- */
+
+async function loadMockTopics(){
+
+    const board =
+        document.getElementById("mockBoard").value;
+
+    const className =
+        document.getElementById("mockClass").value;
+
+    const subject =
+        document.getElementById("mockSubject").value;
+
+    const topic =
+        document.getElementById("mockTopic");
+
+    const subtopic =
+        document.getElementById("mockSubtopic");
+
+
+    topic.innerHTML =
+        '<option value="">Loading chapters...</option>';
+
+    topic.disabled = true;
+
+    subtopic.innerHTML =
+        '<option value="">Select Subtopic</option>';
+
+    subtopic.disabled = true;
+
+
+    document.getElementById(
+        "mockSelectionSummary"
+    ).style.display = "none";
+
+    document.getElementById(
+        "mockTypeCard"
+    ).style.display = "none";
+
+
+    if(!board || !className || !subject) return;
+
+
+    try{
+
+        const response =
+            await fetch("/api/practice/topics", {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                    "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    board:board,
+
+                    class_name:className,
+
+                    subject:subject
+
+                })
+            });
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+            throw new Error(
+                data.error ||
+                "Unable to load chapters."
+            );
+        }
+
+
+        mockTopicData =
+            data.topics || [];
+
+
+        topic.innerHTML =
+            '<option value="">Select Chapter / Topic</option>';
+
+
+        mockTopicData.forEach(
+            (item,index) => {
+
+                const opt =
+                    document.createElement("option");
+
+                opt.value = index;
+
+                opt.textContent =
+                    item.topic;
+
+                topic.appendChild(opt);
+
+            }
+        );
+
+
+        topic.disabled = false;
+
+
+    }catch(error){
+
+        console.error(
+            "MOCK TOPICS ERROR:",
+            error
+        );
+
+        topic.innerHTML =
+            '<option value="">Unable to load</option>';
+
+        alert(error.message);
+    }
+}
+
+
+/* ---------- MOCK SUBTOPICS ---------- */
+
+function loadMockSubtopics(){
+
+    const index =
+        document.getElementById(
+            "mockTopic"
+        ).value;
+
+    const subtopic =
+        document.getElementById(
+            "mockSubtopic"
+        );
+
+
+    subtopic.innerHTML =
+        '<option value="">Select Subtopic</option>';
+
+    subtopic.disabled = true;
+
+
+    document.getElementById(
+        "mockTypeCard"
+    ).style.display = "none";
+
+
+    if(
+        index === "" ||
+        !mockTopicData[index]
+    ){
+        return;
+    }
+
+
+    (
+        mockTopicData[index].subtopics || []
+    ).forEach(name => {
+
+        const opt =
+            document.createElement("option");
+
+        opt.value = name;
+        opt.textContent = name;
+
+        subtopic.appendChild(opt);
+
+    });
+
+
+    subtopic.disabled = false;
+}
+
+
+/* ---------- MOCK SELECTION COMPLETE ---------- */
+
+function updateMockSelection(){
+
+    const board =
+        document.getElementById("mockBoard").value;
+
+    const cls =
+        document.getElementById("mockClass").value;
+
+    const subject =
+        document.getElementById("mockSubject").value;
+
+    const topicIndex =
+        document.getElementById("mockTopic").value;
+
+    const subtopic =
+        document.getElementById("mockSubtopic").value;
+
+
+    const summary =
+        document.getElementById(
+            "mockSelectionSummary"
+        );
+
+    const summaryText =
+        document.getElementById(
+            "mockSelectionSummaryText"
+        );
+
+
+    if(
+        board &&
+        cls &&
+        subject &&
+        topicIndex !== "" &&
+        subtopic
+    ){
+
+        const topic =
+            mockTopicData[
+                Number(topicIndex)
+            ]?.topic || "";
+
+
+        summaryText.textContent =
+            `${board} • ${cls} • ${subject} • ${topic} • ${subtopic}`;
+
+
+        summary.style.display = "block";
+
+
+        document.getElementById(
+            "mockTypeCard"
+        ).style.display = "block";
+
+
+    }else{
+
+        summary.style.display = "none";
+
+        document.getElementById(
+            "mockTypeCard"
+        ).style.display = "none";
+    }
+}
+
+
+/* ---------- MOCK TYPE ---------- */
+
+function selectMockType(type){
+
+    selectedMockType = type;
+
+
+    document.getElementById(
+        "chapterMockList"
+    ).style.display = "none";
+
+    document.getElementById(
+        "fourChapterMockList"
+    ).style.display = "none";
+
+
+    if(type === "chapter"){
+
+        document.getElementById(
+            "chapterMockList"
+        ).style.display = "block";
+
+        document.getElementById(
+            "chapterMockOptions"
+        ).innerHTML = `
+            <div class="mock-list-option">
+                📘 Chapter Mock Test
+                <br>
+                <small>
+                    50 Questions • 100 Marks • 60 Minutes
+                </small>
+            </div>
+        `;
+    }
+
+
+    if(type === "four_chapter"){
+
+        document.getElementById(
+            "fourChapterMockList"
+        ).style.display = "block";
+
+        document.getElementById(
+            "fourChapterMockOptions"
+        ).innerHTML = `
+            <div class="mock-list-option">
+                📚 4-Chapter Mock Test
+                <br>
+                <small>
+                    50 Questions • 100 Marks • 60 Minutes
+                </small>
+            </div>
+        `;
+    }
+
+
+    if(type === "final"){
+
+        alert(
+            "🏆 Final Full-Syllabus Test will be available after the complete syllabus is configured."
+        );
+    }
+}
+
+
+/* ---------- RESET MOCK ---------- */
+
+function resetMockSelection(){
+
+    const cls =
+        document.getElementById("mockClass");
+
+    const subject =
+        document.getElementById("mockSubject");
+
+    const topic =
+        document.getElementById("mockTopic");
+
+    const subtopic =
+        document.getElementById("mockSubtopic");
+
+
+    cls.innerHTML =
+        '<option value="">Select Class</option>';
+
+    subject.innerHTML =
+        '<option value="">Select Subject</option>';
+
+    topic.innerHTML =
+        '<option value="">Select Chapter / Topic</option>';
+
+    subtopic.innerHTML =
+        '<option value="">Select Subtopic</option>';
+
+
+    cls.disabled = true;
+    subject.disabled = true;
+    topic.disabled = true;
+    subtopic.disabled = true;
+
+
+    document.getElementById(
+        "mockSelectionSummary"
+    ).style.display = "none";
+
+    document.getElementById(
+        "mockTypeCard"
+    ).style.display = "none";
+}
+   
 
 function updateDifficultyState(){
     const ready =
