@@ -3457,7 +3457,8 @@ function showMockPackage(){
         "mockTestsUnlocked"
     ).style.display = "none";
 
-
+    checkMockAccess();
+   
     document.getElementById(
         "mockPackageCard"
     ).scrollIntoView({
@@ -3472,37 +3473,352 @@ function showMockPackage(){
    PAYMENT
    ========================================================= */
 
-function startMockPayment(){
+async function startMockPayment(){
 
     if(
         !selectedMockSubject ||
         !selectedMockBoard ||
         !selectedMockClass
     ){
-
-        alert(
-            "Please select Subject, Board and Class first."
-        );
-
+        alert("Please select Subject, Board and Class first.");
         return;
     }
 
+    const payBtn = document.querySelector(".mock-pay-btn");
 
-    /*
-       PAYMENT WILL BE CONNECTED
-       IN THE NEXT STEP.
+    if(payBtn){
+        payBtn.disabled = true;
+        payBtn.innerHTML = "⏳ Starting Payment...";
+    }
 
-       For now we are testing the UI flow.
-    */
+    try{
 
-    alert(
-        "₹299 Mock Test Package selected.\n\n" +
-        "Razorpay payment will be connected next."
-    );
+        // -------------------------------------------------
+        // 1. CREATE RAZORPAY ORDER
+        // -------------------------------------------------
+
+        const response = await fetch(
+            "/api/mock/create-order",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    subject: selectedMockSubject,
+
+                    board: selectedMockBoard,
+
+                    class_name: selectedMockClass
+
+                })
+
+            }
+        );
+
+        const data = await response.json();
+
+        // -------------------------------------------------
+        // ALREADY PURCHASED
+        // -------------------------------------------------
+
+        if(data.already_paid){
+
+            unlockMockTests();
+
+            alert(
+                "✅ Mock Test Package already purchased!"
+            );
+
+            return;
+        }
+
+        if(!response.ok || !data.success){
+
+            throw new Error(
+                data.error ||
+                "Unable to create payment order."
+            );
+
+        }
+
+        // -------------------------------------------------
+        // 2. LOAD RAZORPAY IF NOT ALREADY LOADED
+        // -------------------------------------------------
+
+        if(typeof Razorpay === "undefined"){
+
+            await new Promise((resolve, reject) => {
+
+                const script =
+                    document.createElement("script");
+
+                script.src =
+                    "https://checkout.razorpay.com/v1/checkout.js";
+
+                script.onload = resolve;
+
+                script.onerror = () => {
+                    reject(
+                        new Error(
+                            "Razorpay checkout could not be loaded."
+                        )
+                    );
+                };
+
+                document.head.appendChild(script);
+
+            });
+
+        }
+
+        // -------------------------------------------------
+        // 3. OPEN RAZORPAY
+        // -------------------------------------------------
+
+        const options = {
+
+            key: data.razorpay_key,
+
+            amount: data.amount,
+
+            currency: data.currency || "INR",
+
+            name: "Ranjitham Study Center",
+
+            description:
+                "Mathematics Mock Test Package",
+
+            order_id: data.order_id,
+
+            prefill: {
+
+                name: "",
+
+            },
+
+            theme: {
+
+                color: "#2563eb"
+
+            },
+
+            modal: {
+
+                ondismiss: function(){
+
+                    if(payBtn){
+
+                        payBtn.disabled = false;
+
+                        payBtn.innerHTML =
+                            "💳 Pay ₹299 & Unlock";
+
+                    }
+
+                }
+
+            },
+
+            handler: async function(payment){
+
+                // -------------------------------------------------
+                // 4. VERIFY PAYMENT ON SERVER
+                // -------------------------------------------------
+
+                try{
+
+                    if(payBtn){
+
+                        payBtn.disabled = true;
+
+                        payBtn.innerHTML =
+                            "⏳ Verifying Payment...";
+                    }
+
+                    const verifyResponse =
+                        await fetch(
+                            "/api/mock/payment-success",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+
+                                    razorpay_order_id:
+                                        payment.razorpay_order_id,
+
+                                    razorpay_payment_id:
+                                        payment.razorpay_payment_id,
+
+                                    razorpay_signature:
+                                        payment.razorpay_signature
+
+                                })
+
+                            }
+                        );
+
+                    const verifyData =
+                        await verifyResponse.json();
+
+                    // -------------------------------------------------
+                    // 5. UNLOCK ONLY AFTER SERVER VERIFICATION
+                    // -------------------------------------------------
+
+                    if(
+                        verifyResponse.ok &&
+                        verifyData.success &&
+                        verifyData.unlocked
+                    ){
+
+                        unlockMockTests();
+
+                        alert(
+                            "🎉 Payment Successful!\n\n" +
+                            "Your Mathematics Mock Test Package " +
+                            "is now unlocked."
+                        );
+
+                    }else{
+
+                        throw new Error(
+                            verifyData.error ||
+                            "Payment verification failed."
+                        );
+
+                    }
+
+                }catch(error){
+
+                    console.error(
+                        "Mock payment verification error:",
+                        error
+                    );
+
+                    alert(
+                        "Payment was received, but verification " +
+                        "could not be completed.\n\n" +
+                        "Please contact Ranjitham Study Center."
+                    );
+
+                    if(payBtn){
+
+                        payBtn.disabled = false;
+
+                        payBtn.innerHTML =
+                            "💳 Pay ₹299 & Unlock";
+
+                    }
+
+                }
+
+            }
+
+        };
+
+        const razorpay =
+            new Razorpay(options);
+
+        razorpay.open();
+
+    }catch(error){
+
+        console.error(
+            "Mock payment error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Unable to start payment."
+        );
+
+        if(payBtn){
+
+            payBtn.disabled = false;
+
+            payBtn.innerHTML =
+                "💳 Pay ₹299 & Unlock";
+
+        }
+
+    }
 
 }
 
+async function checkMockAccess(){
 
+    if(
+        !selectedMockSubject ||
+        !selectedMockBoard ||
+        !selectedMockClass
+    ){
+        return;
+    }
+
+    try{
+
+        const params = new URLSearchParams({
+
+            subject: selectedMockSubject,
+
+            board: selectedMockBoard,
+
+            class_name: selectedMockClass
+
+        });
+
+        const response = await fetch(
+            "/api/mock/check-access?" +
+            params.toString(),
+            {
+                cache: "no-store"
+            }
+        );
+
+        const data = await response.json();
+
+        if(
+            data.success &&
+            data.unlocked
+        ){
+
+            document.getElementById(
+                "mockPackageCard"
+            ).style.display = "none";
+
+            document.getElementById(
+                "mockTestsUnlocked"
+            ).style.display = "block";
+
+            document.getElementById(
+                "mockTestsUnlocked"
+            ).scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+            });
+
+        }
+
+    }catch(error){
+
+        console.error(
+            "Mock access check error:",
+            error
+        );
+
+    }
+
+}
+   
 /* =========================================================
    AFTER PAYMENT — TEMPORARY UI TEST
    ========================================================= */
