@@ -5293,6 +5293,111 @@ def about():
 def practice():
     return render_template("practice.html")
     
+@app.route("/api/practice/options")
+def practice_options():
+    try:
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT DISTINCT board, class_name, subject
+            FROM practice_questions
+            WHERE active=1
+            ORDER BY board, class_name, subject
+        """)
+
+        options = [
+            {
+                "board": row["board"],
+                "class_name": row["class_name"],
+                "subject": row["subject"]
+            }
+            for row in c.fetchall()
+        ]
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "options": options
+        })
+
+    except Exception as e:
+        print("PRACTICE OPTIONS ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+@app.route("/api/practice/topics", methods=["POST"])
+def practice_topics():
+    try:
+        data = request.get_json() or {}
+
+        board = str(data.get("board", "")).strip()
+        class_name = str(data.get("class_name", "")).strip()
+        subject = str(data.get("subject", "")).strip()
+
+        if not board or not class_name or not subject:
+            return jsonify({
+                "success": False,
+                "error": "Board, Class and Subject are required."
+            }), 400
+
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT DISTINCT topic, subtopic
+            FROM practice_questions
+            WHERE board=?
+              AND class_name=?
+              AND subject=?
+              AND active=1
+            ORDER BY topic, subtopic
+        """, (board, class_name, subject))
+
+        grouped = {}
+
+        for row in c.fetchall():
+
+            topic = row["topic"]
+            subtopic = row["subtopic"]
+
+            if topic not in grouped:
+                grouped[topic] = []
+
+            if subtopic and subtopic not in grouped[topic]:
+                grouped[topic].append(subtopic)
+
+        conn.close()
+
+        topics = [
+            {
+                "topic": topic,
+                "subtopics": subtopics
+            }
+            for topic, subtopics in grouped.items()
+        ]
+
+        return jsonify({
+            "success": True,
+            "topics": topics
+        })
+
+    except Exception as e:
+
+        print("PRACTICE TOPICS ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+        
 @app.route("/courses")
 def courses():
 
