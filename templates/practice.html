@@ -3305,55 +3305,89 @@ function comingSoonMock(name){
 
 /* ---------- LOAD BOARDS ---------- */
 
-function loadMockBoardsNew(){
+/* ---------- LOAD MOCK BOARDS ---------- */
+async function loadMockBoardsNew(){
 
     const board =
         document.getElementById("mockBoard");
 
-    if(!board) return;
+    const cls =
+        document.getElementById("mockClass");
 
+    if(!board || !cls) return;
 
     board.innerHTML =
-        '<option value="">Select Board</option>';
+        '<option value="">Loading Board...</option>';
 
-
-    const boards = [
-        ...new Set(
-            syllabusOptions
-                .map(x => x.board)
-                .filter(Boolean)
-        )
-    ];
-
-
-    boards.forEach(boardName => {
-
-        const option =
-            document.createElement("option");
-
-        option.value = boardName;
-
-        option.textContent = boardName;
-
-        board.appendChild(option);
-
-    });
-
-
-    document.getElementById("mockClass").innerHTML =
+    cls.innerHTML =
         '<option value="">Select Class</option>';
 
-    document.getElementById("mockClass").disabled = true;
+    cls.disabled = true;
 
+    document.getElementById("mockPackageCard").style.display = "none";
+    document.getElementById("mockTestsUnlocked").style.display = "none";
 
-    document.getElementById("mockPackageCard").style.display =
-        "none";
+    try{
 
-    document.getElementById("mockTestsUnlocked").style.display =
-        "none";
+        /*
+         * Load practice options if they are not loaded yet.
+         * This prevents an empty Board dropdown when the
+         * Mock section is opened quickly.
+         */
+        if(!syllabusOptions || syllabusOptions.length === 0){
+
+            await loadPracticeOptions();
+
+        }
+
+        const boards = [
+            ...new Set(
+                (syllabusOptions || [])
+                    .map(x => x.board)
+                    .filter(Boolean)
+            )
+        ];
+
+        board.innerHTML =
+            '<option value="">Select Board</option>';
+
+        if(boards.length === 0){
+
+            board.innerHTML =
+                '<option value="">No Board Available</option>';
+
+            console.warn(
+                "No board data found for Mock Test."
+            );
+
+            return;
+        }
+
+        boards.forEach(boardName => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = boardName;
+            option.textContent = boardName;
+
+            board.appendChild(option);
+
+        });
+
+    }catch(error){
+
+        console.error(
+            "Mock board loading error:",
+            error
+        );
+
+        board.innerHTML =
+            '<option value="">Unable to load Board</option>';
+
+    }
 
 }
-
 
 /* ---------- LOAD CLASS ---------- */
 
