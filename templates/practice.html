@@ -115,10 +115,7 @@ a{text-decoration:none}
 }
 .section-head h2{margin:0;color:#172554;font-size:24px}
 .section-head p{margin:6px 0 0;color:#64748b;font-size:14px;line-height:1.6}
-.step-pill{
-    flex:none;padding:7px 11px;border-radius:999px;
-    background:#eef2ff;color:#4338ca;font-size:11px;font-weight:800;
-}
+.step-pill{display:none}
 
 /* SUBJECT CARDS */
 .subject-grid{
@@ -466,8 +463,8 @@ a{text-decoration:none}
         <div class="p-card" id="setupCard">
             <div class="section-head">
                 <div>
-                    <h2>🎯 Build Your Practice Test</h2>
-                    <p>Select the exact syllabus area you want to practise.</p>
+                    <h2>🎯 Choose Your Practice</h2>
+                    <p>Select a subject to continue.</p>
                 </div>
                 <span class="step-pill">STEP 1</span>
             </div>
@@ -502,7 +499,7 @@ a{text-decoration:none}
                 </div>
             </div>
 
-            <div id="mathSetup" style="margin-top:28px;">
+            <div id="mathSetup" style="margin-top:28px;display:none;">
                 <div class="section-head" style="margin-top:8px;">
                     <div>
                         <h2 style="font-size:20px;">📚 Select Syllabus</h2>
@@ -555,7 +552,7 @@ a{text-decoration:none}
             </div>
         </div>
 
-        <div class="p-card" id="difficultyCard">
+        <div class="p-card" id="difficultyCard" style="display:none;">
             <div class="section-head">
                 <div>
                     <h2>⚡ Choose Difficulty</h2>
@@ -710,65 +707,6 @@ a{text-decoration:none}
 
 </main>
 
-<!-- ==========================
-         CTA SECTION
-    ========================== -->
-    <section class="cta-section">
-        <div class="cta-box">
-            <p class="cta-small">Best Maths Tuition in Medavakkam </p>
-            <h2>Ready to improve your Maths?</h2>
-            <p class="cta-text">Join Ranjitham Study Center and build strong fundamentals with good guidance.</p>
-            <a href="/contact" class="cta-btn">Enroll Now</a>
-        </div>
-    </section>
-
-    <!-- ==========================
-         CONTACT & FOOTER
-    ========================== -->
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-box">
-                <h3>RANJITHAM STUDY CENTER</h3>
-                <p>Focused maths coaching for Class 6–12 students</p>
-            </div>
-            <div class="footer-box">
-                <h3>Quick Links</h3>
-                <a href="/">Home</a>
-                <a href="/about">About</a>
-                <a href="/courses">Courses</a>
-                <a href="/materials">Materials</a>
-                <a href="/contact">Contact</a>
-                <a href="/admin">Admin</a>
-                <a href="/privacy">Privacy policy</a>
-                <a href="/terms">Terms and Conditions</a>
-            </div>
-            <div class="footer-box">
-                <h3>Contact Details</h3>
-                <p>📞 7702616245</p>
-                <p>📧 ranjithamstudycenter@gmail.com</p>
-           </div>
-        </div>
-                    <div class="footer-bottom">
-                      © 2026 Ranjitham Study Center. All Rights Reserved. | Designed for Quality Education
-                    </div>
-        </footer>
- <div class="privacy-section">
-  <h3>🔒 <strong>Your Privacy </strong></h3><br> 
-  <p>
-    We collect your name, contact number, email, and feedback solely for communication purposes. 
-    This information is used to provide you with relevant educational updates and materials. 
-    Your data is securely stored and will not be shared with any third parties.
-  </p>
-</div>
-
-  
- 
-    <!-- ==========================
-         WHATSAPP FLOAT BUTTON
-    ========================== -->
-    <a class="whatsapp" href="https://wa.me/917702616245" target="_blank">💬</a>
-
-
 <script>
 /* =========================================================
    RSC PRACTICE — DATABASE QUESTION BANK ONLY
@@ -814,7 +752,16 @@ function selectSubject(subject, card){
     document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
     card.classList.add("active");
 
-    document.getElementById("mathSetup").style.display = "block";
+    const mathSetup = document.getElementById("mathSetup");
+    const difficulty = document.getElementById("difficultyCard");
+
+    mathSetup.style.display = "block";
+    difficulty.style.display = "none";
+
+    mathSetup.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
 }
 
 function comingSoon(name){
@@ -827,7 +774,17 @@ async function loadPracticeOptions(){
 
     try{
         const response = await fetch("/api/practice/options", {cache:"no-store"});
-        const data = await response.json();
+        const contentType = response.headers.get("content-type") || "";
+        const raw = await response.text();
+
+        if(!contentType.includes("application/json")){
+            throw new Error(
+                `Practice API returned ${response.status} ${response.statusText}. ` +
+                `The /api/practice/options backend route is missing or returning HTML.`
+            );
+        }
+
+        const data = JSON.parse(raw);
 
         if(!response.ok || !data.success){
             throw new Error(data.error || "Unable to load Practice options.");
@@ -874,6 +831,7 @@ function loadPracticeClasses(){
     topic.disabled = true;
     subtopic.disabled = true;
     document.getElementById("selectionSummary").style.display = "none";
+    document.getElementById("difficultyCard").style.display = "none";
 
     if(!board) return;
 
@@ -911,6 +869,8 @@ function loadPracticeSubjects(){
     document.getElementById("practiceTopic").disabled = true;
     document.getElementById("practiceSubtopic").innerHTML = '<option value="">Select Subtopic</option>';
     document.getElementById("practiceSubtopic").disabled = true;
+    document.getElementById("difficultyCard").style.display = "none";
+    document.getElementById("selectionSummary").style.display = "none";
 
     if(!board || !className) return;
 
@@ -947,6 +907,8 @@ async function loadPracticeTopics(){
     topic.disabled = true;
     subtopic.innerHTML = '<option value="">Select Subtopic</option>';
     subtopic.disabled = true;
+    document.getElementById("difficultyCard").style.display = "none";
+    document.getElementById("selectionSummary").style.display = "none";
 
     if(!board || !className || !subject) return;
 
@@ -961,7 +923,17 @@ async function loadPracticeTopics(){
             })
         });
 
-        const data = await response.json();
+        const contentType = response.headers.get("content-type") || "";
+        const raw = await response.text();
+
+        if(!contentType.includes("application/json")){
+            throw new Error(
+                `Practice API returned ${response.status} ${response.statusText}. ` +
+                `The /api/practice/topics backend route is missing or returning HTML.`
+            );
+        }
+
+        const data = JSON.parse(raw);
 
         if(!response.ok || !data.success){
             throw new Error(data.error || "Unable to load chapters.");
@@ -1014,12 +986,24 @@ function updateSelectionSummary(){
     const summary = document.getElementById("selectionSummary");
     const text = document.getElementById("selectionSummaryText");
 
+    const difficultyCard = document.getElementById("difficultyCard");
+
     if(board && cls && subject && topicIndex !== "" && subtopic){
         const topic = topicData[Number(topicIndex)]?.topic || "";
         text.textContent = `${board} • ${cls} • ${subject} • ${topic} • ${subtopic}`;
         summary.style.display = "block";
+
+        // STEP 3 appears only after the complete syllabus selection.
+        difficultyCard.style.display = "block";
+        setTimeout(() => {
+            difficultyCard.scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+            });
+        }, 100);
     }else{
         summary.style.display = "none";
+        difficultyCard.style.display = "none";
     }
 }
 
@@ -1463,9 +1447,14 @@ function startNewAttempt(){
 
     document.getElementById("resultShell").style.display = "none";
     document.getElementById("setupCard").style.display = "block";
-    document.getElementById("difficultyCard").style.display = "block";
+    document.getElementById("examShell").style.display = "none";
 
-    document.getElementById("difficultyCard").scrollIntoView({
+    // Return to the beginning of the sequential flow.
+    document.getElementById("mathSetup").style.display = "none";
+    document.getElementById("difficultyCard").style.display = "none";
+    document.getElementById("selectionSummary").style.display = "none";
+
+    document.getElementById("setupCard").scrollIntoView({
         behavior:"smooth",
         block:"start"
     });
