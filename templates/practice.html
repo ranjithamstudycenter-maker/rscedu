@@ -1461,42 +1461,101 @@ function renderPalette(){
 
 /* ---------- TIMER ---------- */
 function startPracticeTimer(startedAt){
+
     stopPracticeTimer();
 
-    const start = new Date(startedAt.replace(" ","T")).getTime();
+    if(!startedAt){
+        console.error("Practice timer error: started_at is missing.");
+        return;
+    }
+
+    /*
+     * Render server stores datetime in UTC.
+     * Add "Z" so browser correctly interprets startedAt as UTC.
+     */
+    let startString = String(startedAt).trim();
+
+    if(!startString.endsWith("Z")){
+        startString = startString.replace(" ","T") + "Z";
+    }
+
+    const start = new Date(startString).getTime();
     const duration = 30 * 60 * 1000;
 
+    if(isNaN(start)){
+        console.error(
+            "Practice timer error: Invalid started_at:",
+            startedAt
+        );
+        return;
+    }
+
     function tick(){
+
         const elapsed = Date.now() - start;
-        let remaining = Math.max(0, duration - elapsed);
 
-        const minutes = Math.floor(remaining / 60000);
-        const seconds = Math.floor((remaining % 60000) / 1000);
+        let remaining = Math.max(
+            0,
+            duration - elapsed
+        );
 
-        const timer = document.getElementById("practiceTimer");
+        const minutes = Math.floor(
+            remaining / 60000
+        );
+
+        const seconds = Math.floor(
+            (remaining % 60000) / 1000
+        );
+
+        const timer =
+            document.getElementById("practiceTimer");
+
+        if(!timer) return;
+
         timer.textContent =
-            String(minutes).padStart(2,"0") + ":" +
+            String(minutes).padStart(2,"0") +
+            ":" +
             String(seconds).padStart(2,"0");
 
+        /* Warning during last 5 minutes */
         if(remaining <= 5 * 60 * 1000){
             timer.classList.add("warning");
+        }else{
+            timer.classList.remove("warning");
         }
 
+        /* Time finished */
         if(remaining <= 0){
+
             stopPracticeTimer();
-            document.getElementById("practiceTimer").textContent = "00:00";
-            alert("⏰ Time is over. Your answers can no longer be changed. Please submit the test.");
+
+            timer.textContent = "00:00";
+
+            alert(
+                "⏰ Time is over. Your answers can no longer be changed. Please submit the test."
+            );
+
             disableExamInputs();
         }
     }
 
+    /* Run immediately */
     tick();
-    practiceTimerInterval = setInterval(tick,1000);
+
+    /* Continue every second */
+    practiceTimerInterval =
+        setInterval(tick, 1000);
 }
 
+
 function stopPracticeTimer(){
+
     if(practiceTimerInterval){
-        clearInterval(practiceTimerInterval);
+
+        clearInterval(
+            practiceTimerInterval
+        );
+
         practiceTimerInterval = null;
     }
 }
