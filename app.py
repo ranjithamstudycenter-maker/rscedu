@@ -3309,7 +3309,9 @@ def practice_create_session():
             subtopic,
             difficulty
         ))
-
+        
+        existing = c.fetchone()
+        
         # -------------------------------------------------
         # 6. RESUME ONLY A LIVE SESSION
         # -------------------------------------------------
