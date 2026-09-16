@@ -486,6 +486,245 @@ a{text-decoration:none}
     .palette{grid-template-columns:repeat(5,1fr)}
     .mock-features{grid-template-columns:1fr 1fr}
 }
+/* =========================================================
+   RSC MOCK TEST PACKAGE
+   ========================================================= */
+
+.mock-subject-grid{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:18px;
+    margin-top:25px;
+}
+
+.mock-subject-card{
+    position:relative;
+    border:2px solid #e2e8f0;
+    border-radius:22px;
+    padding:25px;
+    background:#fff;
+    cursor:pointer;
+    transition:.25s ease;
+    min-height:245px;
+    box-shadow:0 8px 25px rgba(15,23,42,.06);
+}
+
+.mock-subject-card:hover{
+    transform:translateY(-6px);
+    box-shadow:0 18px 38px rgba(79,70,229,.14);
+}
+
+.mock-subject-card.available{
+    border-color:#818cf8;
+    background:linear-gradient(145deg,#eef2ff,#fff);
+}
+
+.mock-subject-card.coming{
+    opacity:.62;
+    cursor:not-allowed;
+    background:#f8fafc;
+}
+
+.mock-subject-icon{
+    width:58px;
+    height:58px;
+    border-radius:17px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:30px;
+    background:#eef2ff;
+    margin-bottom:15px;
+}
+
+.mock-subject-card h3{
+    margin:0 0 8px;
+    color:#172554;
+    font-size:20px;
+}
+
+.mock-subject-card p{
+    margin:0;
+    color:#64748b;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.mock-subject-price{
+    margin-top:15px;
+    font-size:25px;
+    font-weight:900;
+    color:#4f46e5;
+}
+
+.mock-subject-status{
+    display:inline-block;
+    margin-top:10px;
+    padding:6px 11px;
+    border-radius:999px;
+    background:#dcfce7;
+    color:#15803d;
+    font-size:11px;
+    font-weight:800;
+}
+
+.mock-subject-card.coming .mock-subject-status{
+    background:#f1f5f9;
+    color:#64748b;
+}
+
+.mock-subject-action{
+    margin-top:15px;
+    color:#4338ca;
+    font-size:13px;
+    font-weight:800;
+}
+
+
+/* PACKAGE CARD */
+
+.mock-package-card{
+    display:grid;
+    grid-template-columns:120px 1fr;
+    gap:25px;
+    align-items:center;
+    padding:30px;
+    border-radius:24px;
+    background:
+        radial-gradient(circle at 90% 10%,rgba(99,102,241,.13),transparent 30%),
+        linear-gradient(145deg,#eef2ff,#fff,#faf5ff);
+    border:1px solid #c7d2fe;
+}
+
+.mock-package-icon{
+    width:105px;
+    height:105px;
+    border-radius:28px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    font-size:52px;
+    background:#fff;
+    box-shadow:0 12px 30px rgba(79,70,229,.12);
+}
+
+.mock-package-label{
+    color:#6366f1;
+    font-size:11px;
+    font-weight:900;
+    letter-spacing:1px;
+}
+
+.mock-package-content h2{
+    margin:7px 0;
+    color:#172554;
+    font-size:28px;
+}
+
+.mock-package-content > p{
+    color:#64748b;
+    font-size:14px;
+    line-height:1.65;
+    max-width:700px;
+}
+
+.mock-price{
+    margin-top:15px;
+    font-size:40px;
+    font-weight:900;
+    color:#312e81;
+}
+
+.mock-price span{
+    font-size:24px;
+}
+
+.mock-package-features{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:9px 25px;
+    margin-top:15px;
+    color:#334155;
+    font-size:13px;
+    font-weight:600;
+}
+
+.mock-pay-btn{
+    margin-top:22px;
+    border:none;
+    border-radius:14px;
+    padding:15px 25px;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:#fff;
+    font-size:15px;
+    font-weight:900;
+    cursor:pointer;
+    box-shadow:0 10px 25px rgba(79,70,229,.22);
+    transition:.2s;
+}
+
+.mock-pay-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 15px 30px rgba(79,70,229,.28);
+}
+
+.mock-payment-note{
+    margin-top:8px !important;
+    font-size:11px !important;
+    color:#94a3b8 !important;
+}
+
+
+/* UNLOCKED */
+
+.mock-unlocked-badge{
+    padding:8px 13px;
+    border-radius:999px;
+    background:#dcfce7;
+    color:#15803d;
+    font-size:11px;
+    font-weight:900;
+}
+
+
+/* RESPONSIVE */
+
+@media(max-width:1000px){
+
+    .mock-subject-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+    .mock-package-card{
+        grid-template-columns:1fr;
+        text-align:center;
+    }
+
+    .mock-package-icon{
+        margin:auto;
+    }
+
+}
+
+@media(max-width:600px){
+
+    .mock-subject-grid{
+        grid-template-columns:1fr;
+    }
+
+    .mock-package-features{
+        grid-template-columns:1fr;
+    }
+
+    .mock-package-content h2{
+        font-size:23px;
+    }
+
+    .mock-price{
+        font-size:34px;
+    }
+
+}   
 </style>
 
 <style>
@@ -955,131 +1194,349 @@ body.exam-running .exam-lock-bar{
 ========================= -->
 <section id="mockShell" style="display:none;">
 
-    <div class="p-card" id="mockSetupCard">
+    <!-- MOCK SUBJECT SELECTION -->
+    <div class="p-card" id="mockSubjectCard">
 
         <div class="section-head">
             <div>
-                <h2>🏆 Build Your Mock Test</h2>
+                <h2>🏆 Mock Test Series</h2>
                 <p>
-                    Complete your chapter practice and test your preparation
-                    with chapter, 4-chapter and full-syllabus mock tests.
+                    Choose your subject and unlock the complete
+                    mock test package.
                 </p>
             </div>
         </div>
 
-        <!-- SAME SYLLABUS SELECTION -->
-        <div class="selection-grid">
+        <div class="mock-subject-grid">
 
-            <div class="field">
-                <label>🏫 Board</label>
-                <select id="mockBoard" onchange="loadMockClasses()">
-                    <option value="">Select Board</option>
-                </select>
+            <!-- MATHEMATICS -->
+            <div class="mock-subject-card available"
+                 onclick="selectMockSubject('Mathematics', this)">
+
+                <div class="mock-subject-icon">📐</div>
+
+                <h3>Mathematics</h3>
+
+                <p>
+                    Chapter-wise, 4-Chapter and
+                    Full-Syllabus Mock Tests.
+                </p>
+
+                <div class="mock-subject-price">
+                    ₹299
+                </div>
+
+                <span class="mock-subject-status">
+                    Available Now
+                </span>
+
+                <div class="mock-subject-action">
+                    View Package →
+                </div>
+
             </div>
 
-            <div class="field">
-                <label>🎓 Class</label>
-                <select id="mockClass"
-                        onchange="loadMockSubjects()"
-                        disabled>
-                    <option value="">Select Class</option>
-                </select>
+
+            <!-- BIOLOGY -->
+            <div class="mock-subject-card coming"
+                 onclick="comingSoonMock('Biology')">
+
+                <div class="mock-subject-icon">🧬</div>
+
+                <h3>Biology</h3>
+
+                <p>
+                    Complete Biology Mock Test Series
+                    will be added soon.
+                </p>
+
+                <span class="mock-subject-status">
+                    Coming Soon
+                </span>
+
             </div>
 
-            <div class="field">
-                <label>📚 Subject</label>
-                <select id="mockSubject"
-                        onchange="loadMockTopics()"
-                        disabled>
-                    <option value="">Select Subject</option>
-                </select>
+
+            <!-- SCIENCE -->
+            <div class="mock-subject-card coming"
+                 onclick="comingSoonMock('Science')">
+
+                <div class="mock-subject-icon">🔬</div>
+
+                <h3>Science</h3>
+
+                <p>
+                    Complete Science Mock Test Series
+                    will be added soon.
+                </p>
+
+                <span class="mock-subject-status">
+                    Coming Soon
+                </span>
+
             </div>
 
-            <div class="field full">
-                <label>📖 Chapter / Topic</label>
-                <select id="mockTopic"
-                        onchange="loadMockSubtopics()"
-                        disabled>
-                    <option value="">Select Chapter / Topic</option>
-                </select>
+
+            <!-- SOCIAL SCIENCE -->
+            <div class="mock-subject-card coming"
+                 onclick="comingSoonMock('Social Science')">
+
+                <div class="mock-subject-icon">🌍</div>
+
+                <h3>Social Science</h3>
+
+                <p>
+                    Complete Social Science Mock Test Series
+                    will be added soon.
+                </p>
+
+                <span class="mock-subject-status">
+                    Coming Soon
+                </span>
+
             </div>
 
-            <div class="field full">
-                <label>📝 Subtopic</label>
-                <select id="mockSubtopic"
-                        onchange="updateMockSelection()"
-                        disabled>
-                    <option value="">Select Subtopic</option>
-                </select>
-            </div>
-
-        </div>
-
-        <div class="selection-summary" id="mockSelectionSummary">
-            <strong>Selected:</strong>
-            <span id="mockSelectionSummaryText"></span>
         </div>
 
     </div>
 
 
-    <!-- MOCK TYPE -->
+    <!-- BOARD + CLASS -->
     <div class="p-card"
-         id="mockTypeCard"
+         id="mockSyllabusCard"
          style="display:none;">
 
         <div class="section-head">
+
             <div>
-                <h2>🏆 Choose Mock Test</h2>
+                <h2>📚 Select Your Syllabus</h2>
+
                 <p>
-                    Select the test according to your preparation stage.
+                    Select your board and class to continue
+                    with the Mathematics Mock Package.
                 </p>
             </div>
+
         </div>
+
+
+        <div class="selection-grid">
+
+            <div class="field">
+
+                <label>🏫 Board</label>
+
+                <select id="mockBoard"
+                        onchange="loadMockClassesNew()">
+
+                    <option value="">
+                        Select Board
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="field">
+
+                <label>🎓 Class</label>
+
+                <select id="mockClass"
+                        onchange="showMockPackage()"
+                        disabled>
+
+                    <option value="">
+                        Select Class
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="selection-summary"
+             id="mockSelectionSummary">
+
+            <strong>Selected:</strong>
+
+            <span id="mockSelectionSummaryText"></span>
+
+        </div>
+
+    </div>
+
+
+    <!-- ₹299 PACKAGE -->
+    <div class="p-card"
+         id="mockPackageCard"
+         style="display:none;">
+
+        <div class="mock-package-card">
+
+            <div class="mock-package-icon">
+                🏆
+            </div>
+
+            <div class="mock-package-content">
+
+                <div class="mock-package-label">
+                    MATHEMATICS MOCK TEST PACKAGE
+                </div>
+
+                <h2>
+                    Complete Mock Test Series
+                </h2>
+
+                <p>
+                    One payment gives access to all
+                    Mathematics mock tests for the
+                    selected Board and Class.
+                </p>
+
+
+                <div class="mock-price">
+                    <span>₹</span>299
+                </div>
+
+
+                <div class="mock-package-features">
+
+                    <div>
+                        ✓ Chapter-wise Mock Tests
+                    </div>
+
+                    <div>
+                        ✓ 4-Chapter Mock Tests
+                    </div>
+
+                    <div>
+                        ✓ Full-Syllabus Final Mock
+                    </div>
+
+                    <div>
+                        ✓ 50 Questions
+                    </div>
+
+                    <div>
+                        ✓ 100 Marks
+                    </div>
+
+                    <div>
+                        ✓ 60 Minutes
+                    </div>
+
+                    <div>
+                        ✓ Detailed Result & Review
+                    </div>
+
+                    <div>
+                        ✓ Explanation & Hint
+                    </div>
+
+                </div>
+
+
+                <button class="mock-pay-btn"
+                        onclick="startMockPayment()">
+
+                    🔒 Unlock Mock Tests — ₹299
+
+                </button>
+
+                <p class="mock-payment-note">
+                    Secure payment powered by Razorpay
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- UNLOCKED MOCK TESTS -->
+    <div class="p-card"
+         id="mockTestsUnlocked"
+         style="display:none;">
+
+        <div class="section-head">
+
+            <div>
+                <h2>🎯 Your Mock Tests</h2>
+
+                <p>
+                    Your Mathematics Mock Test Package
+                    is unlocked.
+                </p>
+            </div>
+
+            <span class="mock-unlocked-badge">
+                ✓ UNLOCKED
+            </span>
+
+        </div>
+
 
         <div class="mock-test-grid">
 
-            <!-- CHAPTER MOCK -->
+            <!-- CHAPTER -->
             <div class="mock-test-option chapter"
-                 onclick="selectMockType('chapter')">
+                 onclick="openChapterMock()">
 
-                <div class="mock-test-icon">📘</div>
+                <div class="mock-test-icon">
+                    📘
+                </div>
 
-                <h3>Chapter Mock Test</h3>
+                <h3>
+                    Chapter-wise Mock
+                </h3>
 
                 <p>
-                    Test your preparation after completing a chapter.
+                    Test your preparation
+                    chapter by chapter.
                 </p>
 
                 <div class="mock-test-meta">
+
                     <span>50 Questions</span>
                     <span>100 Marks</span>
                     <span>60 Minutes</span>
+
                 </div>
 
                 <div class="mock-test-action">
-                    Choose Chapter Mock →
+                    Choose Chapter →
                 </div>
 
             </div>
 
 
-            <!-- 4 CHAPTER MOCK -->
+            <!-- FOUR CHAPTER -->
             <div class="mock-test-option combined"
-                 onclick="selectMockType('four_chapter')">
+                 onclick="openFourChapterMock()">
 
-                <div class="mock-test-icon">📚</div>
+                <div class="mock-test-icon">
+                    📚
+                </div>
 
-                <h3>4-Chapter Mock Test</h3>
+                <h3>
+                    4-Chapter Mock
+                </h3>
 
                 <p>
-                    Test yourself after completing a group of four chapters.
+                    Test yourself after
+                    completing four chapters.
                 </p>
 
                 <div class="mock-test-meta">
+
                     <span>50 Questions</span>
                     <span>100 Marks</span>
                     <span>60 Minutes</span>
+
                 </div>
 
                 <div class="mock-test-action">
@@ -1091,20 +1548,27 @@ body.exam-running .exam-lock-bar{
 
             <!-- FINAL -->
             <div class="mock-test-option final"
-                 onclick="selectMockType('final')">
+                 onclick="openFinalMock()">
 
-                <div class="mock-test-icon">🏆</div>
+                <div class="mock-test-icon">
+                    🏆
+                </div>
 
-                <h3>Final Full-Syllabus Test</h3>
+                <h3>
+                    Final Full-Syllabus
+                </h3>
 
                 <p>
-                    Complete examination covering the full syllabus.
+                    Complete examination
+                    covering the full syllabus.
                 </p>
 
                 <div class="mock-test-meta">
+
                     <span>50 Questions</span>
                     <span>100 Marks</span>
                     <span>60 Minutes</span>
+
                 </div>
 
                 <div class="mock-test-action">
@@ -1115,28 +1579,29 @@ body.exam-running .exam-lock-bar{
 
         </div>
 
-        <!-- CHAPTER MOCK LIST -->
-        <div id="chapterMockList"
+
+        <!-- CHAPTER LIST -->
+        <div id="chapterMockListNew"
              style="display:none;margin-top:25px;">
 
             <h3 class="mock-list-title">
                 📘 Select Chapter Mock
             </h3>
 
-            <div id="chapterMockOptions"></div>
+            <div id="chapterMockOptionsNew"></div>
 
         </div>
 
 
-        <!-- 4 CHAPTER MOCK LIST -->
-        <div id="fourChapterMockList"
+        <!-- FOUR CHAPTER LIST -->
+        <div id="fourChapterMockListNew"
              style="display:none;margin-top:25px;">
 
             <h3 class="mock-list-title">
                 📚 Select 4-Chapter Mock
             </h3>
 
-            <div id="fourChapterMockOptions"></div>
+            <div id="fourChapterMockOptionsNew"></div>
 
         </div>
 
@@ -1194,7 +1659,7 @@ function showMode(mode){
 
         mBtn.classList.add("active");
 
-        loadMockOptions();
+        
 
         window.scrollTo({
             top:0,
@@ -2783,6 +3248,382 @@ document.getElementById("startTestModal")?.addEventListener("click", function(e)
     if(e.target === this) closeStartTestModal();
 });
 
+/* =========================================================
+   NEW MOCK TEST PACKAGE FLOW
+   ========================================================= */
+
+let selectedMockSubject = "";
+let selectedMockBoard = "";
+let selectedMockClass = "";
+
+
+/* ---------- SUBJECT ---------- */
+
+function selectMockSubject(subject, card){
+
+    if(subject !== "Mathematics"){
+        return;
+    }
+
+    selectedMockSubject = subject;
+
+    document
+        .querySelectorAll(".mock-subject-card")
+        .forEach(c => c.classList.remove("active"));
+
+    card.classList.add("active");
+
+
+    document.getElementById("mockSyllabusCard").style.display = "block";
+
+    document.getElementById("mockPackageCard").style.display = "none";
+
+    document.getElementById("mockTestsUnlocked").style.display = "none";
+
+
+    loadMockBoardsNew();
+
+
+    document.getElementById("mockSyllabusCard").scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
+
+
+/* ---------- COMING SOON ---------- */
+
+function comingSoonMock(name){
+
+    alert(
+        "📚 " + name +
+        " Mock Test Series is coming soon."
+    );
+
+}
+
+
+/* ---------- LOAD BOARDS ---------- */
+
+function loadMockBoardsNew(){
+
+    const board =
+        document.getElementById("mockBoard");
+
+    if(!board) return;
+
+
+    board.innerHTML =
+        '<option value="">Select Board</option>';
+
+
+    const boards = [
+        ...new Set(
+            syllabusOptions
+                .map(x => x.board)
+                .filter(Boolean)
+        )
+    ];
+
+
+    boards.forEach(boardName => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = boardName;
+
+        option.textContent = boardName;
+
+        board.appendChild(option);
+
+    });
+
+
+    document.getElementById("mockClass").innerHTML =
+        '<option value="">Select Class</option>';
+
+    document.getElementById("mockClass").disabled = true;
+
+
+    document.getElementById("mockPackageCard").style.display =
+        "none";
+
+    document.getElementById("mockTestsUnlocked").style.display =
+        "none";
+
+}
+
+
+/* ---------- LOAD CLASS ---------- */
+
+function loadMockClassesNew(){
+
+    const board =
+        document.getElementById("mockBoard").value;
+
+    const cls =
+        document.getElementById("mockClass");
+
+
+    cls.innerHTML =
+        '<option value="">Select Class</option>';
+
+    cls.disabled = true;
+
+
+    document.getElementById("mockPackageCard").style.display =
+        "none";
+
+    document.getElementById("mockTestsUnlocked").style.display =
+        "none";
+
+
+    if(!board) return;
+
+
+    const classes = [
+        ...new Set(
+            syllabusOptions
+                .filter(x => x.board === board)
+                .map(x => x.class_name)
+                .filter(Boolean)
+        )
+    ];
+
+
+    classes.forEach(className => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = className;
+
+        option.textContent = className;
+
+        cls.appendChild(option);
+
+    });
+
+
+    cls.disabled = false;
+
+}
+
+
+/* ---------- SHOW PACKAGE ---------- */
+
+function showMockPackage(){
+
+    const board =
+        document.getElementById("mockBoard").value;
+
+    const cls =
+        document.getElementById("mockClass").value;
+
+
+    if(!board || !cls){
+
+        document.getElementById(
+            "mockPackageCard"
+        ).style.display = "none";
+
+        return;
+
+    }
+
+
+    selectedMockBoard = board;
+    selectedMockClass = cls;
+
+
+    document.getElementById(
+        "mockSelectionSummaryText"
+    ).textContent =
+        `${selectedMockSubject} • ${board} • ${cls}`;
+
+
+    document.getElementById(
+        "mockSelectionSummary"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "mockPackageCard"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "mockTestsUnlocked"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "mockPackageCard"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+
+}
+
+
+/* =========================================================
+   PAYMENT
+   ========================================================= */
+
+function startMockPayment(){
+
+    if(
+        !selectedMockSubject ||
+        !selectedMockBoard ||
+        !selectedMockClass
+    ){
+
+        alert(
+            "Please select Subject, Board and Class first."
+        );
+
+        return;
+    }
+
+
+    /*
+       PAYMENT WILL BE CONNECTED
+       IN THE NEXT STEP.
+
+       For now we are testing the UI flow.
+    */
+
+    alert(
+        "₹299 Mock Test Package selected.\n\n" +
+        "Razorpay payment will be connected next."
+    );
+
+}
+
+
+/* =========================================================
+   AFTER PAYMENT — TEMPORARY UI TEST
+   ========================================================= */
+
+function unlockMockTests(){
+
+    document.getElementById(
+        "mockPackageCard"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "mockTestsUnlocked"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "mockTestsUnlocked"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+
+}
+
+
+/* ---------- CHAPTER MOCK ---------- */
+
+function openChapterMock(){
+
+    const box =
+        document.getElementById(
+            "chapterMockListNew"
+        );
+
+    const options =
+        document.getElementById(
+            "chapterMockOptionsNew"
+        );
+
+
+    document.getElementById(
+        "fourChapterMockListNew"
+    ).style.display = "none";
+
+
+    box.style.display = "block";
+
+
+    options.innerHTML = `
+        <div class="mock-list-option">
+            📘 Chapter Mock Test
+            <br>
+            <small>
+                50 Questions • 100 Marks • 60 Minutes
+            </small>
+        </div>
+    `;
+
+
+    box.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+
+}
+
+
+/* ---------- FOUR CHAPTER MOCK ---------- */
+
+function openFourChapterMock(){
+
+    const box =
+        document.getElementById(
+            "fourChapterMockListNew"
+        );
+
+    const options =
+        document.getElementById(
+            "fourChapterMockOptionsNew"
+        );
+
+
+    document.getElementById(
+        "chapterMockListNew"
+    ).style.display = "none";
+
+
+    box.style.display = "block";
+
+
+    options.innerHTML = `
+        <div class="mock-list-option">
+            📚 4-Chapter Mock Test
+            <br>
+            <small>
+                50 Questions • 100 Marks • 60 Minutes
+            </small>
+        </div>
+    `;
+
+
+    box.scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+
+}
+
+
+/* ---------- FINAL MOCK ---------- */
+
+function openFinalMock(){
+
+    alert(
+        "🏆 Full-Syllabus Final Mock Test\n\n" +
+        "50 Questions • 100 Marks • 60 Minutes\n\n" +
+        "Test engine will be connected next."
+    );
+
+}   
 </script>
 
 </body>
