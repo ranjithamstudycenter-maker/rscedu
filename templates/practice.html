@@ -623,11 +623,11 @@ body.exam-running .exam-lock-bar{
                     <h2>🎯 Build Your Practice Test</h2>
                     <p>Select the exact syllabus area you want to practise.</p>
                 </div>
-                <span class="step-pill">STEP 1</span>
+                
             </div>
 
             <div class="subject-grid">
-                <div class="subject-card active" onclick="selectSubject('math',this)">
+                <div class="subject-card" onclick="selectSubject('math',this)">
                     <div class="subject-icon">📐</div>
                     <h3>Mathematics</h3>
                     <p>Chapter-wise MCQ practice for concepts, application and problem solving.</p>
@@ -662,7 +662,7 @@ body.exam-running .exam-lock-bar{
                         <h2 style="font-size:20px;">📚 Select Syllabus</h2>
                         <p>Questions are loaded from the RSC Practice Question Bank.</p>
                     </div>
-                    <span class="step-pill">STEP 2</span>
+                    
                 </div>
 
                 <div class="selection-grid">
@@ -715,7 +715,7 @@ body.exam-running .exam-lock-bar{
                     <h2>⚡ Choose Difficulty</h2>
                     <p>Each attempt contains 25 MCQs. Choose the level that matches your preparation.</p>
                 </div>
-                <span class="step-pill">STEP 3</span>
+                
             </div>
 
             <div class="difficulty-grid">
@@ -903,16 +903,61 @@ function updateDifficultyState(){
 
 /* ---------- SUBJECT ---------- */
 function selectSubject(subject, card){
+
     if(subject !== "math") return;
 
-    document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
+    // Mathematics மட்டும் active
+    document.querySelectorAll(".subject-card")
+        .forEach(c => c.classList.remove("active"));
+
     card.classList.add("active");
 
+    // Step 2 மட்டும் இப்போது open ஆகும்
     document.getElementById("mathSetup").style.display = "block";
-    document.getElementById("difficultyCard").style.display = "block";
-    updateDifficultyState();
-}
 
+    // Step 3 இன்னும் hidden
+    document.getElementById("difficultyCard").style.display = "none";
+
+    // Fresh syllabus selection
+    resetPracticeDropdowns();
+
+    document.getElementById("mathSetup").scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
+function resetPracticeDropdowns(){
+
+    const board = document.getElementById("practiceBoard");
+    const cls = document.getElementById("practiceClass");
+    const subject = document.getElementById("practiceSubject");
+    const topic = document.getElementById("practiceTopic");
+    const subtopic = document.getElementById("practiceSubtopic");
+
+    board.value = "";
+
+    cls.innerHTML =
+        '<option value="">Select Class</option>';
+
+    subject.innerHTML =
+        '<option value="">Select Subject</option>';
+
+    topic.innerHTML =
+        '<option value="">Select Chapter / Topic</option>';
+
+    subtopic.innerHTML =
+        '<option value="">Select Subtopic</option>';
+
+    cls.disabled = true;
+    subject.disabled = true;
+    topic.disabled = true;
+    subtopic.disabled = true;
+
+    document.getElementById("selectionSummary").style.display = "none";
+
+    document.getElementById("difficultyCard").style.display = "none";
+}
+   
 function comingSoon(name){
     alert("📚 " + name + " Practice is coming soon.");
 }
@@ -942,10 +987,7 @@ async function loadPracticeOptions(){
             board.appendChild(opt);
         });
 
-        if(boards.length === 1){
-            board.value = boards[0];
-            loadPracticeClasses();
-        }
+    
     }catch(error){
         console.error("PRACTICE OPTIONS ERROR:", error);
         board.innerHTML = '<option value="">Unable to load</option>';
@@ -992,10 +1034,7 @@ function loadPracticeClasses(){
 
     cls.disabled = false;
 
-    if(classes.length === 1){
-        cls.value = classes[0];
-        loadPracticeSubjects();
-    }
+    
 }
 
 function loadPracticeSubjects(){
@@ -1032,10 +1071,7 @@ function loadPracticeSubjects(){
 
     subject.disabled = false;
 
-    if(subjects.length === 1){
-        subject.value = subjects[0];
-        loadPracticeTopics();
-    }
+    
 }
 
 async function loadPracticeTopics(){
@@ -1107,28 +1143,70 @@ function loadPracticeSubtopics(){
     });
 
     subtopic.disabled = false;
+
+    document.getElementById("difficultyCard").style.display = "none";
+
     updateSelectionSummary();
-    updateDifficultyState();
 }
 
 function updateSelectionSummary(){
-    const board = document.getElementById("practiceBoard").value;
-    const cls = document.getElementById("practiceClass").value;
-    const subject = document.getElementById("practiceSubject").value;
-    const topicIndex = document.getElementById("practiceTopic").value;
-    const subtopic = document.getElementById("practiceSubtopic").value;
-    const summary = document.getElementById("selectionSummary");
-    const text = document.getElementById("selectionSummaryText");
 
-    if(board && cls && subject && topicIndex !== "" && subtopic){
-        const topic = topicData[Number(topicIndex)]?.topic || "";
-        text.textContent = `${board} • ${cls} • ${subject} • ${topic} • ${subtopic}`;
+    const board =
+        document.getElementById("practiceBoard").value;
+
+    const cls =
+        document.getElementById("practiceClass").value;
+
+    const subject =
+        document.getElementById("practiceSubject").value;
+
+    const topicIndex =
+        document.getElementById("practiceTopic").value;
+
+    const subtopic =
+        document.getElementById("practiceSubtopic").value;
+
+    const summary =
+        document.getElementById("selectionSummary");
+
+    const text =
+        document.getElementById("selectionSummaryText");
+
+    const difficultyCard =
+        document.getElementById("difficultyCard");
+
+
+    // எல்லாம் select செய்யப்பட்டால் மட்டும் Step 3
+    if(
+        board &&
+        cls &&
+        subject &&
+        topicIndex !== "" &&
+        subtopic
+    ){
+
+        const topic =
+            topicData[Number(topicIndex)]?.topic || "";
+
+        text.textContent =
+            `${board} • ${cls} • ${subject} • ${topic} • ${subtopic}`;
+
         summary.style.display = "block";
+
+        // STEP 3 NOW OPEN
+        difficultyCard.style.display = "block";
+
     }else{
+
         summary.style.display = "none";
+
+        // Selection incomplete → Step 3 hidden
+        difficultyCard.style.display = "none";
     }
+
     updateDifficultyState();
 }
+   
 
 /* ---------- PRACTICE SESSION ---------- */
 function startPractice(level){
@@ -1693,15 +1771,53 @@ function startNewAttempt(){
 }
 
 function backToSetup(){
-    // Back to Selection = reset the syllabus dropdowns.
-    startNewAttempt();
-    resetPracticeSelection();
-    updateDifficultyState();
+
+    // Stop current test/result state
+    practiceSessionId = null;
+    practiceAnswers = {};
+    practiceQuestions = [];
+    currentQuestion = 0;
+    practiceSubmitted = false;
+    pendingDifficulty = "";
+
+    stopPracticeTimer();
+    exitExamLock();
+
+    // Hide exam/result
+    document.getElementById("examShell").style.display = "none";
+    document.getElementById("resultShell").style.display = "none";
+
+    // Show selection
+    document.getElementById("setupCard").style.display = "block";
+
+    // Mathematics remains active
+    document.querySelectorAll(".subject-card")
+        .forEach(c => c.classList.remove("active"));
+
+    const mathCard =
+        document.querySelector(
+            '.subject-card[onclick*="selectSubject(\'math\'"]'
+        );
+
+    if(mathCard){
+        mathCard.classList.add("active");
+    }
+
+    // Mathematics section remains open
+    document.getElementById("mathSetup").style.display = "block";
+
+    // Step 3 hidden
+    document.getElementById("difficultyCard").style.display = "none";
+
+    // Reset Board → Class → Subject → Chapter → Subtopic
+    resetPracticeDropdowns();
+
     document.getElementById("setupCard").scrollIntoView({
         behavior:"smooth",
         block:"start"
     });
 }
+   
 
 /* ---------- INITIAL LOAD ---------- */
 document.addEventListener("DOMContentLoaded", function(){
