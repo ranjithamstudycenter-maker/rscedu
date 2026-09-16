@@ -656,7 +656,7 @@ body.exam-running .exam-lock-bar{
                 </div>
             </div>
 
-            <div id="mathSetup" style="margin-top:28px;">
+            <div id="mathSetup" style="margin-top:28px;display:none;">
                 <div class="section-head" style="margin-top:8px;">
                     <div>
                         <h2 style="font-size:20px;">📚 Select Syllabus</h2>
@@ -709,7 +709,7 @@ body.exam-running .exam-lock-bar{
             </div>
         </div>
 
-        <div class="p-card" id="difficultyCard">
+        <div class="p-card" id="difficultyCard" style="display:none;">
             <div class="section-head">
                 <div>
                     <h2>⚡ Choose Difficulty</h2>
@@ -909,6 +909,7 @@ function selectSubject(subject, card){
     card.classList.add("active");
 
     document.getElementById("mathSetup").style.display = "block";
+    document.getElementById("difficultyCard").style.display = "block";
     updateDifficultyState();
 }
 
@@ -1661,6 +1662,7 @@ function resetPracticeSelection(){
     const mathCard = document.querySelector(".subject-card[onclick*=\"selectSubject('math'\"]");
     if(mathCard) mathCard.classList.add("active");
     document.getElementById("mathSetup").style.display = "block";
+    document.getElementById("difficultyCard").style.display = "block";
     updateDifficultyState();
 }
 
