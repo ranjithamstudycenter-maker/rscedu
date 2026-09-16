@@ -373,8 +373,59 @@ a{text-decoration:none}
 </style>
 
 </style>
+
+/* =========================================================
+   EXAM MODE LOCK
+   During an active test, only the exam interface is usable.
+   ========================================================= */
+body.exam-running{
+    background:#f8fafc;
+}
+body.exam-running .navbar,
+body.exam-running .practice-hero,
+body.exam-running .mode-switch,
+body.exam-running #setupCard,
+body.exam-running #difficultyCard,
+body.exam-running #mockShell,
+body.exam-running footer,
+body.exam-running .privacy-section,
+body.exam-running .whatsapp{
+    pointer-events:none !important;
+    opacity:.35 !important;
+}
+body.exam-running .navbar a,
+body.exam-running .mode-switch button{
+    pointer-events:none !important;
+}
+body.exam-running #examShell,
+body.exam-running #examShell *{
+    pointer-events:auto !important;
+}
+body.exam-running #examShell{
+    position:relative;
+    z-index:10000;
+}
+.exam-lock-notice{
+    display:none;
+}
+body.exam-running .exam-lock-notice{
+    display:block;
+    position:fixed;
+    top:10px;
+    right:14px;
+    z-index:20000;
+    padding:7px 12px;
+    border-radius:999px;
+    background:#172554;
+    color:#fff;
+    font-size:11px;
+    font-weight:700;
+    box-shadow:0 8px 20px rgba(15,23,42,.18);
+}
+
 </head>
 <body>
+<div class="exam-lock-notice">🔒 Test Mode — Navigation Locked</div>
 
  
 
@@ -470,7 +521,7 @@ a{text-decoration:none}
             </div>
 
             <div class="subject-grid">
-                <div class="subject-card active" onclick="selectSubject('math',this)">
+                <div class="subject-card" onclick="selectSubject('math',this)">
                     <div class="subject-icon">📐</div>
                     <h3>Mathematics</h3>
                     <p>Chapter-wise MCQ practice for concepts, application and problem solving.</p>
@@ -726,6 +777,9 @@ let practiceSubmitted = false;
 let currentDifficulty = "";
 let restoringPracticeState = false;
 const PRACTICE_STATE_KEY = "rsc_practice_selection_v1";
+const PRACTICE_HISTORY_KEY = "rsc_practice_history_v1";
+let examRunning = false;
+let examWasHidden = false;
 
 function showMode(mode){
     const practice = document.getElementById("practiceShell");
@@ -750,7 +804,7 @@ function showMode(mode){
 
 /* ---------- SUBJECT ---------- */
 function selectSubject(subject, card){
-    if(subject !== "math") return;
+    if(subject !== "math" || examRunning) return;
 
     document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
     card.classList.add("active");
@@ -762,6 +816,7 @@ function selectSubject(subject, card){
     difficulty.style.display = "none";
 
     savePracticeSelection();
+    pushPracticeHistory(2);
 
     if(!restoringPracticeState){
         mathSetup.scrollIntoView({
@@ -774,6 +829,134 @@ function selectSubject(subject, card){
 function comingSoon(name){
     alert("📚 " + name + " Practice is coming soon.");
 }
+
+
+/* ---------- SEQUENTIAL BROWSER HISTORY ---------- */
+function getPracticeSelectionSnapshot(){
+    return {
+        subject: document.querySelector('.subject-card.active') ? 'math' : '',
+        board: document.getElementById("practiceBoard")?.value || "",
+        class_name: document.getElementById("practiceClass")?.value || "",
+        subject_value: document.getElementById("practiceSubject")?.value || "",
+        topic_index: document.getElementById("practiceTopic")?.value || "",
+        subtopic: document.getElementById("practiceSubtopic")?.value || ""
+    };
+}
+
+function pushPracticeHistory(stage){
+    if(restoringPracticeState || examRunning) return;
+
+    const snapshot = getPracticeSelectionSnapshot();
+
+    try{
+        history.pushState({
+            rscPractice: true,
+            stage: stage,
+            selection: snapshot
+        }, "", window.location.href);
+    }catch(e){}
+}
+
+async function restoreHistorySnapshot(state){
+    if(!state || !state.rscPractice) return;
+
+    restoringPracticeState = true;
+
+    try{
+        const stage = Number(state.stage || 1);
+        const s = state.selection || {};
+
+        const mathCard = document.querySelector('.subject-card[onclick*="selectSubject(\'math\'"]');
+        const mathSetup = document.getElementById("mathSetup");
+        const difficulty = document.getElementById("difficultyCard");
+
+        if(stage <= 1 || s.subject !== "math"){
+            document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
+            mathSetup.style.display = "none";
+            difficulty.style.display = "none";
+            document.getElementById("selectionSummary").style.display = "none";
+            return;
+        }
+
+        if(mathCard){
+            document.querySelectorAll(".subject-card").forEach(c => c.classList.remove("active"));
+            mathCard.classList.add("active");
+        }
+        mathSetup.style.display = "block";
+
+        const board = document.getElementById("practiceBoard");
+        const cls = document.getElementById("practiceClass");
+        const subject = document.getElementById("practiceSubject");
+        const topic = document.getElementById("practiceTopic");
+        const subtopic = document.getElementById("practiceSubtopic");
+
+        board.value = s.board || "";
+        loadPracticeClasses();
+
+        if(stage >= 3 && s.class_name && [...cls.options].some(o => o.value === s.class_name)){
+            cls.value = s.class_name;
+            loadPracticeSubjects();
+        }
+
+        if(stage >= 4 && s.subject_value && [...subject.options].some(o => o.value === s.subject_value)){
+            subject.value = s.subject_value;
+            await loadPracticeTopics();
+        }
+
+        if(stage >= 5 && s.topic_index !== "" && topicData[Number(s.topic_index)]){
+            topic.value = s.topic_index;
+            loadPracticeSubtopics();
+        }
+
+        if(stage >= 6 && s.subtopic && [...subtopic.options].some(o => o.value === s.subtopic)){
+            subtopic.value = s.subtopic;
+        }
+
+        updateSelectionSummary(false);
+
+        if(stage < 6){
+            difficulty.style.display = "none";
+        }
+    }catch(e){
+        console.warn("HISTORY RESTORE ERROR:", e);
+    }finally{
+        restoringPracticeState = false;
+        savePracticeSelection();
+    }
+}
+
+function initialisePracticeHistory(){
+    try{
+        history.replaceState({
+            rscPractice:true,
+            stage:1,
+            selection:getPracticeSelectionSnapshot()
+        }, "", window.location.href);
+    }catch(e){}
+}
+
+window.addEventListener("popstate", function(event){
+    if(examRunning){
+        // Never leave the active test through browser Back.
+        history.pushState({
+            rscPractice:true,
+            stage:7,
+            exam:true
+        }, "", window.location.href);
+        return;
+    }
+
+    if(event.state && event.state.rscPractice){
+        restoreHistorySnapshot(event.state);
+    }
+});
+
+window.addEventListener("beforeunload", function(event){
+    if(examRunning && !practiceSubmitted){
+        event.preventDefault();
+        event.returnValue = "";
+    }
+});
 
 /* ---------- REMEMBER SELECTION ---------- */
 function savePracticeSelection(){
@@ -913,6 +1096,7 @@ async function loadPracticeOptions(){
 }
 
 function loadPracticeClasses(){
+    if(examRunning) return;
     const board = document.getElementById("practiceBoard").value;
     const cls = document.getElementById("practiceClass");
     const subject = document.getElementById("practiceSubject");
@@ -955,9 +1139,11 @@ function loadPracticeClasses(){
     }
 
     savePracticeSelection();
+    if(!restoringPracticeState) pushPracticeHistory(2);
 }
 
 function loadPracticeSubjects(){
+    if(examRunning) return;
     const board = document.getElementById("practiceBoard").value;
     const className = document.getElementById("practiceClass").value;
     const subject = document.getElementById("practiceSubject");
@@ -996,6 +1182,7 @@ function loadPracticeSubjects(){
     }
 
     savePracticeSelection();
+    if(!restoringPracticeState) pushPracticeHistory(3);
 }
 
 async function loadPracticeTopics(){
@@ -1053,6 +1240,7 @@ async function loadPracticeTopics(){
 
         topic.disabled = false;
         savePracticeSelection();
+        if(!restoringPracticeState) pushPracticeHistory(4);
     }catch(error){
         console.error("PRACTICE TOPICS ERROR:", error);
         topic.innerHTML = '<option value="">Unable to load</option>';
@@ -1077,8 +1265,8 @@ function loadPracticeSubtopics(){
     });
 
     subtopic.disabled = false;
-    updateSelectionSummary();
     savePracticeSelection();
+    if(!restoringPracticeState) pushPracticeHistory(5);
 }
 
 function updateSelectionSummary(shouldScroll = true){
@@ -1099,6 +1287,7 @@ function updateSelectionSummary(shouldScroll = true){
 
         // STEP 3 appears only after the complete syllabus selection.
         difficultyCard.style.display = "block";
+        if(!restoringPracticeState) pushPracticeHistory(6);
         if(shouldScroll && !restoringPracticeState){
             setTimeout(() => {
                 difficultyCard.scrollIntoView({
@@ -1117,6 +1306,7 @@ function updateSelectionSummary(shouldScroll = true){
 
 /* ---------- PRACTICE SESSION ---------- */
 async function startPractice(level){
+    if(examRunning) return;
     const board = document.getElementById("practiceBoard").value;
     const className = document.getElementById("practiceClass").value;
     const subject = document.getElementById("practiceSubject").value;
@@ -1164,6 +1354,7 @@ async function startPractice(level){
         practiceSubmitted = false;
 
         await loadPracticeQuestions(data);
+        lockPracticeExam();
 
     }catch(error){
         console.error("START PRACTICE ERROR:", error);
@@ -1171,6 +1362,34 @@ async function startPractice(level){
     }finally{
         document.getElementById("practiceLoading").style.display = "none";
     }
+}
+
+
+/* ---------- ACTIVE EXAM LOCK ---------- */
+function lockPracticeExam(){
+    examRunning = true;
+    document.body.classList.add("exam-running");
+
+    try{
+        history.pushState({
+            rscPractice:true,
+            stage:7,
+            exam:true
+        }, "", window.location.href);
+    }catch(e){}
+
+    // Prevent accidental clicks on all non-exam page controls.
+    document.querySelectorAll(
+        ".navbar a, .mode-switch button, #setupCard, #difficultyCard, footer a, .whatsapp"
+    ).forEach(el => {
+        el.setAttribute("data-exam-disabled","1");
+    });
+}
+
+function unlockPracticeExam(){
+    examRunning = false;
+    document.body.classList.remove("exam-running");
+    examWasHidden = false;
 }
 
 async function loadPracticeQuestions(sessionData){
@@ -1424,6 +1643,7 @@ async function submitPractice(autoSubmit){
 
 /* ---------- RESULT + REVIEW ---------- */
 function showResult(data, autoSubmit){
+    unlockPracticeExam();
     document.getElementById("examShell").style.display = "none";
     document.getElementById("resultShell").style.display = "block";
 
@@ -1545,6 +1765,7 @@ function escapeHtml(value){
 
 /* ---------- NEW ATTEMPT ---------- */
 function startNewAttempt(){
+    unlockPracticeExam();
     practiceSessionId = null;
     practiceAnswers = {};
     practiceQuestions = [];
@@ -1576,8 +1797,27 @@ function backToSetup(){
     });
 }
 
+
+/* ---------- TAB VISIBILITY ---------- */
+document.addEventListener("visibilitychange", function(){
+    if(!examRunning) return;
+
+    if(document.hidden){
+        examWasHidden = true;
+        return;
+    }
+
+    if(examWasHidden && !practiceSubmitted){
+        examWasHidden = false;
+        // The browser cannot physically disable switching to another tab.
+        // When the student returns, keep the same exam and timer running.
+        console.warn("Student returned to the active Practice test.");
+    }
+});
+
 /* ---------- INITIAL LOAD ---------- */
 document.addEventListener("DOMContentLoaded", function(){
+    initialisePracticeHistory();
     loadPracticeOptions();
 });
 
