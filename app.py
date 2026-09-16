@@ -1237,6 +1237,7 @@ def payment_success_api():
     })
 # =====================================================
 # RSC MOCK TEST - ₹299 PAYMENT
+# LOGIN NOT REQUIRED
 # =====================================================
 
 MOCK_TEST_PRICE = 299
@@ -1246,13 +1247,10 @@ MOCK_TEST_SUBJECT = "Mathematics"
 @app.route("/api/mock/create-order", methods=["POST"])
 def mock_create_order():
 
-    phone = session.get("phone")
-
-    if not phone:
-        return jsonify({
-            "success": False,
-            "error": "Please login before purchasing the Mock Test package."
-        }), 401
+    # -------------------------------------------------
+    # ANONYMOUS BROWSER ID
+    # -------------------------------------------------
+    practice_id = get_practice_id()
 
     data = request.get_json() or {}
 
@@ -1268,16 +1266,21 @@ def mock_create_order():
         data.get("class_name", "")
     ).strip()
 
+    # -------------------------------------------------
+    # VALIDATION
+    # -------------------------------------------------
     if subject != MOCK_TEST_SUBJECT:
         return jsonify({
             "success": False,
-            "error": "Only Mathematics Mock Test is currently available."
+            "error":
+                "Only Mathematics Mock Test is currently available."
         }), 400
 
     if not board or not class_name:
         return jsonify({
             "success": False,
-            "error": "Board and Class are required."
+            "error":
+                "Board and Class are required."
         }), 400
 
     conn = sqlite3.connect("students.db")
@@ -1285,16 +1288,8 @@ def mock_create_order():
     c = conn.cursor()
 
     # -------------------------------------------------
-    # CHECK WHETHER PACKAGE IS ALREADY PURCHASED
+    # CHECK WHETHER THIS BROWSER ALREADY PURCHASED
     # -------------------------------------------------
-
-    practice_id = (
-        f"mock:{phone}:"
-        f"{board}:"
-        f"{class_name}:"
-        f"{subject}"
-    )
-
     c.execute("""
         SELECT
             id,
@@ -1302,7 +1297,16 @@ def mock_create_order():
             razorpay_payment_id
         FROM mock_purchases
         WHERE practice_id=?
-    """, (practice_id,))
+          AND board=?
+          AND class_name=?
+          AND subject=?
+        LIMIT 1
+    """, (
+        practice_id,
+        board,
+        class_name,
+        subject
+    ))
 
     existing = c.fetchone()
 
@@ -1314,13 +1318,13 @@ def mock_create_order():
             "success": True,
             "already_paid": True,
             "unlocked": True,
-            "message": "Mock Test package is already unlocked."
+            "message":
+                "Mock Test package is already unlocked."
         })
 
     # -------------------------------------------------
     # LOAD RAZORPAY KEYS
     # -------------------------------------------------
-
     try:
 
         with open("admin.json") as f:
@@ -1336,14 +1340,13 @@ def mock_create_order():
         # -------------------------------------------------
         # CREATE EXACT ₹299 ORDER
         # -------------------------------------------------
-
         order = client.order.create({
             "amount": MOCK_TEST_PRICE * 100,
             "currency": "INR",
             "payment_capture": 1,
             "notes": {
                 "type": "mock_test_package",
-                "phone": phone,
+                "practice_id": practice_id,
                 "subject": subject,
                 "board": board,
                 "class_name": class_name
@@ -1361,13 +1364,13 @@ def mock_create_order():
 
         return jsonify({
             "success": False,
-            "error": "Unable to start payment."
+            "error":
+                "Unable to start payment."
         }), 500
 
     # -------------------------------------------------
     # SAVE PENDING PAYMENT
     # -------------------------------------------------
-
     try:
 
         c.execute("""
@@ -1387,7 +1390,7 @@ def mock_create_order():
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
             practice_id,
-            phone,
+            None,
             subject,
             board,
             class_name,
@@ -1411,7 +1414,8 @@ def mock_create_order():
 
         return jsonify({
             "success": False,
-            "error": "Unable to save payment order."
+            "error":
+                "Unable to save payment order."
         }), 500
 
     conn.close()
@@ -1420,19 +1424,13 @@ def mock_create_order():
         "success": True,
         "already_paid": False,
         "unlocked": False,
-
         "order_id": order["id"],
-
         "amount": MOCK_TEST_PRICE * 100,
-
         "currency": "INR",
-
-        "razorpay_key": keys["razorpay_key"],
-
+        "razorpay_key":
+            keys["razorpay_key"],
         "subject": subject,
-
         "board": board,
-
         "class_name": class_name
     })
 
@@ -1441,42 +1439,51 @@ def mock_create_order():
 # RSC MOCK TEST - VERIFY PAYMENT
 # =====================================================
 
-@app.route("/api/mock/payment-success", methods=["POST"])
+@app.route(
+    "/api/mock/payment-success",
+    methods=["POST"]
+)
 def mock_payment_success():
 
-    phone = session.get("phone")
-
-    if not phone:
-        return jsonify({
-            "success": False,
-            "error": "Unauthorized."
-        }), 401
+    # -------------------------------------------------
+    # ANONYMOUS BROWSER ID
+    # -------------------------------------------------
+    practice_id = get_practice_id()
 
     data = request.get_json() or {}
 
     order_id = str(
-        data.get("razorpay_order_id", "")
+        data.get(
+            "razorpay_order_id",
+            ""
+        )
     ).strip()
 
     payment_id = str(
-        data.get("razorpay_payment_id", "")
+        data.get(
+            "razorpay_payment_id",
+            ""
+        )
     ).strip()
 
     signature = str(
-        data.get("razorpay_signature", "")
+        data.get(
+            "razorpay_signature",
+            ""
+        )
     ).strip()
 
     if not order_id or not payment_id or not signature:
 
         return jsonify({
             "success": False,
-            "error": "Incomplete payment response."
+            "error":
+                "Incomplete payment response."
         }), 400
 
     # -------------------------------------------------
     # LOAD RAZORPAY KEYS
     # -------------------------------------------------
-
     try:
 
         with open("admin.json") as f:
@@ -1498,13 +1505,13 @@ def mock_payment_success():
 
         return jsonify({
             "success": False,
-            "error": "Payment verification unavailable."
+            "error":
+                "Payment verification unavailable."
         }), 500
 
     # -------------------------------------------------
-    # GET OUR PENDING PURCHASE
+    # FIND OUR PENDING PURCHASE
     # -------------------------------------------------
-
     conn = sqlite3.connect("students.db")
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
@@ -1522,11 +1529,11 @@ def mock_payment_success():
             payment_status
         FROM mock_purchases
         WHERE razorpay_order_id=?
-          AND phone=?
+          AND practice_id=?
         LIMIT 1
     """, (
         order_id,
-        phone
+        practice_id
     ))
 
     purchase = c.fetchone()
@@ -1537,13 +1544,13 @@ def mock_payment_success():
 
         return jsonify({
             "success": False,
-            "error": "Payment order not found."
+            "error":
+                "Payment order not found."
         }), 404
 
     # -------------------------------------------------
     # ALREADY PAID
     # -------------------------------------------------
-
     if purchase["payment_status"] == "paid":
 
         conn.close()
@@ -1551,19 +1558,24 @@ def mock_payment_success():
         return jsonify({
             "success": True,
             "unlocked": True,
-            "message": "Mock Test package already unlocked."
+            "message":
+                "Mock Test package already unlocked."
         })
 
     # -------------------------------------------------
     # VERIFY RAZORPAY SIGNATURE
     # -------------------------------------------------
-
     try:
 
         client.utility.verify_payment_signature({
-            "razorpay_order_id": order_id,
-            "razorpay_payment_id": payment_id,
-            "razorpay_signature": signature
+            "razorpay_order_id":
+                order_id,
+
+            "razorpay_payment_id":
+                payment_id,
+
+            "razorpay_signature":
+                signature
         })
 
     except Exception as e:
@@ -1577,13 +1589,13 @@ def mock_payment_success():
 
         return jsonify({
             "success": False,
-            "error": "Payment verification failed."
+            "error":
+                "Payment verification failed."
         }), 400
 
     # -------------------------------------------------
-    # VERIFY PAYMENT DETAILS WITH RAZORPAY
+    # VERIFY PAYMENT DETAILS
     # -------------------------------------------------
-
     try:
 
         payment = client.payment.fetch(
@@ -1595,11 +1607,15 @@ def mock_payment_success():
         )
 
         payment_amount = int(
-            payment.get("amount", 0)
+            payment.get(
+                "amount",
+                0
+            )
         )
 
         payment_status = payment.get(
-            "status", ""
+            "status",
+            ""
         )
 
         expected_amount = int(
@@ -1635,13 +1651,13 @@ def mock_payment_success():
 
         return jsonify({
             "success": False,
-            "error": "Payment could not be confirmed."
+            "error":
+                "Payment could not be confirmed."
         }), 400
 
     # -------------------------------------------------
     # MARK PACKAGE AS PAID
     # -------------------------------------------------
-
     try:
 
         c.execute("""
@@ -1672,7 +1688,8 @@ def mock_payment_success():
 
         return jsonify({
             "success": False,
-            "error": "Payment received but package update failed."
+            "error":
+                "Payment received but package update failed."
         }), 500
 
     conn.close()
@@ -1680,11 +1697,12 @@ def mock_payment_success():
     return jsonify({
         "success": True,
         "unlocked": True,
-
-        "subject": purchase["subject"],
-        "board": purchase["board"],
-        "class_name": purchase["class_name"],
-
+        "subject":
+            purchase["subject"],
+        "board":
+            purchase["board"],
+        "class_name":
+            purchase["class_name"],
         "message":
             "Payment successful. Mock Test package unlocked."
     })
@@ -1697,14 +1715,10 @@ def mock_payment_success():
 @app.route("/api/mock/check-access")
 def mock_check_access():
 
-    phone = session.get("phone")
-
-    if not phone:
-        return jsonify({
-            "success": True,
-            "logged_in": False,
-            "unlocked": False
-        })
+    # -------------------------------------------------
+    # ANONYMOUS BROWSER ID
+    # -------------------------------------------------
+    practice_id = get_practice_id()
 
     subject = request.args.get(
         "subject",
@@ -1725,26 +1739,29 @@ def mock_check_access():
 
         return jsonify({
             "success": False,
-            "error": "Subject, Board and Class are required."
+            "error":
+                "Subject, Board and Class are required."
         }), 400
-
-    practice_id = (
-        f"mock:{phone}:"
-        f"{board}:"
-        f"{class_name}:"
-        f"{subject}"
-    )
 
     conn = sqlite3.connect("students.db")
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     c.execute("""
-        SELECT payment_status
+        SELECT
+            payment_status
         FROM mock_purchases
         WHERE practice_id=?
+          AND subject=?
+          AND board=?
+          AND class_name=?
         LIMIT 1
-    """, (practice_id,))
+    """, (
+        practice_id,
+        subject,
+        board,
+        class_name
+    ))
 
     row = c.fetchone()
 
@@ -1757,9 +1774,10 @@ def mock_check_access():
 
     return jsonify({
         "success": True,
-        "logged_in": True,
+        "logged_in": False,
         "unlocked": unlocked
     })
+    
     
 # -------------------- JOIN CLASS --------------------
 
