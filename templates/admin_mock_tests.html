@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Mock Test Question Bank | Ranjitham Study Center</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef2ff,#fff7ed);color:#1f2937}
+.container{width:min(1250px,94%);margin:30px auto}
+.header{background:linear-gradient(135deg,#7c3aed,#db2777,#f59e0b);color:#fff;padding:28px;border-radius:24px;box-shadow:0 15px 40px rgba(124,58,237,.18)}
+.header h1{margin:0 0 8px}.header p{margin:0;opacity:.93}
+.card{background:#fff;margin-top:22px;padding:25px;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,.07)}
+.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
+label{display:block;font-weight:700;margin-bottom:6px}
+input,select,textarea{width:100%;padding:12px;border:1px solid #dbe3ef;border-radius:10px;font-size:14px}
+textarea{resize:vertical}
+button{border:0;border-radius:10px;padding:12px 18px;background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;font-weight:700;cursor:pointer}
+button.danger{background:#ef4444}button.green{background:#16a34a}
+.note{padding:14px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;margin-top:12px}
+.message{margin-top:12px;font-weight:700}
+.table-wrap{overflow-x:auto}
+table{width:100%;border-collapse:collapse;margin-top:15px;min-width:1050px}
+th,td{padding:10px;border:1px solid #e5e7eb;text-align:left;vertical-align:top}
+th{background:#f8fafc}
+.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#dcfce7;color:#166534;font-weight:700;font-size:12px}
+@media(max-width:850px){.grid{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>🏆 Mock Test Question Bank</h1>
+<p>Mock Test section — questions only. Each question is attached to a selected Mock Test.</p>
+</div>
+
+<div class="card">
+<h2>📥 Import Mock Questions from Excel</h2>
+<p>Required columns: <b>Mock Test No, Board, Class, Subject, Topic, Subtopic, Difficulty, Question, A, B, C, D, Answer</b>. Optional: Explanation, Hint.</p>
+<input type="file" id="mockExcelFile" accept=".xlsx,.xls">
+<br>
+<button class="green" type="button" onclick="importMockExcel()">📥 Import Mock Questions</button>
+<div id="mockImportMessage" class="message"></div>
+</div>
+
+<div class="card">
+<h2>➕ Add Mock Test Question</h2>
+<div class="note">Mock Test No identifies the test. If that Mock Test does not exist yet, the system creates it automatically and activates it for the student-side Mock Test list.</div>
+
+<div class="grid" style="margin-top:18px">
+<div><label>Mock Test No</label><input type="number" id="mqTestNo" min="1" placeholder="1"></div>
+<div><label>Board</label><select id="mqBoard"><option value="">Select Board</option><option>CBSE</option><option>State Board</option><option>Matric</option></select></div>
+<div><label>Class</label><select id="mqClass"><option value="">Select Class</option>{% for n in range(6,13) %}<option value="Class {{n}}">Class {{n}}</option>{% endfor %}</select></div>
+<div><label>Subject</label><input id="mqSubject" value="Mathematics"></div>
+<div><label>Chapter / Topic</label><input id="mqTopic" placeholder="Algebra"></div>
+<div><label>Subtopic</label><input id="mqSubtopic" placeholder="Factorisation"></div>
+<div><label>Difficulty</label><select id="mqDifficulty"><option value="">Select Difficulty</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>
+</div>
+
+<br>
+<label>Question</label><textarea id="mqQuestion" rows="4"></textarea>
+<br>
+<div class="grid">
+<div><label>Option A</label><input id="mqA"></div>
+<div><label>Option B</label><input id="mqB"></div>
+<div><label>Option C</label><input id="mqC"></div>
+<div><label>Option D</label><input id="mqD"></div>
+<div><label>Correct Answer</label><select id="mqAnswer"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
+</div>
+<br>
+<label>Explanation</label><textarea id="mqExplanation" rows="3"></textarea>
+<br>
+<label>Hint</label><textarea id="mqHint" rows="2"></textarea>
+<br>
+<button type="button" onclick="addMockQuestion()">➕ Add Mock Question</button>
+<div id="mqMessage" class="message"></div>
+</div>
+
+<div class="card">
+<h2>📋 Mock Tests & Question Count</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>Test No</th><th>Board</th><th>Class</th><th>Subject</th><th>Test Name</th><th>Questions</th><th>Status</th><th>Action</th></tr></thead>
+<tbody id="mockTestTable"><tr><td colspan="8" style="text-align:center">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+
+<div class="card">
+<h2>📋 Existing Mock Questions</h2>
+<div class="table-wrap">
+<table>
+<thead><tr><th>ID</th><th>Test</th><th>Class</th><th>Topic</th><th>Difficulty</th><th>Question</th><th>Answer</th><th>Action</th></tr></thead>
+<tbody id="mockQuestionTable"><tr><td colspan="8" style="text-align:center">Loading...</td></tr></tbody>
+</table>
+</div>
+</div>
+</div>
+
+<script>
+async function loadMockTests(){
+    const tbody=document.getElementById("mockTestTable");
+    try{
+        const r=await fetch("/admin/mock-test-list");
+        const d=await r.json();
+        if(!d.success){tbody.innerHTML=`<tr><td colspan="8" style="color:red;text-align:center">${esc(d.error||"Unable to load")}</td></tr>`;return}
+        if(!d.tests.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center">No Mock Tests created yet.</td></tr>';return}
+        tbody.innerHTML=d.tests.map(t=>`
+        <tr>
+            <td>${t.mock_test_no}</td><td>${esc(t.board)}</td><td>${esc(t.class_name)}</td>
+            <td>${esc(t.subject)}</td><td>${esc(t.test_name)}</td>
+            <td>${t.question_count}</td>
+            <td>${t.active ? '<span class="badge">ACTIVE</span>' : 'INACTIVE'}</td>
+            <td><button class="danger" onclick="deleteMockTest(${t.id})">🗑️ Delete Test</button></td>
+        </tr>`).join("");
+    }catch(e){console.error(e)}
+}
+
+async function loadMockQuestions(){
+    const tbody=document.getElementById("mockQuestionTable");
+    try{
+        const r=await fetch("/admin/mock-questions");
+        const d=await r.json();
+        if(!d.success){tbody.innerHTML=`<tr><td colspan="8" style="color:red;text-align:center">${esc(d.error||"Unable to load")}</td></tr>`;return}
+        if(!d.questions.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center">No mock questions added yet.</td></tr>';return}
+        tbody.innerHTML=d.questions.map(q=>`
+        <tr>
+            <td>${q.id}</td><td>${q.mock_test_no}</td><td>${esc(q.class_name)}</td>
+            <td>${esc(q.topic)}</td><td>${esc(q.difficulty)}</td>
+            <td>${esc(q.question)}</td><td>${esc(q.correct_answer)}</td>
+            <td><button class="danger" onclick="deleteMockQuestion(${q.id})">🗑️ Delete</button></td>
+        </tr>`).join("");
+    }catch(e){console.error(e)}
+}
+
+async function addMockQuestion(){
+    const data={
+        mock_test_no:parseInt(mqTestNo.value,10),
+        board:mqBoard.value.trim(),class_name:mqClass.value.trim(),
+        subject:mqSubject.value.trim(),topic:mqTopic.value.trim(),
+        subtopic:mqSubtopic.value.trim(),difficulty:mqDifficulty.value.trim(),
+        question:mqQuestion.value.trim(),option_a:mqA.value.trim(),
+        option_b:mqB.value.trim(),option_c:mqC.value.trim(),option_d:mqD.value.trim(),
+        correct_answer:mqAnswer.value.trim(),explanation:mqExplanation.value.trim(),
+        hint:mqHint.value.trim()
+    };
+    const required=["mock_test_no","board","class_name","subject","topic","subtopic","difficulty","question","option_a","option_b","option_c","option_d","correct_answer"];
+    if(required.some(k=>!data[k])){mqMessage.style.color="red";mqMessage.textContent="❌ Please fill all required fields.";return}
+    try{
+        const r=await fetch("/admin/mock-questions/add",{
+            method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)
+        });
+        const d=await r.json();
+        if(!d.success){mqMessage.style.color="red";mqMessage.textContent="❌ "+(d.error||"Unable to add.");return}
+        mqMessage.style.color="green";mqMessage.textContent="✅ Mock question added successfully.";
+        ["mqQuestion","mqA","mqB","mqC","mqD","mqExplanation","mqHint"].forEach(id=>document.getElementById(id).value="");
+        mqAnswer.value="";
+        loadMockTests();loadMockQuestions();
+    }catch(e){mqMessage.style.color="red";mqMessage.textContent="❌ Server error.";console.error(e)}
+}
+
+async function importMockExcel(){
+    const input=document.getElementById("mockExcelFile"), box=document.getElementById("mockImportMessage");
+    if(!input.files.length){box.style.color="red";box.textContent="❌ Please select an Excel file.";return}
+    const fd=new FormData();fd.append("excel_file",input.files[0]);
+    box.style.color="#4338ca";box.textContent="⏳ Importing...";
+    try{
+        const r=await fetch("/admin/mock-questions/import-excel",{method:"POST",body:fd});
+        const d=await r.json();
+        if(!d.success){box.style.color="red";box.textContent="❌ "+(d.error||"Import failed.");return}
+        box.style.color="green";box.textContent=`✅ ${d.imported||0} imported, ${d.skipped||0} skipped.`;
+        input.value="";loadMockTests();loadMockQuestions();
+    }catch(e){box.style.color="red";box.textContent="❌ Server error during import.";console.error(e)}
+}
+
+async function deleteMockQuestion(id){
+    if(!confirm("Delete this mock question?"))return;
+    const r=await fetch("/admin/mock-questions/delete/"+id,{method:"POST"});const d=await r.json();
+    if(!d.success){alert(d.error||"Delete failed");return} loadMockTests();loadMockQuestions();
+}
+
+async function deleteMockTest(id){
+    if(!confirm("Delete this Mock Test and all its questions?"))return;
+    const r=await fetch("/admin/mock-tests/delete/"+id,{method:"POST"});const d=await r.json();
+    if(!d.success){alert(d.error||"Delete failed");return} loadMockTests();loadMockQuestions();
+}
+
+function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
+document.addEventListener("DOMContentLoaded",()=>{loadMockTests();loadMockQuestions()});
+</script>
+</body>
+</html>
