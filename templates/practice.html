@@ -1732,6 +1732,8 @@ let practiceSubmitted = false;
 let currentDifficulty = "";
 let pendingDifficulty = "";
 let examLockActive = false;
+let mockScreenHistory = [];
+let mockHistoryIndex = -1;
 
 function showMode(mode){
 
@@ -4007,12 +4009,12 @@ function unlockMockTests(){
 
 }
 
-
-/* ---------- CHAPTER MOCK ---------- */
-
 /* ---------- CHAPTER MOCK ---------- */
 
 function openChapterMock(){
+
+    document.getElementById("mockShell").style.display = "none";
+    updateMockHistory("chapter");
 
     // Hide Mock Home
     document.getElementById("mockHomeView").style.display = "none";
@@ -4130,7 +4132,9 @@ function openChapterMock(){
 /* ---------- FOUR CHAPTER MOCK ---------- */
 
 function openFourChapterMock(){
-
+  
+    document.getElementById("mockShell").style.display = "none"; 
+    updateMockHistory("fourChapter");
     // Hide Mock Home
     document.getElementById("mockHomeView").style.display = "none";
 
@@ -4191,9 +4195,52 @@ function openFourChapterMock(){
     });
 
 }
-   
+function updateMockHistory(screen){
+
+    // Remove forward history
+    mockScreenHistory =
+        mockScreenHistory.slice(0, mockHistoryIndex + 1);
+
+    // Add new screen
+    mockScreenHistory.push(screen);
+
+    // Move pointer
+    mockHistoryIndex =
+        mockScreenHistory.length - 1;
+
+    // Create browser history entry
+    history.pushState(
+        { mockScreen: screen },
+        "",
+        window.location.href
+    );
+
+}
+function restoreMockScreen(screen){
+
+    if(screen === "chapter"){
+        openChapterMock(true);
+        return;
+    }
+
+    if(screen === "fourChapter"){
+        openFourChapterMock(true);
+        return;
+    }
+
+    if(screen === "final"){
+        openFinalMock(true);
+        return;
+    }
+
+    if(screen === "home"){
+        showMockHome(true);
+    }
+
+}
 function showMockHome(){
 
+    document.getElementById("mockShell").style.display = "block";
     // Hide all Mock Test sub-pages
     document.getElementById("chapterView").style.display = "none";
     document.getElementById("fourChapterView").style.display = "none";
@@ -4214,6 +4261,8 @@ function showMockHome(){
 
 function openFinalMock(){
 
+    document.getElementById("mockShell").style.display = "none";
+    updateMockHistory("final");
     // Hide Mock Home
     document.getElementById("mockHomeView").style.display = "none";
 
@@ -4231,6 +4280,19 @@ function openFinalMock(){
     });
 
 }
+ window.addEventListener("popstate", function(){
+
+    if(mockHistoryIndex < 0){
+        return;
+    }
+
+    const screen = mockScreenHistory[mockHistoryIndex];
+
+    if(screen){
+        restoreMockScreen(screen);
+    }
+
+});  
 </script>
 
 </body>
