@@ -1236,11 +1236,11 @@ def payment_success_api():
         "hours_remaining": user["max_hours"][course]
     })
 # =====================================================
-# RSC MOCK TEST - ₹299 PAYMENT
+# RSC MOCK TEST - ₹1 PAYMENT
 # LOGIN NOT REQUIRED
 # =====================================================
 
-MOCK_TEST_PRICE = 299
+MOCK_TEST_PRICE = 1
 MOCK_TEST_SUBJECT = "Mathematics"
 
 
