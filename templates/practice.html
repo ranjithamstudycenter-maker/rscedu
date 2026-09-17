@@ -4086,49 +4086,7 @@ function openChapterMock(){
 
 }
 
-/* ---------- FOUR CHAPTER MOCK ---------- */
 
-function openChapterMock(){
-
-    document.getElementById("mockHomeView").style.display="none";
-    document.getElementById("chapterView").style.display="block";
-
-    history.pushState({page:"chapter"},"");
-
-    document.getElementById("chapterTitle").innerHTML =
-        `${selectedMockSubject} • ${selectedMockBoard} • ${selectedMockClass}`;
-
-    const chapters=[
-        "Real Numbers",
-        "Polynomials",
-        "Pair of Linear Equations",
-        "Quadratic Equations",
-        "Arithmetic Progressions"
-    ];
-
-    let html="";
-
-    chapters.forEach((c,i)=>{
-
-        html += `
-        <div class="chapter-item">
-
-            <div>
-                <b>${i+1}. ${c}</b><br>
-                50 Questions • 100 Marks • 60 Minutes
-            </div>
-
-            <button class="start-btn">
-                Start Test
-            </button>
-
-        </div>`;
-
-    });
-
-    document.getElementById("chapterList").innerHTML=html;
-
-}
 /* ---------- FOUR CHAPTER MOCK ---------- */
 
 function openFourChapterMock(){
