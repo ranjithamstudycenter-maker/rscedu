@@ -3302,10 +3302,9 @@ function comingSoonMock(name){
 
 }
 
-
-/* ---------- LOAD BOARDS ---------- */
-
 /* ---------- LOAD MOCK BOARDS ---------- */
+/* ---------- LOAD MOCK BOARDS ---------- */
+
 async function loadMockBoardsNew(){
 
     const board =
@@ -3324,25 +3323,47 @@ async function loadMockBoardsNew(){
 
     cls.disabled = true;
 
-    document.getElementById("mockPackageCard").style.display = "none";
-    document.getElementById("mockTestsUnlocked").style.display = "none";
+    document.getElementById(
+        "mockPackageCard"
+    ).style.display = "none";
+
+    document.getElementById(
+        "mockTestsUnlocked"
+    ).style.display = "none";
 
     try{
 
-        /*
-         * Load practice options if they are not loaded yet.
-         * This prevents an empty Board dropdown when the
-         * Mock section is opened quickly.
-         */
-        if(!syllabusOptions || syllabusOptions.length === 0){
+        const response =
+            await fetch(
+                "/api/mock/options",
+                {
+                    cache: "no-store"
+                }
+            );
 
-            await loadPracticeOptions();
+        const data =
+            await response.json();
 
+        if(
+            !response.ok ||
+            !data.success
+        ){
+            throw new Error(
+                data.error ||
+                "Unable to load Mock options."
+            );
         }
+
+        /*
+         * Save Mock options separately.
+         * Do NOT use Practice syllabusOptions.
+         */
+        window.mockSyllabusOptions =
+            data.options || [];
 
         const boards = [
             ...new Set(
-                (syllabusOptions || [])
+                window.mockSyllabusOptions
                     .map(x => x.board)
                     .filter(Boolean)
             )
@@ -3354,10 +3375,10 @@ async function loadMockBoardsNew(){
         if(boards.length === 0){
 
             board.innerHTML =
-                '<option value="">No Board Available</option>';
+                '<option value="">No Mock Available</option>';
 
             console.warn(
-                "No board data found for Mock Test."
+                "No active Mock Tests found in mock_tests table."
             );
 
             return;
@@ -3378,18 +3399,20 @@ async function loadMockBoardsNew(){
     }catch(error){
 
         console.error(
-            "Mock board loading error:",
+            "MOCK BOARD LOADING ERROR:",
             error
         );
 
         board.innerHTML =
-            '<option value="">Unable to load Board</option>';
+            '<option value="">Unable to load</option>';
 
+        alert(
+            "Unable to load Mock Test options."
+        );
     }
-
 }
-
-/* ---------- LOAD CLASS ---------- */
+   
+/* ---------- LOAD MOCK CLASSES ---------- */
 
 function loadMockClassesNew(){
 
@@ -3399,32 +3422,36 @@ function loadMockClassesNew(){
     const cls =
         document.getElementById("mockClass");
 
-
     cls.innerHTML =
         '<option value="">Select Class</option>';
 
     cls.disabled = true;
 
+    document.getElementById(
+        "mockPackageCard"
+    ).style.display = "none";
 
-    document.getElementById("mockPackageCard").style.display =
-        "none";
-
-    document.getElementById("mockTestsUnlocked").style.display =
-        "none";
-
+    document.getElementById(
+        "mockTestsUnlocked"
+    ).style.display = "none";
 
     if(!board) return;
 
+    const options =
+        window.mockSyllabusOptions || [];
 
     const classes = [
         ...new Set(
-            syllabusOptions
-                .filter(x => x.board === board)
-                .map(x => x.class_name)
+            options
+                .filter(
+                    x => x.board === board
+                )
+                .map(
+                    x => x.class_name
+                )
                 .filter(Boolean)
         )
     ];
-
 
     classes.forEach(className => {
 
@@ -3432,18 +3459,14 @@ function loadMockClassesNew(){
             document.createElement("option");
 
         option.value = className;
-
         option.textContent = className;
 
         cls.appendChild(option);
 
     });
 
-
-    cls.disabled = false;
-
+    cls.disabled = classes.length === 0;
 }
-
 
 /* ---------- SHOW PACKAGE ---------- */
 
