@@ -2728,6 +2728,1015 @@ def admin_mock_tests():
 
     return render_template("admin_mock_tests.html")
 
+# =====================================================
+# ADMIN - MOCK TEST LIST
+# =====================================================
+
+@app.route("/admin/mock-test-list")
+def admin_mock_test_list():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT
+                mt.id,
+                mt.mock_test_no,
+                mt.board,
+                mt.class_name,
+                mt.subject,
+                mt.test_name,
+                mt.syllabus_scope,
+                mt.total_questions,
+                mt.total_marks,
+                mt.duration_minutes,
+                mt.price_inr,
+                mt.attempt_limit,
+                mt.active,
+                mt.created_at,
+                COUNT(mq.id) AS question_count
+            FROM mock_tests mt
+            LEFT JOIN mock_questions mq
+                ON mq.mock_test_id = mt.id
+            GROUP BY mt.id
+            ORDER BY
+                mt.board,
+                mt.class_name,
+                mt.subject,
+                mt.mock_test_no
+        """)
+
+        tests = []
+
+        for row in c.fetchall():
+            tests.append({
+                "id": row["id"],
+                "mock_test_no": row["mock_test_no"],
+                "board": row["board"],
+                "class_name": row["class_name"],
+                "subject": row["subject"],
+                "test_name": row["test_name"],
+                "syllabus_scope": row["syllabus_scope"],
+                "total_questions": row["total_questions"],
+                "total_marks": row["total_marks"],
+                "duration_minutes": row["duration_minutes"],
+                "price_inr": row["price_inr"],
+                "attempt_limit": row["attempt_limit"],
+                "active": bool(row["active"]),
+                "created_at": row["created_at"],
+                "question_count": row["question_count"]
+            })
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "tests": tests
+        })
+
+    except Exception as e:
+
+        print("ADMIN MOCK TEST LIST ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# =====================================================
+# ADMIN - MOCK QUESTIONS LIST
+# =====================================================
+
+@app.route("/admin/mock-questions")
+def admin_mock_questions():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT
+                mq.id,
+                mq.mock_test_id,
+                mt.mock_test_no,
+                mq.board,
+                mq.class_name,
+                mq.subject,
+                mq.topic,
+                mq.subtopic,
+                mq.difficulty,
+                mq.question,
+                mq.option_a,
+                mq.option_b,
+                mq.option_c,
+                mq.option_d,
+                mq.correct_answer,
+                mq.explanation,
+                mq.hint,
+                mq.marks,
+                mq.active,
+                mq.created_at
+            FROM mock_questions mq
+            INNER JOIN mock_tests mt
+                ON mt.id = mq.mock_test_id
+            ORDER BY
+                mt.mock_test_no,
+                mq.id DESC
+        """)
+
+        questions = []
+
+        for row in c.fetchall():
+            questions.append({
+                "id": row["id"],
+                "mock_test_id": row["mock_test_id"],
+                "mock_test_no": row["mock_test_no"],
+                "board": row["board"],
+                "class_name": row["class_name"],
+                "subject": row["subject"],
+                "topic": row["topic"],
+                "subtopic": row["subtopic"],
+                "difficulty": row["difficulty"],
+                "question": row["question"],
+                "option_a": row["option_a"],
+                "option_b": row["option_b"],
+                "option_c": row["option_c"],
+                "option_d": row["option_d"],
+                "correct_answer": row["correct_answer"],
+                "explanation": row["explanation"],
+                "hint": row["hint"],
+                "marks": row["marks"],
+                "active": bool(row["active"]),
+                "created_at": row["created_at"]
+            })
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "questions": questions
+        })
+
+    except Exception as e:
+
+        print("ADMIN MOCK QUESTIONS ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# =====================================================
+# ADMIN - ADD MOCK QUESTION
+# =====================================================
+
+@app.route("/admin/mock-questions/add", methods=["POST"])
+def admin_add_mock_question():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        data = request.get_json() or {}
+
+        mock_test_no = int(data.get("mock_test_no", 0))
+
+        board = str(data.get("board", "")).strip()
+        class_name = str(data.get("class_name", "")).strip()
+        subject = str(data.get("subject", "")).strip()
+
+        topic = str(data.get("topic", "")).strip()
+        subtopic = str(data.get("subtopic", "")).strip()
+        difficulty = str(data.get("difficulty", "")).strip().lower()
+
+        question = str(data.get("question", "")).strip()
+
+        option_a = str(data.get("option_a", "")).strip()
+        option_b = str(data.get("option_b", "")).strip()
+        option_c = str(data.get("option_c", "")).strip()
+        option_d = str(data.get("option_d", "")).strip()
+
+        correct_answer = str(
+            data.get("correct_answer", "")
+        ).strip().upper()
+
+        explanation = str(
+            data.get("explanation", "")
+        ).strip()
+
+        hint = str(
+            data.get("hint", "")
+        ).strip()
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
+
+        if mock_test_no <= 0:
+            return jsonify({
+                "success": False,
+                "error": "Invalid Mock Test No."
+            }), 400
+
+        required = {
+            "Board": board,
+            "Class": class_name,
+            "Subject": subject,
+            "Topic": topic,
+            "Subtopic": subtopic,
+            "Difficulty": difficulty,
+            "Question": question,
+            "Option A": option_a,
+            "Option B": option_b,
+            "Option C": option_c,
+            "Option D": option_d,
+            "Correct Answer": correct_answer
+        }
+
+        missing = [
+            name
+            for name, value in required.items()
+            if not value
+        ]
+
+        if missing:
+            return jsonify({
+                "success": False,
+                "error": "Missing: " + ", ".join(missing)
+            }), 400
+
+        if correct_answer not in ["A", "B", "C", "D"]:
+            return jsonify({
+                "success": False,
+                "error": "Correct Answer must be A, B, C or D."
+            }), 400
+
+        if difficulty not in ["easy", "medium", "hard"]:
+            return jsonify({
+                "success": False,
+                "error": "Difficulty must be Easy, Medium or Hard."
+            }), 400
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        # -------------------------------------------------
+        # FIND EXISTING MOCK TEST
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT id
+            FROM mock_tests
+            WHERE mock_test_no=?
+              AND board=?
+              AND class_name=?
+              AND subject=?
+            LIMIT 1
+        """, (
+            mock_test_no,
+            board,
+            class_name,
+            subject
+        ))
+
+        test_row = c.fetchone()
+
+        # -------------------------------------------------
+        # CREATE MOCK TEST IF NOT EXISTS
+        # -------------------------------------------------
+
+        if test_row:
+
+            mock_test_id = test_row[0]
+
+        else:
+
+            test_name = f"Mock Test {mock_test_no}"
+
+            c.execute("""
+                INSERT INTO mock_tests (
+                    mock_test_no,
+                    board,
+                    class_name,
+                    subject,
+                    test_name,
+                    syllabus_scope,
+                    total_questions,
+                    total_marks,
+                    duration_minutes,
+                    price_inr,
+                    attempt_limit,
+                    active
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            """, (
+                mock_test_no,
+                board,
+                class_name,
+                subject,
+                test_name,
+                "",
+                50,
+                100,
+                60,
+                299,
+                1,
+                1
+            ))
+
+            mock_test_id = c.lastrowid
+
+        # -------------------------------------------------
+        # ADD QUESTION
+        # -------------------------------------------------
+
+        c.execute("""
+            INSERT INTO mock_questions (
+                mock_test_id,
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic,
+                difficulty,
+                question,
+                option_a,
+                option_b,
+                option_c,
+                option_d,
+                correct_answer,
+                explanation,
+                hint,
+                marks,
+                active
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            mock_test_id,
+            board,
+            class_name,
+            subject,
+            topic,
+            subtopic,
+            difficulty,
+            question,
+            option_a,
+            option_b,
+            option_c,
+            option_d,
+            correct_answer,
+            explanation,
+            hint,
+            2,
+            1
+        ))
+
+        question_id = c.lastrowid
+
+        # -------------------------------------------------
+        # UPDATE QUESTION COUNT
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT COUNT(*)
+            FROM mock_questions
+            WHERE mock_test_id=?
+              AND active=1
+        """, (mock_test_id,))
+
+        question_count = c.fetchone()[0]
+
+        c.execute("""
+            UPDATE mock_tests
+            SET total_questions=?,
+                total_marks=?
+            WHERE id=?
+        """, (
+            question_count,
+            question_count * 2,
+            mock_test_id
+        ))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "message": "Mock question added successfully.",
+            "question_id": question_id,
+            "mock_test_id": mock_test_id,
+            "question_count": question_count
+        })
+
+    except Exception as e:
+
+        print("ADD MOCK QUESTION ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# =====================================================
+# ADMIN - DELETE MOCK QUESTION
+# =====================================================
+
+@app.route("/admin/mock-questions/delete/<int:question_id>", methods=["POST"])
+def admin_delete_mock_question(question_id):
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT mock_test_id
+            FROM mock_questions
+            WHERE id=?
+        """, (question_id,))
+
+        row = c.fetchone()
+
+        if not row:
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error": "Question not found."
+            }), 404
+
+        mock_test_id = row[0]
+
+        c.execute("""
+            DELETE FROM mock_questions
+            WHERE id=?
+        """, (question_id,))
+
+        # Update test count
+        c.execute("""
+            SELECT COUNT(*)
+            FROM mock_questions
+            WHERE mock_test_id=?
+              AND active=1
+        """, (mock_test_id,))
+
+        question_count = c.fetchone()[0]
+
+        c.execute("""
+            UPDATE mock_tests
+            SET total_questions=?,
+                total_marks=?
+            WHERE id=?
+        """, (
+            question_count,
+            question_count * 2,
+            mock_test_id
+        ))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "message": "Mock question deleted successfully."
+        })
+
+    except Exception as e:
+
+        print("DELETE MOCK QUESTION ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# =====================================================
+# ADMIN - DELETE MOCK TEST
+# =====================================================
+
+@app.route("/admin/mock-tests/delete/<int:test_id>", methods=["POST"])
+def admin_delete_mock_test(test_id):
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT id
+            FROM mock_tests
+            WHERE id=?
+        """, (test_id,))
+
+        row = c.fetchone()
+
+        if not row:
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error": "Mock Test not found."
+            }), 404
+
+        # Delete all questions first
+        c.execute("""
+            DELETE FROM mock_questions
+            WHERE mock_test_id=?
+        """, (test_id,))
+
+        # Delete mock test
+        c.execute("""
+            DELETE FROM mock_tests
+            WHERE id=?
+        """, (test_id,))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "message": "Mock Test and all its questions deleted."
+        })
+
+    except Exception as e:
+
+        print("DELETE MOCK TEST ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+
+# =====================================================
+# ADMIN - IMPORT MOCK QUESTIONS FROM EXCEL
+# =====================================================
+
+@app.route("/admin/mock-questions/import-excel", methods=["POST"])
+def admin_import_mock_questions_excel():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        if "excel_file" not in request.files:
+            return jsonify({
+                "success": False,
+                "error": "Excel file is required."
+            }), 400
+
+        file = request.files["excel_file"]
+
+        if not file or not file.filename:
+            return jsonify({
+                "success": False,
+                "error": "Please select an Excel file."
+            }), 400
+
+        df = pd.read_excel(file)
+
+        # -------------------------------------------------
+        # NORMALIZE COLUMN NAMES
+        # -------------------------------------------------
+
+        df.columns = [
+            str(col).strip().lower().replace(" ", "_")
+            for col in df.columns
+        ]
+
+        # Allow common column names
+        rename_map = {
+            "mock_test_no": "mock_test_no",
+            "mock_test_number": "mock_test_no",
+            "test_no": "mock_test_no",
+            "test_number": "mock_test_no",
+
+            "class": "class_name",
+
+            "a": "option_a",
+            "b": "option_b",
+            "c": "option_c",
+            "d": "option_d",
+
+            "answer": "correct_answer",
+            "correct": "correct_answer"
+        }
+
+        df.rename(
+            columns={
+                k: v
+                for k, v in rename_map.items()
+                if k in df.columns
+            },
+            inplace=True
+        )
+
+        required_columns = [
+            "mock_test_no",
+            "board",
+            "class_name",
+            "subject",
+            "topic",
+            "subtopic",
+            "difficulty",
+            "question",
+            "option_a",
+            "option_b",
+            "option_c",
+            "option_d",
+            "correct_answer"
+        ]
+
+        missing_columns = [
+            col
+            for col in required_columns
+            if col not in df.columns
+        ]
+
+        if missing_columns:
+
+            return jsonify({
+                "success": False,
+                "error": (
+                    "Missing Excel columns: "
+                    + ", ".join(missing_columns)
+                )
+            }), 400
+
+        conn = sqlite3.connect("students.db")
+        c = conn.cursor()
+
+        imported = 0
+        skipped = 0
+        errors = []
+
+        # Cache test IDs
+        test_cache = {}
+
+        for index, row in df.iterrows():
+
+            excel_row = index + 2
+
+            try:
+
+                if pd.isna(row["mock_test_no"]):
+                    skipped += 1
+                    errors.append(
+                        f"Row {excel_row}: Mock Test No missing."
+                    )
+                    continue
+
+                mock_test_no = int(
+                    row["mock_test_no"]
+                )
+
+                board = str(
+                    row["board"]
+                ).strip()
+
+                class_name = str(
+                    row["class_name"]
+                ).strip()
+
+                subject = str(
+                    row["subject"]
+                ).strip()
+
+                topic = str(
+                    row["topic"]
+                ).strip()
+
+                subtopic = str(
+                    row["subtopic"]
+                ).strip()
+
+                difficulty = str(
+                    row["difficulty"]
+                ).strip().lower()
+
+                question = str(
+                    row["question"]
+                ).strip()
+
+                option_a = str(
+                    row["option_a"]
+                ).strip()
+
+                option_b = str(
+                    row["option_b"]
+                ).strip()
+
+                option_c = str(
+                    row["option_c"]
+                ).strip()
+
+                option_d = str(
+                    row["option_d"]
+                ).strip()
+
+                correct_answer = str(
+                    row["correct_answer"]
+                ).strip().upper()
+
+                explanation = ""
+
+                if "explanation" in df.columns:
+                    if not pd.isna(row["explanation"]):
+                        explanation = str(
+                            row["explanation"]
+                        ).strip()
+
+                hint = ""
+
+                if "hint" in df.columns:
+                    if not pd.isna(row["hint"]):
+                        hint = str(
+                            row["hint"]
+                        ).strip()
+
+                # Basic validation
+                if not all([
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    difficulty,
+                    question,
+                    option_a,
+                    option_b,
+                    option_c,
+                    option_d,
+                    correct_answer
+                ]):
+                    skipped += 1
+                    errors.append(
+                        f"Row {excel_row}: Required value missing."
+                    )
+                    continue
+
+                if correct_answer not in ["A", "B", "C", "D"]:
+                    skipped += 1
+                    errors.append(
+                        f"Row {excel_row}: Invalid answer."
+                    )
+                    continue
+
+                if difficulty not in [
+                    "easy",
+                    "medium",
+                    "hard"
+                ]:
+                    skipped += 1
+                    errors.append(
+                        f"Row {excel_row}: Invalid difficulty."
+                    )
+                    continue
+
+                cache_key = (
+                    mock_test_no,
+                    board,
+                    class_name,
+                    subject
+                )
+
+                # -----------------------------------------
+                # GET / CREATE MOCK TEST
+                # -----------------------------------------
+
+                if cache_key in test_cache:
+
+                    mock_test_id = test_cache[cache_key]
+
+                else:
+
+                    c.execute("""
+                        SELECT id
+                        FROM mock_tests
+                        WHERE mock_test_no=?
+                          AND board=?
+                          AND class_name=?
+                          AND subject=?
+                        LIMIT 1
+                    """, (
+                        mock_test_no,
+                        board,
+                        class_name,
+                        subject
+                    ))
+
+                    test_row = c.fetchone()
+
+                    if test_row:
+
+                        mock_test_id = test_row[0]
+
+                    else:
+
+                        test_name = (
+                            f"Mock Test {mock_test_no}"
+                        )
+
+                        c.execute("""
+                            INSERT INTO mock_tests (
+                                mock_test_no,
+                                board,
+                                class_name,
+                                subject,
+                                test_name,
+                                syllabus_scope,
+                                total_questions,
+                                total_marks,
+                                duration_minutes,
+                                price_inr,
+                                attempt_limit,
+                                active
+                            )
+                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                        """, (
+                            mock_test_no,
+                            board,
+                            class_name,
+                            subject,
+                            test_name,
+                            "",
+                            50,
+                            100,
+                            60,
+                            299,
+                            1,
+                            1
+                        ))
+
+                        mock_test_id = c.lastrowid
+
+                    test_cache[cache_key] = mock_test_id
+
+                # -----------------------------------------
+                # DUPLICATE CHECK
+                # -----------------------------------------
+
+                c.execute("""
+                    SELECT id
+                    FROM mock_questions
+                    WHERE mock_test_id=?
+                      AND question=?
+                    LIMIT 1
+                """, (
+                    mock_test_id,
+                    question
+                ))
+
+                duplicate = c.fetchone()
+
+                if duplicate:
+
+                    skipped += 1
+                    continue
+
+                # -----------------------------------------
+                # INSERT QUESTION
+                # -----------------------------------------
+
+                c.execute("""
+                    INSERT INTO mock_questions (
+                        mock_test_id,
+                        board,
+                        class_name,
+                        subject,
+                        topic,
+                        subtopic,
+                        difficulty,
+                        question,
+                        option_a,
+                        option_b,
+                        option_c,
+                        option_d,
+                        correct_answer,
+                        explanation,
+                        hint,
+                        marks,
+                        active
+                    )
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                """, (
+                    mock_test_id,
+                    board,
+                    class_name,
+                    subject,
+                    topic,
+                    subtopic,
+                    difficulty,
+                    question,
+                    option_a,
+                    option_b,
+                    option_c,
+                    option_d,
+                    correct_answer,
+                    explanation,
+                    hint,
+                    2,
+                    1
+                ))
+
+                imported += 1
+
+            except Exception as row_error:
+
+                skipped += 1
+
+                errors.append(
+                    f"Row {excel_row}: {str(row_error)}"
+                )
+
+        # -------------------------------------------------
+        # UPDATE ALL TEST COUNTS
+        # -------------------------------------------------
+
+        for mock_test_id in test_cache.values():
+
+            c.execute("""
+                SELECT COUNT(*)
+                FROM mock_questions
+                WHERE mock_test_id=?
+                  AND active=1
+            """, (mock_test_id,))
+
+            count = c.fetchone()[0]
+
+            c.execute("""
+                UPDATE mock_tests
+                SET total_questions=?,
+                    total_marks=?
+                WHERE id=?
+            """, (
+                count,
+                count * 2,
+                mock_test_id
+            ))
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "imported": imported,
+            "skipped": skipped,
+            "errors": errors[:50]
+        })
+
+    except Exception as e:
+
+        print(
+            "IMPORT MOCK EXCEL ERROR:",
+            e
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+        
+
 @app.route("/download-salary-pdf")
 def download_salary_pdf():
 
