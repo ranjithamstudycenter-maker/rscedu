@@ -412,7 +412,11 @@ iframe{
 
    <button onclick="showTab('uploads')">📁 Uploads</button>
 
-   <button onclick="showTab('syllabus')">📚 Syllabus </button>      
+   <button onclick="showTab('syllabus')">📚 Syllabus </button>
+
+   <button onclick="showTab('practice')">📝 Practice </button>
+
+   <button onclick="showTab('mock-test')">🏆 Mock Tests </button>
 
    <button onclick="showTab('students')">🎓 Students</button>
 
@@ -479,6 +483,44 @@ iframe{
         style="
             width:100%;
             height:850px;
+            border:none;
+            border-radius:20px;
+            background:white;
+        ">
+    </iframe>
+
+</div>
+<!-- =====================================================
+     PRACTICE ADMIN
+     ===================================================== -->
+
+<div id="practice" class="tab-content">
+
+    <iframe
+        src="/admin/practice"
+        style="
+            width:100%;
+            height:900px;
+            border:none;
+            border-radius:20px;
+            background:white;
+        ">
+    </iframe>
+
+</div>
+
+
+<!-- =====================================================
+     MOCK TEST ADMIN
+     ===================================================== -->
+
+<div id="mock-test" class="tab-content">
+
+    <iframe
+        src="/admin/mock-tests"
+        style="
+            width:100%;
+            height:900px;
             border:none;
             border-radius:20px;
             background:white;
