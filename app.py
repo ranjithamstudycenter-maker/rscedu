@@ -2734,7 +2734,7 @@ def admin_mock_tests():
     if not session.get("admin"):
         return redirect("/admin")
 
-    return render_template("mock_test.html")
+    return render_template("practice.html")
 
 @app.route("/download-salary-pdf")
 def download_salary_pdf():
