@@ -2711,9 +2711,6 @@ def admin_dashboard():
         selected_month=selected_month
 
     )
-# =====================================================
-# ADMIN - PRACTICE MANAGEMENT PAGE
-# =====================================================
 
 @app.route("/admin/practice")
 def admin_practice():
@@ -2723,18 +2720,13 @@ def admin_practice():
 
     return render_template("admin_practice.html")
 
-
-# =====================================================
-# ADMIN - MOCK TEST MANAGEMENT PAGE
-# =====================================================
-
-@app.route("/admin/mock-test")
+@app.route("/admin/mock-tests")
 def admin_mock_tests():
 
     if not session.get("admin"):
         return redirect("/admin")
 
-    return render_template("practice.html")
+    return render_template("admin_mock_tests.html")
 
 @app.route("/download-salary-pdf")
 def download_salary_pdf():
