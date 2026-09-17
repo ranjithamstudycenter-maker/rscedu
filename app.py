@@ -2711,7 +2711,12 @@ def admin_dashboard():
         selected_month=selected_month
 
     )
-
+@app.route("/admin/practice")
+def admin_practice():
+  
+@app.route("/admin/mock-test")
+def admin_mock_tests():
+   
 @app.route("/download-salary-pdf")
 def download_salary_pdf():
 
