@@ -2721,7 +2721,7 @@ def admin_practice():
     if not session.get("admin"):
         return redirect("/admin")
 
-    return render_template("practice.html")
+    return render_template("admin_practice.html")
 
 
 # =====================================================
