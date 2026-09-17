@@ -1,0 +1,821 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Practice Question Bank | Ranjitham Study Center</title>
+
+<style>
+*{box-sizing:border-box}
+
+body{
+    margin:0;
+    font-family:Arial,Helvetica,sans-serif;
+    background:linear-gradient(135deg,#eef2ff,#fdf4ff);
+    color:#1f2937;
+}
+
+.container{
+    width:min(1200px,94%);
+    margin:30px auto 50px;
+}
+
+.header{
+    background:linear-gradient(135deg,#4f46e5,#7c3aed,#db2777);
+    color:#fff;
+    padding:28px 30px;
+    border-radius:22px;
+    box-shadow:0 12px 35px rgba(79,70,229,.20);
+}
+
+.header h1{margin:0 0 8px;font-size:30px}
+.header p{margin:0;opacity:.92}
+
+.card{
+    background:#fff;
+    margin-top:22px;
+    padding:24px;
+    border-radius:20px;
+    box-shadow:0 8px 28px rgba(0,0,0,.07);
+}
+
+.card h2,.card h3{margin-top:0}
+
+.stats{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+}
+
+.stat{
+    padding:18px;
+    border-radius:14px;
+    text-align:center;
+    border:1px solid #e5e7eb;
+}
+
+.stat .label{font-size:14px;color:#6b7280;font-weight:700}
+.stat .value{font-size:30px;font-weight:800;margin-top:5px}
+
+.easy{background:#eff6ff}
+.medium{background:#fffbeb}
+.hard{background:#fef2f2}
+.total{background:#ecfdf5}
+
+.grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:16px;
+}
+
+.field label{
+    display:block;
+    font-weight:700;
+    margin-bottom:7px;
+}
+
+input,select,textarea{
+    width:100%;
+    padding:12px 13px;
+    border:1px solid #d1d5db;
+    border-radius:10px;
+    font-size:15px;
+    font-family:inherit;
+}
+
+textarea{
+    resize:vertical;
+    min-height:90px;
+}
+
+.full{grid-column:1/-1}
+
+button{
+    border:0;
+    border-radius:10px;
+    padding:12px 18px;
+    font-weight:700;
+    font-size:15px;
+    cursor:pointer;
+}
+
+.primary{
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    color:#fff;
+}
+
+.excel-btn{
+    background:#16a34a;
+    color:#fff;
+}
+
+.danger{
+    background:#ef4444;
+    color:#fff;
+    padding:8px 12px;
+    font-size:13px;
+}
+
+.message{
+    margin-top:14px;
+    padding:12px 14px;
+    border-radius:10px;
+    font-weight:700;
+    display:none;
+}
+
+.message.success{
+    display:block;
+    background:#ecfdf5;
+    color:#047857;
+}
+
+.message.error{
+    display:block;
+    background:#fef2f2;
+    color:#b91c1c;
+}
+
+.excel-box{
+    background:#f8fafc;
+    border:1px dashed #cbd5e1;
+    border-radius:14px;
+    padding:18px;
+    margin-bottom:22px;
+}
+
+.table-wrap{
+    overflow-x:auto;
+}
+
+table{
+    width:100%;
+    border-collapse:collapse;
+    min-width:900px;
+}
+
+th,td{
+    padding:11px 10px;
+    border-bottom:1px solid #e5e7eb;
+    text-align:left;
+    vertical-align:top;
+}
+
+th{
+    background:#f8fafc;
+    font-size:14px;
+}
+
+.question-cell{
+    min-width:280px;
+    max-width:420px;
+    white-space:normal;
+    line-height:1.45;
+}
+
+.badge{
+    display:inline-block;
+    padding:5px 9px;
+    border-radius:20px;
+    font-size:12px;
+    font-weight:700;
+}
+
+.badge.easy{background:#dbeafe}
+.badge.medium{background:#fef3c7}
+.badge.hard{background:#fee2e2}
+
+.empty{
+    text-align:center;
+    padding:25px;
+    color:#6b7280;
+}
+
+@media(max-width:800px){
+    .stats{grid-template-columns:repeat(2,1fr)}
+    .grid{grid-template-columns:1fr}
+    .full{grid-column:auto}
+}
+
+@media(max-width:500px){
+    .container{width:96%;margin-top:15px}
+    .header{padding:22px}
+    .header h1{font-size:24px}
+    .card{padding:18px}
+    .stats{grid-template-columns:1fr 1fr}
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <div class="header">
+        <h1>📝 Practice Question Bank</h1>
+        <p>
+            Manage Practice MCQ questions separately from Syllabus and Mock Tests.
+        </p>
+    </div>
+
+    <!-- QUESTION COUNTS -->
+    <div class="card">
+        <h2>📊 Question Bank Summary</h2>
+
+        <div class="stats">
+            <div class="stat easy">
+                <div class="label">Easy</div>
+                <div class="value" id="easyCount">0</div>
+            </div>
+
+            <div class="stat medium">
+                <div class="label">Medium</div>
+                <div class="value" id="mediumCount">0</div>
+            </div>
+
+            <div class="stat hard">
+                <div class="label">Hard</div>
+                <div class="value" id="hardCount">0</div>
+            </div>
+
+            <div class="stat total">
+                <div class="label">Total</div>
+                <div class="value" id="totalCount">0</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- EXCEL IMPORT -->
+    <div class="card">
+        <h2>📥 Bulk Upload Practice Questions</h2>
+
+        <div class="excel-box">
+            <h3>Import Questions from Excel</h3>
+            <p style="color:#6b7280;">
+                Upload an Excel file containing Practice MCQ questions.
+                Existing duplicate questions will be skipped by the server.
+            </p>
+
+            <input
+                type="file"
+                id="practiceExcelFile"
+                accept=".xlsx,.xls"
+            >
+
+            <div style="margin-top:14px;">
+                <button
+                    type="button"
+                    class="excel-btn"
+                    onclick="importPracticeExcel()"
+                >
+                    📥 Import Excel Questions
+                </button>
+            </div>
+
+            <div id="excelImportMessage" class="message"></div>
+        </div>
+    </div>
+
+    <!-- ADD QUESTION -->
+    <div class="card">
+        <h2>➕ Add Practice Question</h2>
+
+        <div class="grid">
+
+            <div class="field">
+                <label>Board</label>
+                <select id="pqBoard">
+                    <option value="">Select Board</option>
+                    <option value="CBSE">CBSE</option>
+                    <option value="State Board">State Board</option>
+                    <option value="Matric">Matric</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Class</label>
+                <select id="pqClass">
+                    <option value="">Select Class</option>
+                    <option value="Class 6">Class 6</option>
+                    <option value="Class 7">Class 7</option>
+                    <option value="Class 8">Class 8</option>
+                    <option value="Class 9">Class 9</option>
+                    <option value="Class 10">Class 10</option>
+                    <option value="Class 11">Class 11</option>
+                    <option value="Class 12">Class 12</option>
+                </select>
+            </div>
+
+            <div class="field">
+                <label>Subject</label>
+                <input id="pqSubject" placeholder="Example: Mathematics">
+            </div>
+
+            <div class="field">
+                <label>Chapter / Topic</label>
+                <input id="pqTopic" placeholder="Example: Algebra">
+            </div>
+
+            <div class="field">
+                <label>Subtopic</label>
+                <input id="pqSubtopic" placeholder="Example: Factorisation">
+            </div>
+
+            <div class="field">
+                <label>Difficulty</label>
+                <select id="pqDifficulty">
+                    <option value="">Select Difficulty</option>
+                    <option value="easy">Easy</option>
+                    <option value="medium">Medium</option>
+                    <option value="hard">Hard</option>
+                </select>
+            </div>
+
+            <div class="field full">
+                <label>Question</label>
+                <textarea id="pqQuestion"
+                    placeholder="Enter the MCQ question"></textarea>
+            </div>
+
+            <div class="field">
+                <label>Option A</label>
+                <input id="pqOptionA" placeholder="Enter option A">
+            </div>
+
+            <div class="field">
+                <label>Option B</label>
+                <input id="pqOptionB" placeholder="Enter option B">
+            </div>
+
+            <div class="field">
+                <label>Option C</label>
+                <input id="pqOptionC" placeholder="Enter option C">
+            </div>
+
+            <div class="field">
+                <label>Option D</label>
+                <input id="pqOptionD" placeholder="Enter option D">
+            </div>
+
+            <div class="field">
+                <label>Correct Answer</label>
+                <select id="pqCorrectAnswer">
+                    <option value="">Select Correct Answer</option>
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                    <option value="C">C</option>
+                    <option value="D">D</option>
+                </select>
+            </div>
+
+            <div class="field full">
+                <label>Explanation</label>
+                <textarea id="pqExplanation"
+                    placeholder="Explanation shown after the test"></textarea>
+            </div>
+
+            <div class="field full">
+                <label>Hint</label>
+                <textarea id="pqHint"
+                    placeholder="Optional hint for the student"></textarea>
+            </div>
+
+            <div class="full">
+                <button type="button" class="primary"
+                    onclick="addPracticeQuestion()">
+                    ➕ Add Question
+                </button>
+
+                <div id="pqMessage" class="message"></div>
+            </div>
+
+        </div>
+    </div>
+
+    <!-- EXISTING QUESTIONS -->
+    <div class="card">
+        <h2>📋 Existing Practice Questions</h2>
+
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Board</th>
+                        <th>Class</th>
+                        <th>Subject</th>
+                        <th>Topic</th>
+                        <th>Subtopic</th>
+                        <th>Difficulty</th>
+                        <th>Question</th>
+                        <th>Answer</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+
+                <tbody id="practiceQuestionTable">
+                    <tr>
+                        <td colspan="10" class="empty">
+                            Loading questions...
+                        </td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>
+
+<script>
+
+function setMessage(id, message, success){
+    const box = document.getElementById(id);
+    box.textContent = message;
+    box.className = "message " + (success ? "success" : "error");
+}
+
+async function loadPracticeQuestionCount(){
+    try{
+        const response = await fetch("/admin/practice-question-count");
+        const data = await response.json();
+
+        if(!data.success) return;
+
+        document.getElementById("easyCount").textContent =
+            data.counts.easy || 0;
+
+        document.getElementById("mediumCount").textContent =
+            data.counts.medium || 0;
+
+        document.getElementById("hardCount").textContent =
+            data.counts.hard || 0;
+
+        document.getElementById("totalCount").textContent =
+            data.counts.total || 0;
+
+    }catch(error){
+        console.error("Question count error:", error);
+    }
+}
+
+async function importPracticeExcel(){
+
+    const fileInput =
+        document.getElementById("practiceExcelFile");
+
+    if(!fileInput.files.length){
+        setMessage(
+            "excelImportMessage",
+            "❌ Please select an Excel file.",
+            false
+        );
+        return;
+    }
+
+    const formData = new FormData();
+    formData.append("excel_file", fileInput.files[0]);
+
+    setMessage(
+        "excelImportMessage",
+        "⏳ Importing questions...",
+        true
+    );
+
+    try{
+
+        const response = await fetch(
+            "/admin/practice-questions/import-excel",
+            {
+                method:"POST",
+                body:formData
+            }
+        );
+
+        const data = await response.json();
+
+        if(!data.success){
+            setMessage(
+                "excelImportMessage",
+                "❌ " + (data.error || "Excel import failed."),
+                false
+            );
+            return;
+        }
+
+        let msg =
+            "✅ " + (data.imported || 0) +
+            " question(s) imported.";
+
+        if(data.skipped > 0){
+            msg += " " + data.skipped + " skipped.";
+        }
+
+        setMessage(
+            "excelImportMessage",
+            msg,
+            true
+        );
+
+        fileInput.value = "";
+
+        loadPracticeQuestionCount();
+        loadPracticeQuestions();
+
+    }catch(error){
+
+        console.error("Excel import error:", error);
+
+        setMessage(
+            "excelImportMessage",
+            "❌ Server error during Excel import.",
+            false
+        );
+    }
+}
+
+async function addPracticeQuestion(){
+
+    const board =
+        document.getElementById("pqBoard").value.trim();
+
+    const class_name =
+        document.getElementById("pqClass").value.trim();
+
+    const subject =
+        document.getElementById("pqSubject").value.trim();
+
+    const topic =
+        document.getElementById("pqTopic").value.trim();
+
+    const subtopic =
+        document.getElementById("pqSubtopic").value.trim();
+
+    const difficulty =
+        document.getElementById("pqDifficulty").value.trim();
+
+    const question =
+        document.getElementById("pqQuestion").value.trim();
+
+    const option_a =
+        document.getElementById("pqOptionA").value.trim();
+
+    const option_b =
+        document.getElementById("pqOptionB").value.trim();
+
+    const option_c =
+        document.getElementById("pqOptionC").value.trim();
+
+    const option_d =
+        document.getElementById("pqOptionD").value.trim();
+
+    const correct_answer =
+        document.getElementById("pqCorrectAnswer").value.trim();
+
+    const explanation =
+        document.getElementById("pqExplanation").value.trim();
+
+    const hint =
+        document.getElementById("pqHint").value.trim();
+
+    if(
+        !board ||
+        !class_name ||
+        !subject ||
+        !topic ||
+        !subtopic ||
+        !difficulty ||
+        !question ||
+        !option_a ||
+        !option_b ||
+        !option_c ||
+        !option_d ||
+        !correct_answer
+    ){
+        setMessage(
+            "pqMessage",
+            "❌ Please fill all required fields.",
+            false
+        );
+        return;
+    }
+
+    try{
+
+        const response = await fetch(
+            "/admin/practice-questions/add",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    board:board,
+                    class_name:class_name,
+                    subject:subject,
+                    topic:topic,
+                    subtopic:subtopic,
+                    difficulty:difficulty,
+                    question:question,
+                    option_a:option_a,
+                    option_b:option_b,
+                    option_c:option_c,
+                    option_d:option_d,
+                    correct_answer:correct_answer,
+                    explanation:explanation,
+                    hint:hint
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if(!data.success){
+            setMessage(
+                "pqMessage",
+                "❌ " + (data.error || "Unable to add question."),
+                false
+            );
+            return;
+        }
+
+        setMessage(
+            "pqMessage",
+            "✅ Practice question added successfully.",
+            true
+        );
+
+        clearQuestionFields();
+
+        loadPracticeQuestionCount();
+        loadPracticeQuestions();
+
+    }catch(error){
+
+        console.error("Add question error:", error);
+
+        setMessage(
+            "pqMessage",
+            "❌ Server error while adding question.",
+            false
+        );
+    }
+}
+
+function clearQuestionFields(){
+
+    document.getElementById("pqQuestion").value = "";
+    document.getElementById("pqOptionA").value = "";
+    document.getElementById("pqOptionB").value = "";
+    document.getElementById("pqOptionC").value = "";
+    document.getElementById("pqOptionD").value = "";
+    document.getElementById("pqCorrectAnswer").value = "";
+    document.getElementById("pqExplanation").value = "";
+    document.getElementById("pqHint").value = "";
+}
+
+async function loadPracticeQuestions(){
+
+    const tbody =
+        document.getElementById("practiceQuestionTable");
+
+    try{
+
+        const response =
+            await fetch("/admin/practice-questions");
+
+        const data = await response.json();
+
+        if(!data.success){
+            tbody.innerHTML =
+                `<tr>
+                    <td colspan="10" class="empty" style="color:#b91c1c;">
+                        ${escapeHTML(data.error || "Unable to load questions.")}
+                    </td>
+                </tr>`;
+            return;
+        }
+
+        if(!data.questions || data.questions.length === 0){
+            tbody.innerHTML =
+                `<tr>
+                    <td colspan="10" class="empty">
+                        No practice questions added yet.
+                    </td>
+                </tr>`;
+            return;
+        }
+
+        tbody.innerHTML = "";
+
+        data.questions.forEach(function(q){
+
+            const row = document.createElement("tr");
+
+            row.innerHTML = `
+                <td>${escapeHTML(q.id)}</td>
+                <td>${escapeHTML(q.board)}</td>
+                <td>${escapeHTML(q.class_name)}</td>
+                <td>${escapeHTML(q.subject)}</td>
+                <td>${escapeHTML(q.topic)}</td>
+                <td>${escapeHTML(q.subtopic)}</td>
+                <td>
+                    <span class="badge ${escapeHTML(q.difficulty)}">
+                        ${escapeHTML(q.difficulty)}
+                    </span>
+                </td>
+                <td class="question-cell">
+                    ${escapeHTML(q.question)}
+                </td>
+                <td><strong>${escapeHTML(q.correct_answer)}</strong></td>
+                <td>
+                    <button
+                        type="button"
+                        class="danger"
+                        onclick="deletePracticeQuestion(${Number(q.id)})">
+                        🗑️ Delete
+                    </button>
+                </td>
+            `;
+
+            tbody.appendChild(row);
+        });
+
+    }catch(error){
+
+        console.error("Load questions error:", error);
+
+        tbody.innerHTML =
+            `<tr>
+                <td colspan="10" class="empty" style="color:#b91c1c;">
+                    Server error while loading questions.
+                </td>
+            </tr>`;
+    }
+}
+
+async function deletePracticeQuestion(id){
+
+    if(!confirm(
+        "⚠️ Are you sure you want to delete this practice question?"
+    )){
+        return;
+    }
+
+    try{
+
+        const response = await fetch(
+            "/admin/practice-questions/delete/" + id,
+            {
+                method:"POST"
+            }
+        );
+
+        const data = await response.json();
+
+        if(!data.success){
+            alert(
+                "❌ " +
+                (data.error || "Unable to delete question.")
+            );
+            return;
+        }
+
+        loadPracticeQuestionCount();
+        loadPracticeQuestions();
+
+    }catch(error){
+
+        console.error("Delete question error:", error);
+
+        alert(
+            "❌ Server error while deleting question."
+        );
+    }
+}
+
+function escapeHTML(value){
+
+    if(value === null || value === undefined){
+        return "";
+    }
+
+    return String(value)
+        .replace(/&/g,"&amp;")
+        .replace(/</g,"&lt;")
+        .replace(/>/g,"&gt;")
+        .replace(/"/g,"&quot;")
+        .replace(/'/g,"&#039;");
+}
+
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+        loadPracticeQuestionCount();
+        loadPracticeQuestions();
+    }
+);
+
+</script>
+
+</body>
+</html>
