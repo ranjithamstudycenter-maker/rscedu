@@ -963,7 +963,7 @@ body.exam-running .exam-lock-bar{
 
 <main class="practice-page">
 
-    <section class="practice-hero">
+    <section class="practice-hero" id="practiceHero">
         <div class="practice-hero-inner">
             <span class="practice-eyebrow">✨ RSC Digital Learning</span>
             <h1>📘 Smart Practice</h1>
@@ -1394,6 +1394,17 @@ body.exam-running .exam-lock-bar{
 
         </div>
 
+         <div class="mock-navigation">
+
+             <button
+                 type="button"
+                 class="mock-back-btn"
+                 onclick="backToMockSubject()">
+                 ← Back
+             </button>
+                           
+         </div>
+
     </div>
 
 
@@ -1609,7 +1620,7 @@ body.exam-running .exam-lock-bar{
         </div>
               </div>
         <!-- END MOCK HOME -->
-</section>
+
 
         <!-- =========================================
              CHAPTER-WISE MOCK VIEW
@@ -1713,7 +1724,7 @@ body.exam-running .exam-lock-bar{
 
 
     </div>
-
+</section>
 <script>
 /* =========================================================
    RSC PRACTICE — DATABASE QUESTION BANK ONLY
@@ -3636,7 +3647,44 @@ function showMockPackage(){
     });
 
 }
+/* ---------- SYLLABUS NAVIGATION ---------- */
 
+function backToMockSubject(){
+
+    document.getElementById("mockSyllabusCard").style.display = "none";
+
+    document.getElementById("mockPackageCard").style.display = "none";
+
+    document.getElementById("mockTestsUnlocked").style.display = "none";
+
+    document.getElementById("mockSubjectCard").style.display = "block";
+
+    document.getElementById("mockSubjectCard").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
+
+
+function continueMockToPayment(){
+
+    const board =
+        document.getElementById("mockBoard").value;
+
+    const cls =
+        document.getElementById("mockClass").value;
+
+    if(!board || !cls){
+
+        alert("Please select Board and Class first.");
+
+        return;
+    }
+
+    showMockPackage();
+
+}
 
 /* =========================================================
    PAYMENT
