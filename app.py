@@ -5900,6 +5900,58 @@ def about():
 @app.route("/practice")
 def practice():
     return render_template("practice.html")
+
+# =====================================================
+# RSC MOCK TEST - AVAILABLE OPTIONS
+# =====================================================
+
+@app.route("/api/mock/options")
+def mock_options():
+
+    try:
+
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT DISTINCT
+                board,
+                class_name,
+                subject
+            FROM mock_tests
+            WHERE active=1
+            ORDER BY board, class_name, subject
+        """)
+
+        options = [
+            {
+                "board": row["board"],
+                "class_name": row["class_name"],
+                "subject": row["subject"]
+            }
+            for row in c.fetchall()
+        ]
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "options": options
+        })
+
+    except Exception as e:
+
+        print(
+            "MOCK OPTIONS ERROR:",
+            e
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+        
     
 @app.route("/api/practice/options")
 def practice_options():
