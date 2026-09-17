@@ -1477,7 +1477,15 @@ body.exam-running .exam-lock-bar{
 
                 </div>
 
+                 <div class="mock-payment-back">
 
+                         <button
+                             type="button"
+                             onclick="backToMockSyllabus()">
+                             ← Back
+                         </button>
+                     
+               </div>
                 <button class="mock-pay-btn"
                         onclick="startMockPayment()">
 
@@ -3685,7 +3693,19 @@ function continueMockToPayment(){
     showMockPackage();
 
 }
+   
+function backToMockSyllabus(){
 
+    document.getElementById("mockPackageCard").style.display = "none";
+
+    document.getElementById("mockSyllabusCard").style.display = "block";
+
+    document.getElementById("mockSyllabusCard").scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+
+}
 /* =========================================================
    PAYMENT
    ========================================================= */
