@@ -5952,7 +5952,42 @@ def mock_options():
             "error": str(e)
         }), 500
         
-    
+@app.route("/api/mock/debug")
+def mock_debug():
+
+    try:
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT
+                id,
+                mock_test_no,
+                board,
+                class_name,
+                subject,
+                active
+            FROM mock_tests
+            ORDER BY id DESC
+        """)
+
+        rows = [dict(row) for row in c.fetchall()]
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "count": len(rows),
+            "mock_tests": rows
+        })
+
+    except Exception as e:
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+        
 @app.route("/api/practice/options")
 def practice_options():
     try:
