@@ -1084,11 +1084,28 @@ body.exam-running .exam-lock-bar{
                 timed online tests and detailed performance review.
             </p>
             <div class="hero-stats">
-                <div class="hero-stat"><strong>25</strong><span>Questions / Attempt</span></div>
-                <div class="hero-stat"><strong>50</strong><span>Total Marks</span></div>
-                <div class="hero-stat"><strong>30 min</strong><span>Practice Time</span></div>
-                <div class="hero-stat"><strong>∞</strong><span>Practice Attempts</span></div>
-            </div>
+
+    <div class="hero-stat">
+        <strong id="heroStat1">25</strong>
+        <span id="heroLabel1">Questions / Attempt</span>
+    </div>
+
+    <div class="hero-stat">
+        <strong id="heroStat2">50</strong>
+        <span id="heroLabel2">Total Marks</span>
+    </div>
+
+    <div class="hero-stat">
+        <strong id="heroStat3">30 min</strong>
+        <span id="heroLabel3">Practice Time</span>
+    </div>
+
+    <div class="hero-stat">
+        <strong id="heroStat4">∞</strong>
+        <span id="heroLabel4">Practice Attempts</span>
+    </div>
+
+</div>
         </div>
     </section>
 
@@ -1928,7 +1945,18 @@ function showMode(mode){
         mBtn.classList.add("active");
 
         
-
+        document.getElementById("heroStat1").textContent = "50";
+        document.getElementById("heroLabel1").textContent = "Questions / Test";
+      
+        document.getElementById("heroStat2").textContent = "100";
+        document.getElementById("heroLabel2").textContent = "Total Marks";
+      
+        document.getElementById("heroStat3").textContent = "60 min";
+        document.getElementById("heroLabel3").textContent = "Test Duration";
+      
+        document.getElementById("heroStat4").textContent = "1";
+        document.getElementById("heroLabel4").textContent = "Attempt / Test";
+       
         window.scrollTo({
             top:0,
             behavior:"smooth"
@@ -1945,6 +1973,20 @@ function showMode(mode){
     mBtn.classList.remove("active");
 
     pBtn.classList.add("active");
+
+
+    // PRACTICE HERO STATS
+    document.getElementById("heroStat1").textContent = "25";
+    document.getElementById("heroLabel1").textContent = "Questions / Attempt";
+
+    document.getElementById("heroStat2").textContent = "50";
+    document.getElementById("heroLabel2").textContent = "Total Marks";
+
+    document.getElementById("heroStat3").textContent = "30 min";
+    document.getElementById("heroLabel3").textContent = "Practice Time";
+
+    document.getElementById("heroStat4").textContent = "∞";
+    document.getElementById("heroLabel4").textContent = "Practice Attempts";   
 }
 /* =========================================================
    MOCK TEST SELECTION
