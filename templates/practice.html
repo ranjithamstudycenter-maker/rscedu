@@ -648,7 +648,36 @@ a{text-decoration:none}
     font-size:13px;
     font-weight:600;
 }
+.mock-payment-actions{
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    margin-top:20px;
+    padding:0 5px;
+}
 
+.mock-payment-status{
+    margin-top:20px;
+    padding:14px 18px;
+    border-radius:14px;
+    background:#ecfdf5;
+    border:1px solid #bbf7d0;
+    text-align:center;
+}
+
+.mock-payment-status span{
+    display:block;
+    color:#15803d;
+    font-size:15px;
+    font-weight:900;
+}
+
+.mock-payment-status small{
+    display:block;
+    margin-top:3px;
+    color:#64748b;
+    font-size:11px;
+}
 .mock-pay-btn{
     margin-top:22px;
     border:none;
@@ -910,7 +939,90 @@ body.exam-running .exam-lock-bar{
     cursor:pointer;
     margin-bottom:20px;
 }
+/* =========================
+   MOCK SYLLABUS PROFESSIONAL UI
+   ========================= */
 
+#mockSyllabusCard .section-head{
+    display:block;
+    text-align:center;
+    margin-bottom:28px;
+}
+
+#mockSyllabusCard .section-head h2{
+    font-size:30px;
+    font-weight:800;
+    color:#172554;
+}
+
+#mockSyllabusCard .section-head p{
+    max-width:650px;
+    margin:8px auto 0;
+    font-size:14px;
+    color:#64748b;
+}
+
+#mockSyllabusCard .selection-grid{
+    max-width:850px;
+    margin:0 auto;
+    grid-template-columns:repeat(2,1fr);
+}
+
+#mockSyllabusCard .selection-summary{
+    max-width:850px;
+    margin:20px auto 0;
+    text-align:center;
+    font-size:14px;
+}
+
+.mock-syllabus-actions{
+    max-width:850px;
+    margin:22px auto 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+}
+
+.mock-back-btn,
+.mock-next-btn{
+    border:none;
+    padding:12px 22px;
+    border-radius:12px;
+    font-size:13px;
+    font-weight:800;
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.mock-back-btn{
+    background:#f1f5f9;
+    color:#334155;
+    border:1px solid #dbe3ef;
+}
+
+.mock-back-btn:hover{
+    background:#e2e8f0;
+    transform:translateY(-2px);
+}
+
+.mock-next-btn{
+    color:#fff;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+    box-shadow:0 8px 20px rgba(79,70,229,.22);
+}
+
+.mock-next-btn:hover{
+    transform:translateY(-2px);
+    box-shadow:0 12px 25px rgba(79,70,229,.28);
+}
+
+.mock-next-btn:disabled{
+    background:#cbd5e1;
+    color:#64748b;
+    cursor:not-allowed;
+    box-shadow:none;
+    transform:none;
+}
 .chapter-item{
     display:flex;
     justify-content:space-between;
@@ -1394,16 +1506,25 @@ body.exam-running .exam-lock-bar{
 
         </div>
 
-         <div class="mock-navigation">
+         <div class="mock-syllabus-actions">
 
-             <button
-                 type="button"
-                 class="mock-back-btn"
-                 onclick="backToMockSubject()">
-                 ← Back
-             </button>
-                           
-         </div>
+    <button
+        type="button"
+        class="mock-back-btn"
+        onclick="backToMockSubject()">
+        ← Back
+    </button>
+
+    <button
+        type="button"
+        id="mockSyllabusContinue"
+        class="mock-next-btn"
+        onclick="continueMockToPayment()"
+        disabled>
+        Continue →
+    </button>
+
+</div>
 
     </div>
 
@@ -1477,16 +1598,7 @@ body.exam-running .exam-lock-bar{
 
                 </div>
 
-                 <div class="mock-payment-back">
-
-                         <button
-                             type="button"
-                             onclick="backToMockSyllabus()">
-                             ← Back
-                         </button>
-                     
-               </div>
-                <button class="mock-pay-btn"
+                 <button class="mock-pay-btn"
                         onclick="startMockPayment()">
 
                     🔒 Unlock Mock Tests — ₹1
@@ -1500,7 +1612,36 @@ body.exam-running .exam-lock-bar{
             </div>
 
         </div>
+<div class="mock-payment-actions">
 
+    <button
+        type="button"
+        class="mock-back-btn"
+        onclick="backToMockSyllabus()">
+        ← Back
+    </button>
+
+    <button
+        type="button"
+        id="mockPaidContinue"
+        class="mock-next-btn"
+        onclick="continueToMockTests()"
+        style="display:none;">
+        Continue →
+    </button>
+<div
+    id="mockPaymentStatus"
+    class="mock-payment-status"
+    style="display:none;">
+
+    <span>✓ PAID</span>
+
+    <small>
+        Payment verified successfully
+    </small>
+
+</div>
+</div>
     </div>
 
 
@@ -3597,7 +3738,6 @@ function loadMockClassesNew(){
 }
 
 /* ---------- SHOW PACKAGE ---------- */
-
 function showMockPackage(){
 
     const board =
@@ -4080,7 +4220,24 @@ function unlockMockTests(){
     });
 
 }
+function continueToMockTests(){
 
+    document.getElementById(
+        "mockPackageCard"
+    ).style.display = "none";
+
+    document.getElementById(
+        "mockTestsUnlocked"
+    ).style.display = "block";
+
+    document.getElementById(
+        "mockTestsUnlocked"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+
+}
 /* ---------- CHAPTER MOCK ---------- */
 
 function openChapterMock(){
