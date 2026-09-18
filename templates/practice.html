@@ -4235,6 +4235,9 @@ async function checkMockAccess(){
             data.success &&
             data.unlocked
         ){
+            document.getElementById("mockSyllabusCard").style.display = "none";
+
+            document.getElementById("mockPackageCard").style.display = "none";
 
             document.getElementById(
                 "mockPackageCard"
