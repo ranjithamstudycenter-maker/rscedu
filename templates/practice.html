@@ -518,6 +518,10 @@ a{text-decoration:none}
     border-color:#e2e8f0;
     background:#fff;
 }
+.mock-subject-card.available:hover{
+    border-color:#818cf8;
+    background:#fff;
+}
 
 .mock-subject-card.coming{
     opacity:.62;
@@ -3819,18 +3823,22 @@ function showMockPackage(){
         `${selectedMockSubject} • ${board} • ${cls}`;
 
     document.getElementById(
-        "mockSelectionSummary"
+       "mockSelectionSummary"
     ).style.display = "block";
-
-    document.getElementById(
-          "mockPackageCard"
-    ).style.display = "none";
+   
+   document.getElementById(
+       "mockSyllabusCard"
+   ).style.display = "none";
+   
+   document.getElementById(
+       "mockPackageCard"
+   ).style.display = "block";
    
    document.getElementById(
        "mockTestsUnlocked"
-    ).style.display = "none";
-
-    checkMockAccess();
+   ).style.display = "none";
+   
+   checkMockAccess();
 
 }
 /* ---------- SYLLABUS NAVIGATION ---------- */
