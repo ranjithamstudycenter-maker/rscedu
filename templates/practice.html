@@ -3904,6 +3904,20 @@ function backToMockSyllabus(){
 
     document.getElementById("mockSyllabusCard").style.display = "block";
 
+
+    const board =
+        document.getElementById("mockBoard").value;
+
+    const cls =
+        document.getElementById("mockClass").value;
+
+    if(board && cls){
+        document.getElementById(
+            "mockSyllabusContinue"
+        ).disabled = false;
+    }
+
+
     document.getElementById("mockSyllabusCard").scrollIntoView({
         behavior: "smooth",
         block: "start"
