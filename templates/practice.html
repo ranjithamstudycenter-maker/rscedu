@@ -3836,37 +3836,27 @@ function showMockPackage(){
 
     }
 
+
     selectedMockBoard = board;
     selectedMockClass = cls;
 
-    document.getElementById(
-        "mockSelectionSummaryText"
-    ).textContent =
-        `${selectedMockSubject} • ${board} • ${cls}`;
 
-      document.getElementById(
-       "mockSelectionSummary"
-      ).style.display = "block";
-      
-      
-      document.getElementById(
-          "mockSyllabusContinue"
-      ).disabled = false;
-      
-      
-      document.getElementById(
-          "mockSyllabusCard"
-      ).style.display = "none";
-      
-      document.getElementById(
-          "mockPackageCard"
-      ).style.display = "block";
-      
-      document.getElementById(
-          "mockTestsUnlocked"
-      ).style.display = "none";
-      
-      checkMockAccess();
+    document.getElementById(
+        "mockSyllabusCard"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "mockPackageCard"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "mockTestsUnlocked"
+    ).style.display = "none";
+
+
+    checkMockAccess();
 
 }
 /* ---------- SYLLABUS NAVIGATION ---------- */
