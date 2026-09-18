@@ -1667,6 +1667,24 @@ body.exam-running .exam-lock-bar{
                     Your Mathematics Mock Test Package
                     is unlocked.
                 </p>
+                 <div id="mockUnlockedSelection"
+                    style="
+                       margin:18px auto 22px;
+                       max-width:700px;
+                       padding:14px 20px;
+                       text-align:center;
+                       border:1px solid #ddd6fe;
+                       border-radius:14px;
+                       background:linear-gradient(135deg,#eef2ff,#faf5ff);
+                       color:#4338ca;
+                       font-size:14px;
+                       font-weight:500;
+                    ">
+               
+                   <strong>Selected:</strong>
+                   <span id="mockUnlockedSelectionText"></span>
+               
+               </div>
             </div>
 
             <span class="mock-unlocked-badge">
@@ -3825,24 +3843,8 @@ function showMockPackage(){
         `${selectedMockSubject} • ${board} • ${cls}`;
 
       document.getElementById(
-        "mockSelectionSummary"
-      ).style.display = "block";
-      
-      document.getElementById(
-          "mockSyllabusContinue"
+      "mockSyllabusContinue"
       ).disabled = false;
-      
-      document.getElementById(
-          "mockSyllabusCard"
-      ).style.display = "none";
-      
-      document.getElementById(
-          "mockPackageCard"
-      ).style.display = "block";
-      
-      document.getElementById(
-          "mockTestsUnlocked"
-      ).style.display = "none";
       
       checkMockAccess();
 
