@@ -3832,10 +3832,8 @@ function showMockPackage(){
 
     }
 
-
     selectedMockBoard = board;
     selectedMockClass = cls;
-
 
     document.getElementById(
         "mockSelectionSummaryText"
@@ -3843,8 +3841,14 @@ function showMockPackage(){
         `${selectedMockSubject} • ${board} • ${cls}`;
 
       document.getElementById(
+       "mockSelectionSummary"
+      ).style.display = "block";
+      
+      
+      document.getElementById(
           "mockSyllabusContinue"
       ).disabled = false;
+      
       
       document.getElementById(
           "mockSyllabusCard"
@@ -4229,30 +4233,43 @@ async function checkMockAccess(){
 
         const data = await response.json();
 
-        if(
-            data.success &&
-            data.unlocked
-        ){
-            document.getElementById("mockSyllabusCard").style.display = "none";
+       if(data.success && data.unlocked){
 
-            document.getElementById("mockPackageCard").style.display = "none";
-
-            document.getElementById(
-                "mockPackageCard"
-            ).style.display = "none";
-
-            document.getElementById(
-                "mockTestsUnlocked"
-            ).style.display = "block";
-
-            document.getElementById(
-                "mockTestsUnlocked"
-            ).scrollIntoView({
-                behavior:"smooth",
-                block:"start"
-            });
-
-        }
+                document.getElementById(
+                    "mockSyllabusCard"
+                ).style.display = "none";
+            
+                document.getElementById(
+                    "mockPackageCard"
+                ).style.display = "block";
+            
+                document.getElementById(
+                    "mockTestsUnlocked"
+                ).style.display = "none";
+            
+            
+                document.getElementById(
+                    "mockPaymentStatus"
+                ).style.display = "block";
+            
+            
+                const payBtn =
+                    document.querySelector(".mock-pay-btn");
+            
+                if(payBtn){
+                    payBtn.style.display = "none";
+                }
+            
+            
+                const continueBtn =
+                    document.getElementById("mockPaidContinue");
+            
+                if(continueBtn){
+                    continueBtn.style.display = "block";
+                    continueBtn.disabled = false;
+                }
+            
+            }
 
     }catch(error){
 
