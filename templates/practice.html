@@ -4274,10 +4274,9 @@ async function checkMockAccess(){
                     payBtn.style.display = "none";
                 }
             
-            
                 const continueBtn =
-                    document.getElementById("mockPaidContinue");
-            
+                    document.getElementById("mockPaidContinueBtn");
+                            
                 if(continueBtn){
                     continueBtn.style.display = "block";
                     continueBtn.disabled = false;
@@ -4302,11 +4301,25 @@ async function checkMockAccess(){
 
 function unlockMockTests(){
 
+    // Show selected syllabus
+    const selectedText =
+        `${selectedMockSubject} • ${selectedMockBoard} • ${selectedMockClass}`;
+
+    const unlockedSelection =
+        document.getElementById("mockUnlockedSelectionText");
+
+    if(unlockedSelection){
+        unlockedSelection.textContent = selectedText;
+    }
+
+
+    // Hide payment page
     document.getElementById(
         "mockPackageCard"
     ).style.display = "none";
 
 
+    // Show unlocked mock tests
     document.getElementById(
         "mockTestsUnlocked"
     ).style.display = "block";
@@ -4320,6 +4333,26 @@ function unlockMockTests(){
     });
 
 }
+
+function backToMockPackage(){
+
+    document.getElementById(
+        "mockTestsUnlocked"
+    ).style.display = "none";
+
+    document.getElementById(
+        "mockPackageCard"
+    ).style.display = "block";
+
+    document.getElementById(
+        "mockPackageCard"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+
+}
+   
 function continueToMockTests(){
 
     document.getElementById(
