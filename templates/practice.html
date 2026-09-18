@@ -1556,7 +1556,7 @@ body.exam-running .exam-lock-bar{
     </div>
 
 
-   <!-- ₹299 PACKAGE -->
+  <!-- MOCK PAYMENT PACKAGE -->
 <div class="p-card"
      id="mockPackageCard"
      style="display:none;">
@@ -1607,8 +1607,12 @@ body.exam-running .exam-lock-bar{
 
             </div>
 
-            <button class="mock-pay-btn"
-                    onclick="startMockPayment()">
+            <!-- PAYMENT BUTTON -->
+            <button
+                type="button"
+                id="mockPayBtn"
+                class="mock-pay-btn"
+                onclick="startMockPayment()">
 
                 🔒 Unlock Mock Tests — ₹1
 
@@ -1622,7 +1626,34 @@ body.exam-running .exam-lock-bar{
 
     </div>
 
-  
+
+    <!-- BACK + CONTINUE -->
+    <div class="mock-payment-actions">
+
+        <button
+            type="button"
+            class="mock-back-btn"
+            onclick="backToMockSyllabus()">
+
+            ← Back
+
+        </button>
+
+
+        <button
+            type="button"
+            id="mockPaidContinueBtn"
+            class="mock-next-btn"
+            onclick="unlockMockTests()"
+            disabled>
+
+            Continue →
+
+        </button>
+
+    </div>
+
+
     <!-- PAYMENT STATUS -->
     <div
         id="mockPaymentStatus"
@@ -1638,9 +1669,7 @@ body.exam-running .exam-lock-bar{
     </div>
 
 </div>
-
-
-    <!-- UNLOCKED MOCK TESTS -->
+       <!-- UNLOCKED MOCK TESTS -->
     <div class="p-card"
          id="mockTestsUnlocked"
          style="display:none;">
@@ -1679,16 +1708,7 @@ body.exam-running .exam-lock-bar{
             </span>
 
         </div>
-            <div class="mock-payment-actions">
             
-                <button
-                    type="button"
-                    class="mock-back-btn"
-                    onclick="backToMockSyllabus()">
-                    ← Back
-                </button>
-            
-            </div>
        <div id="mockHomeView">
 
         <div class="mock-test-grid">
@@ -1789,17 +1809,8 @@ body.exam-running .exam-lock-bar{
             </div>
 
         </div>
-          
-              
-               <div class="mock-payment-actions">
-
-                  <button
-                      type="button"
-                      class="mock-back-btn"
-                      onclick="backToMockSyllabus()">
-                      ← Back
-                  </button>
-             </div>
+                      
+               
         </div>
         <!-- END MOCK HOME -->
 
