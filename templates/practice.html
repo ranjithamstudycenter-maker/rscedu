@@ -1033,7 +1033,15 @@ body.exam-running .exam-lock-bar{
     border-radius:12px;
     background:#fff;
 }
+.chapter-item.selected{
+    border:2px solid #6366f1;
+    background:#eef2ff;
+    box-shadow:0 8px 22px rgba(99,102,241,.12);
+}
 
+.chapter-item.selected .start-btn{
+    background:#312e81;
+}
 .start-btn{
     background:#4f46e5;
     color:#fff;
@@ -1523,142 +1531,131 @@ body.exam-running .exam-lock-bar{
         </div>
 
          <div class="mock-syllabus-actions">
-
-    <button
-        type="button"
-        class="mock-back-btn"
-        onclick="backToMockSubject()">
-        ← Back
-    </button>
-
-    <button
-        type="button"
-        id="mockSyllabusContinue"
-        class="mock-next-btn"
-        onclick="continueMockToPayment()"
-        disabled>
-        Continue →
-    </button>
-
-</div>
+             <button
+                 type="button"
+                 class="mock-back-btn"
+                 onclick="backToMockSubject()">
+                 ← Back
+             </button>
+         
+             <button
+                 type="button"
+                 id="mockSyllabusContinue"
+                 class="mock-next-btn"
+                 onclick="continueMockToPayment()"
+                 disabled>
+                 Continue →
+             </button>
+         
+         </div>
 
     </div>
 
 
-    <!-- ₹299 PACKAGE -->
-    <div class="p-card"
-         id="mockPackageCard"
-         style="display:none;">
+   <!-- ₹299 PACKAGE -->
+<div class="p-card"
+     id="mockPackageCard"
+     style="display:none;">
 
-        <div class="mock-package-card">
+    <div class="mock-package-card">
 
-            <div class="mock-package-icon">
-                🏆
+        <div class="mock-package-icon">
+            🏆
+        </div>
+
+        <div class="mock-package-content">
+
+            <div class="mock-package-label">
+                MATHEMATICS MOCK TEST PACKAGE
             </div>
 
-            <div class="mock-package-content">
+            <h2>
+                Complete Mock Test Series
+            </h2>
 
-                <div class="mock-package-label">
-                    MATHEMATICS MOCK TEST PACKAGE
-                </div>
+            <p>
+                One payment gives access to all
+                Mathematics mock tests for the
+                selected Board and Class.
+            </p>
 
-                <h2>
-                    Complete Mock Test Series
-                </h2>
+            <div class="mock-price">
+                <span>₹</span>1
+            </div>
 
-                <p>
-                    One payment gives access to all
-                    Mathematics mock tests for the
-                    selected Board and Class.
-                </p>
+            <div class="mock-package-features">
 
+                <div>✓ Chapter-wise Mock Tests</div>
 
-                <div class="mock-price">
-                    <span>₹</span>1
-                </div>
+                <div>✓ 4-Chapter Mock Tests</div>
 
+                <div>✓ Full-Syllabus Final Mock</div>
 
-                <div class="mock-package-features">
+                <div>✓ 50 Questions</div>
 
-                    <div>
-                        ✓ Chapter-wise Mock Tests
-                    </div>
+                <div>✓ 100 Marks</div>
 
-                    <div>
-                        ✓ 4-Chapter Mock Tests
-                    </div>
+                <div>✓ 60 Minutes</div>
 
-                    <div>
-                        ✓ Full-Syllabus Final Mock
-                    </div>
+                <div>✓ Detailed Result & Review</div>
 
-                    <div>
-                        ✓ 50 Questions
-                    </div>
-
-                    <div>
-                        ✓ 100 Marks
-                    </div>
-
-                    <div>
-                        ✓ 60 Minutes
-                    </div>
-
-                    <div>
-                        ✓ Detailed Result & Review
-                    </div>
-
-                    <div>
-                        ✓ Explanation & Hint
-                    </div>
-
-                </div>
-
-                 <button class="mock-pay-btn"
-                        onclick="startMockPayment()">
-
-                    🔒 Unlock Mock Tests — ₹1
-
-                </button>
-
-                <p class="mock-payment-note">
-                    Secure payment powered by Razorpay
-                </p>
+                <div>✓ Explanation & Hint</div>
 
             </div>
+
+            <button class="mock-pay-btn"
+                    onclick="startMockPayment()">
+
+                🔒 Unlock Mock Tests — ₹1
+
+            </button>
+
+            <p class="mock-payment-note">
+                Secure payment powered by Razorpay
+            </p>
 
         </div>
-<div class="mock-payment-actions">
 
-    <button
-        type="button"
-        class="mock-back-btn"
-        onclick="backToMockSyllabus()">
-        ← Back
-    </button>
-
-    <button
-        type="button"
-        id="mockPaidContinue"
-        class="mock-next-btn"
-        onclick="continueToMockTests()"
-        style="display:none;">
-        Continue →
-    </button>
-<div
-    id="mockPaymentStatus"
-    class="mock-payment-status"
-    style="display:none;">
-
-    <span>✓ PAID</span>
-
-    <small>
-        Payment verified successfully
-    </small>
-
-</div>
-</div>
     </div>
+
+
+    <!-- PAYMENT ACTIONS -->
+    <div class="mock-payment-actions">
+
+        <button
+            type="button"
+            class="mock-back-btn"
+            onclick="backToMockSyllabus()">
+            ← Back
+        </button>
+
+        <button
+            type="button"
+            id="mockPaidContinue"
+            class="mock-next-btn"
+            onclick="continueToMockTests()"
+            style="display:none;">
+            Continue →
+        </button>
+
+    </div>
+
+
+    <!-- PAYMENT STATUS -->
+    <div
+        id="mockPaymentStatus"
+        class="mock-payment-status"
+        style="display:none;">
+
+        <span>✓ PAID</span>
+
+        <small>
+            Payment verified successfully
+        </small>
+
+    </div>
+
+</div>
 
 
     <!-- UNLOCKED MOCK TESTS -->
@@ -1807,7 +1804,25 @@ body.exam-running .exam-lock-bar{
             </div>
 
             <div id="chapterList"></div>
-
+               <div class="mock-syllabus-actions">
+               
+                   <button
+                       type="button"
+                       class="mock-back-btn"
+                       onclick="showMockHome()">
+                       ← Back
+                   </button>
+               
+                   <button
+                       type="button"
+                       id="chapterContinueBtn"
+                       class="mock-next-btn"
+                       onclick="continueSelectedChapter()"
+                       disabled>
+                       Continue →
+                   </button>
+               
+               </div>
         </div>
 
 
@@ -3564,6 +3579,7 @@ document.getElementById("startTestModal")?.addEventListener("click", function(e)
 let selectedMockSubject = "";
 let selectedMockBoard = "";
 let selectedMockClass = "";
+let selectedChapter = "";
 
 
 /* ---------- SUBJECT ---------- */
@@ -3575,12 +3591,6 @@ function selectMockSubject(subject, card){
     }
 
     selectedMockSubject = subject;
-
-    document
-        .querySelectorAll(".mock-subject-card")
-        .forEach(c => c.classList.remove("active"));
-
-    card.classList.add("active");
 
     document.getElementById("mockSubjectCard").style.display = "none";
    
@@ -3818,22 +3828,14 @@ function showMockPackage(){
     ).style.display = "none";
 
     document.getElementById(
-        "mockPackageCard"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "mockTestsUnlocked"
+    "mockPackageCard"
+    ).style.display = "none";
+   
+   document.getElementById(
+       "mockTestsUnlocked"
     ).style.display = "none";
 
     checkMockAccess();
-   
-    document.getElementById(
-        "mockPackageCard"
-    ).scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-    });
 
 }
 /* ---------- SYLLABUS NAVIGATION ---------- */
@@ -4336,10 +4338,11 @@ function openChapterMock(){
                 </div>
 
                 <button
-                    class="start-btn"
-                    onclick="startChapterMock('${chapter}')">
-                    Start Test →
-                </button>
+                   type="button"
+                   class="start-btn"
+                   onclick="selectChapterMock('${chapter}', this)">
+                   Select →
+               </button>
 
             </div>
         `;
@@ -4356,7 +4359,29 @@ function openChapterMock(){
 
 }
 
+function selectChapterMock(chapter, button){
 
+    selectedChapter = chapter;
+
+    document
+        .querySelectorAll("#chapterList .chapter-item")
+        .forEach(item => {
+            item.classList.remove("selected");
+        });
+
+    const selectedItem = button.closest(".chapter-item");
+
+    if(selectedItem){
+        selectedItem.classList.add("selected");
+    }
+
+    const continueBtn =
+        document.getElementById("chapterContinueBtn");
+
+    if(continueBtn){
+        continueBtn.disabled = false;
+    }
+}
 /* ---------- FOUR CHAPTER MOCK ---------- */
 
 function openFourChapterMock(){
@@ -4422,6 +4447,15 @@ function openFourChapterMock(){
         block: "start"
     });
 
+}
+function continueSelectedChapter(){
+
+    if(!selectedChapter){
+        alert("Please select a chapter first.");
+        return;
+    }
+
+    startChapterMock(selectedChapter);
 }
 function updateMockHistory(screen){
 
