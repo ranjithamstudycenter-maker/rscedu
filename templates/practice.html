@@ -3843,8 +3843,20 @@ function showMockPackage(){
         `${selectedMockSubject} • ${board} • ${cls}`;
 
       document.getElementById(
-      "mockSyllabusContinue"
+          "mockSyllabusContinue"
       ).disabled = false;
+      
+      document.getElementById(
+          "mockSyllabusCard"
+      ).style.display = "none";
+      
+      document.getElementById(
+          "mockPackageCard"
+      ).style.display = "block";
+      
+      document.getElementById(
+          "mockTestsUnlocked"
+      ).style.display = "none";
       
       checkMockAccess();
 
