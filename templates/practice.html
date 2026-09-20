@@ -986,7 +986,26 @@ body.exam-running .exam-lock-bar{
     justify-content:space-between;
     align-items:center;
 }
+#mockTestsUnlocked .section-head{
+    display:block;
+    text-align:center;
+}
 
+#mockTestsUnlocked .section-head h2{
+    text-align:center;
+}
+
+#mockTestsUnlocked .section-head p{
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+#mockTestsUnlocked #mockUnlockedSelection{
+    justify-content:center;
+    text-align:center;
+}
+   
 .mock-back-btn,
 .mock-next-btn{
     border:none;
@@ -4489,7 +4508,7 @@ function selectChapterMock(chapter, button){
 
 function openFourChapterMock(){
   
-    document.getElementById("mockShell").style.display = "none"; 
+    document.getElementById("mockShell").style.display = "block"; 
     updateMockHistory("fourChapter");
     // Hide Mock Home
     document.getElementById("mockHomeView").style.display = "none";
@@ -4626,7 +4645,7 @@ function showMockHome(){
 
 function openFinalMock(){
 
-    document.getElementById("mockShell").style.display = "none";
+    document.getElementById("mockShell").style.display = "block";
     updateMockHistory("final");
     // Hide Mock Home
     document.getElementById("mockHomeView").style.display = "none";
