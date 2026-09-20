@@ -1817,11 +1817,7 @@ body.exam-running .exam-lock-bar{
         ========================================== -->
         <div id="chapterView" style="display:none;">
 
-            <button class="back-btn" onclick="showMockHome()">
-                ← Back to Mock Tests
-            </button>
-
-            <div class="section-head">
+           <div class="section-head">
                 <div>
                     <h2>📘 Chapter-wise Mock Tests</h2>
 
@@ -1859,10 +1855,6 @@ body.exam-running .exam-lock-bar{
         ========================================== -->
         <div id="fourChapterView" style="display:none;">
 
-            <button class="back-btn" onclick="showMockHome()">
-                ← Back to Mock Tests
-            </button>
-
             <div class="section-head">
                 <div>
                     <h2>📚 4-Chapter Mock Tests</h2>
@@ -1874,7 +1866,21 @@ body.exam-running .exam-lock-bar{
             </div>
 
             <div id="fourChapterList"></div>
-
+                   <button
+                       type="button"
+                       class="mock-back-btn"
+                       onclick="showMockHome()">
+                       ← Back
+                   </button>
+               
+                   <button
+                       type="button"
+                       id="chapterContinueBtn"
+                       class="mock-next-btn"
+                       onclick="continueSelectedChapter()"
+                       disabled>
+                       Continue →
+                   </button>
         </div>
 
 
@@ -1882,10 +1888,6 @@ body.exam-running .exam-lock-bar{
              FINAL FULL-SYLLABUS VIEW
         ========================================== -->
         <div id="finalView" style="display:none;">
-
-            <button class="back-btn" onclick="showMockHome()">
-                ← Back to Mock Tests
-            </button>
 
             <div class="section-head">
                 <div>
@@ -1925,9 +1927,24 @@ body.exam-running .exam-lock-bar{
                 <button class="start-btn">
                     Start Final Test →
                 </button>
+               
 
             </div>
-
+                <button
+                       type="button"
+                       class="mock-back-btn"
+                       onclick="showMockHome()">
+                       ← Back
+                   </button>
+               
+                   <button
+                       type="button"
+                       id="chapterContinueBtn"
+                       class="mock-next-btn"
+                       onclick="continueSelectedChapter()"
+                       disabled>
+                       Continue →
+                   </button>
         </div>
 
 
