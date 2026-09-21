@@ -23,7 +23,7 @@ from PyPDF2 import PdfReader
 
 
 def init_db():
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
     c.execute("""
@@ -809,7 +809,7 @@ def get_user(phone):
     }
 
     # 🔥 ALWAYS LOAD FROM DB
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
     c.execute("SELECT * FROM students WHERE phone=?", (phone,))
@@ -846,7 +846,7 @@ def save_user():
     user = get_user(phone)
 
     # 🔥 INSERT BASE RECORD (if not exists)
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
     c.execute("""
@@ -948,7 +948,7 @@ def demo_complete():
 
     user["demo_done"][course] = True
 
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
     # 🔍 check existing record
@@ -1148,7 +1148,7 @@ def payment_success_api():
     user["hours_used"][course] = 0
     user["max_hours"][course] = classes_per_month  # 24 classes
 
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
     
     c.execute("""
@@ -1283,7 +1283,7 @@ def mock_create_order():
                 "Board and Class are required."
         }), 400
 
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
@@ -1512,7 +1512,7 @@ def mock_payment_success():
     # -------------------------------------------------
     # FIND OUR PENDING PURCHASE
     # -------------------------------------------------
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
@@ -1743,7 +1743,7 @@ def mock_check_access():
                 "Subject, Board and Class are required."
         }), 400
 
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
@@ -1800,7 +1800,7 @@ def join_class_api():
     # DB CHECK
     # =================================
 
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
     c.execute("""
@@ -2031,7 +2031,7 @@ def start_class():
         # 🔥 SAVE LIVE CLASS TO DB
         # =====================================
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         # 🔥 create table if not exists
@@ -2081,7 +2081,7 @@ def start_class():
 
 def get_active_meet_link(course):
 
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
     # 🔥 SAFETY TABLE
@@ -2145,7 +2145,7 @@ def end_class():
 
         course = teachers[username]["course"]
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         # 🔥 GET ENROLLED STUDENTS
@@ -2212,7 +2212,7 @@ def end_class():
         teachers[username]["meet_link"] = ""
 
         # 🔥 UPDATE LIVE CLASS TABLE
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         c.execute("""
@@ -2351,7 +2351,7 @@ def teacher_dashboard():
     # STUDENT COUNT
     # =========================
 
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
     c.execute("""
@@ -2417,7 +2417,7 @@ def teacher_dashboard():
     # 🔥 WAITING DEMO STUDENTS
     # =========================================
     
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
     
     c.execute("""
@@ -2451,7 +2451,7 @@ def teacher_dashboard():
         })
     conn.close()
     
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
     
@@ -2742,7 +2742,7 @@ def admin_mock_test_list():
         }), 403
 
     try:
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -2826,7 +2826,7 @@ def admin_mock_questions():
         }), 403
 
     try:
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -2998,7 +2998,7 @@ def admin_add_mock_question():
                 "error": "Difficulty must be Easy, Medium or Hard."
             }), 400
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         # -------------------------------------------------
@@ -3174,7 +3174,7 @@ def admin_delete_mock_question(question_id):
 
     try:
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         c.execute("""
@@ -3254,7 +3254,7 @@ def admin_delete_mock_test(test_id):
 
     try:
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         c.execute("""
@@ -3402,7 +3402,7 @@ def admin_import_mock_questions_excel():
                 )
             }), 400
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         imported = 0
@@ -3857,7 +3857,7 @@ def admin_syllabus():
                     )
 
                     # Save syllabus information in database
-                    conn = sqlite3.connect("students.db")
+                    conn = sqlite3.connect("/var/data/students.db")
 
                     c = conn.cursor()
 
@@ -3927,7 +3927,7 @@ def admin_syllabus():
                 )
 
     # Get uploaded syllabi
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
 
     conn.row_factory = sqlite3.Row
 
@@ -3971,7 +3971,7 @@ def delete_syllabus(syllabus_id):
 
     try:
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         # Get syllabus details
@@ -4045,7 +4045,7 @@ def admin_practice_questions():
         subtopic = request.args.get("subtopic", "").strip()
         difficulty = request.args.get("difficulty", "").strip().lower()
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -4234,7 +4234,7 @@ def import_practice_questions_excel():
         # 4. DATABASE
         # -------------------------------------------------
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
 
@@ -4567,7 +4567,7 @@ def add_practice_question():
         # SAVE QUESTION
         # =================================================
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         c.execute("""
@@ -4649,7 +4649,7 @@ def delete_practice_question(question_id):
 
     try:
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         c.execute("""
@@ -4712,7 +4712,7 @@ def practice_question_count():
         topic = request.args.get("topic", "").strip()
         subtopic = request.args.get("subtopic", "").strip()
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         query = """
@@ -4884,7 +4884,7 @@ def practice_create_session():
         # 4. DATABASE
         # -------------------------------------------------
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
 
         conn.row_factory = sqlite3.Row
 
@@ -6615,7 +6615,7 @@ def admin_students():
         return jsonify({"error": "Unauthorized"}), 403
 
     # ✅ FETCH FROM DB
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
@@ -6662,7 +6662,7 @@ def admin_reset_demo():
     phone = request.json.get("phone")
     course = request.json.get("course")
     
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
     # 🔥 UPDATE ALL ROWS
@@ -6683,7 +6683,7 @@ def delete_student():
     phone = data.get("phone")
     course = data.get("course")
 
-    conn = sqlite3.connect("students.db")
+    conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
     c.execute("DELETE FROM students WHERE phone=? AND course=?", (phone, course))
@@ -6951,7 +6951,7 @@ def mock_final_test():
 
     try:
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -7031,7 +7031,7 @@ def mock_options():
 
     try:
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -7077,7 +7077,7 @@ def mock_options():
 @app.route("/api/practice/options")
 def practice_options():
     try:
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -7128,7 +7128,7 @@ def practice_topics():
                 "error": "Board, Class and Subject are required."
             }), 400
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -7281,7 +7281,7 @@ def ai_learning_options():
 
     try:
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
 
         c = conn.cursor()
@@ -8128,7 +8128,7 @@ def ai_question():
         # GET SELECTED SYLLABUS
         # -----------------------------------------
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -8431,7 +8431,7 @@ def save_ai_attempt():
         # Maximum 25 questions
         question_data = question_data[:25]
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
         # -------------------------------------------------
@@ -10695,7 +10695,7 @@ def ai_session_submit():
         # DATABASE
         # -------------------------------------------------
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
 
         conn.row_factory = sqlite3.Row
 
@@ -11327,7 +11327,7 @@ def ai_performance():
         # DATABASE
         # -------------------------------------------------
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
 
@@ -12030,7 +12030,7 @@ def ai_diagnostic_question():
         # GET SYLLABUS
         # -----------------------------------------
 
-        conn = sqlite3.connect("students.db")
+        conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
 
         c = conn.cursor()
