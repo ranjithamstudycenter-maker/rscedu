@@ -334,7 +334,39 @@ a{text-decoration:none}
     grid-template-columns:repeat(3,1fr);
     gap:18px;
 }
+.mock-unlocked-stats{
+    display:flex;
+    justify-content:center;
+    align-items:stretch;
+    gap:14px;
+    margin:0 auto 28px;
+    max-width:850px;
+    flex-wrap:wrap;
+}
 
+.mock-unlocked-stat{
+    min-width:150px;
+    padding:16px 20px;
+    border-radius:16px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    text-align:center;
+}
+
+.mock-unlocked-stat strong{
+    display:block;
+    font-size:24px;
+    font-weight:900;
+    color:#312e81;
+}
+
+.mock-unlocked-stat span{
+    display:block;
+    margin-top:3px;
+    font-size:11px;
+    color:#64748b;
+    font-weight:700;
+}
 .mock-test-option{
     border:2px solid #e2e8f0;
     border-radius:22px;
@@ -1719,7 +1751,30 @@ body.exam-running .exam-lock-bar{
         </div>
             
        <div id="mockHomeView">
-
+        <!-- MOCK TEST STATS -->
+               <div class="mock-unlocked-stats">
+               
+                   <div class="mock-unlocked-stat">
+                       <strong>50</strong>
+                       <span>Questions / Test</span>
+                   </div>
+               
+                   <div class="mock-unlocked-stat">
+                       <strong>100</strong>
+                       <span>Total Marks</span>
+                   </div>
+               
+                   <div class="mock-unlocked-stat">
+                       <strong>60 min</strong>
+                       <span>Test Duration</span>
+                   </div>
+               
+                   <div class="mock-unlocked-stat">
+                       <strong>1</strong>
+                       <span>Attempt / Test</span>
+                   </div>
+               
+               </div>
         <div class="mock-test-grid">
 
             <!-- CHAPTER -->
@@ -1928,7 +1983,7 @@ body.exam-running .exam-lock-bar{
 
                 </div>
 
-                <button class="start-btn">
+                <button class="start-btn" onclick="startFinalMock()">
                     Start Final Test →
                 </button>
                
@@ -4439,10 +4494,10 @@ function openChapterMock(){
                 </div>
 
                 <button
-                   type="button"
-                   class="start-btn"
-                   onclick="selectChapterMock('${chapter}', this)">
-                   Select →
+                  type="button"
+                  class="start-btn"
+                  onclick="startChapterMock('${chapter}')">
+                  Start Test →
                </button>
 
             </div>
