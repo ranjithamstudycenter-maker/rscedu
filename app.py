@@ -6929,6 +6929,102 @@ def practice():
 # =====================================================
 # RSC MOCK TEST - AVAILABLE OPTIONS
 # =====================================================
+# =====================================================
+# RSC MOCK TEST - FINAL FULL SYLLABUS TEST
+# =====================================================
+
+@app.route("/api/mock/final-test")
+def mock_final_test():
+
+    board = request.args.get("board", "").strip()
+    class_name = request.args.get("class_name", "").strip()
+    subject = request.args.get(
+        "subject",
+        MOCK_TEST_SUBJECT
+    ).strip()
+
+    if not board or not class_name or not subject:
+        return jsonify({
+            "success": False,
+            "error": "Board, Class and Subject are required."
+        }), 400
+
+    try:
+
+        conn = sqlite3.connect("students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT
+                id,
+                mock_test_no,
+                board,
+                class_name,
+                subject,
+                test_name,
+                syllabus_scope,
+                total_questions,
+                total_marks,
+                duration_minutes,
+                attempt_limit,
+                active
+            FROM mock_tests
+            WHERE board=?
+              AND class_name=?
+              AND subject=?
+              AND active=1
+              AND (
+                    LOWER(test_name) LIKE '%final%'
+                    OR LOWER(test_name) LIKE '%full%'
+                    OR LOWER(syllabus_scope) LIKE '%full%'
+                    OR LOWER(syllabus_scope) LIKE '%syllabus%'
+                  )
+            ORDER BY id DESC
+            LIMIT 1
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+        row = c.fetchone()
+
+        conn.close()
+
+        if not row:
+            return jsonify({
+                "success": False,
+                "found": False,
+                "error": "Final Full-Syllabus Mock Test not configured yet."
+            }), 404
+
+        return jsonify({
+            "success": True,
+            "found": True,
+            "test": {
+                "id": row["id"],
+                "mock_test_no": row["mock_test_no"],
+                "board": row["board"],
+                "class_name": row["class_name"],
+                "subject": row["subject"],
+                "test_name": row["test_name"],
+                "syllabus_scope": row["syllabus_scope"],
+                "total_questions": row["total_questions"],
+                "total_marks": row["total_marks"],
+                "duration_minutes": row["duration_minutes"],
+                "attempt_limit": row["attempt_limit"]
+            }
+        })
+
+    except Exception as e:
+
+        print("FINAL MOCK TEST ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
 
 @app.route("/api/mock/options")
 def mock_options():
