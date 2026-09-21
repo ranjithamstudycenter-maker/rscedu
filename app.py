@@ -21,9 +21,17 @@ from email.message import EmailMessage
 from PyPDF2 import PdfReader
 
 
+# =====================================================
+# RSC PERSISTENT STORAGE
+# =====================================================
+
+DATA_DIR = "/var/data"
+DB_PATH = os.path.join(DATA_DIR, "students.db")
+
+
 
 def init_db():
-    conn = sqlite3.connect("/var/data/students.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
     c.execute("""
@@ -1179,7 +1187,7 @@ def payment_success_api():
 
     # Save to CSV
     try:
-        file = "payments.csv"
+        file = os.path.join("/var/data", "payments.csv")
         write_header = not os.path.exists(file)
         with open(file, "a", newline="") as f:
             writer = csv.writer(f)
@@ -2576,7 +2584,7 @@ def submit_teacher_feedback():
 
 def _save_feedback():
     try:
-        with open("feedback.json", "w") as f:
+        with open("/var/data/feedback.json", "w") as f:
             json.dump(feedback_db, f, indent=4)
     except Exception as e:
         print("Feedback save error:", e)
@@ -3757,7 +3765,7 @@ def download_salary_pdf():
 
 from werkzeug.utils import secure_filename
 
-SYLLABUS_FOLDER = "syllabus_files"
+SYLLABUS_FOLDER = os.path.join("/var/data", "syllabus_files")
 os.makedirs(SYLLABUS_FOLDER, exist_ok=True)
 
 @app.route("/upload", methods=["GET", "POST"])
@@ -6739,7 +6747,7 @@ def delete_feedback():
 
 # -------------------- MATERIALS (PDF) --------------------
 
-PDF_FOLDER = "rsc_download"
+PDF_FOLDER = os.path.join("/var/data", "rsc_download")
 os.makedirs(PDF_FOLDER, exist_ok=True)
 
 PRODUCTS = {
@@ -6894,7 +6902,7 @@ def payment_success():
     # Save to CSV
     phone = session.get("phone", "")
     try:
-        file = "payments.csv"
+        file = os.path.join("/var/data", "payments.csv")
         write_header = not os.path.exists(file)
         with open(file, "a", newline="") as f:
             writer = csv.writer(f)
