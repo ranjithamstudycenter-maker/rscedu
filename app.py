@@ -4897,7 +4897,65 @@ def practice_question_count():
 # =====================================================
 # RSC PRACTICE - CREATE / RESUME SESSION
 # =====================================================
+# =====================================================
+# RSC PRACTICE - DATABASE DIAGNOSTIC
+# =====================================================
 
+@app.route("/admin/practice-db-check")
+def practice_db_check():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT name
+            FROM sqlite_master
+            WHERE type='table'
+            ORDER BY name
+        """)
+
+        tables = [
+            row[0]
+            for row in c.fetchall()
+        ]
+
+        c.execute("""
+            SELECT COUNT(*)
+            FROM practice_questions
+        """)
+
+        question_count = c.fetchone()[0]
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "db_path": DB_PATH,
+            "practice_sessions_exists":
+                "practice_sessions" in tables,
+            "practice_questions_exists":
+                "practice_questions" in tables,
+            "practice_question_count":
+                question_count,
+            "tables": tables
+        })
+
+    except Exception as e:
+
+        return jsonify({
+            "success": False,
+            "db_path": DB_PATH,
+            "error": str(e)
+        }), 500
+        
 @app.route("/api/practice/session", methods=["POST"])
 def practice_create_session():
 
