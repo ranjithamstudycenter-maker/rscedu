@@ -672,7 +672,58 @@ def init_db():
     conn.close()
     
 init_db()
+# =====================================================
+# RSC PRACTICE SESSION TABLE SAFETY MIGRATION
+# =====================================================
 
+conn = sqlite3.connect(DB_PATH)
+c = conn.cursor()
+
+c.execute("""
+CREATE TABLE IF NOT EXISTS practice_sessions (
+
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+    practice_id TEXT NOT NULL,
+
+    board TEXT NOT NULL,
+    class_name TEXT NOT NULL,
+    subject TEXT NOT NULL,
+
+    topic TEXT NOT NULL,
+    subtopic TEXT NOT NULL,
+
+    difficulty TEXT NOT NULL,
+
+    total_questions INTEGER DEFAULT 25,
+    total_marks INTEGER DEFAULT 50,
+
+    question_ids TEXT NOT NULL,
+
+    answers TEXT DEFAULT '{}',
+
+    current_question INTEGER DEFAULT 0,
+
+    status TEXT DEFAULT 'in_progress',
+
+    started_at TEXT,
+
+    submitted_at TEXT,
+
+    score INTEGER DEFAULT 0,
+
+    correct_answers INTEGER DEFAULT 0,
+
+    incorrect_answers INTEGER DEFAULT 0,
+
+    unanswered INTEGER DEFAULT 0,
+
+    percentage REAL DEFAULT 0
+)
+""")
+
+conn.commit()
+conn.close()
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
