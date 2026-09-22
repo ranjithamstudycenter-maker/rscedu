@@ -3093,21 +3093,20 @@ function continueToDifficulty(){
         return;
     }
 
-    const setupCard =
-        document.getElementById("setupCard");
+    const mathSetup =
+        document.getElementById("mathSetup");
 
     const difficultyCard =
         document.getElementById("difficultyCard");
 
-    /* Hide complete syllabus step */
-    setupCard.style.display = "none";
+    // Hide only Syllabus selection
+    mathSetup.style.display = "none";
 
-    /* Show only difficulty step */
+    // Show Difficulty selection
     difficultyCard.style.display = "block";
 
     updateDifficultyState();
 
-    /* Move directly to Difficulty section */
     setTimeout(function(){
         difficultyCard.scrollIntoView({
             behavior:"smooth",
