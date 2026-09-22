@@ -4698,7 +4698,54 @@ def delete_practice_question(question_id):
             "error": str(e)
         }), 500
 
+# =====================================================
+# ADMIN - DELETE ALL PRACTICE QUESTIONS
+# =====================================================
 
+@app.route(
+    "/admin/practice-questions/delete-all",
+    methods=["POST"]
+)
+def delete_all_practice_questions():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+
+        c.execute("""
+            DELETE FROM practice_questions
+        """)
+
+        deleted_count = c.rowcount
+
+        conn.commit()
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "message": "All practice questions deleted successfully.",
+            "deleted": deleted_count
+        })
+
+    except Exception as e:
+
+        print(
+            "DELETE ALL PRACTICE QUESTIONS ERROR:",
+            e
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+        
 # =====================================================
 # ADMIN - PRACTICE QUESTION BANK COUNTS
 # =====================================================
