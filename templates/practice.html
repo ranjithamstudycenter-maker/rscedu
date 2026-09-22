@@ -3138,43 +3138,6 @@ function continueToDifficulty(){
 }
 
 function backToPracticeSubject(){
-
-    const difficultyCard =
-        document.getElementById("difficultyCard");
-
-    const mathSetup =
-        document.getElementById("mathSetup");
-
-    const subjectGrid =
-        document.querySelector(".subject-grid");
-
-    // If Difficulty page is open
-    if(difficultyCard.style.display !== "none"){
-
-        difficultyCard.style.display = "none";
-        mathSetup.style.display = "block";
-
-        mathSetup.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-        });
-
-        return;
-    }
-
-    // If Syllabus page is open → go back to Subject selection
-    mathSetup.style.display = "none";
-    subjectGrid.style.display = "grid";
-
-    document.querySelectorAll(".subject-card")
-        .forEach(card => card.classList.remove("active"));
-
-    document.getElementById("setupCard").scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-    });
-}
-
 /* ---------- PRACTICE SESSION ---------- */
 function startPractice(level){
     const board = document.getElementById("practiceBoard").value;
