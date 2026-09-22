@@ -275,7 +275,19 @@ a{text-decoration:none}
 }
 .exam-option.selected .letter{background:#6366f1;color:#fff}
 .exam-nav{
-    display:flex;justify-content:space-between;gap:10px;margin-top:22px;
+    position:sticky;
+    bottom:10px;
+    display:flex;
+    justify-content:space-between;
+    gap:10px;
+    margin-top:22px;
+    padding:10px;
+    background:rgba(255,255,255,.96);
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+    box-shadow:0 8px 20px rgba(15,23,42,.10);
+    backdrop-filter:blur(8px);
+    z-index:20;
 }
 .nav-btn,.submit-btn{
     border:none;border-radius:12px;padding:12px 18px;font-weight:800;cursor:pointer;
