@@ -3112,6 +3112,21 @@ function continueToDifficulty(){
     // Show Difficulty selection
     difficultyCard.style.display = "block";
 
+    // Move selected syllabus summary to the top of Difficulty page
+   const selectionSummary =
+       document.getElementById("selectionSummary");
+   
+   if(selectionSummary){
+   
+       difficultyCard.insertBefore(
+           selectionSummary,
+           difficultyCard.firstChild
+       );
+
+    selectionSummary.style.display = "block";
+    selectionSummary.style.textAlign = "center";
+    selectionSummary.style.margin = "0 auto 22px";
+}
     updateDifficultyState();
 
     setTimeout(function(){
