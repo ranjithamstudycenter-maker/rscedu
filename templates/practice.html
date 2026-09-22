@@ -1198,29 +1198,7 @@ body.exam-running .exam-lock-bar{
             🏆 Mock Test
         </button>
     </div>
-<div class="hero-stats">
 
-    <div class="hero-stat">
-        <strong id="heroStat1">25</strong>
-        <span id="heroLabel1">Questions / Attempt</span>
-    </div>
-
-    <div class="hero-stat">
-        <strong id="heroStat2">50</strong>
-        <span id="heroLabel2">Total Marks</span>
-    </div>
-
-    <div class="hero-stat">
-        <strong id="heroStat3">30 min</strong>
-        <span id="heroLabel3">Practice Time</span>
-    </div>
-
-    <div class="hero-stat">
-        <strong id="heroStat4">∞</strong>
-        <span id="heroLabel4">Practice Attempts</span>
-    </div>
-
-</div>
     <!-- PRACTICE -->
     <section id="practiceShell">
 
@@ -1347,9 +1325,6 @@ body.exam-running .exam-lock-bar{
                     <div class="difficulty-icon">🌱</div>
                     <h3>Easy</h3>
                     <p>Strengthen fundamentals and build confidence with basic concept-focused questions.</p>
-                    <div class="difficulty-meta">
-                        <span>25 MCQs</span><span>50 Marks</span><span>30 Minutes</span>
-                    </div>
                     <span class="level-action">Start Easy Practice →</span>
                 </div>
 
@@ -1357,9 +1332,6 @@ body.exam-running .exam-lock-bar{
                     <div class="difficulty-icon">⚡</div>
                     <h3>Medium</h3>
                     <p>Improve application skills with moderate-level questions and problem solving.</p>
-                    <div class="difficulty-meta">
-                        <span>25 MCQs</span><span>50 Marks</span><span>30 Minutes</span>
-                    </div>
                     <span class="level-action">Start Medium Practice →</span>
                 </div>
 
@@ -1367,9 +1339,6 @@ body.exam-running .exam-lock-bar{
                     <div class="difficulty-icon">🔥</div>
                     <h3>Hard</h3>
                     <p>Challenge yourself with advanced and higher-order Mathematics problems.</p>
-                    <div class="difficulty-meta">
-                        <span>25 MCQs</span><span>50 Marks</span><span>30 Minutes</span>
-                    </div>
                     <span class="level-action">Start Hard Practice →</span>
                 </div>
             </div>
@@ -1399,7 +1368,30 @@ body.exam-running .exam-lock-bar{
                 </div>
                 <div class="timer" id="practiceTimer">30:00</div>
             </div>
+           <div class="practice-exam-stats"
+     style="display:flex;justify-content:center;align-items:center;gap:14px;flex-wrap:wrap;margin:12px 0 18px;">
 
+    <div style="padding:8px 16px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;text-align:center;">
+        <strong style="display:block;font-size:16px;color:#4f46e5;">25</strong>
+        <span style="font-size:11px;color:#64748b;font-weight:700;">Questions</span>
+    </div>
+
+    <div style="padding:8px 16px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;text-align:center;">
+        <strong style="display:block;font-size:16px;color:#4f46e5;">50</strong>
+        <span style="font-size:11px;color:#64748b;font-weight:700;">Total Marks</span>
+    </div>
+
+    <div style="padding:8px 16px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;text-align:center;">
+        <strong style="display:block;font-size:16px;color:#4f46e5;">30 min</strong>
+        <span style="font-size:11px;color:#64748b;font-weight:700;">Practice Time</span>
+    </div>
+
+    <div style="padding:8px 16px;border:1px solid #e2e8f0;border-radius:10px;background:#f8fafc;text-align:center;">
+        <strong style="display:block;font-size:16px;color:#4f46e5;">∞</strong>
+        <span style="font-size:11px;color:#64748b;font-weight:700;">Practice Attempts</span>
+    </div>
+
+</div>
             <div class="progress-wrap">
                 <div class="progress-label">
                     <span id="progressText">Question 1 of 25</span>
@@ -2140,20 +2132,7 @@ function showMode(mode){
         pBtn.classList.remove("active");
 
         mBtn.classList.add("active");
-
-        
-        document.getElementById("heroStat1").textContent = "50";
-        document.getElementById("heroLabel1").textContent = "Questions / Test";
-      
-        document.getElementById("heroStat2").textContent = "100";
-        document.getElementById("heroLabel2").textContent = "Total Marks";
-      
-        document.getElementById("heroStat3").textContent = "60 min";
-        document.getElementById("heroLabel3").textContent = "Test Duration";
-      
-        document.getElementById("heroStat4").textContent = "1";
-        document.getElementById("heroLabel4").textContent = "Attempt / Test";
-       
+                   
         window.scrollTo({
             top:0,
             behavior:"smooth"
@@ -2170,20 +2149,7 @@ function showMode(mode){
     mBtn.classList.remove("active");
 
     pBtn.classList.add("active");
-
-
-    // PRACTICE HERO STATS
-    document.getElementById("heroStat1").textContent = "25";
-    document.getElementById("heroLabel1").textContent = "Questions / Attempt";
-
-    document.getElementById("heroStat2").textContent = "50";
-    document.getElementById("heroLabel2").textContent = "Total Marks";
-
-    document.getElementById("heroStat3").textContent = "30 min";
-    document.getElementById("heroLabel3").textContent = "Practice Time";
-
-    document.getElementById("heroStat4").textContent = "∞";
-    document.getElementById("heroLabel4").textContent = "Practice Attempts";   
+    
 }
 /* =========================================================
    MOCK TEST SELECTION
