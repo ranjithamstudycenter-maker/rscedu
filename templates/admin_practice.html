@@ -800,7 +800,54 @@ async function deletePracticeQuestion(id){
         );
     }
 }
+async function deleteAllPracticeQuestions(){
 
+    if(!confirm(
+        "⚠️ Are you sure you want to delete ALL practice questions?\n\nThis action cannot be undone."
+    )){
+        return;
+    }
+
+    try{
+
+        const response = await fetch(
+            "/admin/practice-questions/delete-all",
+            {
+                method:"POST"
+            }
+        );
+
+        const data = await response.json();
+
+        if(!data.success){
+
+            alert(
+                "❌ " +
+                (data.error || "Unable to delete practice questions.")
+            );
+
+            return;
+        }
+
+        alert(
+            "✅ All practice questions deleted successfully."
+        );
+
+        loadPracticeQuestionCount();
+        loadPracticeQuestions();
+
+    }catch(error){
+
+        console.error(
+            "Delete all questions error:",
+            error
+        );
+
+        alert(
+            "❌ Server error while deleting all practice questions."
+        );
+    }
+}
 function escapeHTML(value){
 
     if(value === null || value === undefined){
