@@ -855,6 +855,55 @@ async function deleteAllPracticeQuestions(){
         );
     }
 }
+
+async function resetActivePracticeSessions(){
+
+    if(!confirm(
+        "⚠️ Reset all active Practice tests?\n\n" +
+        "This will expire all currently active Practice sessions."
+    )){
+        return;
+    }
+
+    try{
+
+        const response = await fetch(
+            "/admin/practice-sessions/reset-active",
+            {
+                method: "POST"
+            }
+        );
+
+        const data = await response.json();
+
+        if(!data.success){
+
+            alert(
+                "❌ " +
+                (data.error || "Unable to reset active tests.")
+            );
+
+            return;
+        }
+
+        alert(
+            "✅ Active Practice tests reset successfully.\n\n" +
+            "Reset sessions: " + data.reset
+        );
+
+    }catch(error){
+
+        console.error(
+            "Reset active practice sessions error:",
+            error
+        );
+
+        alert(
+            "❌ Server error while resetting active tests."
+        );
+    }
+}
+    
 function escapeHTML(value){
 
     if(value === null || value === undefined){
