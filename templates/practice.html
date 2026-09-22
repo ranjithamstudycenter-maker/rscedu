@@ -1306,6 +1306,23 @@ body.exam-running .exam-lock-bar{
                     <strong>Selected:</strong>
                     <span id="selectionSummaryText"></span>
                 </div>
+                    <div class="practice-step-actions">
+                      <button
+                          type="button"
+                          class="mock-back-btn"
+                          onclick="backToPracticeSubject()">
+                          ← Back
+                      </button>
+                  
+                      <button
+                          type="button"
+                          class="mock-next-btn"
+                          id="practiceContinueBtn"
+                          onclick="continueToDifficulty()"
+                          disabled>
+                          Continue →
+                      </button>
+                   </div>
             </div>
         </div>
 
@@ -1349,7 +1366,14 @@ body.exam-running .exam-lock-bar{
                     <span class="level-action">Start Hard Practice →</span>
                 </div>
             </div>
-
+            <div class="practice-step-actions">
+                <button
+                    type="button"
+                    class="mock-back-btn"
+                    onclick="backToPracticeSubject()">
+                    ← Back
+                </button>
+            </div>
             <div class="loading-overlay" id="practiceLoading">
                 <span class="spinner"></span> Preparing your Practice test...
             </div>
@@ -3000,11 +3024,9 @@ function updateSelectionSummary(){
     const text =
         document.getElementById("selectionSummaryText");
 
-    const difficultyCard =
-        document.getElementById("difficultyCard");
+    const continueBtn =
+        document.getElementById("practiceContinueBtn");
 
-
-    // எல்லாம் select செய்யப்பட்டால் மட்டும் Step 3
     if(
         board &&
         cls &&
@@ -3021,20 +3043,73 @@ function updateSelectionSummary(){
 
         summary.style.display = "block";
 
-        // STEP 3 NOW OPEN
-        difficultyCard.style.display = "block";
+        if(continueBtn){
+            continueBtn.disabled = false;
+        }
 
     }else{
 
         summary.style.display = "none";
 
-        // Selection incomplete → Step 3 hidden
-        difficultyCard.style.display = "none";
+        if(continueBtn){
+            continueBtn.disabled = true;
+        }
     }
+
+    // Difficulty page must remain hidden
+    // until Continue is clicked.
+    document.getElementById("difficultyCard").style.display = "none";
+}
+function continueToDifficulty(){
+
+    const board =
+        document.getElementById("practiceBoard").value;
+
+    const cls =
+        document.getElementById("practiceClass").value;
+
+    const subject =
+        document.getElementById("practiceSubject").value;
+
+    const topic =
+        document.getElementById("practiceTopic").value;
+
+    const subtopic =
+        document.getElementById("practiceSubtopic").value;
+
+    if(!board || !cls || !subject || topic === "" || !subtopic){
+        alert("Please complete the syllabus selection first.");
+        return;
+    }
+
+    // Hide syllabus selection
+    document.getElementById("setupCard").style.display = "none";
+
+    // Show difficulty page
+    document.getElementById("difficultyCard").style.display = "block";
+
+    document.getElementById("difficultyCard").scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
 
     updateDifficultyState();
 }
-   
+
+
+function backToPracticeSubject(){
+
+    // Hide difficulty page
+    document.getElementById("difficultyCard").style.display = "none";
+
+    // Show syllabus page
+    document.getElementById("setupCard").style.display = "block";
+
+    document.getElementById("setupCard").scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}   
 
 /* ---------- PRACTICE SESSION ---------- */
 function startPractice(level){
