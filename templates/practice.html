@@ -1071,7 +1071,14 @@ body.exam-running .exam-lock-bar{
     justify-content:center;
     text-align:center;
 }
-   
+ .practice-step-actions{
+    width:100%;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+    margin-top:22px;
+}  
 .mock-back-btn,
 .mock-next-btn{
     border:none;
@@ -2758,21 +2765,25 @@ function selectSubject(subject, card){
 
     if(subject !== "math") return;
 
-    // Mathematics மட்டும் active
+    // Mathematics active
     document.querySelectorAll(".subject-card")
         .forEach(c => c.classList.remove("active"));
 
     card.classList.add("active");
 
-    // Step 2 மட்டும் இப்போது open ஆகும்
+    // Hide subject selection
+    document.querySelector(".subject-grid").style.display = "none";
+
+    // Show syllabus selection
     document.getElementById("mathSetup").style.display = "block";
 
-    // Step 3 இன்னும் hidden
+    // Hide difficulty
     document.getElementById("difficultyCard").style.display = "none";
 
     // Fresh syllabus selection
     resetPracticeDropdowns();
 
+    // Go directly to Select Syllabus
     document.getElementById("mathSetup").scrollIntoView({
         behavior:"smooth",
         block:"start"
