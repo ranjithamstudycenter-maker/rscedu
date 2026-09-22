@@ -707,12 +707,12 @@ async function loadPracticeQuestions(){
 
         tbody.innerHTML = "";
 
-        data.questions.forEach(function(q){
+        data.questions.forEach(function(q, index){
 
             const row = document.createElement("tr");
 
             row.innerHTML = `
-                <td>${escapeHTML(q.id)}</td>
+                <td>${index + 1}</td>
                 <td>${escapeHTML(q.board)}</td>
                 <td>${escapeHTML(q.class_name)}</td>
                 <td>${escapeHTML(q.subject)}</td>
