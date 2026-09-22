@@ -3082,20 +3082,28 @@ function continueToDifficulty(){
         return;
     }
 
-    // Hide syllabus selection
-    document.getElementById("setupCard").style.display = "none";
+    const setupCard =
+        document.getElementById("setupCard");
 
-    // Show difficulty page
-    document.getElementById("difficultyCard").style.display = "block";
+    const difficultyCard =
+        document.getElementById("difficultyCard");
 
-    document.getElementById("difficultyCard").scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-    });
+    /* Hide complete syllabus step */
+    setupCard.style.display = "none";
+
+    /* Show only difficulty step */
+    difficultyCard.style.display = "block";
 
     updateDifficultyState();
-}
 
+    /* Move directly to Difficulty section */
+    setTimeout(function(){
+        difficultyCard.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+    }, 50);
+}
 
 function backToPracticeSubject(){
 
