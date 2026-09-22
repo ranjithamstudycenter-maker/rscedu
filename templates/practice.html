@@ -3117,17 +3117,41 @@ function continueToDifficulty(){
 
 function backToPracticeSubject(){
 
-    // Hide difficulty page
-    document.getElementById("difficultyCard").style.display = "none";
+    const difficultyCard =
+        document.getElementById("difficultyCard");
 
-    // Show syllabus page
-    document.getElementById("setupCard").style.display = "block";
+    const mathSetup =
+        document.getElementById("mathSetup");
+
+    const subjectGrid =
+        document.querySelector(".subject-grid");
+
+    // If Difficulty page is open
+    if(difficultyCard.style.display !== "none"){
+
+        difficultyCard.style.display = "none";
+        mathSetup.style.display = "block";
+
+        mathSetup.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+        return;
+    }
+
+    // If Syllabus page is open → go back to Subject selection
+    mathSetup.style.display = "none";
+    subjectGrid.style.display = "grid";
+
+    document.querySelectorAll(".subject-card")
+        .forEach(card => card.classList.remove("active"));
 
     document.getElementById("setupCard").scrollIntoView({
         behavior:"smooth",
         block:"start"
     });
-}   
+}
 
 /* ---------- PRACTICE SESSION ---------- */
 function startPractice(level){
