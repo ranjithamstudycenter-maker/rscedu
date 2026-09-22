@@ -3138,6 +3138,88 @@ function continueToDifficulty(){
 }
 
 function backToPracticeSubject(){
+
+    const difficultyCard =
+        document.getElementById("difficultyCard");
+
+    const mathSetup =
+        document.getElementById("mathSetup");
+
+    const subjectGrid =
+        document.querySelector(".subject-grid");
+
+    const setupHead =
+        document.querySelector("#setupCard > .section-head");
+
+    const selectionSummary =
+        document.getElementById("selectionSummary");
+
+    const stepActions =
+        mathSetup.querySelector(".practice-step-actions");
+
+    // -----------------------------------------
+    // DIFFICULTY → SYLLABUS
+    // -----------------------------------------
+    if(difficultyCard.style.display !== "none"){
+
+        // Hide Difficulty page
+        difficultyCard.style.display = "none";
+
+        // Move Selected summary back into Syllabus page
+        if(selectionSummary && stepActions){
+            mathSetup.insertBefore(
+                selectionSummary,
+                stepActions
+            );
+        }
+
+        // Show Selected summary
+        if(selectionSummary){
+            selectionSummary.style.display = "block";
+            selectionSummary.style.textAlign = "left";
+            selectionSummary.style.margin = "";
+        }
+
+        // Show Syllabus page
+        mathSetup.style.display = "block";
+
+        mathSetup.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+        return;
+    }
+
+    // -----------------------------------------
+    // SYLLABUS → SUBJECT SELECTION
+    // -----------------------------------------
+
+    // Hide Syllabus
+    mathSetup.style.display = "none";
+
+    // Show Build Your Practice Test heading
+    if(setupHead){
+        setupHead.style.display = "block";
+    }
+
+    // Show subject cards
+    subjectGrid.style.display = "grid";
+
+    // Clear active subject
+    document.querySelectorAll(".subject-card")
+        .forEach(card => card.classList.remove("active"));
+
+    // Clear selection summary
+    if(selectionSummary){
+        selectionSummary.style.display = "block";
+    }
+
+    document.getElementById("setupCard").scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
 /* ---------- PRACTICE SESSION ---------- */
 function startPractice(level){
     const board = document.getElementById("practiceBoard").value;
