@@ -1314,7 +1314,7 @@ body.exam-running .exam-lock-bar{
         <div class="p-card" id="difficultyCard" style="display:none;">
             <div class="section-head">
                 <div>
-                    <h2>⚡ Choose Difficulty</h2>
+                    <h2>⚡ Mode of Level </h2>
                     <p>Each attempt contains 25 MCQs. Choose the level that matches your preparation.</p>
                 </div>
                 
@@ -3069,8 +3069,13 @@ function continueToDifficulty(){
     const mathSetup =
         document.getElementById("mathSetup");
 
+    const setupCard =
+        document.getElementById("setupCard");
+
     const difficultyCard =
         document.getElementById("difficultyCard");
+
+    setupCard.style.display = "none";
 
     // Hide only Syllabus selection
     mathSetup.style.display = "none";
