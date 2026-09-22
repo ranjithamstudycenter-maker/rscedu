@@ -2774,6 +2774,13 @@ function selectSubject(subject, card){
     // Hide subject selection
     document.querySelector(".subject-grid").style.display = "none";
 
+    // Hide "Build Your Practice Test" heading
+    const setupHead = document.querySelector("#setupCard > .section-head");
+    if(setupHead){
+         setupHead.style.display = "none";
+    }
+
+
     // Show syllabus selection
     document.getElementById("mathSetup").style.display = "block";
 
