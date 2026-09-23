@@ -1644,23 +1644,7 @@ body.exam-running .exam-lock-bar{
                     <!-- Dynamic content will appear here -->
                 </div>
             </div>
-            <!-- FOCUS AREAS -->
-            <div class="focus-area-card" id="focusAreaCard">
-            
-                <div class="focus-area-head">
-                    <div>
-                        <h3>🎯 Areas to Focus On</h3>
-                        <p>Based on the questions answered incorrectly in this attempt.</p>
-                    </div>
-                </div>
-            
-                <div id="focusAreaContent" class="focus-area-content">
-                    <div class="focus-area-empty">
-                        Your focus areas will appear here.
-                    </div>
-                </div>
-            
-            </div>
+                   
             <div class="review-head">
                 <h3>🔍 Review All 25 Questions</h3>
                 <span class="step-pill">AFTER TEST</span>
@@ -3996,8 +3980,134 @@ function showResult(data, autoSubmit){
     document.getElementById("resultMessage").textContent = message;
 
     renderReview(data.review || []);
-    document.getElementById("resultShell").scrollIntoView({behavior:"smooth",block:"start"});
-}
+    const reviewData = data.review || [];
+
+   /* ---------- FOCUS AREAS ---------- */
+   
+   const focusContent =
+       document.getElementById("practiceFocusContent");
+   
+   const oldFocusCard =
+       document.getElementById("focusAreaCard");
+   
+   if(focusContent){
+   
+       const incorrectItems =
+           reviewData.filter(
+               item => item.result === "incorrect"
+           );
+   
+       if(!incorrectItems.length){
+   
+           focusContent.innerHTML = `
+               <div style="
+                   grid-column:1/-1;
+                   padding:16px;
+                   border-radius:12px;
+                   background:#ecfdf5;
+                   border:1px solid #bbf7d0;
+                   color:#166534;
+                   font-weight:700;
+                   text-align:center;
+               ">
+                   ✓ Excellent! No specific topic requires additional focus
+                   from this attempt.
+               </div>
+           `;
+   
+       }else{
+   
+           const groups = {};
+   
+           incorrectItems.forEach(item => {
+   
+               const topic =
+                   item.topic || "General Topic";
+   
+               const subtopic =
+                   item.subtopic || "General";
+   
+               const key =
+                   `${topic}|||${subtopic}`;
+   
+               if(!groups[key]){
+                   groups[key] = {
+                       topic: topic,
+                       subtopic: subtopic,
+                       count: 0
+                   };
+               }
+   
+               groups[key].count++;
+           });
+   
+           focusContent.innerHTML =
+               Object.values(groups)
+                   .sort((a,b) => b.count - a.count)
+                   .map(item => `
+                       <div style="
+                           padding:15px;
+                           border-radius:13px;
+                           background:#fff;
+                           border:1px solid #e2e8f0;
+                           box-shadow:0 4px 12px rgba(15,23,42,.05);
+                       ">
+                           <div style="
+                               font-size:11px;
+                               font-weight:800;
+                               color:#64748b;
+                               text-transform:uppercase;
+                               letter-spacing:.4px;
+                           ">
+                               Chapter / Topic
+                           </div>
+   
+                           <div style="
+                               margin-top:4px;
+                               font-size:15px;
+                               font-weight:800;
+                               color:#172554;
+                           ">
+                               ${escapeHtml(item.topic)}
+                           </div>
+   
+                           <div style="
+                               margin-top:7px;
+                               font-size:12px;
+                               color:#475569;
+                           ">
+                               Subtopic:
+                               <strong>
+                                   ${escapeHtml(item.subtopic)}
+                               </strong>
+                           </div>
+   
+                           <div style="
+                               margin-top:10px;
+                               display:inline-block;
+                               padding:5px 9px;
+                               border-radius:999px;
+                               background:#fee2e2;
+                               color:#b91c1c;
+                               font-size:11px;
+                               font-weight:800;
+                           ">
+                               ${item.count} Incorrect
+                           </div>
+                       </div>
+                   `)
+                   .join("");
+       }
+   }
+   
+   /* Hide old duplicate focus section */
+   if(oldFocusCard){
+       oldFocusCard.style.display = "none";
+   }
+   
+   renderReview(reviewData);
+       document.getElementById("resultShell").scrollIntoView({behavior:"smooth",block:"start"});
+   }
 
 function renderReview(review){
 
