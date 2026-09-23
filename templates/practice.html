@@ -1086,6 +1086,91 @@ body.exam-running .exam-lock-bar{
     body.exam-running .practice-page{padding:10px}
     body.exam-running .exam-layout{grid-template-columns:1fr}
 }
+/* =========================================================
+   COMPACT PRACTICE RESULT / REVIEW SCREEN
+   ========================================================= */
+
+#resultShell{
+    width:100%;
+    max-width:1080px;
+    margin:0 auto;
+}
+
+/* Result statistics */
+#resultShell .result-stats{
+    max-width:100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* Focus Areas */
+#resultShell #practiceFocusCard{
+    max-width:100%;
+    margin-left:auto !important;
+    margin-right:auto !important;
+}
+
+/* Review heading */
+#resultShell .review-head{
+    max-width:100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* Individual review questions */
+#resultShell #reviewContainer{
+    max-width:100%;
+    margin:0 auto;
+}
+
+/* Review question boxes */
+#resultShell .review-item{
+    border-radius:13px;
+    margin-bottom:10px;
+}
+
+/* Slightly more compact review rows */
+#resultShell .review-summary{
+    padding:13px 16px;
+}
+
+/* Result buttons */
+#resultShell .result-actions{
+    max-width:100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* Desktop breathing space */
+@media(min-width:1101px){
+    #resultShell{
+        padding-left:10px;
+        padding-right:10px;
+    }
+}
+
+/* Tablet */
+@media(max-width:1100px){
+    #resultShell{
+        max-width:94%;
+    }
+}
+
+/* Mobile */
+@media(max-width:700px){
+    #resultShell{
+        max-width:100%;
+    }
+}
+#resultShell #practiceFocusContent{
+    grid-template-columns:repeat(2,1fr) !important;
+    gap:12px;
+}
+@media(max-width:700px){
+    #resultShell #practiceFocusContent{
+        grid-template-columns:1fr !important;
+    }
+}
 </style>
 
 </head>
