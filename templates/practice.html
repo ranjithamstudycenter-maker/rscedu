@@ -1171,6 +1171,49 @@ body.exam-running .exam-lock-bar{
         grid-template-columns:1fr !important;
     }
 }
+/* =========================================================
+   COMPACT SYLLABUS SELECTION
+   ========================================================= */
+
+#mathSetup{
+    max-width:1080px;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* Keep the selection fields neat and centered */
+#mathSetup .selection-grid{
+    width:100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* Chapter and Subtopic remain full width
+   inside the compact content area */
+#mathSetup .field.full{
+    width:100%;
+}
+
+/* Bottom Back / Continue buttons */
+#mathSetup .practice-step-actions{
+    max-width:100%;
+    margin-left:auto;
+    margin-right:auto;
+}
+
+/* Tablet */
+@media(max-width:1100px){
+    #mathSetup{
+        max-width:94%;
+    }
+}
+
+/* Mobile */
+@media(max-width:700px){
+    #mathSetup{
+        max-width:100%;
+    }
+}
 </style>
 
 </head>
