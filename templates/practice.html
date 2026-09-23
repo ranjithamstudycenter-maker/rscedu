@@ -1588,7 +1588,79 @@ body.exam-running .exam-lock-bar{
                 <div class="result-stat"><strong id="unansweredCount">0</strong><span>Unanswered</span></div>
                 <div class="result-stat"><strong id="statusText">—</strong><span>Performance</span></div>
             </div>
-
+            <!-- PRACTICE FOCUS AREAS -->
+            <div
+                id="practiceFocusCard"
+                style="
+                    margin:20px 0;
+                    padding:20px 22px;
+                    border:1px solid #dbeafe;
+                    border-radius:16px;
+                    background:linear-gradient(135deg,#f8fbff,#f5f3ff);
+                "
+            >
+                <div
+                    style="
+                        display:flex;
+                        align-items:center;
+                        gap:10px;
+                        margin-bottom:14px;
+                    "
+                >
+                    <span style="font-size:22px;">🎯</span>
+            
+                    <div>
+                        <h3
+                            style="
+                                margin:0;
+                                color:#172554;
+                                font-size:18px;
+                                font-weight:800;
+                            "
+                        >
+                            Your Focus Areas
+                        </h3>
+            
+                        <p
+                            style="
+                                margin:3px 0 0;
+                                color:#64748b;
+                                font-size:12px;
+                            "
+                        >
+                            Topics that need more attention based on this attempt
+                        </p>
+                    </div>
+                </div>
+            
+                <div
+                    id="practiceFocusContent"
+                    style="
+                        display:grid;
+                        grid-template-columns:repeat(3,1fr);
+                        gap:12px;
+                    "
+                >
+                    <!-- Dynamic content will appear here -->
+                </div>
+            </div>
+            <!-- FOCUS AREAS -->
+            <div class="focus-area-card" id="focusAreaCard">
+            
+                <div class="focus-area-head">
+                    <div>
+                        <h3>🎯 Areas to Focus On</h3>
+                        <p>Based on the questions answered incorrectly in this attempt.</p>
+                    </div>
+                </div>
+            
+                <div id="focusAreaContent" class="focus-area-content">
+                    <div class="focus-area-empty">
+                        Your focus areas will appear here.
+                    </div>
+                </div>
+            
+            </div>
             <div class="review-head">
                 <h3>🔍 Review All 25 Questions</h3>
                 <span class="step-pill">AFTER TEST</span>
@@ -4404,8 +4476,7 @@ function resetPracticeSelection(){
 }
 
 function startNewAttempt(){
-    // New attempt = keep the current Board/Class/Subject/Chapter/Subtopic,
-    // but create a fresh 25-question session after the student chooses a level.
+
     practiceSessionId = null;
     practiceAnswers = {};
     practiceQuestions = [];
@@ -4418,62 +4489,36 @@ function startNewAttempt(){
 
     document.getElementById("resultShell").style.display = "none";
     document.getElementById("examShell").style.display = "none";
-    document.getElementById("setupCard").style.display = "block";
+
+    // Start a completely fresh attempt
+    beginPracticeSession(currentDifficulty);
+}
+function backToSetup(){
+
+    practiceSessionId = null;
+    practiceAnswers = {};
+    practiceQuestions = [];
+    currentQuestion = 0;
+    practiceSubmitted = false;
+    pendingDifficulty = "";
+
+    stopPracticeTimer();
+    exitExamLock();
+
+    // Hide exam and result
+    document.getElementById("examShell").style.display = "none";
+    document.getElementById("resultShell").style.display = "none";
+
+    // Keep current Board / Class / Subject / Chapter / Subtopic
+    // and show Easy / Medium / Hard selection
+    document.getElementById("setupCard").style.display = "none";
     document.getElementById("difficultyCard").style.display = "block";
 
     updateDifficultyState();
 
     document.getElementById("difficultyCard").scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-    });
-}
-
-function backToSetup(){
-
-    // Stop current test/result state
-    practiceSessionId = null;
-    practiceAnswers = {};
-    practiceQuestions = [];
-    currentQuestion = 0;
-    practiceSubmitted = false;
-    pendingDifficulty = "";
-
-    stopPracticeTimer();
-    exitExamLock();
-
-    // Hide exam/result
-    document.getElementById("examShell").style.display = "none";
-    document.getElementById("resultShell").style.display = "none";
-
-    // Show selection
-    document.getElementById("setupCard").style.display = "block";
-
-    // Mathematics remains active
-    document.querySelectorAll(".subject-card")
-        .forEach(c => c.classList.remove("active"));
-
-    const mathCard =
-        document.querySelector(
-            '.subject-card[onclick*="selectSubject(\'math\'"]'
-        );
-
-    if(mathCard){
-        mathCard.classList.add("active");
-    }
-
-    // Mathematics section remains open
-    document.getElementById("mathSetup").style.display = "block";
-
-    // Step 3 hidden
-    document.getElementById("difficultyCard").style.display = "none";
-
-    // Reset Board → Class → Subject → Chapter → Subtopic
-    resetPracticeDropdowns();
-
-    document.getElementById("setupCard").scrollIntoView({
-        behavior:"smooth",
-        block:"start"
+        behavior: "smooth",
+        block: "start"
     });
 }
    
