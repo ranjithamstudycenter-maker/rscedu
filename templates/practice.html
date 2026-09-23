@@ -3197,6 +3197,89 @@ function backToPracticeSubject(){
     });
 }
 /* ---------- PRACTICE SESSION ---------- */
+async function resumePracticeAfterRefresh(){
+
+    const saved = localStorage.getItem(
+        "rsc_active_practice"
+    );
+
+    if(!saved){
+        return;
+    }
+
+    try{
+
+        const info = JSON.parse(saved);
+
+        if(!info.board ||
+           !info.class_name ||
+           !info.subject ||
+           !info.topic ||
+           !info.subtopic ||
+           !info.difficulty){
+
+            return;
+        }
+
+        currentDifficulty = info.difficulty;
+
+        const response = await fetch(
+            "/api/practice/session",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    board: info.board,
+                    class_name: info.class_name,
+                    subject: info.subject,
+                    topic: info.topic,
+                    subtopic: info.subtopic,
+                    difficulty: info.difficulty
+                })
+            }
+        );
+
+        const data = await response.json();
+
+        if(!response.ok || !data.success){
+            return;
+        }
+
+        /*
+         * Only resume an actually active session.
+         * If backend created a new session, do not
+         * automatically open it after refresh.
+         */
+        if(!data.resumed){
+            localStorage.removeItem(
+                "rsc_active_practice"
+            );
+            return;
+        }
+
+        practiceSessionId = data.session_id;
+
+        practiceAnswers =
+            data.answers || {};
+
+        currentQuestion =
+            Number(data.current_question || 0);
+
+        practiceSubmitted = false;
+
+        await loadPracticeQuestions(data);
+
+    }catch(error){
+
+        console.error(
+            "PRACTICE REFRESH RESUME ERROR:",
+            error
+        );
+
+    }
+}
 function startPractice(level){
     const board = document.getElementById("practiceBoard").value;
     const className = document.getElementById("practiceClass").value;
