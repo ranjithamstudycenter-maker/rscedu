@@ -3800,39 +3800,163 @@ function renderQuestion(){
 
     document.getElementById("previousBtn").disabled = currentQuestion === 0;
     const nextBtn = document.getElementById("nextBtn");
-    nextBtn.textContent = currentQuestion === 24 ? "Last Question" : "Next →";
-    nextBtn.disabled = currentQuestion === 24;
+    const nextBtn =
+    document.getElementById("nextBtn");
+    nextBtn.textContent = "Next →";
+    nextBtn.disabled = false;
+    nextBtn.onclick = function(){
+    nextQuestion();
+};
 
     renderPalette();
 }
 
 async function selectAnswer(questionId, answerIndex){
+
+    const answeredQuestionIndex = currentQuestion;
+
+    // Save answer locally immediately
     practiceAnswers[String(questionId)] = answerIndex;
+
+    // Check whether this is Question 25
+    const isLastQuestion =
+        answeredQuestionIndex === practiceQuestions.length - 1;
+
+    /*
+     * For Question 25:
+     * show "Finished" briefly, then move to Question 1.
+     *
+     * For all other questions:
+     * stay on the current question after selecting the answer.
+     */
+
+    if(isLastQuestion){
+
+        // Show selected answer first
+        renderQuestion();
+
+        // Show Finished message
+        const nextBtn = document.getElementById("nextBtn");
+
+        if(nextBtn){
+            nextBtn.textContent = "✓ Finished";
+            nextBtn.disabled = true;
+        }
+
+        try{
+
+            const response = await fetch(
+                "/api/practice/session/save-answer",
+                {
+                    method:"POST",
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
+                    body:JSON.stringify({
+                        session_id: practiceSessionId,
+                        question_id: questionId,
+                        answer: answerIndex,
+                        current_question: answeredQuestionIndex
+                    })
+                }
+            );
+
+            const data = await response.json();
+
+            if(response.ok && data.success){
+
+                practiceAnswers =
+                    data.answers || practiceAnswers;
+
+                // Keep Question 25 marked as answered
+                renderPalette();
+
+                // Small Finished indication
+                await new Promise(resolve =>
+                    setTimeout(resolve, 500)
+                );
+
+                // Move automatically to Question 1
+                currentQuestion = 0;
+
+                renderQuestion();
+
+                // Make sure Question 1 button is normal
+                const firstNextBtn =
+                    document.getElementById("nextBtn");
+
+                if(firstNextBtn){
+                    firstNextBtn.textContent = "Next →";
+                    firstNextBtn.disabled = false;
+                    firstNextBtn.onclick = function(){
+                        nextQuestion();
+                    };
+                }
+
+            }else{
+
+                console.error(
+                    "Question 25 answer was not saved:",
+                    data
+                );
+
+            }
+
+        }catch(error){
+
+            console.error(
+                "SAVE QUESTION 25 ERROR:",
+                error
+            );
+
+        }
+
+        return;
+    }
+
+    /*
+     * Normal questions:
+     * keep the current question visible.
+     */
     renderQuestion();
 
     try{
-        const response = await fetch("/api/practice/session/save-answer", {
-            method:"POST",
-            headers:{"Content-Type":"application/json"},
-            body:JSON.stringify({
-                session_id: practiceSessionId,
-                question_id: questionId,
-                answer: answerIndex,
-                current_question: currentQuestion
-            })
-        });
+
+        const response = await fetch(
+            "/api/practice/session/save-answer",
+            {
+                method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
+                body:JSON.stringify({
+                    session_id: practiceSessionId,
+                    question_id: questionId,
+                    answer: answerIndex,
+                    current_question: answeredQuestionIndex
+                })
+            }
+        );
 
         const data = await response.json();
 
         if(response.ok && data.success){
-            practiceAnswers = data.answers || practiceAnswers;
+
+            practiceAnswers =
+                data.answers || practiceAnswers;
+
             renderPalette();
         }
+
     }catch(error){
-        console.error("SAVE ANSWER ERROR:", error);
+
+        console.error(
+            "SAVE ANSWER ERROR:",
+            error
+        );
+
     }
 }
-
 function previousQuestion(){
     if(currentQuestion > 0){
         currentQuestion--;
