@@ -3569,6 +3569,13 @@ function startPracticeTimer(startedAt){
     }
 
     const start = new Date(startString).getTime();
+
+    console.log("TIMER DEBUG:", {
+       startedAt: startedAt,
+       startTime: new Date(start).toISOString(),
+       now: new Date().toISOString(),
+       elapsedSeconds: Math.floor((Date.now() - start) / 1000)
+    });
     const duration = 30 * 60 * 1000;
 
     if(isNaN(start)){
