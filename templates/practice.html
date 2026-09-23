@@ -3519,9 +3519,7 @@ function startPracticeTimer(startedAt){
 
             timer.textContent = "00:00";
 
-            alert(
-                "⏰ Time is over. Your answers can no longer be changed. Please submit the test."
-            );
+            submitPractice(true);
 
             disableExamInputs();
         }
