@@ -6073,9 +6073,8 @@ def practice_session_submit():
         # -------------------------------------------------
 
         conn = sqlite3.connect(
-            "students.db"
+            DB_PATH
         )
-
         conn.row_factory = sqlite3.Row
 
         c = conn.cursor()
