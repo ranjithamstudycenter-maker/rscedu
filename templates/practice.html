@@ -3420,7 +3420,11 @@ async function loadPracticeQuestions(sessionData){
         `${label} Practice • 25 Questions • 50 Marks • 30 Minutes`;
 
     renderQuestion();
+    if(sessionData.resumed){
     startPracticeTimer(data.started_at);
+    }else{
+        startPracticeTimer(new Date().toISOString());
+    }
 
     document.getElementById("examShell").scrollIntoView({behavior:"smooth",block:"start"});
 }
