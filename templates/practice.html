@@ -823,7 +823,144 @@ a{text-decoration:none}
         font-size:34px;
     }
 
-}   
+}
+
+ /* =====================================================
+   PRACTICE RESULT STATS — PROFESSIONAL HORIZONTAL UI
+   ===================================================== */
+
+.result-stats{
+    display:grid;
+    grid-template-columns:repeat(4, 1fr);
+    gap:16px;
+    margin:22px 0 28px;
+    width:100%;
+}
+
+.result-stat{
+    min-height:105px;
+    padding:20px 16px;
+    border-radius:14px;
+    background:#ffffff;
+    border:1px solid #e2e8f0;
+    box-shadow:0 4px 14px rgba(15,23,42,.06);
+
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    justify-content:center;
+    text-align:center;
+
+    transition:transform .2s ease,
+               box-shadow .2s ease;
+}
+
+.result-stat:hover{
+    transform:translateY(-2px);
+    box-shadow:0 8px 20px rgba(15,23,42,.10);
+}
+
+.result-stat strong{
+    display:block;
+    font-size:30px;
+    line-height:1;
+    font-weight:900;
+    margin-bottom:9px;
+}
+
+.result-stat span{
+    display:block;
+    font-size:13px;
+    font-weight:800;
+    letter-spacing:.2px;
+}
+
+
+/* Correct */
+.result-stat:nth-child(1){
+    border-top:4px solid #22c55e;
+}
+
+.result-stat:nth-child(1) strong{
+    color:#16a34a;
+}
+
+.result-stat:nth-child(1) span{
+    color:#166534;
+}
+
+
+/* Incorrect */
+.result-stat:nth-child(2){
+    border-top:4px solid #ef4444;
+}
+
+.result-stat:nth-child(2) strong{
+    color:#dc2626;
+}
+
+.result-stat:nth-child(2) span{
+    color:#991b1b;
+}
+
+
+/* Unanswered */
+.result-stat:nth-child(3){
+    border-top:4px solid #94a3b8;
+}
+
+.result-stat:nth-child(3) strong{
+    color:#475569;
+}
+
+.result-stat:nth-child(3) span{
+    color:#64748b;
+}
+
+
+/* Performance */
+.result-stat:nth-child(4){
+    border-top:4px solid #6366f1;
+}
+
+.result-stat:nth-child(4) strong{
+    color:#4f46e5;
+}
+
+.result-stat:nth-child(4) span{
+    color:#4338ca;
+}
+
+
+/* Mobile / small screen */
+@media(max-width:760px){
+
+    .result-stats{
+        grid-template-columns:repeat(2, 1fr);
+        gap:12px;
+    }
+
+    .result-stat{
+        min-height:95px;
+        padding:16px 10px;
+    }
+
+    .result-stat strong{
+        font-size:25px;
+    }
+
+    .result-stat span{
+        font-size:12px;
+    }
+}
+
+@media(max-width:430px){
+
+    .result-stats{
+        grid-template-columns:1fr 1fr;
+    }
+}  
+   
 </style>
 
 <style>
@@ -3763,7 +3900,7 @@ function showResult(data, autoSubmit){
     const status = data.status || "—";
 
     document.getElementById("resultScore").textContent =
-        `${score} / 50`;
+        `${score} / 50 Marks`;
 
     document.getElementById("resultPercentage").textContent =
         `${percentage.toFixed(1)}%`;
@@ -3805,405 +3942,429 @@ function renderReview(review){
         return;
     }
 
-    let reviewIndex = 0;
+    let currentReviewIndex = 0;
 
-    function renderReviewQuestion(){
+    function showReviewQuestion(){
 
-        const item = review[reviewIndex];
+        const item = review[currentReviewIndex];
 
-        if(!item){
-            return;
-        }
+        container.innerHTML = "";
+
+        const isCorrect =
+            item.result === "correct";
 
         const isUnanswered =
-            item.student_answer === null ||
-            item.student_answer === undefined;
+            item.result === "unanswered";
 
-        const status =
-            item.is_correct
-                ? "✓ Correct"
-                : (isUnanswered
-                    ? "— Unanswered"
-                    : "✕ Incorrect");
+        const isIncorrect =
+            item.result === "incorrect";
 
-        const statusColor =
-            item.is_correct
-                ? "#16a34a"
-                : (isUnanswered
-                    ? "#64748b"
-                    : "#dc2626");
+        /* ===============================
+           HEADER
+        =============================== */
 
-        let studentAnswerText =
-            "Not answered";
+        const header =
+            document.createElement("div");
 
-        if(
-            !isUnanswered &&
-            item.options &&
-            item.options[item.student_answer] !== undefined
-        ){
-
-            studentAnswerText =
-                String.fromCharCode(
-                    65 + Number(item.student_answer)
-                ) +
-                ". " +
-                item.options[item.student_answer];
-        }
-
-        let correctAnswerText =
-            "Not available";
-
-        if(
-            item.correct_answer !== null &&
-            item.correct_answer !== undefined &&
-            item.options &&
-            item.options[item.correct_answer] !== undefined
-        ){
-
-            correctAnswerText =
-                String.fromCharCode(
-                    65 + Number(item.correct_answer)
-                ) +
-                ". " +
-                item.options[item.correct_answer];
-        }
-
-        container.innerHTML = `
-
-            <div style="
-                width:100%;
-                max-width:1100px;
-                margin:0 auto;
-            ">
-
-                <!-- REVIEW HEADER -->
-
-                <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                    gap:15px;
-                    padding:14px 18px;
-                    margin-bottom:14px;
-                    border:1px solid #e2e8f0;
-                    border-radius:14px;
-                    background:#f8fafc;
-                ">
-
-                    <div style="
-                        font-size:15px;
-                        font-weight:800;
-                        color:#0f172a;
-                    ">
-                        Question ${reviewIndex + 1} of ${review.length}
-                    </div>
-
-                    <div style="
-                        padding:7px 14px;
-                        border-radius:999px;
-                        background:${statusColor}15;
-                        color:${statusColor};
-                        font-size:13px;
-                        font-weight:800;
-                    ">
-                        ${status}
-                    </div>
-
-                </div>
-
-
-                <!-- QUESTION CARD -->
-
-                <div style="
-                    border:1px solid #e2e8f0;
-                    border-radius:16px;
-                    background:#ffffff;
-                    padding:24px;
-                    box-shadow:0 8px 24px rgba(15,23,42,.06);
-                ">
-
-                    <div style="
-                        font-size:18px;
-                        font-weight:800;
-                        line-height:1.6;
-                        color:#0f172a;
-                        margin-bottom:22px;
-                    ">
-                        ${escapeHtml(item.question || "")}
-                    </div>
-
-
-                    <!-- ANSWER ROW -->
-
-                    <div style="
-                        display:flex;
-                        gap:18px;
-                        flex-wrap:wrap;
-                        margin-bottom:18px;
-                    ">
-
-                        <div style="
-                            flex:1;
-                            min-width:280px;
-                            padding:15px 18px;
-                            border-radius:12px;
-                            background:#f8fafc;
-                            border:1px solid #e2e8f0;
-                        ">
-
-                            <div style="
-                                font-size:11px;
-                                font-weight:800;
-                                text-transform:uppercase;
-                                letter-spacing:.5px;
-                                color:#64748b;
-                                margin-bottom:7px;
-                            ">
-                                Your Answer
-                            </div>
-
-                            <div style="
-                                font-size:14px;
-                                font-weight:700;
-                                color:${isUnanswered ? "#64748b" : "#0f172a"};
-                                line-height:1.5;
-                            ">
-                                ${escapeHtml(studentAnswerText)}
-                            </div>
-
-                        </div>
-
-
-                        <div style="
-                            flex:1;
-                            min-width:280px;
-                            padding:15px 18px;
-                            border-radius:12px;
-                            background:#f0fdf4;
-                            border:1px solid #bbf7d0;
-                        ">
-
-                            <div style="
-                                font-size:11px;
-                                font-weight:800;
-                                text-transform:uppercase;
-                                letter-spacing:.5px;
-                                color:#15803d;
-                                margin-bottom:7px;
-                            ">
-                                Correct Answer
-                            </div>
-
-                            <div style="
-                                font-size:14px;
-                                font-weight:700;
-                                color:#166534;
-                                line-height:1.5;
-                            ">
-                                ${escapeHtml(correctAnswerText)}
-                            </div>
-
-                        </div>
-
-                    </div>
-
-
-                    <!-- EXPLANATION -->
-
-                    ${
-                        item.explanation
-                        ? `
-                            <div style="
-                                margin-top:18px;
-                                padding:17px 18px;
-                                border-radius:12px;
-                                background:#eff6ff;
-                                border:1px solid #bfdbfe;
-                            ">
-
-                                <div style="
-                                    font-size:13px;
-                                    font-weight:800;
-                                    color:#1d4ed8;
-                                    margin-bottom:7px;
-                                ">
-                                    💡 Explanation
-                                </div>
-
-                                <div style="
-                                    font-size:14px;
-                                    line-height:1.6;
-                                    color:#334155;
-                                ">
-                                    ${escapeHtml(item.explanation)}
-                                </div>
-
-                            </div>
-                        `
-                        : ""
-                    }
-
-
-                    <!-- HINT -->
-
-                    ${
-                        item.hint
-                        ? `
-                            <div style="
-                                margin-top:12px;
-                                padding:15px 18px;
-                                border-radius:12px;
-                                background:#fffbeb;
-                                border:1px solid #fde68a;
-                            ">
-
-                                <div style="
-                                    font-size:13px;
-                                    font-weight:800;
-                                    color:#a16207;
-                                    margin-bottom:6px;
-                                ">
-                                    🧠 Hint
-                                </div>
-
-                                <div style="
-                                    font-size:14px;
-                                    line-height:1.6;
-                                    color:#475569;
-                                ">
-                                    ${escapeHtml(item.hint)}
-                                </div>
-
-                            </div>
-                        `
-                        : ""
-                    }
-
-                </div>
-
-
-                <!-- REVIEW NAVIGATION -->
-
-                <div style="
-                    display:flex;
-                    justify-content:space-between;
-                    align-items:center;
-                    gap:15px;
-                    margin-top:18px;
-                    padding:12px;
-                    border:1px solid #e2e8f0;
-                    border-radius:14px;
-                    background:#ffffff;
-                ">
-
-                    <button
-                        type="button"
-                        id="reviewPreviousBtn"
-                        style="
-                            padding:11px 20px;
-                            border:none;
-                            border-radius:10px;
-                            font-size:13px;
-                            font-weight:800;
-                            cursor:pointer;
-                            background:#eef2ff;
-                            color:#4338ca;
-                        "
-                    >
-                        ← Previous
-                    </button>
-
-
-                    <div style="
-                        font-size:12px;
-                        font-weight:800;
-                        color:#64748b;
-                    ">
-                        ${reviewIndex + 1} / ${review.length}
-                    </div>
-
-
-                    <button
-                        type="button"
-                        id="reviewNextBtn"
-                        style="
-                            padding:11px 20px;
-                            border:none;
-                            border-radius:10px;
-                            font-size:13px;
-                            font-weight:800;
-                            cursor:pointer;
-                            background:#4f46e5;
-                            color:#ffffff;
-                        "
-                    >
-                        Next →
-                    </button>
-
-                </div>
-
-            </div>
+        header.style.cssText = `
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            margin-bottom:16px;
+            padding:14px 18px;
+            border-radius:12px;
+            background:#f8fafc;
+            border:1px solid #e2e8f0;
         `;
 
+        const questionTitle =
+            document.createElement("strong");
 
-        const previousBtn =
-            document.getElementById("reviewPreviousBtn");
+        questionTitle.textContent =
+            `Question ${currentReviewIndex + 1} of ${review.length}`;
 
-        const nextBtn =
-            document.getElementById("reviewNextBtn");
+        const status =
+            document.createElement("span");
+
+        status.textContent =
+            isCorrect
+                ? "✓ Correct"
+                : isIncorrect
+                    ? "✕ Incorrect"
+                    : "— Unanswered";
+
+        status.style.cssText = `
+            font-weight:800;
+            padding:6px 12px;
+            border-radius:999px;
+            background:${
+                isCorrect
+                    ? "#dcfce7"
+                    : isIncorrect
+                        ? "#fee2e2"
+                        : "#f1f5f9"
+            };
+            color:${
+                isCorrect
+                    ? "#15803d"
+                    : isIncorrect
+                        ? "#dc2626"
+                        : "#64748b"
+            };
+        `;
+
+        header.appendChild(questionTitle);
+        header.appendChild(status);
+
+        container.appendChild(header);
 
 
-        previousBtn.disabled =
-            reviewIndex === 0;
+        /* ===============================
+           QUESTION
+        =============================== */
 
-        nextBtn.disabled =
-            reviewIndex === review.length - 1;
+        const questionBox =
+            document.createElement("div");
+
+        questionBox.style.cssText = `
+            padding:18px 20px;
+            margin-bottom:14px;
+            border-radius:12px;
+            background:#ffffff;
+            border:1px solid #e2e8f0;
+        `;
+
+        const question =
+            document.createElement("div");
+
+        question.textContent =
+            item.question || "";
+
+        question.style.cssText = `
+            font-size:17px;
+            font-weight:800;
+            color:#0f172a;
+            line-height:1.6;
+        `;
+
+        questionBox.appendChild(question);
+
+        container.appendChild(questionBox);
 
 
-        if(previousBtn.disabled){
+        /* ===============================
+           OPTIONS
+        =============================== */
 
-            previousBtn.style.opacity = "0.45";
-            previousBtn.style.cursor = "not-allowed";
+        const optionsBox =
+            document.createElement("div");
 
+        optionsBox.style.cssText = `
+            display:flex;
+            flex-direction:column;
+            gap:10px;
+            margin-bottom:16px;
+        `;
+
+        const letters = ["A","B","C","D"];
+
+        (item.options || []).forEach(
+            (option, optionIndex) => {
+
+                const optionBox =
+                    document.createElement("div");
+
+                const isStudentAnswer =
+                    item.student_answer === optionIndex;
+
+                const isCorrectAnswer =
+                    item.correct_answer === optionIndex;
+
+                let background = "#ffffff";
+                let border = "#e2e8f0";
+                let textColor = "#334155";
+
+                if(isCorrectAnswer){
+
+                    background = "#ecfdf5";
+                    border = "#22c55e";
+                    textColor = "#166534";
+
+                }
+
+                if(isStudentAnswer && !isCorrectAnswer){
+
+                    background = "#fef2f2";
+                    border = "#ef4444";
+                    textColor = "#b91c1c";
+
+                }
+
+                optionBox.style.cssText = `
+                    display:flex;
+                    align-items:center;
+                    gap:12px;
+                    padding:13px 16px;
+                    border:2px solid ${border};
+                    border-radius:11px;
+                    background:${background};
+                    color:${textColor};
+                    font-size:15px;
+                    font-weight:700;
+                `;
+
+                const letter =
+                    document.createElement("span");
+
+                letter.textContent =
+                    letters[optionIndex];
+
+                letter.style.cssText = `
+                    min-width:30px;
+                    height:30px;
+                    display:flex;
+                    align-items:center;
+                    justify-content:center;
+                    border-radius:8px;
+                    background:${
+                        isCorrectAnswer
+                            ? "#22c55e"
+                            : isStudentAnswer
+                                ? "#ef4444"
+                                : "#f1f5f9"
+                    };
+                    color:${
+                        isCorrectAnswer ||
+                        isStudentAnswer
+                            ? "#ffffff"
+                            : "#475569"
+                    };
+                    font-weight:900;
+                `;
+
+                const text =
+                    document.createElement("span");
+
+                text.textContent =
+                    option || "";
+
+                optionBox.appendChild(letter);
+                optionBox.appendChild(text);
+
+                optionsBox.appendChild(optionBox);
+            }
+        );
+
+        container.appendChild(optionsBox);
+
+
+        /* ===============================
+           ANSWER INFORMATION
+        =============================== */
+
+        if(!isCorrect && !isUnanswered){
+
+            const answerInfo =
+                document.createElement("div");
+
+            answerInfo.style.cssText = `
+                display:flex;
+                gap:12px;
+                flex-wrap:wrap;
+                margin-bottom:14px;
+            `;
+
+            const studentText =
+                item.student_answer !== null &&
+                item.student_answer !== undefined
+                    ? `${letters[item.student_answer]} — ${
+                        item.options[item.student_answer] || ""
+                    }`
+                    : "Not answered";
+
+            const correctText =
+                item.options[item.correct_answer] || "";
+
+            const yourAnswer =
+                document.createElement("div");
+
+            yourAnswer.innerHTML =
+                `<strong>Your Answer:</strong> ${escapeHtml(studentText)}`;
+
+            yourAnswer.style.cssText = `
+                flex:1;
+                min-width:240px;
+                padding:12px 15px;
+                border-radius:10px;
+                background:#fef2f2;
+                border:1px solid #fecaca;
+                color:#991b1b;
+            `;
+
+            const correctAnswer =
+                document.createElement("div");
+
+            correctAnswer.innerHTML =
+                `<strong>Correct Answer:</strong> ${
+                    escapeHtml(
+                        `${letters[item.correct_answer]} — ${correctText}`
+                    )
+                }`;
+
+            correctAnswer.style.cssText = `
+                flex:1;
+                min-width:240px;
+                padding:12px 15px;
+                border-radius:10px;
+                background:#ecfdf5;
+                border:1px solid #bbf7d0;
+                color:#166534;
+            `;
+
+            answerInfo.appendChild(yourAnswer);
+            answerInfo.appendChild(correctAnswer);
+
+            container.appendChild(answerInfo);
         }
 
 
-        if(nextBtn.disabled){
+        /* ===============================
+           EXPLANATION + HINT
+        =============================== */
 
-            nextBtn.style.opacity = "0.45";
-            nextBtn.style.cursor = "not-allowed";
+        if(isIncorrect){
 
+            if(item.explanation){
+
+                const explanation =
+                    document.createElement("div");
+
+                explanation.innerHTML =
+                    `<strong>💡 Explanation</strong><br>${
+                        escapeHtml(item.explanation)
+                    }`;
+
+                explanation.style.cssText = `
+                    padding:14px 16px;
+                    margin-bottom:10px;
+                    border-radius:10px;
+                    background:#eff6ff;
+                    border:1px solid #bfdbfe;
+                    color:#1e3a8a;
+                    line-height:1.6;
+                `;
+
+                container.appendChild(explanation);
+            }
+
+            if(item.hint){
+
+                const hint =
+                    document.createElement("div");
+
+                hint.innerHTML =
+                    `<strong>🧠 Hint</strong><br>${
+                        escapeHtml(item.hint)
+                    }`;
+
+                hint.style.cssText = `
+                    padding:14px 16px;
+                    margin-bottom:10px;
+                    border-radius:10px;
+                    background:#fffbeb;
+                    border:1px solid #fde68a;
+                    color:#92400e;
+                    line-height:1.6;
+                `;
+
+                container.appendChild(hint);
+            }
         }
 
 
-        previousBtn.onclick = function(){
+        /* ===============================
+           NAVIGATION
+        =============================== */
 
-            if(reviewIndex > 0){
+        const navigation =
+            document.createElement("div");
 
-                reviewIndex--;
+        navigation.style.cssText = `
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            gap:12px;
+            margin-top:18px;
+            padding:12px;
+            border-radius:12px;
+            background:#f8fafc;
+            border:1px solid #e2e8f0;
+        `;
 
-                renderReviewQuestion();
+        const previous =
+            document.createElement("button");
 
+        previous.type = "button";
+        previous.textContent = "← Previous";
+        previous.disabled =
+            currentReviewIndex === 0;
+
+        previous.style.cssText = `
+            padding:10px 18px;
+            border:none;
+            border-radius:9px;
+            font-weight:800;
+            cursor:pointer;
+        `;
+
+        previous.onclick = () => {
+
+            if(currentReviewIndex > 0){
+
+                currentReviewIndex--;
+                showReviewQuestion();
             }
-
         };
 
 
-        nextBtn.onclick = function(){
+        const next =
+            document.createElement("button");
 
-            if(reviewIndex < review.length - 1){
+        next.type = "button";
 
-                reviewIndex++;
+        next.textContent =
+            currentReviewIndex === review.length - 1
+                ? "Last Question"
+                : "Next →";
 
-                renderReviewQuestion();
+        next.disabled =
+            currentReviewIndex === review.length - 1;
 
+        next.style.cssText = `
+            padding:10px 18px;
+            border:none;
+            border-radius:9px;
+            font-weight:800;
+            cursor:pointer;
+        `;
+
+        next.onclick = () => {
+
+            if(currentReviewIndex < review.length - 1){
+
+                currentReviewIndex++;
+                showReviewQuestion();
             }
-
         };
 
+        navigation.appendChild(previous);
+        navigation.appendChild(next);
+
+        container.appendChild(navigation);
     }
 
-    renderReviewQuestion();
+    showReviewQuestion();
 }
    
 function escapeHtml(value){
