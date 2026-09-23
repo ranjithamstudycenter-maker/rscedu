@@ -3359,6 +3359,12 @@ async function beginPracticeSession(level){
         currentQuestion = Number(data.current_question || 0);
         practiceSubmitted = false;
 
+       console.log("PRACTICE SESSION:", {
+          session_id: data.session_id,
+          resumed: data.resumed,
+          started_at: data.started_at
+       });
+
         localStorage.setItem(
            "rsc_active_practice",
             JSON.stringify({
