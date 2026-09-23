@@ -3359,6 +3359,18 @@ async function beginPracticeSession(level){
         currentQuestion = Number(data.current_question || 0);
         practiceSubmitted = false;
 
+        localStorage.setItem(
+           "rsc_active_practice",
+            JSON.stringify({
+              board: board,
+              class_name: className,
+              subject: subject,
+              topic: topic,
+              subtopic: subtopic,
+              difficulty: level
+            })
+        );
+
         await loadPracticeQuestions(data);
 
     }catch(error){
