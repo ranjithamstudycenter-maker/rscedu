@@ -3774,80 +3774,421 @@ function showResult(data, autoSubmit){
 }
 
 function renderReview(review){
-    const container = document.getElementById("reviewContainer");
+
+    const container =
+        document.getElementById("reviewContainer");
+
     container.innerHTML = "";
 
     if(!review.length){
+
         container.innerHTML =
             '<p style="color:#64748b;">Review information is not available.</p>';
+
         return;
     }
 
-    review.forEach((item,index) => {
-        const wrapper = document.createElement("div");
-        wrapper.className = "review-item";
+    let reviewIndex = 0;
 
-        const state = item.is_correct
-            ? "correct"
-            : (item.student_answer === null || item.student_answer === undefined ? "unanswered" : "wrong");
+    function renderReviewQuestion(){
 
-        const title = document.createElement("div");
-        title.className = "review-summary " + state;
+        const item = review[reviewIndex];
 
-        const label = item.is_correct
-            ? "✓ Correct"
-            : (state === "unanswered" ? "— Unanswered" : "✕ Incorrect");
-
-        title.innerHTML =
-            `<span>Question ${index + 1} — ${label}</span><span>＋</span>`;
-
-        const body = document.createElement("div");
-        body.className = "review-body";
-
-        const question = document.createElement("div");
-        question.className = "review-q";
-        question.textContent = item.question || "";
-
-        const studentAnswer = document.createElement("div");
-        studentAnswer.className = "review-line";
-        studentAnswer.innerHTML =
-            "<span class='review-answer'>Your answer:</span> " +
-            escapeHtml(item.student_answer_text ?? "Not answered");
-
-        const correctAnswer = document.createElement("div");
-        correctAnswer.className = "review-line";
-        correctAnswer.innerHTML =
-            "<span class='review-answer'>Correct answer:</span> " +
-            escapeHtml(item.correct_answer_text ?? "");
-
-        body.appendChild(question);
-        body.appendChild(studentAnswer);
-        body.appendChild(correctAnswer);
-
-        if(item.explanation){
-            const exp = document.createElement("div");
-            exp.className = "explanation";
-            exp.innerHTML = "<strong>💡 Explanation:</strong><br>" +
-                escapeHtml(item.explanation);
-            body.appendChild(exp);
+        if(!item){
+            return;
         }
 
-        if(item.hint){
-            const hint = document.createElement("div");
-            hint.className = "hint";
-            hint.innerHTML = "<strong>🧠 Hint:</strong><br>" +
-                escapeHtml(item.hint);
-            body.appendChild(hint);
+        const isUnanswered =
+            item.student_answer === null ||
+            item.student_answer === undefined;
+
+        const status =
+            item.is_correct
+                ? "✓ Correct"
+                : (isUnanswered
+                    ? "— Unanswered"
+                    : "✕ Incorrect");
+
+        const statusColor =
+            item.is_correct
+                ? "#16a34a"
+                : (isUnanswered
+                    ? "#64748b"
+                    : "#dc2626");
+
+        let studentAnswerText =
+            "Not answered";
+
+        if(
+            !isUnanswered &&
+            item.options &&
+            item.options[item.student_answer] !== undefined
+        ){
+
+            studentAnswerText =
+                String.fromCharCode(
+                    65 + Number(item.student_answer)
+                ) +
+                ". " +
+                item.options[item.student_answer];
         }
 
-        title.onclick = () => body.classList.toggle("open");
+        let correctAnswerText =
+            "Not available";
 
-        wrapper.appendChild(title);
-        wrapper.appendChild(body);
-        container.appendChild(wrapper);
-    });
+        if(
+            item.correct_answer !== null &&
+            item.correct_answer !== undefined &&
+            item.options &&
+            item.options[item.correct_answer] !== undefined
+        ){
+
+            correctAnswerText =
+                String.fromCharCode(
+                    65 + Number(item.correct_answer)
+                ) +
+                ". " +
+                item.options[item.correct_answer];
+        }
+
+        container.innerHTML = `
+
+            <div style="
+                width:100%;
+                max-width:1100px;
+                margin:0 auto;
+            ">
+
+                <!-- REVIEW HEADER -->
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:15px;
+                    padding:14px 18px;
+                    margin-bottom:14px;
+                    border:1px solid #e2e8f0;
+                    border-radius:14px;
+                    background:#f8fafc;
+                ">
+
+                    <div style="
+                        font-size:15px;
+                        font-weight:800;
+                        color:#0f172a;
+                    ">
+                        Question ${reviewIndex + 1} of ${review.length}
+                    </div>
+
+                    <div style="
+                        padding:7px 14px;
+                        border-radius:999px;
+                        background:${statusColor}15;
+                        color:${statusColor};
+                        font-size:13px;
+                        font-weight:800;
+                    ">
+                        ${status}
+                    </div>
+
+                </div>
+
+
+                <!-- QUESTION CARD -->
+
+                <div style="
+                    border:1px solid #e2e8f0;
+                    border-radius:16px;
+                    background:#ffffff;
+                    padding:24px;
+                    box-shadow:0 8px 24px rgba(15,23,42,.06);
+                ">
+
+                    <div style="
+                        font-size:18px;
+                        font-weight:800;
+                        line-height:1.6;
+                        color:#0f172a;
+                        margin-bottom:22px;
+                    ">
+                        ${escapeHtml(item.question || "")}
+                    </div>
+
+
+                    <!-- ANSWER ROW -->
+
+                    <div style="
+                        display:flex;
+                        gap:18px;
+                        flex-wrap:wrap;
+                        margin-bottom:18px;
+                    ">
+
+                        <div style="
+                            flex:1;
+                            min-width:280px;
+                            padding:15px 18px;
+                            border-radius:12px;
+                            background:#f8fafc;
+                            border:1px solid #e2e8f0;
+                        ">
+
+                            <div style="
+                                font-size:11px;
+                                font-weight:800;
+                                text-transform:uppercase;
+                                letter-spacing:.5px;
+                                color:#64748b;
+                                margin-bottom:7px;
+                            ">
+                                Your Answer
+                            </div>
+
+                            <div style="
+                                font-size:14px;
+                                font-weight:700;
+                                color:${isUnanswered ? "#64748b" : "#0f172a"};
+                                line-height:1.5;
+                            ">
+                                ${escapeHtml(studentAnswerText)}
+                            </div>
+
+                        </div>
+
+
+                        <div style="
+                            flex:1;
+                            min-width:280px;
+                            padding:15px 18px;
+                            border-radius:12px;
+                            background:#f0fdf4;
+                            border:1px solid #bbf7d0;
+                        ">
+
+                            <div style="
+                                font-size:11px;
+                                font-weight:800;
+                                text-transform:uppercase;
+                                letter-spacing:.5px;
+                                color:#15803d;
+                                margin-bottom:7px;
+                            ">
+                                Correct Answer
+                            </div>
+
+                            <div style="
+                                font-size:14px;
+                                font-weight:700;
+                                color:#166534;
+                                line-height:1.5;
+                            ">
+                                ${escapeHtml(correctAnswerText)}
+                            </div>
+
+                        </div>
+
+                    </div>
+
+
+                    <!-- EXPLANATION -->
+
+                    ${
+                        item.explanation
+                        ? `
+                            <div style="
+                                margin-top:18px;
+                                padding:17px 18px;
+                                border-radius:12px;
+                                background:#eff6ff;
+                                border:1px solid #bfdbfe;
+                            ">
+
+                                <div style="
+                                    font-size:13px;
+                                    font-weight:800;
+                                    color:#1d4ed8;
+                                    margin-bottom:7px;
+                                ">
+                                    💡 Explanation
+                                </div>
+
+                                <div style="
+                                    font-size:14px;
+                                    line-height:1.6;
+                                    color:#334155;
+                                ">
+                                    ${escapeHtml(item.explanation)}
+                                </div>
+
+                            </div>
+                        `
+                        : ""
+                    }
+
+
+                    <!-- HINT -->
+
+                    ${
+                        item.hint
+                        ? `
+                            <div style="
+                                margin-top:12px;
+                                padding:15px 18px;
+                                border-radius:12px;
+                                background:#fffbeb;
+                                border:1px solid #fde68a;
+                            ">
+
+                                <div style="
+                                    font-size:13px;
+                                    font-weight:800;
+                                    color:#a16207;
+                                    margin-bottom:6px;
+                                ">
+                                    🧠 Hint
+                                </div>
+
+                                <div style="
+                                    font-size:14px;
+                                    line-height:1.6;
+                                    color:#475569;
+                                ">
+                                    ${escapeHtml(item.hint)}
+                                </div>
+
+                            </div>
+                        `
+                        : ""
+                    }
+
+                </div>
+
+
+                <!-- REVIEW NAVIGATION -->
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    align-items:center;
+                    gap:15px;
+                    margin-top:18px;
+                    padding:12px;
+                    border:1px solid #e2e8f0;
+                    border-radius:14px;
+                    background:#ffffff;
+                ">
+
+                    <button
+                        type="button"
+                        id="reviewPreviousBtn"
+                        style="
+                            padding:11px 20px;
+                            border:none;
+                            border-radius:10px;
+                            font-size:13px;
+                            font-weight:800;
+                            cursor:pointer;
+                            background:#eef2ff;
+                            color:#4338ca;
+                        "
+                    >
+                        ← Previous
+                    </button>
+
+
+                    <div style="
+                        font-size:12px;
+                        font-weight:800;
+                        color:#64748b;
+                    ">
+                        ${reviewIndex + 1} / ${review.length}
+                    </div>
+
+
+                    <button
+                        type="button"
+                        id="reviewNextBtn"
+                        style="
+                            padding:11px 20px;
+                            border:none;
+                            border-radius:10px;
+                            font-size:13px;
+                            font-weight:800;
+                            cursor:pointer;
+                            background:#4f46e5;
+                            color:#ffffff;
+                        "
+                    >
+                        Next →
+                    </button>
+
+                </div>
+
+            </div>
+        `;
+
+
+        const previousBtn =
+            document.getElementById("reviewPreviousBtn");
+
+        const nextBtn =
+            document.getElementById("reviewNextBtn");
+
+
+        previousBtn.disabled =
+            reviewIndex === 0;
+
+        nextBtn.disabled =
+            reviewIndex === review.length - 1;
+
+
+        if(previousBtn.disabled){
+
+            previousBtn.style.opacity = "0.45";
+            previousBtn.style.cursor = "not-allowed";
+
+        }
+
+
+        if(nextBtn.disabled){
+
+            nextBtn.style.opacity = "0.45";
+            nextBtn.style.cursor = "not-allowed";
+
+        }
+
+
+        previousBtn.onclick = function(){
+
+            if(reviewIndex > 0){
+
+                reviewIndex--;
+
+                renderReviewQuestion();
+
+            }
+
+        };
+
+
+        nextBtn.onclick = function(){
+
+            if(reviewIndex < review.length - 1){
+
+                reviewIndex++;
+
+                renderReviewQuestion();
+
+            }
+
+        };
+
+    }
+
+    renderReviewQuestion();
 }
-
+   
 function escapeHtml(value){
     const div = document.createElement("div");
     div.textContent = String(value ?? "");
