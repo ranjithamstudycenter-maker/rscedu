@@ -2240,15 +2240,25 @@ body.exam-running .exam-lock-bar{
 </div>
     <div class="package-step-actions">
 
-        <button
-            type="button"
-            class="mock-back-btn"
-            onclick="backToPackageGateway()"
-        >
-            ← Back
-        </button>
+    <button
+        type="button"
+        class="mock-back-btn"
+        onclick="backToPackageGateway()"
+    >
+        ← Back
+    </button>
 
-    </div>
+    <button
+        type="button"
+        class="continue-btn"
+        id="packageContinueBtn"
+        onclick="continueToPurchasedPackage()"
+        disabled
+    >
+        Continue →
+    </button>
+
+</div>
 
 </section>
     <div class="mode-switch">
