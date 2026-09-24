@@ -1294,21 +1294,29 @@ def payment_success_api():
         "enrolled": True,
         "hours_remaining": user["max_hours"][course]
     })
+
 # =====================================================
-# RSC MOCK TEST - ₹1 PAYMENT
-# LOGIN NOT REQUIRED
+# RSC SUBJECT PACKAGE - PRACTICE + MOCK
 # =====================================================
 
-MOCK_TEST_PRICE = 1
-MOCK_TEST_SUBJECT = "Mathematics"
+PACKAGE_PRICE = 299
 
+PACKAGE_SUBJECTS = {
+    "math": "Mathematics",
+    "biology": "Biology",
+    "science": "Science",
+    "social_science": "Social Science"
+}
+
+
+# =====================================================
+# RSC SUBJECT PACKAGE - CREATE ORDER
+# PRACTICE + MOCK TEST
+# =====================================================
 
 @app.route("/api/mock/create-order", methods=["POST"])
 def mock_create_order():
 
-    # -------------------------------------------------
-    # ANONYMOUS BROWSER ID
-    # -------------------------------------------------
     practice_id = get_practice_id()
 
     data = request.get_json() or {}
@@ -1328,27 +1336,38 @@ def mock_create_order():
     # -------------------------------------------------
     # VALIDATION
     # -------------------------------------------------
-    if subject != MOCK_TEST_SUBJECT:
+
+    if subject not in PACKAGE_SUBJECTS:
+
         return jsonify({
             "success": False,
-            "error":
-                "Only Mathematics Mock Test is currently available."
+            "error": "Invalid subject package."
         }), 400
 
     if not board or not class_name:
+
         return jsonify({
             "success": False,
-            "error":
-                "Board and Class are required."
+            "error": "Board and Class are required."
         }), 400
 
-    conn = sqlite3.connect("/var/data/students.db")
+    subject_name = PACKAGE_SUBJECTS[subject]
+
+    # -------------------------------------------------
+    # DATABASE
+    # -------------------------------------------------
+
+    conn = sqlite3.connect(
+        "/var/data/students.db"
+    )
+
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     # -------------------------------------------------
-    # CHECK WHETHER THIS BROWSER ALREADY PURCHASED
+    # CHECK EXISTING PURCHASE
     # -------------------------------------------------
+
     c.execute("""
         SELECT
             id,
@@ -1364,7 +1383,7 @@ def mock_create_order():
         practice_id,
         board,
         class_name,
-        subject
+        subject_name
     ))
 
     existing = c.fetchone()
@@ -1377,13 +1396,15 @@ def mock_create_order():
             "success": True,
             "already_paid": True,
             "unlocked": True,
+            "package_type": "practice_mock",
             "message":
-                "Mock Test package is already unlocked."
+                "Practice + Mock Test package is already unlocked."
         })
 
     # -------------------------------------------------
-    # LOAD RAZORPAY KEYS
+    # LOAD RAZORPAY
     # -------------------------------------------------
+
     try:
 
         with open("admin.json") as f:
@@ -1397,19 +1418,31 @@ def mock_create_order():
         )
 
         # -------------------------------------------------
-        # CREATE EXACT ₹299 ORDER
+        # CREATE ₹299 ORDER
         # -------------------------------------------------
+
         order = client.order.create({
-            "amount": MOCK_TEST_PRICE * 100,
+
+            "amount": PACKAGE_PRICE * 100,
+
             "currency": "INR",
+
             "payment_capture": 1,
+
             "notes": {
-                "type": "mock_test_package",
+
+                "type": "practice_mock_package",
+
                 "practice_id": practice_id,
-                "subject": subject,
+
+                "subject": subject_name,
+
                 "board": board,
+
                 "class_name": class_name
+
             }
+
         })
 
     except Exception as e:
@@ -1417,7 +1450,7 @@ def mock_create_order():
         conn.close()
 
         print(
-            "MOCK RAZORPAY CREATE ORDER ERROR:",
+            "PACKAGE RAZORPAY CREATE ORDER ERROR:",
             e
         )
 
@@ -1430,6 +1463,7 @@ def mock_create_order():
     # -------------------------------------------------
     # SAVE PENDING PAYMENT
     # -------------------------------------------------
+
     try:
 
         c.execute("""
@@ -1448,16 +1482,27 @@ def mock_create_order():
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
+
             practice_id,
+
             None,
-            subject,
+
+            subject_name,
+
             board,
+
             class_name,
-            MOCK_TEST_PRICE,
+
+            PACKAGE_PRICE,
+
             order["id"],
+
             None,
+
             "pending",
+
             None
+
         ))
 
         conn.commit()
@@ -1465,7 +1510,7 @@ def mock_create_order():
     except Exception as e:
 
         print(
-            "MOCK PURCHASE SAVE ERROR:",
+            "PACKAGE PURCHASE SAVE ERROR:",
             e
         )
 
@@ -1480,19 +1525,41 @@ def mock_create_order():
     conn.close()
 
     return jsonify({
+
         "success": True,
+
         "already_paid": False,
+
         "unlocked": False,
-        "order_id": order["id"],
-        "amount": MOCK_TEST_PRICE * 100,
-        "currency": "INR",
+
+        "package_type":
+            "practice_mock",
+
+        "order_id":
+            order["id"],
+
+        "amount":
+            PACKAGE_PRICE * 100,
+
+        "currency":
+            "INR",
+
         "razorpay_key":
             keys["razorpay_key"],
-        "subject": subject,
-        "board": board,
-        "class_name": class_name
-    })
 
+        "subject":
+            subject_name,
+
+        "subject_key":
+            subject,
+
+        "board":
+            board,
+
+        "class_name":
+            class_name
+
+    })
 
 # =====================================================
 # RSC MOCK TEST - VERIFY PAYMENT
