@@ -4628,40 +4628,195 @@ function backToSubjectPackages(){
     });
 }   
 /* ---------- SUBJECT ---------- */
+/* ---------- SUBJECT ---------- */
+
 function selectSubject(subject, card){
 
-    if(subject !== "math") return;
+    /*
+     * Allow all subjects.
+     * Practice data will be loaded dynamically
+     * from the selected Board + Class + Subject.
+     */
 
-    // Mathematics active
-    document.querySelectorAll(".subject-card")
-        .forEach(c => c.classList.remove("active"));
+    const allowedSubjects = [
+        "math",
+        "biology",
+        "science",
+        "social_science"
+    ];
 
-    card.classList.add("active");
-
-    // Hide subject selection
-    document.querySelector(".subject-grid").style.display = "none";
-
-    // Hide "Build Your Practice Test" heading
-    const setupHead = document.querySelector("#setupCard > .section-head");
-    if(setupHead){
-         setupHead.style.display = "none";
+    if(!allowedSubjects.includes(subject)){
+        return;
     }
 
 
-    // Show syllabus selection
-    document.getElementById("mathSetup").style.display = "block";
+    // =============================================
+    // ACTIVE SUBJECT
+    // =============================================
 
-    // Hide difficulty
-    document.getElementById("difficultyCard").style.display = "none";
+    document.querySelectorAll(".subject-card")
+        .forEach(function(c){
 
-    // Fresh syllabus selection
+            c.classList.remove("active");
+
+        });
+
+
+    if(card){
+
+        card.classList.add("active");
+
+    }
+
+
+    // =============================================
+    // HIDE SUBJECT SELECTION
+    // =============================================
+
+    const subjectGrid =
+        document.querySelector(".subject-grid");
+
+    if(subjectGrid){
+
+        subjectGrid.style.display = "none";
+
+    }
+
+
+    // =============================================
+    // HIDE SETUP HEADING
+    // =============================================
+
+    const setupHead =
+        document.querySelector(
+            "#setupCard > .section-head"
+        );
+
+    if(setupHead){
+
+        setupHead.style.display = "none";
+
+    }
+
+
+    // =============================================
+    // SHOW PRACTICE SYLLABUS
+    // =============================================
+
+    const mathSetup =
+        document.getElementById("mathSetup");
+
+    if(mathSetup){
+
+        mathSetup.style.display = "block";
+
+    }
+
+
+    // =============================================
+    // HIDE DIFFICULTY
+    // =============================================
+
+    const difficultyCard =
+        document.getElementById("difficultyCard");
+
+    if(difficultyCard){
+
+        difficultyCard.style.display = "none";
+
+    }
+
+
+    // =============================================
+    // RESET BOARD / CLASS / TOPIC
+    // BUT KEEP PURCHASED BOARD + CLASS
+    // =============================================
+
     resetPracticeDropdowns();
 
-    // Go directly to Select Syllabus
-    document.getElementById("mathSetup").scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-    });
+
+    // =============================================
+    // AUTO SELECT PURCHASED SUBJECT
+    // =============================================
+
+    const subjectSelect =
+        document.getElementById("practiceSubject");
+
+
+    if(subjectSelect){
+
+        setTimeout(function(){
+
+            /*
+             * Find the real subject name coming
+             * from database.
+             */
+
+            const subjectNames = {
+
+                math: "Mathematics",
+
+                biology: "Biology",
+
+                science: "Science",
+
+                social_science: "Social Science"
+
+            };
+
+
+            const realSubject =
+                subjectNames[subject] || subject;
+
+
+            const option =
+                [...subjectSelect.options]
+                .find(function(opt){
+
+                    return (
+                        opt.value === realSubject ||
+                        opt.textContent.trim() === realSubject
+                    );
+
+                });
+
+
+            if(option){
+
+                subjectSelect.value =
+                    option.value;
+
+                /*
+                 * Load chapters for this subject.
+                 */
+
+                loadPracticeTopics();
+
+            }
+
+            updateDifficultyState();
+
+        }, 250);
+
+    }
+
+
+    // =============================================
+    // SCROLL TO PRACTICE
+    // =============================================
+
+    if(mathSetup){
+
+        mathSetup.scrollIntoView({
+
+            behavior:"smooth",
+
+            block:"start"
+
+        });
+
+    }
+
 }
 async function startCombinedPackagePayment(){
 
@@ -5227,27 +5382,24 @@ function continueToPurchasedPackage(){
     }
 
 
-    // ---------------------------------------------
-    // SELECT MATHEMATICS
-    // ---------------------------------------------
-
-    if(packageSelectedSubject === "math"){
-
-        const mathCard =
-            document.querySelector(
-                '.subject-card[onclick*="selectSubject(\'math\'"]'
-            );
-
-        if(mathCard){
-
-            selectSubject(
-                "math",
-                mathCard
-            );
-
-        }
-
-    }
+   // =============================================
+   // OPEN PURCHASED SUBJECT IN PRACTICE
+   // =============================================
+   
+   const subjectCard =
+       document.querySelector(
+           `.subject-card[onclick*="selectSubject('${packageSelectedSubject}'"]`
+       );
+   
+   
+   if(subjectCard){
+   
+       selectSubject(
+           packageSelectedSubject,
+           subjectCard
+       );
+   
+   }
 
 
     // ---------------------------------------------
