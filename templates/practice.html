@@ -4509,21 +4509,16 @@ async function startCombinedPackagePayment(subject, button){
                 method: "POST",
 
                 headers: {
-                    "Content-Type": "application/json"
+                    "Content-Type": "application/json" 
                 },
 
                 body: JSON.stringify({
 
-                    subject:
-                        packageSelectedSubject === "math"
-                            ? "Mathematics"
-                            : packageSelectedSubject,
-
-                    board:
-                        packageSelectedBoard,
-
-                    class_name:
-                        packageSelectedClass
+                      subject: packageSelectedSubject,
+                  
+                      board: packageSelectedBoard,
+                  
+                      class_name: packageSelectedClass
 
                 })
 
