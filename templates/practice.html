@@ -1251,6 +1251,11 @@ body.exam-running .exam-lock-bar{
         max-width:100%;
     }
 }
+.package-gateway-actions{
+    display:flex;
+    justify-content:flex-end;
+    margin-top:22px;
+}
 </style>
 
 </head>
@@ -1815,9 +1820,9 @@ body.exam-running .exam-lock-bar{
     <section class="practice-hero" id="practiceHero">
         <div class="practice-hero-inner">
             <span class="practice-eyebrow">✨ RSC Digital Learning</span>
-            <h1>📘 Smart Practice</h1>
+            <h1>📘 Smart Practice & Assessment </h1>
             <p>
-                Practice chapter-wise Mathematics with structured MCQs,
+                Practice All Subjects with structured MCQs,
                 timed online tests and detailed performance review.
             </p>
             </div>
@@ -1870,9 +1875,16 @@ body.exam-running .exam-lock-bar{
                   disabled>
                   Continue →
               </button>
-      
+        
           </div>
-      
+           <div class="package-gateway-actions">
+             <button
+                 id="packageGatewayContinueBtn"
+                 onclick="continueFromPackageGateway()"
+                 disabled>
+                 Continue →
+             </button>
+         </div>
       </section>
    <!-- =========================================================
      STEP 2 — SUBJECT PACKAGE
