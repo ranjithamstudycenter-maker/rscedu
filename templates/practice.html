@@ -3465,6 +3465,15 @@ function continueFromPackageGateway(){
     packageSelectedBoard = board;
     packageSelectedClass = cls;
 
+   localStorage.setItem(
+       "rsc_package_board",
+       board
+   );
+
+   localStorage.setItem(
+       "rsc_package_class",
+       cls
+   );
 
     /* Update Step 2 selection */
 
@@ -4333,16 +4342,7 @@ async function checkPackageAccess(){
         social_science: "Social Science"
 
     };
-       body: JSON.stringify({
-   
-       subject: subjectName,
-   
-       board: packageSelectedBoard,
-   
-       class_name: packageSelectedClass
-   
-   })
-
+       
     const subjectName =
         subjectNames[packageSelectedSubject]
         || packageSelectedSubject;
@@ -5090,6 +5090,143 @@ function markPackageAsPurchased(subject){
     });
 
 }
+async function restorePurchasedPackageStatuses(){
+
+    const savedBoard =
+        localStorage.getItem(
+            "rsc_package_board"
+        );
+
+    const savedClass =
+        localStorage.getItem(
+            "rsc_package_class"
+        );
+
+
+    // No previous Board/Class
+    if(
+        !savedBoard ||
+        !savedClass
+    ){
+
+        return;
+
+    }
+
+
+    // Restore current package selection
+    packageSelectedBoard =
+        savedBoard;
+
+    packageSelectedClass =
+        savedClass;
+
+
+    // Update selected syllabus text
+    const selectedText =
+        document.getElementById(
+            "packageSelectedSyllabusText"
+        );
+
+    if(selectedText){
+
+        selectedText.textContent =
+            `${savedBoard} • Class ${savedClass}`;
+
+    }
+
+
+    // -----------------------------------------
+    // SUBJECTS TO CHECK
+    // -----------------------------------------
+
+    const subjects = [
+        "math",
+        "biology",
+        "science",
+        "social_science"
+    ];
+
+
+    // -----------------------------------------
+    // CHECK EACH SUBJECT FROM SERVER
+    // -----------------------------------------
+
+    for(
+        const subject of subjects
+    ){
+
+        try{
+
+            const subjectNames = {
+
+                math:
+                    "Mathematics",
+
+                biology:
+                    "Biology",
+
+                science:
+                    "Science",
+
+                social_science:
+                    "Social Science"
+
+            };
+
+
+            const response =
+                await fetch(
+                    "/api/mock/check-access?" +
+                    new URLSearchParams({
+
+                        subject:
+                            subjectNames[subject],
+
+                        board:
+                            savedBoard,
+
+                        class_name:
+                            savedClass
+
+                    }).toString(),
+
+                    {
+                        cache:"no-store"
+                    }
+                );
+
+
+            const data =
+                await response.json();
+
+
+            if(
+                response.ok &&
+                data.success &&
+                data.unlocked
+            ){
+
+                markPackageAsPurchased(
+                    subject
+                );
+
+            }
+
+        }
+        catch(error){
+
+            console.error(
+                "Package restore error:",
+                subject,
+                error
+            );
+
+        }
+
+    }
+
+}
 function openPurchasedSubject(subject){
 
     // -----------------------------------------
@@ -5736,30 +5873,97 @@ function continueToDifficulty(){
 
 function backToPracticeSubject(){
 
-    // -----------------------------------------
-    // IF DIFFICULTY PAGE IS OPEN
-    // RETURN TO SYLLABUS
-    // -----------------------------------------
-
     const difficultyCard =
-        document.getElementById(
-            "difficultyCard"
-        );
+        document.getElementById("difficultyCard");
+
+    const setupCard =
+        document.getElementById("setupCard");
 
     const mathSetup =
-        document.getElementById(
-            "mathSetup"
+        document.getElementById("mathSetup");
+
+    const subjectGrid =
+        document.querySelector(".subject-grid");
+
+    const setupHead =
+        document.querySelector(
+            "#setupCard > .section-head"
         );
 
+    const selectionSummary =
+        document.getElementById(
+            "selectionSummary"
+        );
+
+    const stepActions =
+        mathSetup
+        ? mathSetup.querySelector(
+            ".practice-step-actions"
+        )
+        : null;
+
+
+    // =================================================
+    // DIFFICULTY → SELECT SYLLABUS
+    // =================================================
 
     if(
         difficultyCard &&
         difficultyCard.style.display !== "none"
     ){
 
+        // Hide Difficulty
         difficultyCard.style.display =
             "none";
 
+
+        // VERY IMPORTANT
+        // Parent setup card must be visible again
+        if(setupCard){
+
+            setupCard.style.display =
+                "block";
+
+        }
+
+
+        // Keep subject cards hidden
+        // because we are returning to the
+        // already selected syllabus.
+        if(subjectGrid){
+
+            subjectGrid.style.display =
+                "none";
+
+        }
+
+
+        // Keep "Build Your Practice Test"
+        // heading hidden.
+        if(setupHead){
+
+            setupHead.style.display =
+                "none";
+
+        }
+
+
+        // Move Selected summary
+        // back into Syllabus section
+        if(
+            selectionSummary &&
+            stepActions
+        ){
+
+            mathSetup.insertBefore(
+                selectionSummary,
+                stepActions
+            );
+
+        }
+
+
+        // Show syllabus
         if(mathSetup){
 
             mathSetup.style.display =
@@ -5767,19 +5971,43 @@ function backToPracticeSubject(){
 
         }
 
-        mathSetup?.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-        });
+
+        // Keep selected summary visible
+        if(selectionSummary){
+
+            selectionSummary.style.display =
+                "block";
+
+            selectionSummary.style.textAlign =
+                "left";
+
+            selectionSummary.style.margin =
+                "";
+
+        }
+
+
+        // Scroll back to syllabus
+        if(mathSetup){
+
+            setTimeout(function(){
+
+                mathSetup.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+
+            },50);
+
+        }
 
         return;
-
     }
 
 
-    // -----------------------------------------
-    // OTHERWISE RETURN TO PACKAGE PAGE
-    // -----------------------------------------
+    // =================================================
+    // SYLLABUS → SUBJECT PACKAGE PAGE
+    // =================================================
 
     const practiceShell =
         document.getElementById(
@@ -7194,10 +7422,18 @@ function backToSetup(){
    
 
 /* ---------- INITIAL LOAD ---------- */
-document.addEventListener("DOMContentLoaded", function(){
-    loadPracticeOptions();
-    loadPackageBoards();
-});
+document.addEventListener(
+    "DOMContentLoaded",
+    async function(){
+
+        loadPracticeOptions();
+
+        await loadPackageBoards();
+
+        await restorePurchasedPackageStatuses();
+
+    }
+);
 
 document.addEventListener("keydown", function(e){
     if(e.key === "Escape"){
