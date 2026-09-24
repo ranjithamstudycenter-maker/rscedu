@@ -1485,7 +1485,7 @@ body.exam-running .exam-lock-bar{
    ========================================================= */
 
 .subject-package-section{
-    max-width:1080px;
+    max-width:1280px;
     margin:24px auto;
 }
 
@@ -1521,7 +1521,7 @@ body.exam-running .exam-lock-bar{
     margin:25px 0 0;
 
     display:grid;
-    grid-template-columns:repeat(3,1fr);
+    grid-template-columns:repeat(2,1fr);
     gap:24px;
 }
 
@@ -1530,8 +1530,7 @@ body.exam-running .exam-lock-bar{
 .subject-package-card{
     display:grid;
 
-    /* SAME STRUCTURE AS MOCK PACKAGE */
-    grid-template-columns:105px 1fr;
+    grid-template-columns:120px minmax(0,1fr);
 
     gap:25px;
     align-items:center;
@@ -1558,7 +1557,6 @@ body.exam-running .exam-lock-bar{
     border:1px solid #c7d2fe;
 
     cursor:pointer;
-
     transition:.25s ease;
 }
 
@@ -1623,12 +1621,12 @@ body.exam-running .exam-lock-bar{
 
 .package-feature-list{
     display:grid;
-    grid-template-columns:1fr;
-    gap:7px;
+    grid-template-columns:repeat(2,1fr);
+    gap:9px 20px;
 
+    margin-top:15px;
     margin-bottom:18px;
 }
-
 
 .package-feature-list span{
     font-size:11px;
