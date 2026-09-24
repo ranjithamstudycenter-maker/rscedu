@@ -4369,9 +4369,18 @@ async function selectSubjectPackage(subject, card){
     // SAVE SELECTED SUBJECT
     // =============================================
 
-    packageSelectedSubject = subject;
+       packageSelectedSubject = subject;
 
-
+    // Keep selected package details on the payment button
+       const payBtn = document.querySelector(".package-pay-btn");
+      
+       if(payBtn){
+      
+           payBtn.dataset.subject = subject;
+           payBtn.dataset.board = packageSelectedBoard;
+           payBtn.dataset.className = packageSelectedClass;
+      
+       }
     // =============================================
     // ACTIVE CARD
     // =============================================
@@ -4820,6 +4829,38 @@ function selectSubject(subject, card){
 }
 async function startCombinedPackagePayment(){
 
+    const payBtn =
+        document.querySelector(".package-pay-btn");
+
+
+    // =============================================
+    // RECOVER SELECTED PACKAGE DETAILS
+    // =============================================
+
+    if(payBtn){
+
+        if(!packageSelectedSubject && payBtn.dataset.subject){
+            packageSelectedSubject =
+                payBtn.dataset.subject;
+        }
+
+        if(!packageSelectedBoard && payBtn.dataset.board){
+            packageSelectedBoard =
+                payBtn.dataset.board;
+        }
+
+        if(!packageSelectedClass && payBtn.dataset.className){
+            packageSelectedClass =
+                payBtn.dataset.className;
+        }
+
+    }
+
+
+    // =============================================
+    // FINAL VALIDATION
+    // =============================================
+
     if(
         !packageSelectedSubject ||
         !packageSelectedBoard ||
@@ -4833,8 +4874,10 @@ async function startCombinedPackagePayment(){
         return;
     }
 
-    const payBtn =
-        document.querySelector(".package-pay-btn");
+
+    // =============================================
+    // DISABLE PAYMENT BUTTON
+    // =============================================
 
     if(payBtn){
 
@@ -4844,6 +4887,7 @@ async function startCombinedPackagePayment(){
             "⏳ Starting Payment...";
 
     }
+
 
     try{
 
@@ -4863,7 +4907,9 @@ async function startCombinedPackagePayment(){
                 body: JSON.stringify({
 
                     subject:
-                        packageSelectedSubject,
+                        packageSelectedSubject === "math"
+                            ? "Mathematics"
+                            : packageSelectedSubject,
 
                     board:
                         packageSelectedBoard,
