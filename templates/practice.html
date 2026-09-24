@@ -1508,40 +1508,37 @@ body.exam-running .exam-lock-bar{
     color:#312e81;
 }
 
-.subject-package-grid{
-    max-width:900px;
-    margin:0 auto;
-    display:grid;
-    grid-template-columns:repeat(2,1fr);
-    gap:18px;
-}
-
 /* =========================================================
    SUBJECT PACKAGE CARDS
    SAME STYLE AS MOCK-PACKAGE-CARD
    3 CARDS PER ROW
    ========================================================= */
 
+
 .subject-package-grid{
-    max-width:1080px;
-    margin:0 auto;
+    width:100%;
+    max-width:none;
+    margin:25px 0 0;
+
     display:grid;
     grid-template-columns:repeat(3,1fr);
-    gap:20px;
+    gap:24px;
 }
-
 
 /* SUBJECT PACKAGE CARD */
 
 .subject-package-card{
-    position:relative;
     display:grid;
-    grid-template-columns:85px 1fr;
-    gap:18px;
+
+    /* SAME STRUCTURE AS MOCK PACKAGE */
+    grid-template-columns:105px 1fr;
+
+    gap:25px;
     align-items:center;
 
-    min-height:300px;
-    padding:25px;
+    padding:30px;
+
+    min-height:330px;
 
     border-radius:24px;
 
@@ -1561,11 +1558,9 @@ body.exam-running .exam-lock-bar{
     border:1px solid #c7d2fe;
 
     cursor:pointer;
+
     transition:.25s ease;
-
-    box-shadow:0 8px 25px rgba(15,23,42,.06);
 }
-
 
 /* HOVER */
 
@@ -1579,21 +1574,21 @@ body.exam-running .exam-lock-bar{
 /* ICON */
 
 .package-subject-icon{
-    width:78px;
-    height:78px;
+    width:105px;
+    height:105px;
 
-    border-radius:22px;
+    border-radius:28px;
 
     display:flex;
     align-items:center;
     justify-content:center;
 
-    font-size:40px;
+    font-size:52px;
 
     background:#fff;
 
     box-shadow:
-        0 10px 25px rgba(79,70,229,.12);
+        0 12px 30px rgba(79,70,229,.12);
 }
 
 
@@ -1605,22 +1600,24 @@ body.exam-running .exam-lock-bar{
 
 
 .package-subject-content h3{
-    margin:0 0 7px;
+    margin:7px 0;
 
     color:#172554;
-    font-size:22px;
+
+    font-size:28px;
     font-weight:800;
 }
 
-
 .package-subject-content p{
-    margin:0 0 14px;
+    margin:0;
 
     color:#64748b;
-    font-size:12px;
-    line-height:1.55;
-}
 
+    font-size:14px;
+    line-height:1.65;
+
+    max-width:700px;
+}
 
 /* FEATURES */
 
@@ -1645,27 +1642,30 @@ body.exam-running .exam-lock-bar{
 
 .package-card-bottom{
     display:flex;
-    align-items:center;
+    align-items:flex-end;
     justify-content:space-between;
-    gap:10px;
+
+    gap:15px;
+
+    margin-top:5px;
 }
 
 
 .package-price{
-    display:flex;
-    flex-direction:column;
+    margin-top:15px;
 }
 
-
 .package-price small{
-    font-size:9px;
+    display:block;
+
+    font-size:11px;
     color:#94a3b8;
 }
 
-
 .package-price strong{
-    font-size:26px;
+    font-size:40px;
     font-weight:900;
+
     color:#312e81;
 }
 
@@ -1673,11 +1673,12 @@ body.exam-running .exam-lock-bar{
 /* VIEW PACKAGE BUTTON */
 
 .package-view-btn{
+    margin-top:22px;
+
     border:none;
+    border-radius:14px;
 
-    padding:10px 13px;
-
-    border-radius:10px;
+    padding:15px 25px;
 
     background:
         linear-gradient(
@@ -1688,25 +1689,60 @@ body.exam-running .exam-lock-bar{
 
     color:#fff;
 
-    font-size:11px;
+    font-size:15px;
     font-weight:900;
 
     cursor:pointer;
 
-    white-space:nowrap;
-
     box-shadow:
-        0 8px 18px rgba(79,70,229,.22);
+        0 10px 25px rgba(79,70,229,.22);
 
-    transition:.2s ease;
+    transition:.2s;
 }
-
 
 .package-view-btn:hover{
     transform:translateY(-2px);
 
     box-shadow:
-        0 12px 25px rgba(79,70,229,.28);
+        0 15px 30px rgba(79,70,229,.28);
+}
+@media(max-width:1100px){
+
+    .subject-package-grid{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:700px){
+
+    .subject-package-grid{
+        grid-template-columns:1fr;
+    }
+
+    .subject-package-card{
+        grid-template-columns:1fr;
+
+        text-align:center;
+
+        min-height:auto;
+
+        padding:25px;
+    }
+
+    .package-subject-icon{
+        margin:0 auto;
+    }
+
+    .package-feature-list{
+        grid-template-columns:1fr;
+        text-align:left;
+    }
+
+    .package-card-bottom{
+        align-items:center;
+    }
+
 }
 }
 </style>
