@@ -1494,16 +1494,9 @@ body.exam-running .exam-lock-bar{
     max-width:850px;
     margin:22px auto 0;
     display:flex;
-    justify-content:space-between;
+    justify-content:flex-end;
     align-items:center;
     gap:12px;
-}
-
-#packageGatewayContinue:disabled{
-    background:#cbd5e1;
-    color:#64748b;
-    cursor:not-allowed;
-    box-shadow:none;
 }
 
 @media(max-width:700px){
@@ -1877,15 +1870,7 @@ body.exam-running .exam-lock-bar{
               </button>
         
           </div>
-           <div class="package-gateway-actions">
-             <button
-                 id="packageGatewayContinueBtn"
-                 onclick="continueFromPackageGateway()"
-                 disabled>
-                 Continue →
-             </button>
-         </div>
-      </section>
+       </section>
    <!-- =========================================================
      STEP 2 — SUBJECT PACKAGE
      ========================================================= -->
