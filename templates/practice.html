@@ -1479,6 +1479,181 @@ body.exam-running .exam-lock-bar{
     }
 
 }
+/* =========================================================
+   STEP 2 — SUBJECT PACKAGE
+   ========================================================= */
+
+.subject-package-section{
+    max-width:1080px;
+    margin:24px auto;
+}
+
+.subject-package-head{
+    margin-bottom:20px;
+}
+
+.package-selected-syllabus{
+    max-width:850px;
+    margin:0 auto 22px;
+    padding:12px 16px;
+    border-radius:12px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    text-align:center;
+    color:#475569;
+}
+
+.package-selected-syllabus strong{
+    color:#312e81;
+}
+
+.subject-package-grid{
+    max-width:900px;
+    margin:0 auto;
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+}
+
+.subject-package-card{
+    position:relative;
+    display:flex;
+    gap:18px;
+    padding:22px;
+    border:1px solid #e2e8f0;
+    border-radius:18px;
+    background:#fff;
+    cursor:pointer;
+    transition:.25s ease;
+    box-shadow:0 6px 18px rgba(15,23,42,.05);
+}
+
+.subject-package-card:hover{
+    transform:translateY(-4px);
+    border-color:#8b5cf6;
+    box-shadow:0 12px 28px rgba(79,70,229,.14);
+}
+
+.package-subject-icon{
+    width:58px;
+    height:58px;
+    min-width:58px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    border-radius:15px;
+    background:#eef2ff;
+    font-size:28px;
+}
+
+.package-subject-content{
+    flex:1;
+}
+
+.package-subject-content h3{
+    margin:0 0 7px;
+    font-size:19px;
+    color:#172554;
+}
+
+.package-subject-content p{
+    margin:0 0 14px;
+    color:#64748b;
+    font-size:13px;
+    line-height:1.6;
+}
+
+.package-feature-list{
+    display:grid;
+    grid-template-columns:1fr 1fr;
+    gap:7px;
+    margin-bottom:18px;
+}
+
+.package-feature-list span{
+    font-size:11px;
+    color:#475569;
+    font-weight:600;
+}
+
+.package-card-bottom{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+}
+
+.package-price{
+    display:flex;
+    flex-direction:column;
+}
+
+.package-price small{
+    font-size:10px;
+    color:#94a3b8;
+}
+
+.package-price strong{
+    font-size:23px;
+    color:#4f46e5;
+}
+
+.package-view-btn{
+    border:none;
+    padding:10px 15px;
+    border-radius:10px;
+    background:linear-gradient(
+        135deg,
+        #4f46e5,
+        #7c3aed
+    );
+    color:#fff;
+    font-size:12px;
+    font-weight:800;
+    cursor:pointer;
+}
+
+.subject-package-card.coming-soon{
+    cursor:default;
+    opacity:.72;
+}
+
+.subject-package-card.coming-soon:hover{
+    transform:none;
+    border-color:#e2e8f0;
+    box-shadow:0 6px 18px rgba(15,23,42,.05);
+}
+
+.coming-soon-label{
+    display:inline-block;
+    padding:6px 10px;
+    border-radius:8px;
+    background:#f1f5f9;
+    color:#64748b;
+    font-size:10px;
+    font-weight:800;
+}
+
+@media(max-width:700px){
+
+    .subject-package-grid{
+        grid-template-columns:1fr;
+    }
+
+    .subject-package-card{
+        padding:18px;
+    }
+
+    .package-feature-list{
+        grid-template-columns:1fr;
+    }
+
+    .package-card-bottom{
+        align-items:flex-start;
+        flex-direction:column;
+    }
+
+}
 </style>
 
 
@@ -1591,6 +1766,197 @@ body.exam-running .exam-lock-bar{
           </div>
       
       </section>
+   <!-- =========================================================
+     STEP 2 — SUBJECT PACKAGE
+     ========================================================= -->
+
+<section
+    id="subjectPackageSection"
+    class="p-card subject-package-section"
+    style="display:none;"
+>
+
+    <div class="section-head subject-package-head">
+
+        <div>
+            <h2>📚 Select Your Subject</h2>
+
+            <p>
+                Choose a subject to view the available
+                Practice + Mock Test package.
+            </p>
+        </div>
+
+        <span class="step-pill">
+            STEP 2
+        </span>
+
+    </div>
+
+
+    <div class="package-selected-syllabus"
+         id="packageSelectedSyllabus">
+
+        <strong>Selected:</strong>
+
+        <span id="packageSelectedSyllabusText"></span>
+
+    </div>
+
+
+    <div class="subject-package-grid">
+
+        <!-- MATHEMATICS -->
+
+        <div
+            class="subject-package-card"
+            onclick="selectSubjectPackage('Mathematics')"
+        >
+
+            <div class="package-subject-icon">
+                📐
+            </div>
+
+            <div class="package-subject-content">
+
+                <h3>Mathematics</h3>
+
+                <p>
+                    Chapter-wise Practice + Mock Test Series
+                    for complete Mathematics preparation.
+                </p>
+
+                <div class="package-feature-list">
+
+                    <span>✓ Unlimited Practice</span>
+
+                    <span>✓ Easy / Medium / Hard</span>
+
+                    <span>✓ Chapter-wise Tests</span>
+
+                    <span>✓ Full Mock Tests</span>
+
+                    <span>✓ Performance Review</span>
+
+                </div>
+
+                <div class="package-card-bottom">
+
+                    <div class="package-price">
+
+                        <small>Package Price</small>
+
+                        <strong>₹299</strong>
+
+                    </div>
+
+                    <button
+                        type="button"
+                        class="package-view-btn"
+                    >
+                        View Package →
+                    </button>
+
+                </div>
+
+            </div>
+
+        </div>
+
+
+        <!-- BIOLOGY -->
+
+        <div class="subject-package-card coming-soon">
+
+            <div class="package-subject-icon">
+                🧬
+            </div>
+
+            <div class="package-subject-content">
+
+                <h3>Biology</h3>
+
+                <p>
+                    Practice and Mock Test package
+                    will be available soon.
+                </p>
+
+                <span class="coming-soon-label">
+                    Coming Soon
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- SCIENCE -->
+
+        <div class="subject-package-card coming-soon">
+
+            <div class="package-subject-icon">
+                🔬
+            </div>
+
+            <div class="package-subject-content">
+
+                <h3>Science</h3>
+
+                <p>
+                    Practice and Mock Test package
+                    will be available soon.
+                </p>
+
+                <span class="coming-soon-label">
+                    Coming Soon
+                </span>
+
+            </div>
+
+        </div>
+
+
+        <!-- SOCIAL SCIENCE -->
+
+        <div class="subject-package-card coming-soon">
+
+            <div class="package-subject-icon">
+                🌍
+            </div>
+
+            <div class="package-subject-content">
+
+                <h3>Social Science</h3>
+
+                <p>
+                    Practice and Mock Test package
+                    will be available soon.
+                </p>
+
+                <span class="coming-soon-label">
+                    Coming Soon
+                </span>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <div class="package-step-actions">
+
+        <button
+            type="button"
+            class="mock-back-btn"
+            onclick="backToPackageGateway()"
+        >
+            ← Back
+        </button>
+
+    </div>
+
+</section>
     <div class="mode-switch">
         <button class="mode-btn active" id="practiceModeBtn" onclick="showMode('practice')">
             📘 Practice
@@ -1612,35 +1978,272 @@ body.exam-running .exam-lock-bar{
                 
             </div>
 
-            <div class="subject-grid">
-                <div class="subject-card" onclick="selectSubject('math',this)">
-                    <div class="subject-icon">📐</div>
-                    <h3>Mathematics</h3>
-                    <p>Chapter-wise MCQ practice for concepts, application and problem solving.</p>
-                    <span class="subject-status">Available Now</span>
-                </div>
+           <div class="subject-package-grid">
 
-                <div class="subject-card soon" onclick="comingSoon('Biology')">
-                    <div class="subject-icon">🧬</div>
-                    <h3>Biology</h3>
-                    <p>Syllabus-based practice modules will be added soon.</p>
-                    <span class="subject-status">Coming Soon</span>
-                </div>
+    <!-- =====================================================
+         MATHEMATICS
+         ===================================================== -->
 
-                <div class="subject-card soon" onclick="comingSoon('Science')">
-                    <div class="subject-icon">🔬</div>
-                    <h3>Science</h3>
-                    <p>Syllabus-based practice modules will be added soon.</p>
-                    <span class="subject-status">Coming Soon</span>
-                </div>
+    <div
+        class="subject-package-card"
+        onclick="selectSubjectPackage('math', this)"
+    >
 
-                <div class="subject-card soon" onclick="comingSoon('Social Science')">
-                    <div class="subject-icon">🌍</div>
-                    <h3>Social Science</h3>
-                    <p>Syllabus-based practice modules will be added soon.</p>
-                    <span class="subject-status">Coming Soon</span>
-                </div>
+        <div class="package-subject-icon">
+            📐
+        </div>
+
+        <div class="package-subject-content">
+
+            <h3>Mathematics</h3>
+
+            <p>
+                Complete Mathematics Practice + Mock Test
+                package for the selected Board and Class.
+            </p>
+
+            <div class="package-feature-list">
+
+                <span>✓ Chapter-wise Practice</span>
+
+                <span>✓ Easy / Medium / Hard</span>
+
+                <span>✓ Chapter-wise Mock Tests</span>
+
+                <span>✓ Full-Syllabus Mock Test</span>
+
+                <span>✓ Detailed Result & Review</span>
+
+                <span>✓ Practice + Mock Access</span>
+
             </div>
+
+            <div class="package-card-bottom">
+
+                <div class="package-price">
+
+                    <small>
+                        Practice + Mock Package
+                    </small>
+
+                    <strong>₹299</strong>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="package-view-btn"
+                    onclick="event.stopPropagation(); selectSubjectPackage('math', this.parentElement.parentElement)"
+                >
+                    View Package →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         BIOLOGY
+         ===================================================== -->
+
+    <div
+        class="subject-package-card"
+        onclick="selectSubjectPackage('biology', this)"
+    >
+
+        <div class="package-subject-icon">
+            🧬
+        </div>
+
+        <div class="package-subject-content">
+
+            <h3>Biology</h3>
+
+            <p>
+                Complete Biology Practice + Mock Test
+                package for the selected Board and Class.
+            </p>
+
+            <div class="package-feature-list">
+
+                <span>✓ Chapter-wise Practice</span>
+
+                <span>✓ Easy / Medium / Hard</span>
+
+                <span>✓ Chapter-wise Mock Tests</span>
+
+                <span>✓ Full-Syllabus Mock Test</span>
+
+                <span>✓ Detailed Result & Review</span>
+
+                <span>✓ Practice + Mock Access</span>
+
+            </div>
+
+            <div class="package-card-bottom">
+
+                <div class="package-price">
+
+                    <small>
+                        Practice + Mock Package
+                    </small>
+
+                    <strong>₹299</strong>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="package-view-btn"
+                    onclick="event.stopPropagation(); selectSubjectPackage('biology', this.parentElement.parentElement)"
+                >
+                    View Package →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SCIENCE
+         ===================================================== -->
+
+    <div
+        class="subject-package-card"
+        onclick="selectSubjectPackage('science', this)"
+    >
+
+        <div class="package-subject-icon">
+            🔬
+        </div>
+
+        <div class="package-subject-content">
+
+            <h3>Science</h3>
+
+            <p>
+                Complete Science Practice + Mock Test
+                package for the selected Board and Class.
+            </p>
+
+            <div class="package-feature-list">
+
+                <span>✓ Chapter-wise Practice</span>
+
+                <span>✓ Easy / Medium / Hard</span>
+
+                <span>✓ Chapter-wise Mock Tests</span>
+
+                <span>✓ Full-Syllabus Mock Test</span>
+
+                <span>✓ Detailed Result & Review</span>
+
+                <span>✓ Practice + Mock Access</span>
+
+            </div>
+
+            <div class="package-card-bottom">
+
+                <div class="package-price">
+
+                    <small>
+                        Practice + Mock Package
+                    </small>
+
+                    <strong>₹299</strong>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="package-view-btn"
+                    onclick="event.stopPropagation(); selectSubjectPackage('science', this.parentElement.parentElement)"
+                >
+                    View Package →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         SOCIAL SCIENCE
+         ===================================================== -->
+
+    <div
+        class="subject-package-card"
+        onclick="selectSubjectPackage('social_science', this)"
+    >
+
+        <div class="package-subject-icon">
+            🌍
+        </div>
+
+        <div class="package-subject-content">
+
+            <h3>Social Science</h3>
+
+            <p>
+                Complete Social Science Practice + Mock Test
+                package for the selected Board and Class.
+            </p>
+
+            <div class="package-feature-list">
+
+                <span>✓ Chapter-wise Practice</span>
+
+                <span>✓ Easy / Medium / Hard</span>
+
+                <span>✓ Chapter-wise Mock Tests</span>
+
+                <span>✓ Full-Syllabus Mock Test</span>
+
+                <span>✓ Detailed Result & Review</span>
+
+                <span>✓ Practice + Mock Access</span>
+
+            </div>
+
+            <div class="package-card-bottom">
+
+                <div class="package-price">
+
+                    <small>
+                        Practice + Mock Package
+                    </small>
+
+                    <strong>₹299</strong>
+
+                </div>
+
+                <button
+                    type="button"
+                    class="package-view-btn"
+                    onclick="event.stopPropagation(); selectSubjectPackage('social_science', this.parentElement.parentElement)"
+                >
+                    View Package →
+                </button>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
+
+
+
+       
       
             <div id="mathSetup" style="margin-top:28px;display:none;">
                 <div class="section-head" style="margin-top:8px;">
@@ -2546,6 +3149,7 @@ body.exam-running .exam-lock-bar{
 
 let packageSelectedBoard = "";
 let packageSelectedClass = "";
+let packageSelectedSubject = "";
 
 
 /* ---------- LOAD INITIAL BOARDS ---------- */
@@ -2766,26 +3370,63 @@ function continueFromPackageGateway(){
     packageSelectedBoard = board;
     packageSelectedClass = cls;
 
-    /*
-     * STEP 2 will be added here.
-     *
-     * For now we only show a temporary message.
-     */
-    console.log(
-        "Package Gateway Selection:",
-        {
-            board: packageSelectedBoard,
-            class_name: packageSelectedClass
-        }
-    );
 
-    alert(
-        `Selected: ${board} • ${cls}\n\nStep 2 — Subject Packages will be connected next.`
-    );
+    /* Update Step 2 selection */
+
+    const selectedText =
+        document.getElementById(
+            "packageSelectedSyllabusText"
+        );
+
+    if(selectedText){
+
+        selectedText.textContent =
+            `${board} • Class ${cls}`;
+
+    }
+
+
+    /* Hide Step 1 */
+
+    document.getElementById(
+        "packageGateway"
+    ).style.display = "none";
+
+
+    /* Show Step 2 */
+
+    document.getElementById(
+        "subjectPackageSection"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "subjectPackageSection"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
 }
 
-
 /* ---------- BACK ---------- */
+function backToPackageGateway(){
+
+    document.getElementById(
+        "subjectPackageSection"
+    ).style.display = "none";
+
+    document.getElementById(
+        "packageGateway"
+    ).style.display = "block";
+
+    document.getElementById(
+        "packageGateway"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}
+
 
 function packageGatewayBack(){
 
@@ -3439,7 +4080,146 @@ function updateDifficultyState(){
     if(grid) grid.classList.toggle("locked", !ready);
     return ready;
 }
+function selectSubjectPackage(subject, card){
 
+    packageSelectedSubject = subject;
+
+
+    /* Remove previous active state */
+
+    document
+        .querySelectorAll(".subject-package-card")
+        .forEach(function(item){
+
+            item.classList.remove("active");
+
+        });
+
+
+    /* Mark selected card */
+
+    if(card){
+
+        card.classList.add("active");
+
+    }
+
+
+    /* Subject display information */
+
+    const subjectInfo = {
+
+        math: {
+            name: "Mathematics",
+            icon: "📐"
+        },
+
+        biology: {
+            name: "Biology",
+            icon: "🧬"
+        },
+
+        science: {
+            name: "Science",
+            icon: "🔬"
+        },
+
+        social_science: {
+            name: "Social Science",
+            icon: "🌍"
+        }
+
+    };
+
+
+    const info =
+        subjectInfo[subject] || {
+            name: subject,
+            icon: "📚"
+        };
+
+
+    /* Update Step 3 */
+
+    document.getElementById(
+        "packageDetailsIcon"
+    ).textContent = info.icon;
+
+
+    document.getElementById(
+        "packageDetailsTitle"
+    ).textContent =
+        `${info.name} Complete Package`;
+
+
+    document.getElementById(
+        "packageDetailsSubtitle"
+    ).textContent =
+        "Practice + Mock Test";
+
+
+    document.getElementById(
+        "packageDetailsBoard"
+    ).textContent =
+        packageSelectedBoard;
+
+
+    document.getElementById(
+        "packageDetailsClass"
+    ).textContent =
+        packageSelectedClass;
+
+
+    /* Hide Step 2 */
+
+    document.getElementById(
+        "subjectPackageSection"
+    ).style.display = "none";
+
+
+    /* Show Step 3 */
+
+    document.getElementById(
+        "packageDetailsSection"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "packageDetailsSection"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+
+
+    console.log(
+        "Selected Package:",
+        {
+            subject: subject,
+            board: packageSelectedBoard,
+            class_name: packageSelectedClass
+        }
+    );
+}
+function backToSubjectPackages(){
+
+    document.getElementById(
+        "packageDetailsSection"
+    ).style.display = "none";
+
+
+    document.getElementById(
+        "subjectPackageSection"
+    ).style.display = "block";
+
+
+    document.getElementById(
+        "subjectPackageSection"
+    ).scrollIntoView({
+        behavior:"smooth",
+        block:"start"
+    });
+}   
 /* ---------- SUBJECT ---------- */
 function selectSubject(subject, card){
 
