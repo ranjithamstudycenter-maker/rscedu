@@ -761,7 +761,44 @@ a{text-decoration:none}
     box-shadow:0 10px 25px rgba(79,70,229,.22);
     transition:.2s;
 }
+.mock-view-btn{
 
+    margin-top:12px;
+
+    padding:13px 22px;
+
+    border:none;
+
+    border-radius:12px;
+
+    background:#0f766e;
+
+    color:#fff;
+
+    font-size:14px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    display:none;
+
+    align-items:center;
+
+    justify-content:center;
+
+    transition:.2s;
+
+}
+
+.mock-view-btn:hover{
+
+    transform:translateY(-2px);
+
+    box-shadow:
+        0 8px 20px rgba(15,118,110,.20);
+
+}
 .mock-pay-btn:hover{
     transform:translateY(-2px);
     box-shadow:0 15px 30px rgba(79,70,229,.28);
@@ -1960,7 +1997,17 @@ body.exam-running .exam-lock-bar{
                >
                    🔓 Unlock Mathematics Package — ₹1
                </button>
-
+                <button
+                      type="button"
+                      class="mock-view-btn"
+                      style="display:none;"
+                      onclick="
+                          event.stopPropagation();
+                          openPurchasedSubject('math');
+                      "
+                  >
+                      📘 View Mathematics Package →
+                  </button>
 
             <p class="mock-payment-note">
                 Practice + Mock Test • ₹299
@@ -2039,7 +2086,7 @@ body.exam-running .exam-lock-bar{
 
             </div>
 
-            <button
+             <button
                    type="button"
                    class="mock-pay-btn"
                    onclick="
@@ -2049,7 +2096,17 @@ body.exam-running .exam-lock-bar{
                >
                    🔓 Unlock Biology Package — ₹1
                </button>
-
+              <button
+                   type="button"
+                   class="mock-view-btn"
+                   style="display:none;"
+                   onclick="
+                       event.stopPropagation();
+                       openPurchasedSubject('biology');
+                   "
+               >
+                   📘 View Biology Package →
+               </button>
 
             <p class="mock-payment-note">
                 Practice + Mock Test • ₹299
@@ -2128,7 +2185,7 @@ body.exam-running .exam-lock-bar{
 
             </div>
 
-            <button
+             <button
                    type="button"
                    class="mock-pay-btn"
                    onclick="
@@ -2138,7 +2195,17 @@ body.exam-running .exam-lock-bar{
                >
                    🔓 Unlock Science Package — ₹1
                </button>
-
+             <button
+                   type="button"
+                   class="mock-view-btn"
+                   style="display:none;"
+                   onclick="
+                       event.stopPropagation();
+                       openPurchasedSubject('science');
+                   "
+               >
+                   📘 View Science Package →
+               </button>
 
             <p class="mock-payment-note">
                 Practice + Mock Test • ₹299
@@ -2228,7 +2295,18 @@ body.exam-running .exam-lock-bar{
                    🔓 Unlock Social Science Package — ₹1
                </button>
 
-
+               <button
+                   type="button"
+                   class="mock-view-btn"
+                   style="display:none;"
+                   onclick="
+                       event.stopPropagation();
+                       openPurchasedSubject('social_science');
+                   "
+               >
+                   📘 View Social Science Package →
+               </button>
+           
             <p class="mock-payment-note">
                 Practice + Mock Test • ₹299
             </p>
@@ -2247,18 +2325,7 @@ body.exam-running .exam-lock-bar{
     >
         ← Back
     </button>
-
-    <button
-        type="button"
-        class="continue-btn"
-        id="packageContinueBtn"
-        onclick="continueToPurchasedPackage()"
-        disabled
-    >
-        Continue →
-    </button>
-
-</div>
+    </div>
 
 </section>
     <div class="mode-switch">
@@ -4932,15 +4999,20 @@ function markPackageAsPurchased(subject){
         return;
     }
 
-    // Already in purchased list?
+
+    // -----------------------------------------
+    // SAVE PURCHASED SUBJECT
+    // -----------------------------------------
+
     if(!purchasedSubjects.includes(subject)){
 
         purchasedSubjects.push(subject);
 
     }
 
+
     // -----------------------------------------
-    // FIND SUBJECT CARD
+    // FIND CORRESPONDING SUBJECT CARD
     // -----------------------------------------
 
     const cards =
@@ -4948,10 +5020,12 @@ function markPackageAsPurchased(subject){
             ".subject-package-card"
         );
 
+
     cards.forEach(function(card){
 
         const onclickText =
             card.getAttribute("onclick") || "";
+
 
         if(
             onclickText.includes(
@@ -4959,12 +5033,15 @@ function markPackageAsPurchased(subject){
             )
         ){
 
-            // ---------------------------------
+            // ================================
             // PAYMENT BUTTON
-            // ---------------------------------
+            // ================================
 
             const payBtn =
-                card.querySelector(".mock-pay-btn");
+                card.querySelector(
+                    ".mock-pay-btn"
+                );
+
 
             if(payBtn){
 
@@ -4981,35 +5058,55 @@ function markPackageAsPurchased(subject){
 
             }
 
-            // ---------------------------------
-            // CARD STATUS
-            // ---------------------------------
 
-            card.classList.add("package-paid");
+            // ================================
+            // VIEW PACKAGE BUTTON
+            // ================================
+
+            const viewBtn =
+                card.querySelector(
+                    ".mock-view-btn"
+                );
+
+
+            if(viewBtn){
+
+                viewBtn.style.display =
+                    "inline-flex";
+
+            }
+
+
+            // ================================
+            // PAID CARD
+            // ================================
+
+            card.classList.add(
+                "package-paid"
+            );
 
         }
 
     });
 
+}
+function openPurchasedSubject(subject){
 
     // -----------------------------------------
-    // ENABLE COMMON CONTINUE
+    // SAVE SELECTED SUBJECT
     // -----------------------------------------
 
-    const continueBtn =
-        document.getElementById(
-            "packageContinueBtn"
-        );
+    packageSelectedSubject =
+        subject;
 
-    if(continueBtn){
 
-        continueBtn.disabled =
-            purchasedSubjects.length === 0;
+    // -----------------------------------------
+    // OPEN PRACTICE + MOCK
+    // -----------------------------------------
 
-    }
+    continueToPurchasedPackage();
 
 }
-   
 function showPackageUnlocked(){
 
     // ---------------------------------------------
@@ -5639,91 +5736,95 @@ function continueToDifficulty(){
 
 function backToPracticeSubject(){
 
-    const difficultyCard =
-        document.getElementById("difficultyCard");
+    // -----------------------------------------
+    // IF DIFFICULTY PAGE IS OPEN
+    // RETURN TO SYLLABUS
+    // -----------------------------------------
 
-    const setupCard =
-        document.getElementById("setupCard");
+    const difficultyCard =
+        document.getElementById(
+            "difficultyCard"
+        );
 
     const mathSetup =
-        document.getElementById("mathSetup");
+        document.getElementById(
+            "mathSetup"
+        );
 
-    const subjectGrid =
-        document.querySelector(".subject-grid");
 
-    const setupHead =
-        document.querySelector("#setupCard > .section-head");
+    if(
+        difficultyCard &&
+        difficultyCard.style.display !== "none"
+    ){
 
-    const selectionSummary =
-        document.getElementById("selectionSummary");
+        difficultyCard.style.display =
+            "none";
 
-    const stepActions =
-        mathSetup.querySelector(".practice-step-actions");
+        if(mathSetup){
 
-    // -----------------------------------------
-    // DIFFICULTY → SYLLABUS
-    // -----------------------------------------
-    if(difficultyCard.style.display !== "none"){
+            mathSetup.style.display =
+                "block";
 
-        // Hide Difficulty page
-        difficultyCard.style.display = "none";
-
-        setupCard.style.display = "block";
-
-        // Move Selected summary back into Syllabus page
-        if(selectionSummary && stepActions){
-            mathSetup.insertBefore(
-                selectionSummary,
-                stepActions
-            );
         }
 
-        // Show Selected summary
-        if(selectionSummary){
-            selectionSummary.style.display = "block";
-            selectionSummary.style.textAlign = "left";
-            selectionSummary.style.margin = "";
-        }
-
-        // Show Syllabus page
-        mathSetup.style.display = "block";
-
-        mathSetup.scrollIntoView({
+        mathSetup?.scrollIntoView({
             behavior:"smooth",
             block:"start"
         });
 
         return;
+
     }
+
 
     // -----------------------------------------
-    // SYLLABUS → SUBJECT SELECTION
+    // OTHERWISE RETURN TO PACKAGE PAGE
     // -----------------------------------------
 
-    // Hide Syllabus
-    mathSetup.style.display = "none";
+    const practiceShell =
+        document.getElementById(
+            "practiceShell"
+        );
 
-    // Show Build Your Practice Test heading
-    if(setupHead){
-        setupHead.style.display = "block";
+    const modeSwitch =
+        document.querySelector(
+            ".mode-switch"
+        );
+
+    const subjectPackages =
+        document.getElementById(
+            "subjectPackageSection"
+        );
+
+
+    if(practiceShell){
+
+        practiceShell.style.display =
+            "none";
+
     }
 
-    // Show subject cards
-    subjectGrid.style.display = "grid";
 
-    // Clear active subject
-    document.querySelectorAll(".subject-card")
-        .forEach(card => card.classList.remove("active"));
+    if(modeSwitch){
 
-    // Clear selection summary
-    if(selectionSummary){
-        selectionSummary.style.display = "block";
+        modeSwitch.style.display =
+            "none";
+
     }
 
-    document.getElementById("setupCard").scrollIntoView({
-        behavior:"smooth",
-        block:"start"
-    });
+
+    if(subjectPackages){
+
+        subjectPackages.style.display =
+            "block";
+
+        subjectPackages.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+    }
+
 }
 /* ---------- PRACTICE SESSION ---------- */
 async function resumePracticeAfterRefresh(){
