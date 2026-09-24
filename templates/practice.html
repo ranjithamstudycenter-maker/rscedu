@@ -997,7 +997,40 @@ a{text-decoration:none}
         grid-template-columns:1fr 1fr;
     }
 }  
-   
+/* =========================================================
+   CENTER ALL PRACTICE STEP HEADINGS
+   ========================================================= */
+
+#packageGateway .section-head,
+#subjectPackageSection .section-head,
+#mathSetup > .section-head,
+#difficultyCard > .section-head{
+    display:block;
+    text-align:center;
+}
+
+#packageGateway .section-head > div,
+#subjectPackageSection .section-head > div,
+#mathSetup > .section-head > div,
+#difficultyCard > .section-head > div{
+    width:100%;
+}
+
+#packageGateway .section-head h2,
+#subjectPackageSection .section-head h2,
+#mathSetup > .section-head h2,
+#difficultyCard > .section-head h2{
+    text-align:center;
+}
+
+#packageGateway .section-head p,
+#subjectPackageSection .section-head p,
+#mathSetup > .section-head p,
+#difficultyCard > .section-head p{
+    text-align:center;
+    margin-left:auto;
+    margin-right:auto;
+}   
 </style>
 
 <style>
@@ -5975,20 +6008,12 @@ function backToPracticeSubject(){
         }
 
 
-        // Show selected syllabus
-        if(selectionSummary){
-
-            selectionSummary.style.display =
-                "block";
-
-            selectionSummary.style.textAlign =
-                "left";
-
-            selectionSummary.style.margin =
-                "";
-
-        }
-
+        // Hide selected syllabus summary when returning to Syllabus
+         if(selectionSummary){
+         
+             selectionSummary.style.display = "none";
+         
+         }
 
         // Show syllabus
         if(mathSetup){
