@@ -1951,14 +1951,15 @@ body.exam-running .exam-lock-bar{
             </div>
 
             <button
-                type="button"
-                id="mockPayBtn"
-                class="mock-pay-btn"
-                onclick="startMockPayment()">
-
-                🔒 Unlock Mathematics Package — ₹1
-
-            </button>
+                   type="button"
+                   class="mock-pay-btn"
+                   onclick="
+                       event.stopPropagation();
+                       startCombinedPackagePayment('math', this);
+                   "
+               >
+                   🔓 Unlock Mathematics Package — ₹1
+               </button>
 
 
             <p class="mock-payment-note">
@@ -2039,14 +2040,15 @@ body.exam-running .exam-lock-bar{
             </div>
 
             <button
-                type="button"
-                id="mockPayBtn"
-                class="mock-pay-btn"
-                onclick="startMockPayment()">
-
-                🔒 Unlock Biology Package — ₹1
-
-            </button>
+                   type="button"
+                   class="mock-pay-btn"
+                   onclick="
+                       event.stopPropagation();
+                       startCombinedPackagePayment('math', this);
+                   "
+               >
+                   🔓 Unlock Mathematics Package — ₹1
+               </button>
 
 
             <p class="mock-payment-note">
@@ -2127,14 +2129,15 @@ body.exam-running .exam-lock-bar{
             </div>
 
             <button
-                type="button"
-                id="mockPayBtn"
-                class="mock-pay-btn"
-                onclick="startMockPayment()">
-
-                🔒 Unlock Science Package — ₹1
-
-            </button>
+                   type="button"
+                   class="mock-pay-btn"
+                   onclick="
+                       event.stopPropagation();
+                       startCombinedPackagePayment('math', this);
+                   "
+               >
+                   🔓 Unlock Science Package — ₹1
+               </button>
 
 
             <p class="mock-payment-note">
@@ -2214,15 +2217,16 @@ body.exam-running .exam-lock-bar{
          
             </div>
 
-            <button
-                type="button"
-                id="mockPayBtn"
-                class="mock-pay-btn"
-                onclick="startMockPayment()">
-
-                🔒 Unlock Social Science Package — ₹1
-
-            </button>
+             <button
+                   type="button"
+                   class="mock-pay-btn"
+                   onclick="
+                       event.stopPropagation();
+                       startCombinedPackagePayment('math', this);
+                   "
+               >
+                   🔓 Unlock Social Science Package — ₹1
+               </button>
 
 
             <p class="mock-payment-note">
@@ -4365,25 +4369,15 @@ function updateDifficultyState(){
 }
 async function selectSubjectPackage(subject, card){
 
-    // =============================================
+    // ---------------------------------------------
     // SAVE SELECTED SUBJECT
-    // =============================================
+    // ---------------------------------------------
 
-       packageSelectedSubject = subject;
+    packageSelectedSubject = subject;
 
-    // Keep selected package details on the payment button
-       const payBtn = document.querySelector(".package-pay-btn");
-      
-       if(payBtn){
-      
-           payBtn.dataset.subject = subject;
-           payBtn.dataset.board = packageSelectedBoard;
-           payBtn.dataset.className = packageSelectedClass;
-      
-       }
-    // =============================================
+    // ---------------------------------------------
     // ACTIVE CARD
-    // =============================================
+    // ---------------------------------------------
 
     document
         .querySelectorAll(".subject-package-card")
@@ -4399,108 +4393,8 @@ async function selectSubjectPackage(subject, card){
 
     }
 
-
-    // =============================================
-    // SUBJECT INFORMATION
-    // =============================================
-
-    const subjectInfo = {
-
-        math: {
-            name: "Mathematics",
-            icon: "📐"
-        },
-
-        biology: {
-            name: "Biology",
-            icon: "🧬"
-        },
-
-        science: {
-            name: "Science",
-            icon: "🔬"
-        },
-
-        social_science: {
-            name: "Social Science",
-            icon: "🌍"
-        }
-
-    };
-
-
-    const info =
-        subjectInfo[subject] || {
-            name: subject,
-            icon: "📚"
-        };
-
-
-    // =============================================
-    // UPDATE STEP 3
-    // =============================================
-
-    document.getElementById(
-        "packageDetailsIcon"
-    ).textContent = info.icon;
-
-
-    document.getElementById(
-        "packageDetailsTitle"
-    ).textContent =
-        `${info.name} Complete Package`;
-
-
-    document.getElementById(
-        "packageDetailsSubtitle"
-    ).textContent =
-        "Practice + Mock Test";
-
-
-    document.getElementById(
-        "packageDetailsBoard"
-    ).textContent =
-        packageSelectedBoard;
-
-
-    document.getElementById(
-        "packageDetailsClass"
-    ).textContent =
-        packageSelectedClass;
-
-
-    // =============================================
-    // SHOW STEP 3
-    // =============================================
-
-    document.getElementById(
-        "subjectPackageSection"
-    ).style.display = "none";
-
-
-    document.getElementById(
-        "packageDetailsSection"
-    ).style.display = "block";
-
-
-    document.getElementById(
-        "packageDetailsSection"
-    ).scrollIntoView({
-
-        behavior: "smooth",
-
-        block: "start"
-
-    });
-
-
-    // =============================================
-    // CHECK EXISTING PURCHASE
-    // =============================================
-
-    await checkPackageAccess();
-
 }
+   
 async function checkPackageAccess(){
 
     if(
@@ -4827,34 +4721,10 @@ function selectSubject(subject, card){
     }
 
 }
-async function startCombinedPackagePayment(){
+async function startCombinedPackagePayment(subject, button){
 
-    const payBtn =
-        document.querySelector(".package-pay-btn");
-
-
-    // =============================================
-    // RECOVER SELECTED PACKAGE DETAILS
-    // =============================================
-
-    if(payBtn){
-
-        if(!packageSelectedSubject && payBtn.dataset.subject){
-            packageSelectedSubject =
-                payBtn.dataset.subject;
-        }
-
-        if(!packageSelectedBoard && payBtn.dataset.board){
-            packageSelectedBoard =
-                payBtn.dataset.board;
-        }
-
-        if(!packageSelectedClass && payBtn.dataset.className){
-            packageSelectedClass =
-                payBtn.dataset.className;
-        }
-
-    }
+    const payBtn = button;
+    packageSelectedSubject = subject;
 
 
     // =============================================
@@ -4932,14 +4802,14 @@ async function startCombinedPackagePayment(){
 
         if(data.already_paid){
 
-            alert(
-                "✅ This package is already purchased."
-            );
-
-            showPackageUnlocked();
-
-            return;
-        }
+             alert(
+                 "✅ This package is already purchased."
+             );
+         
+             continueToPurchasedPackage();
+         
+             return;
+         }
 
 
         // =============================================
@@ -5117,7 +4987,7 @@ async function startCombinedPackagePayment(){
                         verifyData.unlocked
                     ){
 
-                        showPackageUnlocked();
+                        continueToPurchasedPackage();
 
                     }
                     else{
@@ -7696,14 +7566,14 @@ async function startMockPayment(){
 
         if(data.already_paid){
 
-            unlockMockTests();
-
-            alert(
-                "✅ Mock Test Package already purchased!"
-            );
-
-            return;
-        }
+             alert(
+                 "✅ This package is already purchased."
+             );
+         
+             continueToPurchasedPackage();
+         
+             return;
+         }
 
         if(!response.ok || !data.success){
 
