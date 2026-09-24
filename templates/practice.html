@@ -168,13 +168,63 @@ a{text-decoration:none}
 .field.full{grid-column:1/-1}
 
 /* SELECTION SUMMARY */
+/* =========================================================
+   SELECTED SYLLABUS SUMMARY
+   ========================================================= */
+
 .selection-summary{
-    margin-top:18px;padding:15px 17px;border-radius:15px;
-    background:linear-gradient(135deg,#eef2ff,#faf5ff);
-    border:1px solid #ddd6fe;color:#3730a3;
+    margin-top:18px;
+    padding:15px 22px;
+
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff 0%,
+            #f5f3ff 50%,
+            #faf5ff 100%
+        );
+
+    border:1px solid #c4b5fd;
+
+    color:#4338ca;
+
     display:none;
+
+    font-size:14px;
+    font-weight:600;
+
+    box-shadow:
+        0 8px 24px rgba(99,102,241,.10),
+        inset 0 1px 0 rgba(255,255,255,.85);
+
+    position:relative;
+    overflow:hidden;
 }
-.selection-summary strong{color:#312e81}
+
+/* Attractive top accent */
+.selection-summary::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:3px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #4f46e5,
+            #7c3aed,
+            #c026d3
+        );
+}
+
+.selection-summary strong{
+    color:#312e81;
+    font-weight:800;
+}
 
 /* DIFFICULTY */
 .difficulty-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px}
@@ -1564,19 +1614,63 @@ body.exam-running .exam-lock-bar{
     margin-bottom:20px;
 }
 
+/* =========================================================
+   SELECTED BOARD + CLASS
+   ========================================================= */
+
 .package-selected-syllabus{
     max-width:850px;
-    margin:0 auto 22px;
-    padding:12px 16px;
-    border-radius:12px;
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
+    margin:0 auto 24px;
+    padding:14px 22px;
+
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff 0%,
+            #f5f3ff 50%,
+            #faf5ff 100%
+        );
+
+    border:1px solid #c7d2fe;
+
+    box-shadow:
+        0 8px 24px rgba(79,70,229,.10),
+        inset 0 1px 0 rgba(255,255,255,.8);
+
     text-align:center;
-    color:#475569;
+
+    color:#4338ca;
+
+    font-size:15px;
+    font-weight:600;
+
+    position:relative;
+    overflow:hidden;
+}
+
+/* Small highlight line */
+.package-selected-syllabus::before{
+    content:"";
+    position:absolute;
+    top:0;
+    left:0;
+    right:0;
+    height:3px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #4f46e5,
+            #7c3aed,
+            #c026d3
+        );
 }
 
 .package-selected-syllabus strong{
     color:#312e81;
+    font-weight:800;
 }
 
 /* =========================================================
