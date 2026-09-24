@@ -1299,7 +1299,7 @@ def payment_success_api():
 # RSC SUBJECT PACKAGE - PRACTICE + MOCK
 # =====================================================
 
-PACKAGE_PRICE = 299
+PACKAGE_PRICE = 1
 
 PACKAGE_SUBJECTS = {
     "math": "Mathematics",
