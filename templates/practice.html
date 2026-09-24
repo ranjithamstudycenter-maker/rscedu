@@ -3177,6 +3177,7 @@ body.exam-running .exam-lock-bar{
 let packageSelectedBoard = "";
 let packageSelectedClass = "";
 let packageSelectedSubject = "";
+let purchasedSubjects = [];
 
 
 /* ---------- LOAD INITIAL BOARDS ---------- */
@@ -4316,27 +4317,17 @@ async function checkPackageAccess(){
         // =========================================
 
         if(
-            response.ok &&
-            data.success &&
-            data.unlocked
-        ){
-
-            console.log(
-                "Package already purchased:",
-                {
-                    subject: subjectName,
-                    board: packageSelectedBoard,
-                    class_name: packageSelectedClass
-                }
-            );
-
-
-            showPackageUnlocked();
-
-
-            return;
-
-        }
+             response.ok &&
+             data.success &&
+             data.unlocked
+         ){
+         
+             markPackageAsPurchased(
+                 packageSelectedSubject
+             );
+         
+             return;
+         }
 
 
         // =========================================
@@ -4647,15 +4638,20 @@ async function startCombinedPackagePayment(subject, button){
 
         if(data.already_paid){
 
-             alert(
-                 "✅ This package is already purchased."
+             markPackageAsPurchased(
+                 packageSelectedSubject
              );
          
-             continueToPurchasedPackage();
+             document.getElementById(
+                 "packageDetailsSection"
+             ).style.display = "none";
+         
+             document.getElementById(
+                 "subjectPackageSection"
+             ).style.display = "block";
          
              return;
          }
-
 
         // =============================================
         // 3. CHECK ORDER RESPONSE
@@ -4827,14 +4823,33 @@ async function startCombinedPackagePayment(subject, button){
                     // =================================
 
                     if(
-                        verifyResponse.ok &&
-                        verifyData.success &&
-                        verifyData.unlocked
+                         verifyResponse.ok &&
+                         verifyData.success &&
+                         verifyData.unlocked
                     ){
-
-                        continueToPurchasedPackage();
-
-                    }
+                     
+                         // Mark this subject as paid
+                         markPackageAsPurchased(
+                             packageSelectedSubject
+                         );
+                     
+                         // Return to subject package list
+                         document.getElementById(
+                             "packageDetailsSection"
+                         ).style.display = "none";
+                     
+                         document.getElementById(
+                             "subjectPackageSection"
+                         ).style.display = "block";
+                     
+                         document.getElementById(
+                             "subjectPackageSection"
+                         ).scrollIntoView({
+                             behavior: "smooth",
+                             block: "start"
+                         });
+                     
+                     }
                     else{
 
                         throw new Error(
@@ -4911,7 +4926,90 @@ async function startCombinedPackagePayment(subject, button){
     }
 
 }
+function markPackageAsPurchased(subject){
 
+    if(!subject){
+        return;
+    }
+
+    // Already in purchased list?
+    if(!purchasedSubjects.includes(subject)){
+
+        purchasedSubjects.push(subject);
+
+    }
+
+    // -----------------------------------------
+    // FIND SUBJECT CARD
+    // -----------------------------------------
+
+    const cards =
+        document.querySelectorAll(
+            ".subject-package-card"
+        );
+
+    cards.forEach(function(card){
+
+        const onclickText =
+            card.getAttribute("onclick") || "";
+
+        if(
+            onclickText.includes(
+                "'" + subject + "'"
+            )
+        ){
+
+            // ---------------------------------
+            // PAYMENT BUTTON
+            // ---------------------------------
+
+            const payBtn =
+                card.querySelector(".mock-pay-btn");
+
+            if(payBtn){
+
+                payBtn.disabled = true;
+
+                payBtn.innerHTML =
+                    "✓ Paid Successfully";
+
+                payBtn.style.background =
+                    "#16a34a";
+
+                payBtn.style.cursor =
+                    "default";
+
+            }
+
+            // ---------------------------------
+            // CARD STATUS
+            // ---------------------------------
+
+            card.classList.add("package-paid");
+
+        }
+
+    });
+
+
+    // -----------------------------------------
+    // ENABLE COMMON CONTINUE
+    // -----------------------------------------
+
+    const continueBtn =
+        document.getElementById(
+            "packageContinueBtn"
+        );
+
+    if(continueBtn){
+
+        continueBtn.disabled =
+            purchasedSubjects.length === 0;
+
+    }
+
+}
+   
 function showPackageUnlocked(){
 
     // ---------------------------------------------
