@@ -1517,11 +1517,10 @@ body.exam-running .exam-lock-bar{
 
 .subject-package-grid{
     width:100%;
-    max-width:none;
     margin:25px 0 0;
 
     display:grid;
-    grid-template-columns:repeat(2,1fr);
+    grid-template-columns:1fr;
     gap:24px;
 }
 
@@ -1529,15 +1528,16 @@ body.exam-running .exam-lock-bar{
 
 .subject-package-card{
     display:grid;
-
-    grid-template-columns:120px minmax(0,1fr);
-
-    gap:25px;
+    grid-template-columns:120px 1fr;
+    gap:30px;
     align-items:center;
 
-    padding:30px;
+    width:100%;
+    box-sizing:border-box;
 
-    min-height:330px;
+    padding:35px;
+
+    min-height:380px;
 
     border-radius:24px;
 
@@ -1559,7 +1559,6 @@ body.exam-running .exam-lock-bar{
     cursor:pointer;
     transition:.25s ease;
 }
-
 /* HOVER */
 
 .subject-package-card:hover{
@@ -1883,264 +1882,288 @@ body.exam-running .exam-lock-bar{
 
     <div class="subject-package-grid">
 
-    <!-- =========================
+    <!-- =====================================================
          MATHEMATICS
-         ========================= -->
+         ===================================================== -->
 
     <div
         class="subject-package-card"
         onclick="selectSubjectPackage('math', this)"
     >
 
-        <div class="package-subject-icon">
+        <div class="mock-package-icon">
             📐
         </div>
 
-        <div class="package-subject-content">
+        <div class="mock-package-content">
 
-            <h3>Mathematics</h3>
+            <div class="mock-package-label">
+                MATHEMATICS PRACTICE + MOCK TEST PACKAGE
+            </div>
+
+            <h2>
+                Complete Mathematics Practice + Mock Test Series
+            </h2>
 
             <p>
-                Complete Mathematics Practice + Mock Test
-                package for the selected Board and Class.
+                One payment gives access to complete Mathematics
+                Practice and Mock Tests for the selected Board and Class.
             </p>
 
-            <div class="package-feature-list">
+            <div class="mock-price">
+                <span>₹</span>1
+            </div>
 
-                <span>✓ Chapter-wise Practice</span>
-                <span>✓ Easy / Medium / Hard</span>
-                <span>✓ Chapter-wise Mock Tests</span>
-                <span>✓ Full-Syllabus Mock Test</span>
-                <span>✓ Detailed Result & Review</span>
-                <span>✓ Practice + Mock Access</span>
+            <div class="mock-package-features">
+
+                <div>✓ Chapter-wise Practice</div>
+
+                <div>✓ Easy / Medium / Hard Practice</div>
+
+                <div>✓ Chapter-wise Mock Tests</div>
+
+                <div>✓ Full-Syllabus Final Mock</div>
+
+                <div>✓ Detailed Result & Review</div>
+
+                <div>✓ Explanation & Hint</div>
+
+                <div>✓ Practice + Mock Access</div>
+
+                <div>✓ Unlimited Practice Attempts</div>
 
             </div>
 
-            <div class="package-card-bottom">
+            <button
+                type="button"
+                class="mock-pay-btn"
+                onclick="
+                    event.stopPropagation();
+                    selectSubjectPackage('math', this.closest('.subject-package-card'));
+                "
+            >
+                🔓 View Mathematics Package →
+            </button>
 
-                <div class="package-price">
-
-                    <small>
-                        Practice + Mock Package
-                    </small>
-
-                    <strong>₹299</strong>
-
-                </div>
-
-                <button
-                    type="button"
-                    class="package-view-btn"
-                    onclick="
-                        event.stopPropagation();
-                        selectSubjectPackage(
-                            'math',
-                            this.parentElement.parentElement
-                        )
-                    "
-                >
-                    View Package →
-                </button>
-
-            </div>
+            <p class="mock-payment-note">
+                Practice + Mock Test • ₹299
+            </p>
 
         </div>
 
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
          BIOLOGY
-         ========================= -->
+         ===================================================== -->
 
     <div
         class="subject-package-card"
         onclick="selectSubjectPackage('biology', this)"
     >
 
-        <div class="package-subject-icon">
+        <div class="mock-package-icon">
             🧬
         </div>
 
-        <div class="package-subject-content">
+        <div class="mock-package-content">
 
-            <h3>Biology</h3>
+            <div class="mock-package-label">
+                BIOLOGY PRACTICE + MOCK TEST PACKAGE
+            </div>
+
+            <h2>
+                Complete Biology Practice + Mock Test Series
+            </h2>
 
             <p>
-                Complete Biology Practice + Mock Test
-                package for the selected Board and Class.
+                One payment gives access to complete Biology
+                Practice and Mock Tests for the selected Board and Class.
             </p>
 
-            <div class="package-feature-list">
+            <div class="mock-price">
+                <span>₹</span>1
+            </div>
 
-                <span>✓ Chapter-wise Practice</span>
-                <span>✓ Easy / Medium / Hard</span>
-                <span>✓ Chapter-wise Mock Tests</span>
-                <span>✓ Full-Syllabus Mock Test</span>
-                <span>✓ Detailed Result & Review</span>
-                <span>✓ Practice + Mock Access</span>
+            <div class="mock-package-features">
+
+                <div>✓ Chapter-wise Practice</div>
+
+                <div>✓ Easy / Medium / Hard Practice</div>
+
+                <div>✓ Chapter-wise Mock Tests</div>
+
+                <div>✓ Full-Syllabus Final Mock</div>
+
+                <div>✓ Detailed Result & Review</div>
+
+                <div>✓ Explanation & Hint</div>
+
+                <div>✓ Practice + Mock Access</div>
+
+                <div>✓ Unlimited Practice Attempts</div>
 
             </div>
 
-            <div class="package-card-bottom">
+            <button
+                type="button"
+                class="mock-pay-btn"
+                onclick="
+                    event.stopPropagation();
+                    selectSubjectPackage('biology', this.closest('.subject-package-card'));
+                "
+            >
+                🔓 View Biology Package →
+            </button>
 
-                <div class="package-price">
-
-                    <small>
-                        Practice + Mock Package
-                    </small>
-
-                    <strong>₹299</strong>
-
-                </div>
-
-                <button
-                    type="button"
-                    class="package-view-btn"
-                    onclick="
-                        event.stopPropagation();
-                        selectSubjectPackage(
-                            'biology',
-                            this.parentElement.parentElement
-                        )
-                    "
-                >
-                    View Package →
-                </button>
-
-            </div>
+            <p class="mock-payment-note">
+                Practice + Mock Test • ₹299
+            </p>
 
         </div>
 
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
          SCIENCE
-         ========================= -->
+         ===================================================== -->
 
     <div
         class="subject-package-card"
         onclick="selectSubjectPackage('science', this)"
     >
 
-        <div class="package-subject-icon">
+        <div class="mock-package-icon">
             🔬
         </div>
 
-        <div class="package-subject-content">
+        <div class="mock-package-content">
 
-            <h3>Science</h3>
+            <div class="mock-package-label">
+                SCIENCE PRACTICE + MOCK TEST PACKAGE
+            </div>
+
+            <h2>
+                Complete Science Practice + Mock Test Series
+            </h2>
 
             <p>
-                Complete Science Practice + Mock Test
-                package for the selected Board and Class.
+                One payment gives access to complete Science
+                Practice and Mock Tests for the selected Board and Class.
             </p>
 
-            <div class="package-feature-list">
+            <div class="mock-price">
+                <span>₹</span>1
+            </div>
 
-                <span>✓ Chapter-wise Practice</span>
-                <span>✓ Easy / Medium / Hard</span>
-                <span>✓ Chapter-wise Mock Tests</span>
-                <span>✓ Full-Syllabus Mock Test</span>
-                <span>✓ Detailed Result & Review</span>
-                <span>✓ Practice + Mock Access</span>
+            <div class="mock-package-features">
+
+                <div>✓ Chapter-wise Practice</div>
+
+                <div>✓ Easy / Medium / Hard Practice</div>
+
+                <div>✓ Chapter-wise Mock Tests</div>
+
+                <div>✓ Full-Syllabus Final Mock</div>
+
+                <div>✓ Detailed Result & Review</div>
+
+                <div>✓ Explanation & Hint</div>
+
+                <div>✓ Practice + Mock Access</div>
+
+                <div>✓ Unlimited Practice Attempts</div>
 
             </div>
 
-            <div class="package-card-bottom">
+            <button
+                type="button"
+                class="mock-pay-btn"
+                onclick="
+                    event.stopPropagation();
+                    selectSubjectPackage('science', this.closest('.subject-package-card'));
+                "
+            >
+                🔓 View Science Package →
+            </button>
 
-                <div class="package-price">
-
-                    <small>
-                        Practice + Mock Package
-                    </small>
-
-                    <strong>₹299</strong>
-
-                </div>
-
-                <button
-                    type="button"
-                    class="package-view-btn"
-                    onclick="
-                        event.stopPropagation();
-                        selectSubjectPackage(
-                            'science',
-                            this.parentElement.parentElement
-                        )
-                    "
-                >
-                    View Package →
-                </button>
-
-            </div>
+            <p class="mock-payment-note">
+                Practice + Mock Test • ₹299
+            </p>
 
         </div>
 
     </div>
 
 
-    <!-- =========================
+    <!-- =====================================================
          SOCIAL SCIENCE
-         ========================= -->
+         ===================================================== -->
 
     <div
         class="subject-package-card"
         onclick="selectSubjectPackage('social_science', this)"
     >
 
-        <div class="package-subject-icon">
+        <div class="mock-package-icon">
             🌍
         </div>
 
-        <div class="package-subject-content">
+        <div class="mock-package-content">
 
-            <h3>Social Science</h3>
+            <div class="mock-package-label">
+                SOCIAL SCIENCE PRACTICE + MOCK TEST PACKAGE
+            </div>
+
+            <h2>
+                Complete Social Science Practice + Mock Test Series
+            </h2>
 
             <p>
-                Complete Social Science Practice + Mock Test
-                package for the selected Board and Class.
+                One payment gives access to complete Social Science
+                Practice and Mock Tests for the selected Board and Class.
             </p>
 
-            <div class="package-feature-list">
+            <div class="mock-price">
+                <span>₹</span>1
+            </div>
 
-                <span>✓ Chapter-wise Practice</span>
-                <span>✓ Easy / Medium / Hard</span>
-                <span>✓ Chapter-wise Mock Tests</span>
-                <span>✓ Full-Syllabus Mock Test</span>
-                <span>✓ Detailed Result & Review</span>
-                <span>✓ Practice + Mock Access</span>
+            <div class="mock-package-features">
+
+                <div>✓ Chapter-wise Practice</div>
+
+                <div>✓ Easy / Medium / Hard Practice</div>
+
+                <div>✓ Chapter-wise Mock Tests</div>
+
+                <div>✓ Full-Syllabus Final Mock</div>
+
+                <div>✓ Detailed Result & Review</div>
+
+                <div>✓ Explanation & Hint</div>
+
+                <div>✓ Practice + Mock Access</div>
+
+                <div>✓ Unlimited Practice Attempts</div>
 
             </div>
 
-            <div class="package-card-bottom">
+            <button
+                type="button"
+                class="mock-pay-btn"
+                onclick="
+                    event.stopPropagation();
+                    selectSubjectPackage('social_science', this.closest('.subject-package-card'));
+                "
+            >
+                🔓 View Social Science Package →
+            </button>
 
-                <div class="package-price">
-
-                    <small>
-                        Practice + Mock Package
-                    </small>
-
-                    <strong>₹299</strong>
-
-                </div>
-
-                <button
-                    type="button"
-                    class="package-view-btn"
-                    onclick="
-                        event.stopPropagation();
-                        selectSubjectPackage(
-                            'social_science',
-                            this.parentElement.parentElement
-                        )
-                    "
-                >
-                    View Package →
-                </button>
-
-            </div>
+            <p class="mock-payment-note">
+                Practice + Mock Test • ₹299
+            </p>
 
         </div>
 
