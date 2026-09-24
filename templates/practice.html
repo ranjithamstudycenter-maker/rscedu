@@ -1967,8 +1967,10 @@ body.exam-running .exam-lock-bar{
     </div>
 
     <!-- PRACTICE -->
-    <section id="practiceShell">
-
+    <section
+             id="practiceShell"
+             style="display:none;"
+         >
         <div class="p-card" id="setupCard">
             <div class="section-head">
                 <div>
@@ -2242,6 +2244,259 @@ body.exam-running .exam-lock-bar{
 </div>
 
 
+
+<!-- =========================================================
+     STEP 3 — PACKAGE DETAILS / PAYMENT
+     ========================================================= -->
+
+<section
+    id="packageDetailsSection"
+    class="p-card package-details-section"
+    style="display:none;"
+>
+
+    <!-- TOP -->
+    <div class="package-details-top">
+
+        <button
+            type="button"
+            class="package-back-link"
+            onclick="backToSubjectPackages()"
+        >
+            ← Back to Subjects
+        </button>
+
+        <span class="step-pill">
+            STEP 3
+        </span>
+
+    </div>
+
+
+    <!-- SUBJECT HEADER -->
+    <div class="checkout-header">
+
+        <div
+            class="checkout-subject-icon"
+            id="packageDetailsIcon"
+        >
+            📐
+        </div>
+
+        <div>
+
+            <h2 id="packageDetailsTitle">
+                Mathematics Complete Package
+            </h2>
+
+            <p id="packageDetailsSubtitle">
+                Practice + Mock Test
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- SELECTED SYLLABUS -->
+    <div class="checkout-syllabus">
+
+        <div>
+
+            🏫
+
+            <strong>Board</strong>
+
+            <span id="packageDetailsBoard">
+                —
+            </span>
+
+        </div>
+
+
+        <div>
+
+            🎓
+
+            <strong>Class</strong>
+
+            <span id="packageDetailsClass">
+                —
+            </span>
+
+        </div>
+
+    </div>
+
+
+    <!-- PACKAGE -->
+    <div class="checkout-package-box">
+
+        <div class="checkout-package-info">
+
+            <span class="checkout-label">
+                COMPLETE SUBJECT PACKAGE
+            </span>
+
+            <h3>
+                Practice + Mock Test
+            </h3>
+
+            <p>
+                One package gives access to both
+                Practice and Mock Test sections.
+            </p>
+
+        </div>
+
+
+        <div class="checkout-price-box">
+
+            <span>
+                Package Price
+            </span>
+
+            <strong>
+                ₹299
+            </strong>
+
+        </div>
+
+    </div>
+
+
+    <!-- FEATURES -->
+    <div class="checkout-includes">
+
+        <span>✓ Chapter-wise Practice</span>
+
+        <span>✓ Easy / Medium / Hard</span>
+
+        <span>✓ Chapter-wise Mock Tests</span>
+
+        <span>✓ Full-Syllabus Mock Test</span>
+
+        <span>✓ Detailed Result & Review</span>
+
+        <span>✓ Practice + Mock Access</span>
+
+    </div>
+
+
+    <!-- PAYMENT SUMMARY -->
+    <div class="checkout-payment-box">
+
+        <div>
+
+            <strong>
+                Total Payable
+            </strong>
+
+            <span>
+                Secure payment
+            </span>
+
+        </div>
+
+        <div class="checkout-total">
+            ₹299
+        </div>
+
+    </div>
+
+
+    <!-- PAY BUTTON -->
+    <button
+        type="button"
+        class="package-pay-btn"
+        onclick="startCombinedPackagePayment()"
+    >
+        🔓 Unlock Package — ₹299
+    </button>
+
+
+    <p class="secure-payment-note">
+        🔒 Secure payment • Practice + Mock Test access
+    </p>
+
+
+    <!-- SUCCESS AREA -->
+    <div
+        id="packagePaymentSuccess"
+        style="display:none;"
+    >
+
+        <div class="package-success-icon">
+            ✓
+        </div>
+
+        <h3>
+            Payment Successful!
+        </h3>
+
+        <p>
+            Your Practice + Mock Test package
+            has been unlocked successfully.
+        </p>
+
+
+        <div class="package-success-summary">
+
+            <div>
+                <strong>Subject</strong>
+                <span id="successPackageSubject">
+                    —
+                </span>
+            </div>
+
+            <div>
+                <strong>Board</strong>
+                <span id="successPackageBoard">
+                    —
+                </span>
+            </div>
+
+            <div>
+                <strong>Class</strong>
+                <span id="successPackageClass">
+                    —
+                </span>
+            </div>
+
+        </div>
+
+
+        <button
+            type="button"
+            class="package-continue-btn"
+            onclick="continueToPurchasedPackage()"
+        >
+            Continue to Practice + Mock →
+        </button>
+
+    </div>
+
+
+    <!-- BACK -->
+    <div
+        class="package-details-actions"
+        id="packageDetailsBackActions"
+    >
+
+        <button
+            type="button"
+            class="mock-back-btn"
+            onclick="backToSubjectPackages()"
+        >
+            ← Back
+        </button>
+
+    </div>
+
+</section>
+
+           
+           
 
        
       
@@ -4080,12 +4335,18 @@ function updateDifficultyState(){
     if(grid) grid.classList.toggle("locked", !ready);
     return ready;
 }
-function selectSubjectPackage(subject, card){
+async function selectSubjectPackage(subject, card){
+
+    // =============================================
+    // SAVE SELECTED SUBJECT
+    // =============================================
 
     packageSelectedSubject = subject;
 
 
-    /* Remove previous active state */
+    // =============================================
+    // ACTIVE CARD
+    // =============================================
 
     document
         .querySelectorAll(".subject-package-card")
@@ -4095,9 +4356,6 @@ function selectSubjectPackage(subject, card){
 
         });
 
-
-    /* Mark selected card */
-
     if(card){
 
         card.classList.add("active");
@@ -4105,7 +4363,9 @@ function selectSubjectPackage(subject, card){
     }
 
 
-    /* Subject display information */
+    // =============================================
+    // SUBJECT INFORMATION
+    // =============================================
 
     const subjectInfo = {
 
@@ -4139,7 +4399,9 @@ function selectSubjectPackage(subject, card){
         };
 
 
-    /* Update Step 3 */
+    // =============================================
+    // UPDATE STEP 3
+    // =============================================
 
     document.getElementById(
         "packageDetailsIcon"
@@ -4170,14 +4432,14 @@ function selectSubjectPackage(subject, card){
         packageSelectedClass;
 
 
-    /* Hide Step 2 */
+    // =============================================
+    // SHOW STEP 3
+    // =============================================
 
     document.getElementById(
         "subjectPackageSection"
     ).style.display = "none";
 
-
-    /* Show Step 3 */
 
     document.getElementById(
         "packageDetailsSection"
@@ -4187,19 +4449,136 @@ function selectSubjectPackage(subject, card){
     document.getElementById(
         "packageDetailsSection"
     ).scrollIntoView({
-        behavior:"smooth",
-        block:"start"
+
+        behavior: "smooth",
+
+        block: "start"
+
     });
 
 
-    console.log(
-        "Selected Package:",
-        {
-            subject: subject,
-            board: packageSelectedBoard,
-            class_name: packageSelectedClass
+    // =============================================
+    // CHECK EXISTING PURCHASE
+    // =============================================
+
+    await checkPackageAccess();
+
+}
+async function checkPackageAccess(){
+
+    if(
+        !packageSelectedSubject ||
+        !packageSelectedBoard ||
+        !packageSelectedClass
+    ){
+
+        return;
+
+    }
+
+
+    // =============================================
+    // SUBJECT NAME FOR DATABASE
+    // =============================================
+
+    const subjectNames = {
+
+        math: "Mathematics",
+
+        biology: "Biology",
+
+        science: "Science",
+
+        social_science: "Social Science"
+
+    };
+
+
+    const subjectName =
+        subjectNames[packageSelectedSubject]
+        || packageSelectedSubject;
+
+
+    try{
+
+        const params =
+            new URLSearchParams({
+
+                subject:
+                    subjectName,
+
+                board:
+                    packageSelectedBoard,
+
+                class_name:
+                    packageSelectedClass
+
+            });
+
+
+        const response =
+            await fetch(
+                "/api/mock/check-access?" +
+                params.toString(),
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        // =========================================
+        // ALREADY PURCHASED
+        // =========================================
+
+        if(
+            response.ok &&
+            data.success &&
+            data.unlocked
+        ){
+
+            console.log(
+                "Package already purchased:",
+                {
+                    subject: subjectName,
+                    board: packageSelectedBoard,
+                    class_name: packageSelectedClass
+                }
+            );
+
+
+            showPackageUnlocked();
+
+
+            return;
+
         }
-    );
+
+
+        // =========================================
+        // NOT PURCHASED
+        // =========================================
+
+        console.log(
+            "Package not purchased yet."
+        );
+
+
+    }
+    catch(error){
+
+        console.error(
+            "PACKAGE ACCESS CHECK ERROR:",
+            error
+        );
+
+        // Do not block payment if access check fails.
+
+    }
+
 }
 function backToSubjectPackages(){
 
@@ -4256,6 +4635,611 @@ function selectSubject(subject, card){
         block:"start"
     });
 }
+async function startCombinedPackagePayment(){
+
+    if(
+        !packageSelectedSubject ||
+        !packageSelectedBoard ||
+        !packageSelectedClass
+    ){
+
+        alert(
+            "Please select Subject, Board and Class first."
+        );
+
+        return;
+    }
+
+    const payBtn =
+        document.querySelector(".package-pay-btn");
+
+    if(payBtn){
+
+        payBtn.disabled = true;
+
+        payBtn.innerHTML =
+            "⏳ Starting Payment...";
+
+    }
+
+    try{
+
+        // =============================================
+        // 1. CREATE RAZORPAY ORDER
+        // =============================================
+
+        const response = await fetch(
+            "/api/mock/create-order",
+            {
+                method: "POST",
+
+                headers: {
+                    "Content-Type": "application/json"
+                },
+
+                body: JSON.stringify({
+
+                    subject:
+                        packageSelectedSubject,
+
+                    board:
+                        packageSelectedBoard,
+
+                    class_name:
+                        packageSelectedClass
+
+                })
+
+            }
+        );
+
+        const data =
+            await response.json();
+
+
+        // =============================================
+        // 2. ALREADY PURCHASED
+        // =============================================
+
+        if(data.already_paid){
+
+            alert(
+                "✅ This package is already purchased."
+            );
+
+            showPackageUnlocked();
+
+            return;
+        }
+
+
+        // =============================================
+        // 3. CHECK ORDER RESPONSE
+        // =============================================
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.error ||
+                "Unable to create payment order."
+            );
+
+        }
+
+
+        // =============================================
+        // 4. LOAD RAZORPAY
+        // =============================================
+
+        if(typeof Razorpay === "undefined"){
+
+            await new Promise(
+                (resolve, reject) => {
+
+                    const script =
+                        document.createElement(
+                            "script"
+                        );
+
+                    script.src =
+                        "https://checkout.razorpay.com/v1/checkout.js";
+
+                    script.onload =
+                        resolve;
+
+                    script.onerror = () => {
+
+                        reject(
+                            new Error(
+                                "Razorpay checkout could not be loaded."
+                            )
+                        );
+
+                    };
+
+                    document.head.appendChild(
+                        script
+                    );
+
+                }
+            );
+
+        }
+
+
+        // =============================================
+        // 5. RAZORPAY OPTIONS
+        // =============================================
+
+        const options = {
+
+            key:
+                data.razorpay_key,
+
+            amount:
+                data.amount,
+
+            currency:
+                data.currency || "INR",
+
+            name:
+                "Ranjitham Study Center",
+
+            description:
+                "Practice + Mock Test Package",
+
+            order_id:
+                data.order_id,
+
+            prefill: {
+
+                name: ""
+
+            },
+
+            theme: {
+
+                color: "#2563eb"
+
+            },
+
+            modal: {
+
+                ondismiss: function(){
+
+                    if(payBtn){
+
+                        payBtn.disabled = false;
+
+                        payBtn.innerHTML =
+                            "🔓 Unlock Package — ₹299";
+
+                    }
+
+                }
+
+            },
+
+
+            // =========================================
+            // 6. PAYMENT SUCCESS
+            // =========================================
+
+            handler: async function(payment){
+
+                try{
+
+                    if(payBtn){
+
+                        payBtn.disabled = true;
+
+                        payBtn.innerHTML =
+                            "⏳ Verifying Payment...";
+
+                    }
+
+
+                    // =================================
+                    // SERVER VERIFICATION
+                    // =================================
+
+                    const verifyResponse =
+                        await fetch(
+                            "/api/mock/payment-success",
+                            {
+                                method: "POST",
+
+                                headers: {
+                                    "Content-Type":
+                                        "application/json"
+                                },
+
+                                body: JSON.stringify({
+
+                                    razorpay_order_id:
+                                        payment.razorpay_order_id,
+
+                                    razorpay_payment_id:
+                                        payment.razorpay_payment_id,
+
+                                    razorpay_signature:
+                                        payment.razorpay_signature
+
+                                })
+
+                            }
+                        );
+
+
+                    const verifyData =
+                        await verifyResponse.json();
+
+
+                    // =================================
+                    // VERIFIED
+                    // =================================
+
+                    if(
+                        verifyResponse.ok &&
+                        verifyData.success &&
+                        verifyData.unlocked
+                    ){
+
+                        showPackageUnlocked();
+
+                    }
+                    else{
+
+                        throw new Error(
+                            verifyData.error ||
+                            "Payment verification failed."
+                        );
+
+                    }
+
+                }
+                catch(error){
+
+                    console.error(
+                        "Package payment verification error:",
+                        error
+                    );
+
+                    alert(
+                        "Payment was received, but verification " +
+                        "could not be completed.\n\n" +
+                        "Please contact Ranjitham Study Center."
+                    );
+
+
+                    if(payBtn){
+
+                        payBtn.disabled = false;
+
+                        payBtn.innerHTML =
+                            "🔓 Unlock Package — ₹299";
+
+                    }
+
+                }
+
+            }
+
+        };
+
+
+        // =============================================
+        // 7. OPEN RAZORPAY
+        // =============================================
+
+        const razorpay =
+            new Razorpay(options);
+
+        razorpay.open();
+
+
+    }
+    catch(error){
+
+        console.error(
+            "Package payment error:",
+            error
+        );
+
+        alert(
+            error.message ||
+            "Unable to start payment."
+        );
+
+
+        if(payBtn){
+
+            payBtn.disabled = false;
+
+            payBtn.innerHTML =
+                "🔓 Unlock Package — ₹299";
+
+        }
+
+    }
+
+}
+
+function showPackageUnlocked(){
+
+    // ---------------------------------------------
+    // HIDE PAYMENT BUTTON
+    // ---------------------------------------------
+
+    const payBtn =
+        document.querySelector(".package-pay-btn");
+
+    if(payBtn){
+
+        payBtn.style.display = "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // HIDE PAYMENT NOTE
+    // ---------------------------------------------
+
+    const paymentNote =
+        document.querySelector(".secure-payment-note");
+
+    if(paymentNote){
+
+        paymentNote.style.display = "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // HIDE BACK BUTTON
+    // ---------------------------------------------
+
+    const backActions =
+        document.getElementById(
+            "packageDetailsBackActions"
+        );
+
+    if(backActions){
+
+        backActions.style.display = "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // SHOW SUCCESS
+    // ---------------------------------------------
+
+    const success =
+        document.getElementById(
+            "packagePaymentSuccess"
+        );
+
+    if(success){
+
+        success.style.display = "block";
+
+    }
+
+
+    // ---------------------------------------------
+    // SHOW SELECTED DETAILS
+    // ---------------------------------------------
+
+    const subjectNames = {
+
+        math: "Mathematics",
+
+        biology: "Biology",
+
+        science: "Science",
+
+        social_science: "Social Science"
+
+    };
+
+
+    const subjectName =
+        subjectNames[packageSelectedSubject]
+        || packageSelectedSubject;
+
+
+    const subjectElement =
+        document.getElementById(
+            "successPackageSubject"
+        );
+
+    if(subjectElement){
+
+        subjectElement.textContent =
+            subjectName;
+
+    }
+
+
+    const boardElement =
+        document.getElementById(
+            "successPackageBoard"
+        );
+
+    if(boardElement){
+
+        boardElement.textContent =
+            packageSelectedBoard;
+
+    }
+
+
+    const classElement =
+        document.getElementById(
+            "successPackageClass"
+        );
+
+    if(classElement){
+
+        classElement.textContent =
+            packageSelectedClass;
+
+    }
+
+
+    // ---------------------------------------------
+    // SUCCESS MESSAGE
+    // ---------------------------------------------
+
+    console.log(
+        "Package unlocked successfully:",
+        {
+            subject: packageSelectedSubject,
+            board: packageSelectedBoard,
+            class_name: packageSelectedClass
+        }
+    );
+
+}
+
+function continueToPurchasedPackage(){
+
+    // ---------------------------------------------
+    // HIDE PACKAGE GATEWAY
+    // ---------------------------------------------
+
+    const gateway =
+        document.getElementById(
+            "packageGateway"
+        );
+
+    if(gateway){
+
+        gateway.style.display = "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // HIDE SUBJECT PACKAGES
+    // ---------------------------------------------
+
+    const subjectPackages =
+        document.getElementById(
+            "subjectPackageSection"
+        );
+
+    if(subjectPackages){
+
+        subjectPackages.style.display = "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // HIDE PACKAGE DETAILS
+    // ---------------------------------------------
+
+    const details =
+        document.getElementById(
+            "packageDetailsSection"
+        );
+
+    if(details){
+
+        details.style.display = "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // SHOW PRACTICE AREA
+    // ---------------------------------------------
+
+    const practiceShell =
+        document.getElementById(
+            "practiceShell"
+        );
+
+    if(practiceShell){
+
+        practiceShell.style.display = "block";
+
+    }
+
+
+    // ---------------------------------------------
+    // SHOW MODE SWITCH
+    // ---------------------------------------------
+
+    const modeSwitch =
+        document.querySelector(
+            ".mode-switch"
+        );
+
+    if(modeSwitch){
+
+        modeSwitch.style.display = "flex";
+
+    }
+
+
+    // ---------------------------------------------
+    // KEEP PRACTICE MODE ACTIVE
+    // ---------------------------------------------
+
+    if(typeof showMode === "function"){
+
+        showMode("practice");
+
+    }
+
+
+    // ---------------------------------------------
+    // SELECT MATHEMATICS
+    // ---------------------------------------------
+
+    if(packageSelectedSubject === "math"){
+
+        const mathCard =
+            document.querySelector(
+                '.subject-card[onclick*="selectSubject(\'math\'"]'
+            );
+
+        if(mathCard){
+
+            selectSubject(
+                "math",
+                mathCard
+            );
+
+        }
+
+    }
+
+
+    // ---------------------------------------------
+    // SCROLL
+    // ---------------------------------------------
+
+    if(practiceShell){
+
+        practiceShell.scrollIntoView({
+
+            behavior: "smooth",
+
+            block: "start"
+
+        });
+
+    }
+
+}
+   
 function resetPracticeDropdowns(){
 
     const board = document.getElementById("practiceBoard");
@@ -4264,7 +5248,18 @@ function resetPracticeDropdowns(){
     const topic = document.getElementById("practiceTopic");
     const subtopic = document.getElementById("practiceSubtopic");
 
-    board.value = "";
+    /*
+     * If package is already selected,
+     * keep Board + Class from purchased package.
+     */
+    const purchasedBoard = packageSelectedBoard || "";
+    const purchasedClass = packageSelectedClass || "";
+
+    if(purchasedBoard){
+        board.value = purchasedBoard;
+    }else{
+        board.value = "";
+    }
 
     cls.innerHTML =
         '<option value="">Select Class</option>';
@@ -4278,14 +5273,31 @@ function resetPracticeDropdowns(){
     subtopic.innerHTML =
         '<option value="">Select Subtopic</option>';
 
-    cls.disabled = true;
-    subject.disabled = true;
     topic.disabled = true;
     subtopic.disabled = true;
 
-    document.getElementById("selectionSummary").style.display = "none";
+    /*
+     * Load classes for selected Board
+     */
+    if(purchasedBoard){
+        loadPracticeClasses();
 
-    document.getElementById("difficultyCard").style.display = "none";
+        /*
+         * Wait until class options are populated,
+         * then select purchased class.
+         */
+        setTimeout(function(){
+
+            if(purchasedClass){
+                cls.value = purchasedClass;
+
+                loadPracticeSubjects();
+            }
+
+        }, 150);
+    }
+
+    updateDifficultyState();
 }
    
 function comingSoon(name){
