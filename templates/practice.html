@@ -5873,12 +5873,18 @@ function backToPracticeSubject(){
     const mathSetup =
         document.getElementById("mathSetup");
 
-    const subjectGrid =
-        document.querySelector(".subject-grid");
+    const practiceShell =
+        document.getElementById("practiceShell");
 
-    const setupHead =
-        document.querySelector(
-            "#setupCard > .section-head"
+    const mockShell =
+        document.getElementById("mockShell");
+
+    const modeSwitch =
+        document.querySelector(".mode-switch");
+
+    const subjectPackageSection =
+        document.getElementById(
+            "subjectPackageSection"
         );
 
     const selectionSummary =
@@ -5895,7 +5901,7 @@ function backToPracticeSubject(){
 
 
     // =================================================
-    // DIFFICULTY → SELECT SYLLABUS
+    // 1. DIFFICULTY → SELECT YOUR SYLLABUS
     // =================================================
 
     if(
@@ -5903,13 +5909,21 @@ function backToPracticeSubject(){
         difficultyCard.style.display !== "none"
     ){
 
-        // Hide Difficulty
+        // Hide difficulty page
         difficultyCard.style.display =
             "none";
 
 
-        // VERY IMPORTANT
-        // Parent setup card must be visible again
+        // Show Practice shell
+        if(practiceShell){
+
+            practiceShell.style.display =
+                "block";
+
+        }
+
+
+        // Show setup card
         if(setupCard){
 
             setupCard.style.display =
@@ -5918,19 +5932,12 @@ function backToPracticeSubject(){
         }
 
 
-        // Keep subject cards hidden
-        // because we are returning to the
-        // already selected syllabus.
-        if(subjectGrid){
+        // Hide Build Your Practice Test heading
+        const setupHead =
+            document.querySelector(
+                "#setupCard > .section-head"
+            );
 
-            subjectGrid.style.display =
-                "none";
-
-        }
-
-
-        // Keep "Build Your Practice Test"
-        // heading hidden.
         if(setupHead){
 
             setupHead.style.display =
@@ -5939,11 +5946,25 @@ function backToPracticeSubject(){
         }
 
 
-        // Move Selected summary
-        // back into Syllabus section
+        // Keep subject cards hidden
+        const subjectGrid =
+            document.querySelector(
+                ".subject-grid"
+            );
+
+        if(subjectGrid){
+
+            subjectGrid.style.display =
+                "none";
+
+        }
+
+
+        // Move summary back to syllabus
         if(
             selectionSummary &&
-            stepActions
+            stepActions &&
+            mathSetup
         ){
 
             mathSetup.insertBefore(
@@ -5954,16 +5975,7 @@ function backToPracticeSubject(){
         }
 
 
-        // Show syllabus
-        if(mathSetup){
-
-            mathSetup.style.display =
-                "block";
-
-        }
-
-
-        // Keep selected summary visible
+        // Show selected syllabus
         if(selectionSummary){
 
             selectionSummary.style.display =
@@ -5978,7 +5990,16 @@ function backToPracticeSubject(){
         }
 
 
-        // Scroll back to syllabus
+        // Show syllabus
+        if(mathSetup){
+
+            mathSetup.style.display =
+                "block";
+
+        }
+
+
+        // Scroll to syllabus
         if(mathSetup){
 
             setTimeout(function(){
@@ -5988,7 +6009,7 @@ function backToPracticeSubject(){
                     block:"start"
                 });
 
-            },50);
+            },100);
 
         }
 
@@ -5997,24 +6018,18 @@ function backToPracticeSubject(){
 
 
     // =================================================
-    // SYLLABUS → SUBJECT PACKAGE PAGE
+    // 2. SELECT YOUR SYLLABUS → PAID PACKAGE PAGE
     // =================================================
 
-    const practiceShell =
-        document.getElementById(
-            "practiceShell"
-        );
+    console.log(
+        "Returning to paid subject package:",
+        packageSelectedSubject
+    );
 
-    const modeSwitch =
-        document.querySelector(
-            ".mode-switch"
-        );
 
-    const subjectPackages =
-        document.getElementById(
-            "subjectPackageSection"
-        );
-
+    // ---------------------------------------------
+    // HIDE PRACTICE
+    // ---------------------------------------------
 
     if(practiceShell){
 
@@ -6024,6 +6039,22 @@ function backToPracticeSubject(){
     }
 
 
+    // ---------------------------------------------
+    // HIDE MOCK
+    // ---------------------------------------------
+
+    if(mockShell){
+
+        mockShell.style.display =
+            "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // HIDE PRACTICE / MOCK SWITCH
+    // ---------------------------------------------
+
     if(modeSwitch){
 
         modeSwitch.style.display =
@@ -6032,15 +6063,69 @@ function backToPracticeSubject(){
     }
 
 
-    if(subjectPackages){
+    // ---------------------------------------------
+    // HIDE SYLLABUS
+    // ---------------------------------------------
 
-        subjectPackages.style.display =
+    if(mathSetup){
+
+        mathSetup.style.display =
+            "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // HIDE DIFFICULTY
+    // ---------------------------------------------
+
+    if(difficultyCard){
+
+        difficultyCard.style.display =
+            "none";
+
+    }
+
+
+    // ---------------------------------------------
+    // SHOW PAID SUBJECT PACKAGE PAGE
+    // ---------------------------------------------
+
+    if(subjectPackageSection){
+
+        subjectPackageSection.style.display =
             "block";
 
-        subjectPackages.scrollIntoView({
-            behavior:"smooth",
-            block:"start"
-        });
+    }
+
+
+    // ---------------------------------------------
+    // RESTORE PAID STATUS
+    // ---------------------------------------------
+
+    if(packageSelectedSubject){
+
+        markPackageAsPurchased(
+            packageSelectedSubject
+        );
+
+    }
+
+
+    // ---------------------------------------------
+    // SCROLL TO PACKAGE
+    // ---------------------------------------------
+
+    if(subjectPackageSection){
+
+        setTimeout(function(){
+
+            subjectPackageSection.scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+            });
+
+        },100);
 
     }
 
