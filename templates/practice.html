@@ -1411,6 +1411,74 @@ body.exam-running .exam-lock-bar{
     border-radius:8px;
     cursor:pointer;
 }
+
+   /* =========================================================
+   PACKAGE GATEWAY — BOARD + CLASS
+   ========================================================= */
+
+.package-gateway{
+    max-width:1080px;
+    margin:0 auto 24px;
+}
+
+.package-gateway-head{
+    margin-bottom:25px;
+}
+
+.package-selection-grid{
+    display:grid;
+    grid-template-columns:repeat(2,1fr);
+    gap:18px;
+    max-width:850px;
+    margin:0 auto;
+}
+
+.package-selection-summary{
+    display:none;
+    max-width:850px;
+    margin:18px auto 0;
+    padding:14px 17px;
+    border-radius:14px;
+    background:linear-gradient(135deg,#eef2ff,#faf5ff);
+    border:1px solid #ddd6fe;
+    color:#3730a3;
+}
+
+.package-selection-summary strong{
+    color:#312e81;
+}
+
+.package-step-actions{
+    max-width:850px;
+    margin:22px auto 0;
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    gap:12px;
+}
+
+#packageGatewayContinue:disabled{
+    background:#cbd5e1;
+    color:#64748b;
+    cursor:not-allowed;
+    box-shadow:none;
+}
+
+@media(max-width:700px){
+
+    .package-gateway{
+        max-width:100%;
+    }
+
+    .package-selection-grid{
+        grid-template-columns:1fr;
+    }
+
+    .package-step-actions{
+        flex-direction:row;
+    }
+
+}
 </style>
 
 
@@ -1454,7 +1522,75 @@ body.exam-running .exam-lock-bar{
             </p>
             </div>
     </section>
-
+      <!-- =========================================================
+           NEW PACKAGE ENTRY — BOARD + CLASS
+           ========================================================= -->
+      
+      <section id="packageGateway" class="p-card package-gateway">
+      
+          <div class="section-head package-gateway-head">
+              <div>
+                  <h2>📚 Select Your Syllabus</h2>
+                  <p>
+                      Select your Board and Class to view the available
+                      subject packages.
+                  </p>
+              </div>
+      
+              <span class="step-pill">STEP 1</span>
+          </div>
+      
+          <div class="package-selection-grid">
+      
+              <div class="field">
+                  <label>🏫 Board</label>
+      
+                  <select id="packageBoard" onchange="loadPackageClasses()">
+                      <option value="">Loading boards...</option>
+                  </select>
+              </div>
+      
+              <div class="field">
+                  <label>🎓 Class</label>
+      
+                  <select id="packageClass"
+                          onchange="updatePackageGateway()"
+                          disabled>
+                      <option value="">Select Class</option>
+                  </select>
+              </div>
+      
+          </div>
+      
+          <div class="package-selection-summary"
+               id="packageSelectionSummary">
+      
+              <strong>Selected:</strong>
+              <span id="packageSelectionText"></span>
+      
+          </div>
+      
+          <div class="package-step-actions">
+      
+              <button
+                  type="button"
+                  class="mock-back-btn"
+                  onclick="packageGatewayBack()">
+                  ← Back
+              </button>
+      
+              <button
+                  type="button"
+                  class="mock-next-btn"
+                  id="packageGatewayContinue"
+                  onclick="continueFromPackageGateway()"
+                  disabled>
+                  Continue →
+              </button>
+      
+          </div>
+      
+      </section>
     <div class="mode-switch">
         <button class="mode-btn active" id="practiceModeBtn" onclick="showMode('practice')">
             📘 Practice
@@ -2402,6 +2538,263 @@ body.exam-running .exam-lock-bar{
     </div>
 </section>
 <script>
+
+ /* =========================================================
+   NEW PACKAGE GATEWAY
+   BOARD + CLASS
+   ========================================================= */
+
+let packageSelectedBoard = "";
+let packageSelectedClass = "";
+
+
+/* ---------- LOAD INITIAL BOARDS ---------- */
+
+async function loadPackageBoards(){
+
+    const board =
+        document.getElementById("packageBoard");
+
+    if(!board) return;
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/practice/options",
+                {
+                    cache:"no-store"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if(!response.ok || !data.success){
+
+            throw new Error(
+                data.error ||
+                "Unable to load syllabus."
+            );
+        }
+
+        /*
+         * Use the existing Practice syllabus options.
+         * We are NOT creating a new API.
+         */
+        window.packageSyllabusOptions =
+            data.options || [];
+
+        const boards = [
+            ...new Set(
+                window.packageSyllabusOptions
+                    .map(x => x.board)
+                    .filter(Boolean)
+            )
+        ];
+
+        board.innerHTML =
+            '<option value="">Select Board</option>';
+
+        boards.forEach(boardName => {
+
+            const option =
+                document.createElement("option");
+
+            option.value = boardName;
+            option.textContent = boardName;
+
+            board.appendChild(option);
+
+        });
+
+    }catch(error){
+
+        console.error(
+            "PACKAGE BOARD ERROR:",
+            error
+        );
+
+        board.innerHTML =
+            '<option value="">Unable to load</option>';
+
+        alert(
+            "Unable to load Board options."
+        );
+    }
+}
+
+
+/* ---------- LOAD CLASSES ---------- */
+
+function loadPackageClasses(){
+
+    const board =
+        document.getElementById("packageBoard").value;
+
+    const cls =
+        document.getElementById("packageClass");
+
+    const continueBtn =
+        document.getElementById(
+            "packageGatewayContinue"
+        );
+
+    const summary =
+        document.getElementById(
+            "packageSelectionSummary"
+        );
+
+    if(!cls) return;
+
+    cls.innerHTML =
+        '<option value="">Select Class</option>';
+
+    cls.disabled = true;
+
+    if(continueBtn){
+        continueBtn.disabled = true;
+    }
+
+    if(summary){
+        summary.style.display = "none";
+    }
+
+    if(!board) return;
+
+    const options =
+        window.packageSyllabusOptions || [];
+
+    const classes = [
+        ...new Set(
+            options
+                .filter(x => x.board === board)
+                .map(x => x.class_name)
+                .filter(Boolean)
+        )
+    ];
+
+    classes.forEach(className => {
+
+        const option =
+            document.createElement("option");
+
+        option.value = className;
+        option.textContent = className;
+
+        cls.appendChild(option);
+
+    });
+
+    cls.disabled =
+        classes.length === 0;
+}
+
+
+/* ---------- UPDATE SELECTION ---------- */
+
+function updatePackageGateway(){
+
+    const board =
+        document.getElementById("packageBoard").value;
+
+    const cls =
+        document.getElementById("packageClass").value;
+
+    const continueBtn =
+        document.getElementById(
+            "packageGatewayContinue"
+        );
+
+    const summary =
+        document.getElementById(
+            "packageSelectionSummary"
+        );
+
+    const summaryText =
+        document.getElementById(
+            "packageSelectionText"
+        );
+
+    packageSelectedBoard = board;
+    packageSelectedClass = cls;
+
+    const ready =
+        !!board && !!cls;
+
+    if(continueBtn){
+        continueBtn.disabled = !ready;
+    }
+
+    if(summary && summaryText){
+
+        if(ready){
+
+            summaryText.textContent =
+                `${board} • ${cls}`;
+
+            summary.style.display = "block";
+
+        }else{
+
+            summary.style.display = "none";
+
+        }
+    }
+}
+
+
+/* ---------- CONTINUE ---------- */
+
+function continueFromPackageGateway(){
+
+    const board =
+        document.getElementById("packageBoard").value;
+
+    const cls =
+        document.getElementById("packageClass").value;
+
+    if(!board || !cls){
+
+        alert(
+            "Please select Board and Class first."
+        );
+
+        return;
+    }
+
+    packageSelectedBoard = board;
+    packageSelectedClass = cls;
+
+    /*
+     * STEP 2 will be added here.
+     *
+     * For now we only show a temporary message.
+     */
+    console.log(
+        "Package Gateway Selection:",
+        {
+            board: packageSelectedBoard,
+            class_name: packageSelectedClass
+        }
+    );
+
+    alert(
+        `Selected: ${board} • ${cls}\n\nStep 2 — Subject Packages will be connected next.`
+    );
+}
+
+
+/* ---------- BACK ---------- */
+
+function packageGatewayBack(){
+
+    /*
+     * Keep this simple for now.
+     * Later we can connect this to the actual previous page.
+     */
+    window.history.back();
+}  
 /* =========================================================
    RSC PRACTICE — DATABASE QUESTION BANK ONLY
    No AI question generation is used on this page.
@@ -4887,6 +5280,7 @@ function backToSetup(){
 /* ---------- INITIAL LOAD ---------- */
 document.addEventListener("DOMContentLoaded", function(){
     loadPracticeOptions();
+    loadPackageBoards();
 });
 
 document.addEventListener("keydown", function(e){
