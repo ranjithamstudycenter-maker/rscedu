@@ -3476,11 +3476,14 @@ let mockHistoryIndex = -1;
 function showMode(mode){
 
     if(examLockActive){
+
         alert(
             "🔒 Your test is in progress. Please finish and submit the test first."
         );
+
         return;
     }
+
 
     const practice =
         document.getElementById("practiceShell");
@@ -3495,33 +3498,132 @@ function showMode(mode){
         document.getElementById("mockModeBtn");
 
 
-    if(mode === "mock"){
+    // =========================================
+    // PRACTICE
+    // =========================================
 
-        practice.style.display = "none";
+    if(mode === "practice"){
 
-        mock.style.display = "block";
+        if(mock){
+            mock.style.display = "none";
+        }
 
-        pBtn.classList.remove("active");
+        if(practice){
+            practice.style.display = "block";
+        }
 
-        mBtn.classList.add("active");
-                   
-        window.scrollTo({
-            top:0,
-            behavior:"smooth"
-        });
+        if(mBtn){
+            mBtn.classList.remove("active");
+        }
+
+        if(pBtn){
+            pBtn.classList.add("active");
+        }
 
         return;
     }
 
 
-    mock.style.display = "none";
+    // =========================================
+    // MOCK TEST
+    // =========================================
 
-    practice.style.display = "block";
+    if(mode === "mock"){
 
-    mBtn.classList.remove("active");
+        if(practice){
+            practice.style.display = "none";
+        }
 
-    pBtn.classList.add("active");
-    
+        if(mock){
+            mock.style.display = "block";
+        }
+
+        if(pBtn){
+            pBtn.classList.remove("active");
+        }
+
+        if(mBtn){
+            mBtn.classList.add("active");
+        }
+
+
+        // -----------------------------------------
+        // CONNECT PURCHASED PACKAGE TO MOCK
+        // -----------------------------------------
+
+        const subjectNames = {
+
+            math: "Mathematics",
+
+            biology: "Biology",
+
+            science: "Science",
+
+            social_science: "Social Science"
+
+        };
+
+
+        selectedMockSubject =
+            subjectNames[packageSelectedSubject]
+            || packageSelectedSubject;
+
+        selectedMockBoard =
+            packageSelectedBoard;
+
+        selectedMockClass =
+            packageSelectedClass;
+
+
+        // -----------------------------------------
+        // HIDE OLD MOCK PAYMENT NAVIGATION
+        // -----------------------------------------
+
+        const oldMockActions =
+            mock.querySelector(".mock-payment-actions");
+
+        if(oldMockActions){
+
+            oldMockActions.style.display = "none";
+
+        }
+
+
+        // -----------------------------------------
+        // SHOW UNLOCKED MOCK TESTS
+        // -----------------------------------------
+
+        const unlocked =
+            document.getElementById("mockTestsUnlocked");
+
+        if(unlocked){
+
+            unlocked.style.display = "block";
+
+        }
+
+
+        // -----------------------------------------
+        // SHOW MOCK HOME
+        // -----------------------------------------
+
+        if(typeof showMockHome === "function"){
+
+            showMockHome();
+
+        }
+
+
+        window.scrollTo({
+
+            top:0,
+
+            behavior:"smooth"
+
+        });
+
+    }
+
 }
 /* =========================================================
    MOCK TEST SELECTION
@@ -4940,89 +5042,87 @@ function showPackageUnlocked(){
 
 function continueToPurchasedPackage(){
 
-    // ---------------------------------------------
-    // HIDE PACKAGE GATEWAY
-    // ---------------------------------------------
+    // =============================================
+    // HIDE PACKAGE FLOW
+    // =============================================
 
     const gateway =
-        document.getElementById(
-            "packageGateway"
-        );
-
-    if(gateway){
-
-        gateway.style.display = "none";
-
-    }
-
-
-    // ---------------------------------------------
-    // HIDE SUBJECT PACKAGES
-    // ---------------------------------------------
+        document.getElementById("packageGateway");
 
     const subjectPackages =
-        document.getElementById(
-            "subjectPackageSection"
-        );
-
-    if(subjectPackages){
-
-        subjectPackages.style.display = "none";
-
-    }
-
-
-    // ---------------------------------------------
-    // HIDE PACKAGE DETAILS
-    // ---------------------------------------------
+        document.getElementById("subjectPackageSection");
 
     const details =
-        document.getElementById(
-            "packageDetailsSection"
-        );
+        document.getElementById("packageDetailsSection");
+
+    if(gateway){
+        gateway.style.display = "none";
+    }
+
+    if(subjectPackages){
+        subjectPackages.style.display = "none";
+    }
 
     if(details){
-
         details.style.display = "none";
-
     }
 
 
-    // ---------------------------------------------
-    // SHOW PRACTICE AREA
-    // ---------------------------------------------
+    // =============================================
+    // SHOW PRACTICE + MOCK AREA
+    // =============================================
 
     const practiceShell =
-        document.getElementById(
-            "practiceShell"
-        );
+        document.getElementById("practiceShell");
 
     if(practiceShell){
-
         practiceShell.style.display = "block";
-
     }
 
 
-    // ---------------------------------------------
-    // SHOW MODE SWITCH
-    // ---------------------------------------------
+    // =============================================
+    // SHOW PRACTICE / MOCK SWITCH
+    // ONLY AFTER PAYMENT
+    // =============================================
 
     const modeSwitch =
-        document.querySelector(
-            ".mode-switch"
-        );
+        document.querySelector(".mode-switch");
 
     if(modeSwitch){
-
         modeSwitch.style.display = "flex";
+    }
+
+
+    // =============================================
+    // SET PURCHASED SUBJECT
+    // =============================================
+
+    if(packageSelectedSubject){
+
+        /*
+         * This connects the purchased package
+         * directly to the existing Practice engine.
+         *
+         * Example:
+         * math → Mathematics
+         * biology → Biology
+         */
+
+        if(typeof selectSubject === "function"){
+
+            selectSubject(
+                packageSelectedSubject,
+                null
+            );
+
+        }
 
     }
 
 
-    // ---------------------------------------------
-    // KEEP PRACTICE MODE ACTIVE
-    // ---------------------------------------------
+    // =============================================
+    // PRACTICE MODE
+    // =============================================
 
     if(typeof showMode === "function"){
 
@@ -5030,19 +5130,26 @@ function continueToPurchasedPackage(){
 
     }
 
-    // ---------------------------------------------
-    // SCROLL
-    // ---------------------------------------------
 
-    if(practiceShell){
+    // =============================================
+    // SCROLL TO SYLLABUS
+    // =============================================
 
-        practiceShell.scrollIntoView({
+    const mathSetup =
+        document.getElementById("mathSetup");
 
-            behavior: "smooth",
+    if(mathSetup){
 
-            block: "start"
+        mathSetup.style.display = "block";
 
-        });
+        setTimeout(function(){
+
+            mathSetup.scrollIntoView({
+                behavior:"smooth",
+                block:"start"
+            });
+
+        },100);
 
     }
 
