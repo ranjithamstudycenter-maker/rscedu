@@ -5433,6 +5433,12 @@ function selectSubject(subject, card){
 async function startCombinedPackagePayment(subject, button){
 
     const payBtn = button;
+
+    // Save the original button text
+    // so it can be restored if payment is cancelled.
+    const originalPayButtonText =
+        payBtn ? payBtn.innerHTML : "";
+
     packageSelectedSubject = subject;
 
 
@@ -5623,7 +5629,7 @@ async function startCombinedPackagePayment(subject, button){
                         payBtn.disabled = false;
 
                         payBtn.innerHTML =
-                            "🔓 Unlock Package — ₹299";
+                           originalPayButtonText;
 
                     }
 
@@ -5747,7 +5753,7 @@ async function startCombinedPackagePayment(subject, button){
                         payBtn.disabled = false;
 
                         payBtn.innerHTML =
-                            "🔓 Unlock Package — ₹299";
+                            originalPayButtonText;
 
                     }
 
@@ -5787,7 +5793,7 @@ async function startCombinedPackagePayment(subject, button){
             payBtn.disabled = false;
 
             payBtn.innerHTML =
-                "🔓 Unlock Package — ₹299";
+                originalPayButtonText;
 
         }
 
