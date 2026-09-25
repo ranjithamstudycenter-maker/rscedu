@@ -5,26 +5,939 @@
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Mock Test Question Bank | Ranjitham Study Center</title>
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:linear-gradient(135deg,#eef2ff,#fff7ed);color:#1f2937}
-.container{width:min(1250px,94%);margin:30px auto}
-.header{background:linear-gradient(135deg,#7c3aed,#db2777,#f59e0b);color:#fff;padding:28px;border-radius:24px;box-shadow:0 15px 40px rgba(124,58,237,.18)}
-.header h1{margin:0 0 8px}.header p{margin:0;opacity:.93}
-.card{background:#fff;margin-top:22px;padding:25px;border-radius:20px;box-shadow:0 10px 28px rgba(0,0,0,.07)}
-.grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}
-label{display:block;font-weight:700;margin-bottom:6px}
-input,select,textarea{width:100%;padding:12px;border:1px solid #dbe3ef;border-radius:10px;font-size:14px}
-textarea{resize:vertical}
-button{border:0;border-radius:10px;padding:12px 18px;background:linear-gradient(135deg,#7c3aed,#db2777);color:#fff;font-weight:700;cursor:pointer}
-button.danger{background:#ef4444}button.green{background:#16a34a}
-.note{padding:14px;border-radius:12px;background:#fff7ed;border:1px solid #fed7aa;color:#9a3412;margin-top:12px}
-.message{margin-top:12px;font-weight:700}
-.table-wrap{overflow-x:auto}
-table{width:100%;border-collapse:collapse;margin-top:15px;min-width:1050px}
-th,td{padding:10px;border:1px solid #e5e7eb;text-align:left;vertical-align:top}
-th{background:#f8fafc}
-.badge{display:inline-block;padding:5px 9px;border-radius:999px;background:#dcfce7;color:#166534;font-weight:700;font-size:12px}
-@media(max-width:850px){.grid{grid-template-columns:1fr}}
+
+*{
+    box-sizing:border-box;
+}
+
+body{
+    margin:0;
+    font-family:Arial,sans-serif;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff 0%,
+            #faf5ff 45%,
+            #fff7ed 100%
+        );
+
+    color:#1f2937;
+}
+
+.container{
+    width:min(1350px,94%);
+    margin:30px auto 60px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.header{
+    position:relative;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4338ca,
+            #7c3aed,
+            #db2777,
+            #f97316
+        );
+
+    color:#fff;
+
+    padding:32px 35px;
+
+    border-radius:26px;
+
+    box-shadow:
+        0 18px 45px
+        rgba(79,70,229,.22);
+
+    overflow:hidden;
+}
+
+.header::after{
+    content:"";
+
+    position:absolute;
+
+    width:220px;
+    height:220px;
+
+    right:-70px;
+    top:-100px;
+
+    border-radius:50%;
+
+    border:1px solid
+        rgba(255,255,255,.18);
+}
+
+.header h1{
+    margin:0 0 8px;
+
+    font-size:30px;
+    font-weight:900;
+
+    letter-spacing:-.4px;
+}
+
+.header p{
+    margin:0;
+
+    opacity:.92;
+
+    font-size:14px;
+}
+
+
+/* =========================================================
+   COMMON CARD
+========================================================= */
+
+.card{
+    background:#fff;
+
+    margin-top:24px;
+
+    padding:28px;
+
+    border-radius:22px;
+
+    border:1px solid
+        rgba(226,232,240,.9);
+
+    box-shadow:
+        0 12px 35px
+        rgba(15,23,42,.07);
+}
+
+.card h2{
+    margin:0 0 7px;
+
+    color:#172554;
+
+    font-size:22px;
+    font-weight:900;
+}
+
+.card-description{
+    margin:0 0 20px;
+
+    color:#64748b;
+
+    font-size:13px;
+
+    line-height:1.6;
+}
+
+
+/* =========================================================
+   SECTION HEADER
+========================================================= */
+
+.section-heading{
+    display:flex;
+
+    align-items:center;
+
+    justify-content:space-between;
+
+    gap:15px;
+
+    margin-bottom:20px;
+}
+
+.section-heading-left h2{
+    margin:0 0 6px;
+}
+
+.section-heading-left p{
+    margin:0;
+
+    color:#64748b;
+
+    font-size:13px;
+}
+
+
+/* =========================================================
+   SUMMARY CARDS
+========================================================= */
+
+.mock-summary-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:15px;
+
+    margin-top:20px;
+}
+
+.mock-summary-card{
+
+    padding:20px;
+
+    border-radius:17px;
+
+    border:1px solid #e2e8f0;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8fafc,
+            #f8f7ff
+        );
+
+    text-align:center;
+}
+
+.mock-summary-card .icon{
+    font-size:25px;
+
+    margin-bottom:7px;
+}
+
+.mock-summary-card strong{
+    display:block;
+
+    color:#312e81;
+
+    font-size:26px;
+
+    font-weight:900;
+}
+
+.mock-summary-card span{
+    display:block;
+
+    margin-top:4px;
+
+    color:#64748b;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+}
+
+
+/* =========================================================
+   IMPORT EXCEL
+========================================================= */
+
+.excel-upload-box{
+
+    padding:22px;
+
+    border-radius:17px;
+
+    border:1px dashed #c7d2fe;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8faff,
+            #faf5ff
+        );
+}
+
+.excel-upload-box h3{
+    margin:0 0 7px;
+
+    color:#312e81;
+
+    font-size:17px;
+}
+
+.excel-upload-box p{
+    margin:0 0 16px;
+
+    color:#64748b;
+
+    font-size:13px;
+
+    line-height:1.6;
+}
+
+.excel-file-row{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    flex-wrap:wrap;
+}
+
+
+/* =========================================================
+   FORM GRID
+========================================================= */
+
+.mock-form-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,minmax(0,1fr));
+
+    gap:17px;
+
+    margin-top:20px;
+}
+
+.form-field label{
+
+    display:block;
+
+    margin-bottom:7px;
+
+    color:#334155;
+
+    font-size:12px;
+
+    font-weight:900;
+}
+
+.form-field input,
+.form-field select,
+.form-field textarea{
+
+    width:100%;
+
+    padding:12px 13px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:11px;
+
+    background:#fff;
+
+    color:#1e293b;
+
+    font-size:13px;
+
+    transition:.2s ease;
+}
+
+.form-field input:focus,
+.form-field select:focus,
+.form-field textarea:focus{
+
+    outline:none;
+
+    border-color:#6366f1;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(99,102,241,.12);
+}
+
+.form-field textarea{
+    resize:vertical;
+}
+
+
+/* =========================================================
+   MOCK TYPE
+========================================================= */
+
+.mock-type-section{
+
+    margin-top:22px;
+
+    padding:20px;
+
+    border-radius:17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #faf5ff
+        );
+
+    border:1px solid #c7d2fe;
+}
+
+.mock-type-title{
+
+    margin-bottom:14px;
+
+    color:#312e81;
+
+    font-size:14px;
+
+    font-weight:900;
+}
+
+.mock-type-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:13px;
+}
+
+.mock-type-option{
+
+    position:relative;
+
+    padding:17px;
+
+    border-radius:14px;
+
+    border:1px solid #dbe3ef;
+
+    background:#fff;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+.mock-type-option:hover{
+
+    transform:translateY(-2px);
+
+    border-color:#818cf8;
+
+    box-shadow:
+        0 8px 20px
+        rgba(79,70,229,.10);
+}
+
+.mock-type-option.active{
+
+    border-color:#6366f1;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #faf5ff
+        );
+
+    box-shadow:
+        0 8px 22px
+        rgba(79,70,229,.12);
+}
+
+.mock-type-option input{
+
+    position:absolute;
+
+    opacity:0;
+
+    pointer-events:none;
+}
+
+.mock-type-icon{
+
+    font-size:25px;
+
+    margin-bottom:8px;
+}
+
+.mock-type-option strong{
+
+    display:block;
+
+    color:#172554;
+
+    font-size:14px;
+
+    font-weight:900;
+}
+
+.mock-type-option span{
+
+    display:block;
+
+    margin-top:5px;
+
+    color:#64748b;
+
+    font-size:11px;
+
+    line-height:1.5;
+}
+
+
+/* =========================================================
+   QUESTION AREA
+========================================================= */
+
+.question-editor{
+
+    margin-top:22px;
+
+    padding:22px;
+
+    border-radius:17px;
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+}
+
+.question-editor-title{
+
+    margin-bottom:15px;
+
+    color:#172554;
+
+    font-size:16px;
+
+    font-weight:900;
+}
+
+.options-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,1fr);
+
+    gap:15px;
+
+    margin-top:15px;
+}
+
+
+/* =========================================================
+   BUTTONS
+========================================================= */
+
+button{
+
+    border:0;
+
+    border-radius:11px;
+
+    padding:11px 17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4f46e5,
+            #7c3aed
+        );
+
+    color:#fff;
+
+    font-weight:800;
+
+    font-size:12px;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+button:hover{
+
+    transform:translateY(-1px);
+
+    box-shadow:
+        0 7px 18px
+        rgba(79,70,229,.20);
+}
+
+button.danger{
+
+    background:#ef4444;
+}
+
+button.danger:hover{
+
+    background:#dc2626;
+}
+
+button.green{
+
+    background:#16a34a;
+}
+
+button.green:hover{
+
+    background:#15803d;
+}
+
+
+/* =========================================================
+   ACTION ROW
+========================================================= */
+
+.form-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:10px;
+
+    margin-top:20px;
+}
+
+
+/* =========================================================
+   NOTES / MESSAGES
+========================================================= */
+
+.note{
+
+    padding:13px 15px;
+
+    border-radius:12px;
+
+    background:#fff7ed;
+
+    border:1px solid #fed7aa;
+
+    color:#9a3412;
+
+    margin-top:12px;
+
+    font-size:12px;
+
+    line-height:1.5;
+}
+
+.message{
+
+    margin-top:12px;
+
+    font-size:13px;
+
+    font-weight:800;
+}
+
+
+/* =========================================================
+   FILTER PANEL
+========================================================= */
+
+.mock-filter-panel{
+
+    margin-top:20px;
+
+    padding:20px;
+
+    border-radius:17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8faff,
+            #faf5ff
+        );
+
+    border:1px solid #e0e7ff;
+}
+
+.filter-title{
+
+    margin-bottom:14px;
+
+    color:#312e81;
+
+    font-size:14px;
+
+    font-weight:900;
+}
+
+.mock-filter-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(5,minmax(130px,1fr));
+
+    gap:13px;
+}
+
+.filter-field label{
+
+    display:block;
+
+    margin-bottom:6px;
+
+    color:#475569;
+
+    font-size:11px;
+
+    font-weight:900;
+}
+
+.filter-field select{
+
+    width:100%;
+
+    padding:10px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:10px;
+
+    background:#fff;
+
+    font-size:12px;
+}
+
+.filter-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    gap:9px;
+
+    margin-top:14px;
+
+    flex-wrap:wrap;
+}
+
+.active-filter-summary{
+
+    margin-top:14px;
+
+    padding:10px 13px;
+
+    border-radius:10px;
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    color:#475569;
+
+    font-size:12px;
+
+    font-weight:700;
+}
+
+
+/* =========================================================
+   TABLE
+========================================================= */
+
+.table-wrap{
+
+    overflow-x:auto;
+
+    margin-top:18px;
+
+    border-radius:13px;
+
+    border:1px solid #e2e8f0;
+}
+
+table{
+
+    width:100%;
+
+    border-collapse:separate;
+
+    border-spacing:0;
+
+    min-width:1100px;
+}
+
+th{
+
+    padding:13px 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f5f3ff
+        );
+
+    color:#312e81;
+
+    border-bottom:1px solid #c7d2fe;
+
+    font-size:11px;
+
+    font-weight:900;
+
+    white-space:nowrap;
+}
+
+td{
+
+    padding:12px 11px;
+
+    border-bottom:1px solid #edf0f5;
+
+    color:#334155;
+
+    font-size:12px;
+
+    vertical-align:middle;
+}
+
+tbody tr{
+
+    transition:.18s ease;
+}
+
+tbody tr:hover{
+
+    background:#f8faff;
+
+    box-shadow:
+        inset 3px 0 #6366f1;
+}
+
+tbody tr:last-child td{
+
+    border-bottom:none;
+}
+
+
+/* =========================================================
+   BADGES
+========================================================= */
+
+.badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    padding:5px 9px;
+
+    border-radius:999px;
+
+    background:#dcfce7;
+
+    color:#166534;
+
+    font-size:10px;
+
+    font-weight:900;
+}
+
+.mock-type-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    padding:5px 9px;
+
+    border-radius:999px;
+
+    background:#eef2ff;
+
+    color:#4338ca;
+
+    font-size:10px;
+
+    font-weight:900;
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:1000px){
+
+    .mock-summary-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .mock-form-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .mock-filter-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:700px){
+
+    .container{
+
+        width:94%;
+
+        margin-top:15px;
+    }
+
+    .header{
+
+        padding:25px 22px;
+
+        border-radius:20px;
+    }
+
+    .header h1{
+
+        font-size:23px;
+    }
+
+    .card{
+
+        padding:20px;
+
+        border-radius:18px;
+    }
+
+    .mock-summary-grid,
+    .mock-form-grid,
+    .mock-type-grid,
+    .mock-filter-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .options-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .form-actions,
+    .filter-actions{
+
+        flex-direction:column;
+
+        align-items:stretch;
+    }
+
+    .form-actions button,
+    .filter-actions button{
+
+        width:100%;
+    }
+
+}
+
 </style>
 </head>
 <body>
@@ -34,66 +947,996 @@ th{background:#f8fafc}
 <p>Mock Test section — questions only. Each question is attached to a selected Mock Test.</p>
 </div>
 
-<div class="card">
-<h2>📥 Import Mock Questions from Excel</h2>
-<p>Required columns: <b>Mock Test No, Board, Class, Subject, Topic, Subtopic, Difficulty, Question, A, B, C, D, Answer</b>. Optional: Explanation, Hint.</p>
-<input type="file" id="mockExcelFile" accept=".xlsx,.xls">
-<br>
-<button class="green" type="button" onclick="importMockExcel()">📥 Import Mock Questions</button>
-<div id="mockImportMessage" class="message"></div>
-</div>
+<!-- =========================================================
+     EXCEL IMPORT
+========================================================= -->
 
 <div class="card">
-<h2>➕ Add Mock Test Question</h2>
-<div class="note">Mock Test No identifies the test. If that Mock Test does not exist yet, the system creates it automatically and activates it for the student-side Mock Test list.</div>
 
-<div class="grid" style="margin-top:18px">
-<div><label>Mock Test No</label><input type="number" id="mqTestNo" min="1" placeholder="1"></div>
-<div><label>Board</label><select id="mqBoard"><option value="">Select Board</option><option>CBSE</option><option>State Board</option><option>Matric</option></select></div>
-<div><label>Class</label><select id="mqClass"><option value="">Select Class</option>{% for n in range(6,13) %}<option value="Class {{n}}">Class {{n}}</option>{% endfor %}</select></div>
-<div><label>Subject</label><input id="mqSubject" value="Mathematics"></div>
-<div><label>Chapter / Topic</label><input id="mqTopic" placeholder="Algebra"></div>
-<div><label>Subtopic</label><input id="mqSubtopic" placeholder="Factorisation"></div>
-<div><label>Difficulty</label><select id="mqDifficulty"><option value="">Select Difficulty</option><option value="easy">Easy</option><option value="medium">Medium</option><option value="hard">Hard</option></select></div>
+    <div class="section-heading">
+
+        <div class="section-heading-left">
+
+            <h2>📥 Import Mock Questions</h2>
+
+            <p>
+                Upload multiple mock-test questions
+                directly from an Excel file.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="excel-upload-box">
+
+        <h3>📊 Excel Question Import</h3>
+
+        <p>
+            Required columns:
+            <b>
+                Mock Type, Mock Test No, Board, Class,
+                Subject, Topic, Subtopic, Question,
+                A, B, C, D, Answer
+            </b>.
+            Optional:
+            <b>Explanation, Hint</b>.
+        </p>
+
+
+        <div class="excel-file-row">
+
+            <input
+                type="file"
+                id="mockExcelFile"
+                accept=".xlsx,.xls">
+
+            <button
+                class="green"
+                type="button"
+                onclick="importMockExcel()">
+
+                📥 Import Questions
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="mockImportMessage"
+            class="message">
+        </div>
+
+    </div>
+
 </div>
 
-<br>
-<label>Question</label><textarea id="mqQuestion" rows="4"></textarea>
-<br>
-<div class="grid">
-<div><label>Option A</label><input id="mqA"></div>
-<div><label>Option B</label><input id="mqB"></div>
-<div><label>Option C</label><input id="mqC"></div>
-<div><label>Option D</label><input id="mqD"></div>
-<div><label>Correct Answer</label><select id="mqAnswer"><option value="">Select</option><option>A</option><option>B</option><option>C</option><option>D</option></select></div>
-</div>
-<br>
-<label>Explanation</label><textarea id="mqExplanation" rows="3"></textarea>
-<br>
-<label>Hint</label><textarea id="mqHint" rows="2"></textarea>
-<br>
-<button type="button" onclick="addMockQuestion()">➕ Add Mock Question</button>
-<div id="mqMessage" class="message"></div>
+<!-- =========================================================
+     ADD MOCK QUESTION
+========================================================= -->
+
+<div class="card">
+
+    <div class="section-heading">
+
+        <div class="section-heading-left">
+
+            <h2>➕ Add Mock Test Question</h2>
+
+            <p>
+                Add a question to a Chapter-wise,
+                4-Chapter or Full-Syllabus Mock Test.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="note">
+
+        💡 Mock Tests contain
+        <b>mixed Easy, Medium and Hard questions</b>.
+        Difficulty is not selected separately here.
+
+    </div>
+
+
+    <!-- BASIC DETAILS -->
+
+    <div class="mock-form-grid">
+
+        <!-- MOCK TEST NO -->
+
+        <div class="form-field">
+
+            <label>
+                📝 Mock Test No
+            </label>
+
+            <input
+                type="number"
+                id="mqTestNo"
+                min="1"
+                placeholder="Example: 1">
+
+        </div>
+
+
+        <!-- BOARD -->
+
+        <div class="form-field">
+
+            <label>
+                🏫 Board
+            </label>
+
+            <select id="mqBoard">
+
+                <option value="">
+                    Select Board
+                </option>
+
+                <option>
+                    CBSE
+                </option>
+
+                <option>
+                    State Board
+                </option>
+
+                <option>
+                    Matric
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- CLASS -->
+
+        <div class="form-field">
+
+            <label>
+                🎓 Class
+            </label>
+
+            <select id="mqClass">
+
+                <option value="">
+                    Select Class
+                </option>
+
+                {% for n in range(9,13) %}
+
+                <option value="Class {{n}}">
+                    Class {{n}}
+                </option>
+
+                {% endfor %}
+
+            </select>
+
+        </div>
+
+
+        <!-- SUBJECT -->
+
+        <div class="form-field">
+
+            <label>
+                📚 Subject
+            </label>
+
+            <select id="mqSubject">
+
+                <option value="">
+                    Select Subject
+                </option>
+
+                <option>
+                    Mathematics
+                </option>
+
+                <option>
+                    Science
+                </option>
+
+                <option>
+                    Biology
+                </option>
+
+                <option>
+                    Social Science
+                </option>
+
+                <option>
+                    Physics
+                </option>
+
+                <option>
+                    Chemistry
+                </option>
+
+                <option>
+                    English
+                </option>
+
+                <option>
+                    Tamil
+                </option>
+
+                <option>
+                    Computer Science
+                </option>
+
+            </select>
+
+        </div>
+
+    </div>
+
+
+    <!-- MOCK TYPE -->
+
+    <div class="mock-type-section">
+
+        <div class="mock-type-title">
+
+            🎯 Select Mock Test Type
+
+        </div>
+
+
+        <div class="mock-type-grid">
+
+
+            <!-- CHAPTER -->
+
+            <label
+                class="mock-type-option active"
+                onclick="selectMockType('chapter',this)">
+
+                <input
+                    type="radio"
+                    name="mockType"
+                    id="mqMockTypeChapter"
+                    value="chapter"
+                    checked>
+
+                <div class="mock-type-icon">
+                    📘
+                </div>
+
+                <strong>
+                    Chapter-wise Mock
+                </strong>
+
+                <span>
+                    Questions from one chapter.
+                </span>
+
+            </label>
+
+
+            <!-- FOUR CHAPTER -->
+
+            <label
+                class="mock-type-option"
+                onclick="selectMockType('four_chapter',this)">
+
+                <input
+                    type="radio"
+                    name="mockType"
+                    id="mqMockTypeFour"
+                    value="four_chapter">
+
+                <div class="mock-type-icon">
+                    📚
+                </div>
+
+                <strong>
+                    4-Chapter Mock
+                </strong>
+
+                <span>
+                    Questions covering four chapters.
+                </span>
+
+            </label>
+
+
+            <!-- FULL SYLLABUS -->
+
+            <label
+                class="mock-type-option"
+                onclick="selectMockType('full_syllabus',this)">
+
+                <input
+                    type="radio"
+                    name="mockType"
+                    id="mqMockTypeFull"
+                    value="full_syllabus">
+
+                <div class="mock-type-icon">
+                    🏆
+                </div>
+
+                <strong>
+                    Full-Syllabus Mock
+                </strong>
+
+                <span>
+                    Questions from the complete syllabus.
+                </span>
+
+            </label>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- MOCK STRUCTURE -->
+
+    <div class="mock-form-grid">
+
+        <!-- CHAPTER / GROUP -->
+
+        <div
+            class="form-field"
+            id="mqTopicField">
+
+            <label id="mqTopicLabel">
+                📖 Chapter
+            </label>
+
+            <input
+                id="mqTopic"
+                placeholder="Example: Real Numbers">
+
+        </div>
+
+
+        <!-- SUBTOPIC -->
+
+        <div class="form-field">
+
+            <label>
+                📑 Subtopic
+            </label>
+
+            <input
+                id="mqSubtopic"
+                placeholder="Example: Euclid's Division Lemma">
+
+        </div>
+
+
+        <!-- HIDDEN COMPATIBILITY VALUE -->
+
+        <input
+            type="hidden"
+            id="mqDifficulty"
+            value="mixed">
+
+    </div>
+
+
+    <!-- QUESTION -->
+
+    <div class="question-editor">
+
+        <div class="question-editor-title">
+
+            📝 Question Details
+
+        </div>
+
+
+        <div class="form-field">
+
+            <label>
+                Question
+            </label>
+
+            <textarea
+                id="mqQuestion"
+                rows="4"
+                placeholder="Enter the mock test question...">
+            </textarea>
+
+        </div>
+
+
+        <!-- OPTIONS -->
+
+        <div class="options-grid">
+
+            <div class="form-field">
+
+                <label>
+                    Option A
+                </label>
+
+                <input
+                    id="mqA"
+                    placeholder="Enter option A">
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Option B
+                </label>
+
+                <input
+                    id="mqB"
+                    placeholder="Enter option B">
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Option C
+                </label>
+
+                <input
+                    id="mqC"
+                    placeholder="Enter option C">
+
+            </div>
+
+
+            <div class="form-field">
+
+                <label>
+                    Option D
+                </label>
+
+                <input
+                    id="mqD"
+                    placeholder="Enter option D">
+
+            </div>
+
+        </div>
+
+
+        <!-- ANSWER -->
+
+        <div
+            class="form-field"
+            style="margin-top:15px;">
+
+            <label>
+                ✅ Correct Answer
+            </label>
+
+            <select id="mqAnswer">
+
+                <option value="">
+                    Select Correct Answer
+                </option>
+
+                <option value="A">
+                    A
+                </option>
+
+                <option value="B">
+                    B
+                </option>
+
+                <option value="C">
+                    C
+                </option>
+
+                <option value="D">
+                    D
+                </option>
+
+            </select>
+
+        </div>
+
+
+        <!-- EXPLANATION -->
+
+        <div
+            class="form-field"
+            style="margin-top:15px;">
+
+            <label>
+                💡 Explanation
+            </label>
+
+            <textarea
+                id="mqExplanation"
+                rows="3"
+                placeholder="Optional explanation...">
+            </textarea>
+
+        </div>
+
+
+        <!-- HINT -->
+
+        <div
+            class="form-field"
+            style="margin-top:15px;">
+
+            <label>
+                💭 Hint
+            </label>
+
+            <textarea
+                id="mqHint"
+                rows="2"
+                placeholder="Optional hint...">
+            </textarea>
+
+        </div>
+
+
+        <div class="form-actions">
+
+            <button
+                type="button"
+                onclick="addMockQuestion()">
+
+                ➕ Add Mock Question
+
+            </button>
+
+        </div>
+
+
+        <div
+            id="mqMessage"
+            class="message">
+        </div>
+
+    </div>
+
 </div>
 
 <div class="card">
-<h2>📋 Mock Tests & Question Count</h2>
-<div class="table-wrap">
-<table>
-<thead><tr><th>Test No</th><th>Board</th><th>Class</th><th>Subject</th><th>Test Name</th><th>Questions</th><th>Status</th><th>Action</th></tr></thead>
-<tbody id="mockTestTable"><tr><td colspan="8" style="text-align:center">Loading...</td></tr></tbody>
-</table>
+
+    <div class="section-heading">
+
+        <div class="section-heading-left">
+
+            <h2>📋 Mock Test Library</h2>
+
+            <p>
+                Manage Chapter-wise, 4-Chapter and
+                Full-Syllabus mock tests.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <!-- FILTERS -->
+
+    <div class="mock-filter-panel">
+
+        <div class="filter-title">
+            🔎 Filter Mock Tests
+        </div>
+
+
+        <div class="mock-filter-grid">
+
+            <div class="filter-field">
+
+                <label>🏫 Board</label>
+
+                <select id="mockFilterBoard">
+
+                    <option value="">
+                        All Boards
+                    </option>
+
+                    <option>CBSE</option>
+                    <option>State Board</option>
+                    <option>Matric</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label>🎓 Class</label>
+
+                <select id="mockFilterClass">
+
+                    <option value="">
+                        All Classes
+                    </option>
+
+                    <option value="Class 9">
+                        Class 9
+                    </option>
+
+                    <option value="Class 10">
+                        Class 10
+                    </option>
+
+                    <option value="Class 11">
+                        Class 11
+                    </option>
+
+                    <option value="Class 12">
+                        Class 12
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label>📚 Subject</label>
+
+                <select id="mockFilterSubject">
+
+                    <option value="">
+                        All Subjects
+                    </option>
+
+                    <option>Mathematics</option>
+                    <option>Science</option>
+                    <option>Biology</option>
+                    <option>Social Science</option>
+                    <option>Physics</option>
+                    <option>Chemistry</option>
+                    <option>English</option>
+                    <option>Tamil</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label>🎯 Mock Type</label>
+
+                <select id="mockFilterType">
+
+                    <option value="">
+                        All Types
+                    </option>
+
+                    <option value="chapter">
+                        Chapter-wise
+                    </option>
+
+                    <option value="four_chapter">
+                        4-Chapter
+                    </option>
+
+                    <option value="full_syllabus">
+                        Full-Syllabus
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label>📝 Test No</label>
+
+                <select id="mockFilterTest">
+
+                    <option value="">
+                        All Tests
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="filter-actions">
+
+            <button
+                type="button"
+                onclick="resetMockFilters()">
+
+                🔄 Reset Filters
+
+            </button>
+
+            <button
+                type="button"
+                class="danger"
+                onclick="deleteAllMockQuestions()">
+
+                🗑️ Delete All Questions
+
+            </button>
+
+        </div>
+
+    </div>
+
+
+    <div
+        id="mockTestFilterSummary"
+        class="active-filter-summary">
+
+        Showing all mock tests
+
+    </div>
+
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>Test No</th>
+
+                    <th>Mock Type</th>
+
+                    <th>Board</th>
+
+                    <th>Class</th>
+
+                    <th>Subject</th>
+
+                    <th>Test Name</th>
+
+                    <th>Questions</th>
+
+                    <th>Status</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="mockTestTable">
+
+                <tr>
+
+                    <td
+                        colspan="9"
+                        style="text-align:center">
+
+                        ⏳ Loading...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
 </div>
 </div>
 
 <div class="card">
-<h2>📋 Existing Mock Questions</h2>
-<div class="table-wrap">
-<table>
-<thead><tr><th>ID</th><th>Test</th><th>Class</th><th>Topic</th><th>Difficulty</th><th>Question</th><th>Answer</th><th>Action</th></tr></thead>
-<tbody id="mockQuestionTable"><tr><td colspan="8" style="text-align:center">Loading...</td></tr></tbody>
-</table>
-</div>
+
+    <div class="section-heading">
+
+        <div class="section-heading-left">
+
+            <h2>📋 Mock Question Bank</h2>
+
+            <p>
+                Browse and manage all questions
+                assigned to mock tests.
+            </p>
+
+        </div>
+
+    </div>
+
+
+    <div class="mock-filter-panel">
+
+        <div class="filter-title">
+            🔎 Filter Questions
+        </div>
+
+
+        <div class="mock-filter-grid">
+
+            <div class="filter-field">
+
+                <label>🏫 Board</label>
+
+                <select id="mockQuestionFilterBoard">
+
+                    <option value="">
+                        All Boards
+                    </option>
+
+                    <option>CBSE</option>
+                    <option>State Board</option>
+                    <option>Matric</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label>🎓 Class</label>
+
+                <select id="mockQuestionFilterClass">
+
+                    <option value="">
+                        All Classes
+                    </option>
+
+                    <option>Class 9</option>
+                    <option>Class 10</option>
+                    <option>Class 11</option>
+                    <option>Class 12</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label>📚 Subject</label>
+
+                <select id="mockQuestionFilterSubject">
+
+                    <option value="">
+                        All Subjects
+                    </option>
+
+                    <option>Mathematics</option>
+                    <option>Science</option>
+                    <option>Biology</option>
+                    <option>Social Science</option>
+                    <option>Physics</option>
+                    <option>Chemistry</option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label>🎯 Mock Type</label>
+
+                <select id="mockQuestionFilterType">
+
+                    <option value="">
+                        All Types
+                    </option>
+
+                    <option value="chapter">
+                        Chapter-wise
+                    </option>
+
+                    <option value="four_chapter">
+                        4-Chapter
+                    </option>
+
+                    <option value="full_syllabus">
+                        Full-Syllabus
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <div class="filter-field">
+
+                <label>📝 Test No</label>
+
+                <select id="mockQuestionFilterTest">
+
+                    <option value="">
+                        All Tests
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <div class="active-filter-summary">
+
+            Difficulty is intentionally not filtered here.
+            Mock tests contain mixed-level questions.
+
+        </div>
+
+    </div>
+
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Test</th>
+
+                    <th>Mock Type</th>
+
+                    <th>Board</th>
+
+                    <th>Class</th>
+
+                    <th>Subject</th>
+
+                    <th>Topic</th>
+
+                    <th>Question</th>
+
+                    <th>Answer</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="mockQuestionTable">
+
+                <tr>
+
+                    <td
+                        colspan="10"
+                        style="text-align:center">
+
+                        ⏳ Loading...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
+    </div>
+
 </div>
 </div>
 
@@ -132,7 +1975,78 @@ async function loadMockQuestions(){
         </tr>`).join("");
     }catch(e){console.error(e)}
 }
+/* =========================================================
+   MOCK TYPE SELECTION
+========================================================= */
 
+let selectedMockType = "chapter";
+
+
+function selectMockType(type, card){
+
+    selectedMockType = type;
+
+
+    document
+        .querySelectorAll(".mock-type-option")
+        .forEach(function(item){
+
+            item.classList.remove("active");
+
+        });
+
+
+    if(card){
+
+        card.classList.add("active");
+
+    }
+
+
+    const topicLabel =
+        document.getElementById(
+            "mqTopicLabel"
+        );
+
+    const topicInput =
+        document.getElementById(
+            "mqTopic"
+        );
+
+
+    if(type === "chapter"){
+
+        topicLabel.textContent =
+            "📖 Chapter";
+
+        topicInput.placeholder =
+            "Example: Real Numbers";
+
+    }
+
+
+    else if(type === "four_chapter"){
+
+        topicLabel.textContent =
+            "📚 Chapter Group";
+
+        topicInput.placeholder =
+            "Example: Chapters 1 – 4";
+
+    }
+
+
+    else if(type === "full_syllabus"){
+
+        topicLabel.textContent =
+            "📚 Syllabus";
+
+        topicInput.placeholder =
+            "Example: Full Syllabus";
+
+    }
+
+}
 async function addMockQuestion(){
     const data={
         mock_test_no:parseInt(mqTestNo.value,10),
