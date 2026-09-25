@@ -2886,6 +2886,10 @@ def admin_mock_tests():
 # ADMIN - MOCK TEST LIST
 # =====================================================
 
+# =====================================================
+# ADMIN - MOCK TEST LIST
+# =====================================================
+
 @app.route("/admin/mock-test-list")
 def admin_mock_test_list():
 
@@ -2896,6 +2900,7 @@ def admin_mock_test_list():
         }), 403
 
     try:
+
         conn = sqlite3.connect("/var/data/students.db")
         conn.row_factory = sqlite3.Row
         c = conn.cursor()
@@ -2904,6 +2909,8 @@ def admin_mock_test_list():
             SELECT
                 mt.id,
                 mt.mock_test_no,
+                mt.mock_type,
+                mt.chapter_scope,
                 mt.board,
                 mt.class_name,
                 mt.subject,
@@ -2916,37 +2923,93 @@ def admin_mock_test_list():
                 mt.attempt_limit,
                 mt.active,
                 mt.created_at,
+
                 COUNT(mq.id) AS question_count
+
             FROM mock_tests mt
+
             LEFT JOIN mock_questions mq
                 ON mq.mock_test_id = mt.id
+
             GROUP BY mt.id
+
             ORDER BY
                 mt.board,
                 mt.class_name,
                 mt.subject,
-                mt.mock_test_no
+                CASE
+                    WHEN mt.mock_type = 'chapter'
+                        THEN 1
+                    WHEN mt.mock_type = 'four_chapter'
+                        THEN 2
+                    WHEN mt.mock_type = 'full_syllabus'
+                        THEN 3
+                    ELSE 4
+                END,
+                mt.id
         """)
 
         tests = []
 
         for row in c.fetchall():
+
             tests.append({
-                "id": row["id"],
-                "mock_test_no": row["mock_test_no"],
-                "board": row["board"],
-                "class_name": row["class_name"],
-                "subject": row["subject"],
-                "test_name": row["test_name"],
-                "syllabus_scope": row["syllabus_scope"],
-                "total_questions": row["total_questions"],
-                "total_marks": row["total_marks"],
-                "duration_minutes": row["duration_minutes"],
-                "price_inr": row["price_inr"],
-                "attempt_limit": row["attempt_limit"],
-                "active": bool(row["active"]),
-                "created_at": row["created_at"],
-                "question_count": row["question_count"]
+
+                "id":
+                    row["id"],
+
+                # Internal compatibility only.
+                # Not displayed in frontend.
+                "mock_test_no":
+                    row["mock_test_no"],
+
+                "mock_type":
+                    row["mock_type"]
+                    or "chapter",
+
+                "chapter_scope":
+                    row["chapter_scope"]
+                    or "",
+
+                "board":
+                    row["board"],
+
+                "class_name":
+                    row["class_name"],
+
+                "subject":
+                    row["subject"],
+
+                "test_name":
+                    row["test_name"],
+
+                "syllabus_scope":
+                    row["syllabus_scope"]
+                    or "",
+
+                "total_questions":
+                    row["total_questions"],
+
+                "total_marks":
+                    row["total_marks"],
+
+                "duration_minutes":
+                    row["duration_minutes"],
+
+                "price_inr":
+                    row["price_inr"],
+
+                "attempt_limit":
+                    row["attempt_limit"],
+
+                "active":
+                    bool(row["active"]),
+
+                "created_at":
+                    row["created_at"],
+
+                "question_count":
+                    row["question_count"]
             })
 
         conn.close()
@@ -2958,14 +3021,16 @@ def admin_mock_test_list():
 
     except Exception as e:
 
-        print("ADMIN MOCK TEST LIST ERROR:", e)
+        print(
+            "ADMIN MOCK TEST LIST ERROR:",
+            e
+        )
 
         return jsonify({
             "success": False,
             "error": str(e)
         }), 500
-
-
+        
 # =====================================================
 # ADMIN - MOCK QUESTIONS LIST
 # =====================================================
