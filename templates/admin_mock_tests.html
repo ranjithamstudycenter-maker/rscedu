@@ -2652,24 +2652,6 @@ tbody tr:last-child td{
 </div>
 </div>
 
-<div class="card">
-
-    <div class="section-heading">
-
-        <div class="section-heading-left">
-
-            <h2>📋 Mock Question Bank</h2>
-
-            <p>
-                Browse and manage all questions
-                assigned to mock tests.
-            </p>
-
-        </div>
-
-    </div>
-
-
     <div class="mock-filter-panel">
 
         <div class="filter-title">
@@ -2765,21 +2747,7 @@ tbody tr:last-child td{
                 </select>
 
             </div>
-
-
-            <div class="filter-field">
-
-                <label>📝 Test No</label>
-
-                <select id="mockQuestionFilterTest">
-
-                    <option value="">
-                        All Tests
-                    </option>
-
-                </select>
-
-            </div>
+          
 
         </div>
 
@@ -4020,12 +3988,6 @@ async function importMockExcel(){
     }
 }
 
-async function deleteMockQuestion(id){
-    if(!confirm("Delete this mock question?"))return;
-    const r=await fetch("/admin/mock-questions/delete/"+id,{method:"POST"});const d=await r.json();
-    if(!d.success){alert(d.error||"Delete failed");return} loadMockTests();loadMockQuestions();
-}
-
 async function deleteMockTest(id){
     if(!confirm("Delete this Mock Test and all its questions?"))return;
     const r=await fetch("/admin/mock-tests/delete/"+id,{method:"POST"});const d=await r.json();
@@ -4037,11 +3999,9 @@ document.addEventListener(
     "DOMContentLoaded",
     function(){
 
-        loadMockAdminOptions();
-
         loadMockTests();
 
-        loadMockQuestions();
+        
 
     }
 );
