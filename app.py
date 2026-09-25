@@ -672,58 +672,86 @@ def init_db():
     conn.close()
     
 init_db()
-# =====================================================
-# RSC PRACTICE SESSION TABLE SAFETY MIGRATION
-# =====================================================
 
-conn = sqlite3.connect(DB_PATH)
-c = conn.cursor()
-
-c.execute("""
-CREATE TABLE IF NOT EXISTS practice_sessions (
-
-    id INTEGER PRIMARY KEY AUTOINCREMENT,
-
-    practice_id TEXT NOT NULL,
-
-    board TEXT NOT NULL,
-    class_name TEXT NOT NULL,
-    subject TEXT NOT NULL,
-
-    topic TEXT NOT NULL,
-    subtopic TEXT NOT NULL,
-
-    difficulty TEXT NOT NULL,
-
-    total_questions INTEGER DEFAULT 25,
-    total_marks INTEGER DEFAULT 50,
-
-    question_ids TEXT NOT NULL,
-
-    answers TEXT DEFAULT '{}',
-
-    current_question INTEGER DEFAULT 0,
-
-    status TEXT DEFAULT 'in_progress',
-
-    started_at TEXT,
-
-    submitted_at TEXT,
-
-    score INTEGER DEFAULT 0,
-
-    correct_answers INTEGER DEFAULT 0,
-
-    incorrect_answers INTEGER DEFAULT 0,
-
-    unanswered INTEGER DEFAULT 0,
-
-    percentage REAL DEFAULT 0
-)
-""")
-
-conn.commit()
-conn.close()
+    # =====================================================
+    # MOCK TEST - NEW CATEGORY MIGRATION
+    # =====================================================
+    
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    
+    # New mock type
+    try:
+        c.execute("""
+            ALTER TABLE mock_tests
+            ADD COLUMN mock_type TEXT DEFAULT 'chapter'
+        """)
+    except sqlite3.OperationalError:
+        pass
+    
+    # New chapter scope
+    try:
+        c.execute("""
+            ALTER TABLE mock_tests
+            ADD COLUMN chapter_scope TEXT DEFAULT ''
+        """)
+    except sqlite3.OperationalError:
+        pass
+    
+    conn.commit()
+    conn.close()
+    # =====================================================
+    # RSC PRACTICE SESSION TABLE SAFETY MIGRATION
+    # =====================================================
+    
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+    
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS practice_sessions (
+    
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+    
+        practice_id TEXT NOT NULL,
+    
+        board TEXT NOT NULL,
+        class_name TEXT NOT NULL,
+        subject TEXT NOT NULL,
+    
+        topic TEXT NOT NULL,
+        subtopic TEXT NOT NULL,
+    
+        difficulty TEXT NOT NULL,
+    
+        total_questions INTEGER DEFAULT 25,
+        total_marks INTEGER DEFAULT 50,
+    
+        question_ids TEXT NOT NULL,
+    
+        answers TEXT DEFAULT '{}',
+    
+        current_question INTEGER DEFAULT 0,
+    
+        status TEXT DEFAULT 'in_progress',
+    
+        started_at TEXT,
+    
+        submitted_at TEXT,
+    
+        score INTEGER DEFAULT 0,
+    
+        correct_answers INTEGER DEFAULT 0,
+    
+        incorrect_answers INTEGER DEFAULT 0,
+    
+        unanswered INTEGER DEFAULT 0,
+    
+        percentage REAL DEFAULT 0
+    )
+    """)
+    
+    conn.commit()
+    conn.close()
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
@@ -3433,110 +3461,517 @@ def admin_delete_mock_test(test_id):
 # ADMIN - IMPORT MOCK QUESTIONS FROM EXCEL
 # =====================================================
 
-@app.route("/admin/mock-questions/import-excel", methods=["POST"])
+# =====================================================
+# ADMIN - IMPORT MOCK QUESTIONS FROM EXCEL
+# NEW 3-CATEGORY SYSTEM
+# =====================================================
+
+@app.route(
+    "/admin/mock-questions/import-excel",
+    methods=["POST"]
+)
 def admin_import_mock_questions_excel():
 
     if not session.get("admin"):
+
         return jsonify({
             "success": False,
             "error": "Unauthorized"
         }), 403
 
+    conn = None
+
     try:
 
+        # =================================================
+        # 1. GET FORM DATA
+        # =================================================
+
+        mock_type = str(
+            request.form.get("mock_type", "")
+        ).strip()
+
+        board = str(
+            request.form.get("board", "")
+        ).strip()
+
+        class_name = str(
+            request.form.get("class_name", "")
+        ).strip()
+
+        subject = str(
+            request.form.get("subject", "")
+        ).strip()
+
+        chapter_scope = str(
+            request.form.get("chapter_scope", "")
+        ).strip()
+
+
+        # =================================================
+        # 2. VALIDATE MOCK TYPE
+        # =================================================
+
+        allowed_types = [
+            "chapter",
+            "four_chapter",
+            "full_syllabus"
+        ]
+
+        if mock_type not in allowed_types:
+
+            return jsonify({
+                "success": False,
+                "error": "Invalid Mock Test Type."
+            }), 400
+
+
+        # =================================================
+        # 3. VALIDATE BASIC DETAILS
+        # =================================================
+
+        if not board:
+
+            return jsonify({
+                "success": False,
+                "error": "Board is required."
+            }), 400
+
+
+        if not class_name:
+
+            return jsonify({
+                "success": False,
+                "error": "Class is required."
+            }), 400
+
+
+        if not subject:
+
+            return jsonify({
+                "success": False,
+                "error": "Subject is required."
+            }), 400
+
+
+        # =================================================
+        # 4. VALIDATE CHAPTER SCOPE
+        # =================================================
+
+        if mock_type == "chapter":
+
+            if not chapter_scope:
+
+                return jsonify({
+                    "success": False,
+                    "error":
+                        "Please select a chapter."
+                }), 400
+
+
+        elif mock_type == "four_chapter":
+
+            if not chapter_scope:
+
+                return jsonify({
+                    "success": False,
+                    "error":
+                        "Please select four chapters."
+                }), 400
+
+
+            chapters = [
+                x.strip()
+                for x in chapter_scope.split("|")
+                if x.strip()
+            ]
+
+            if len(chapters) != 4:
+
+                return jsonify({
+                    "success": False,
+                    "error":
+                        "Exactly four chapters are required."
+                }), 400
+
+
+            if len(set(chapters)) != 4:
+
+                return jsonify({
+                    "success": False,
+                    "error":
+                        "Four different chapters are required."
+                }), 400
+
+
+        elif mock_type == "full_syllabus":
+
+            chapter_scope = "FULL_SYLLABUS"
+
+
+        # =================================================
+        # 5. GET EXCEL FILE
+        # =================================================
+
         if "excel_file" not in request.files:
+
             return jsonify({
                 "success": False,
                 "error": "Excel file is required."
             }), 400
 
+
         file = request.files["excel_file"]
 
+
         if not file or not file.filename:
+
             return jsonify({
                 "success": False,
-                "error": "Please select an Excel file."
+                "error":
+                    "Please select an Excel file."
             }), 400
+
+
+        if not file.filename.lower().endswith(
+            (".xlsx", ".xls")
+        ):
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Only .xlsx or .xls files are supported."
+            }), 400
+
+
+        # =================================================
+        # 6. READ EXCEL
+        # =================================================
 
         df = pd.read_excel(file)
 
-        # -------------------------------------------------
-        # NORMALIZE COLUMN NAMES
-        # -------------------------------------------------
+        df = df.dropna(how="all")
+
+
+        if df.empty:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "The Excel file contains no questions."
+            }), 400
+
+
+        # =================================================
+        # 7. NORMALIZE COLUMN NAMES
+        # =================================================
 
         df.columns = [
-            str(col).strip().lower().replace(" ", "_")
+
+            str(col)
+            .strip()
+            .lower()
+            .replace(" ", "_")
+            .replace("-", "_")
+
             for col in df.columns
+
         ]
 
-        # Allow common column names
+
         rename_map = {
-            "mock_test_no": "mock_test_no",
-            "mock_test_number": "mock_test_no",
-            "test_no": "mock_test_no",
-            "test_number": "mock_test_no",
 
-            "class": "class_name",
+            "a":
+                "option_a",
 
-            "a": "option_a",
-            "b": "option_b",
-            "c": "option_c",
-            "d": "option_d",
+            "b":
+                "option_b",
 
-            "answer": "correct_answer",
-            "correct": "correct_answer"
+            "c":
+                "option_c",
+
+            "d":
+                "option_d",
+
+            "answer":
+                "correct_answer",
+
+            "correct":
+                "correct_answer",
+
+            "correct_option":
+                "correct_answer",
+
+            "explanation_text":
+                "explanation",
+
+            "hint_text":
+                "hint"
+
         }
+
 
         df.rename(
             columns={
-                k: v
-                for k, v in rename_map.items()
-                if k in df.columns
+                old: new
+                for old, new in rename_map.items()
+                if old in df.columns
             },
             inplace=True
         )
 
+
+        # =================================================
+        # 8. REQUIRED EXCEL COLUMNS
+        # =================================================
+
         required_columns = [
-            "mock_test_no",
-            "board",
-            "class_name",
-            "subject",
-            "topic",
-            "subtopic",
-            "difficulty",
+
             "question",
+
             "option_a",
+
             "option_b",
+
             "option_c",
+
             "option_d",
+
             "correct_answer"
+
         ]
 
+
         missing_columns = [
+
             col
             for col in required_columns
             if col not in df.columns
+
         ]
+
 
         if missing_columns:
 
             return jsonify({
+
                 "success": False,
-                "error": (
+
+                "error":
                     "Missing Excel columns: "
-                    + ", ".join(missing_columns)
-                )
+                    +
+                    ", ".join(
+                        missing_columns
+                    )
+
             }), 400
 
-        conn = sqlite3.connect("/var/data/students.db")
+
+        # =================================================
+        # 9. DATABASE
+        # =================================================
+
+        conn = sqlite3.connect(
+            DB_PATH
+        )
+
         c = conn.cursor()
 
+
+        # =================================================
+        # 10. INTERNAL LEGACY TEST NUMBER
+        # =================================================
+        #
+        # IMPORTANT:
+        # User does NOT select Mock Test No.
+        #
+        # This value is only kept internally because
+        # the existing database still has mock_test_no
+        # as a NOT NULL field.
+        #
+        # It is NOT shown in the Admin UI.
+        # =================================================
+
+        type_code = {
+
+            "chapter": 1,
+
+            "four_chapter": 2,
+
+            "full_syllabus": 3
+
+        }[mock_type]
+
+
+        # Find existing tests for same configuration.
+
+        c.execute("""
+            SELECT id
+            FROM mock_tests
+            WHERE board=?
+              AND class_name=?
+              AND subject=?
+              AND mock_type=?
+              AND chapter_scope=?
+            LIMIT 1
+        """, (
+
+            board,
+            class_name,
+            subject,
+            mock_type,
+            chapter_scope
+
+        ))
+
+
+        existing_test = c.fetchone()
+
+
+        # =================================================
+        # 11. CREATE / REUSE MOCK TEST
+        # =================================================
+
+        if existing_test:
+
+            mock_test_id = existing_test[0]
+
+            # Clear previous questions when the
+            # same configuration is re-uploaded.
+
+            c.execute("""
+                DELETE FROM mock_questions
+                WHERE mock_test_id=?
+            """, (
+                mock_test_id,
+            ))
+
+
+        else:
+
+            # Generate internal number.
+            #
+            # Example:
+            # chapter       -> 100001+
+            # four_chapter  -> 200001+
+            # full_syllabus -> 300001+
+
+            c.execute("""
+                SELECT
+                    COALESCE(
+                        MAX(mock_test_no),
+                        0
+                    )
+                FROM mock_tests
+                WHERE board=?
+                  AND class_name=?
+                  AND subject=?
+            """, (
+
+                board,
+                class_name,
+                subject
+
+            ))
+
+
+            max_no = c.fetchone()[0] or 0
+
+
+            mock_test_no = max(
+                max_no + 1,
+                type_code * 100000 + 1
+            )
+
+
+            if mock_type == "chapter":
+
+                test_name = (
+                    f"{chapter_scope} - Chapter Mock"
+                )
+
+            elif mock_type == "four_chapter":
+
+                test_name = (
+                    "4-Chapter Mock"
+                )
+
+            else:
+
+                test_name = (
+                    "Final Test - Full Syllabus"
+                )
+
+
+            c.execute("""
+                INSERT INTO mock_tests
+                (
+                    mock_test_no,
+                    board,
+                    class_name,
+                    subject,
+                    test_name,
+                    syllabus_scope,
+                    total_questions,
+                    total_marks,
+                    duration_minutes,
+                    price_inr,
+                    attempt_limit,
+                    active,
+                    mock_type,
+                    chapter_scope
+                )
+                VALUES
+                (
+                    ?, ?, ?, ?, ?, ?, ?,
+                    ?, ?, ?, ?, ?, ?, ?
+                )
+            """, (
+
+                mock_test_no,
+
+                board,
+
+                class_name,
+
+                subject,
+
+                test_name,
+
+                chapter_scope,
+
+                0,
+
+                0,
+
+                60,
+
+                0,
+
+                1,
+
+                1,
+
+                mock_type,
+
+                chapter_scope
+
+            ))
+
+
+            mock_test_id = c.lastrowid
+
+
+        # =================================================
+        # 12. IMPORT QUESTIONS
+        # =================================================
+
         imported = 0
+
         skipped = 0
+
         errors = []
 
-        # Cache test IDs
-        test_cache = {}
 
         for index, row in df.iterrows():
 
@@ -3544,198 +3979,112 @@ def admin_import_mock_questions_excel():
 
             try:
 
-                if pd.isna(row["mock_test_no"]):
-                    skipped += 1
-                    errors.append(
-                        f"Row {excel_row}: Mock Test No missing."
-                    )
-                    continue
-
-                mock_test_no = int(
-                    row["mock_test_no"]
-                )
-
-                board = str(
-                    row["board"]
-                ).strip()
-
-                class_name = str(
-                    row["class_name"]
-                ).strip()
-
-                subject = str(
-                    row["subject"]
-                ).strip()
-
-                topic = str(
-                    row["topic"]
-                ).strip()
-
-                subtopic = str(
-                    row["subtopic"]
-                ).strip()
-
-                difficulty = str(
-                    row["difficulty"]
-                ).strip().lower()
+                # -----------------------------------------
+                # QUESTION
+                # -----------------------------------------
 
                 question = str(
                     row["question"]
                 ).strip()
 
+
                 option_a = str(
                     row["option_a"]
                 ).strip()
+
 
                 option_b = str(
                     row["option_b"]
                 ).strip()
 
+
                 option_c = str(
                     row["option_c"]
                 ).strip()
+
 
                 option_d = str(
                     row["option_d"]
                 ).strip()
 
+
                 correct_answer = str(
                     row["correct_answer"]
                 ).strip().upper()
 
+
                 explanation = ""
 
                 if "explanation" in df.columns:
-                    if not pd.isna(row["explanation"]):
+
+                    value = row["explanation"]
+
+                    if pd.notna(value):
+
                         explanation = str(
-                            row["explanation"]
+                            value
                         ).strip()
+
 
                 hint = ""
 
                 if "hint" in df.columns:
-                    if not pd.isna(row["hint"]):
+
+                    value = row["hint"]
+
+                    if pd.notna(value):
+
                         hint = str(
-                            row["hint"]
+                            value
                         ).strip()
 
-                # Basic validation
+
+                # -----------------------------------------
+                # VALIDATION
+                # -----------------------------------------
+
                 if not all([
-                    board,
-                    class_name,
-                    subject,
-                    topic,
-                    subtopic,
-                    difficulty,
+
                     question,
+
                     option_a,
+
                     option_b,
+
                     option_c,
+
                     option_d,
+
                     correct_answer
+
                 ]):
+
                     skipped += 1
+
                     errors.append(
-                        f"Row {excel_row}: Required value missing."
+                        f"Row {excel_row}: "
+                        "Required value missing."
                     )
+
                     continue
 
-                if correct_answer not in ["A", "B", "C", "D"]:
-                    skipped += 1
-                    errors.append(
-                        f"Row {excel_row}: Invalid answer."
-                    )
-                    continue
 
-                if difficulty not in [
-                    "easy",
-                    "medium",
-                    "hard"
+                if correct_answer not in [
+                    "A",
+                    "B",
+                    "C",
+                    "D"
                 ]:
+
                     skipped += 1
+
                     errors.append(
-                        f"Row {excel_row}: Invalid difficulty."
+                        f"Row {excel_row}: "
+                        "Answer must be A, B, C or D."
                     )
+
                     continue
 
-                cache_key = (
-                    mock_test_no,
-                    board,
-                    class_name,
-                    subject
-                )
-
-                # -----------------------------------------
-                # GET / CREATE MOCK TEST
-                # -----------------------------------------
-
-                if cache_key in test_cache:
-
-                    mock_test_id = test_cache[cache_key]
-
-                else:
-
-                    c.execute("""
-                        SELECT id
-                        FROM mock_tests
-                        WHERE mock_test_no=?
-                          AND board=?
-                          AND class_name=?
-                          AND subject=?
-                        LIMIT 1
-                    """, (
-                        mock_test_no,
-                        board,
-                        class_name,
-                        subject
-                    ))
-
-                    test_row = c.fetchone()
-
-                    if test_row:
-
-                        mock_test_id = test_row[0]
-
-                    else:
-
-                        test_name = (
-                            f"Mock Test {mock_test_no}"
-                        )
-
-                        c.execute("""
-                            INSERT INTO mock_tests (
-                                mock_test_no,
-                                board,
-                                class_name,
-                                subject,
-                                test_name,
-                                syllabus_scope,
-                                total_questions,
-                                total_marks,
-                                duration_minutes,
-                                price_inr,
-                                attempt_limit,
-                                active
-                            )
-                            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-                        """, (
-                            mock_test_no,
-                            board,
-                            class_name,
-                            subject,
-                            test_name,
-                            "",
-                            50,
-                            100,
-                            60,
-                            299,
-                            1,
-                            1
-                        ))
-
-                        mock_test_id = c.lastrowid
-
-                    test_cache[cache_key] = mock_test_id
 
                 # -----------------------------------------
                 # DUPLICATE CHECK
@@ -3748,23 +4097,35 @@ def admin_import_mock_questions_excel():
                       AND question=?
                     LIMIT 1
                 """, (
+
                     mock_test_id,
+
                     question
+
                 ))
 
-                duplicate = c.fetchone()
 
-                if duplicate:
+                if c.fetchone():
 
                     skipped += 1
+
                     continue
 
+
                 # -----------------------------------------
-                # INSERT QUESTION
+                # INSERT
+                # -----------------------------------------
+                #
+                # topic/subtopic/difficulty are retained
+                # temporarily only because the current
+                # database schema requires them.
+                #
+                # They are NOT part of the new Excel format.
                 # -----------------------------------------
 
                 c.execute("""
-                    INSERT INTO mock_questions (
+                    INSERT INTO mock_questions
+                    (
                         mock_test_id,
                         board,
                         class_name,
@@ -3783,85 +4144,182 @@ def admin_import_mock_questions_excel():
                         marks,
                         active
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES
+                    (
+                        ?, ?, ?, ?,
+                        ?, ?, ?,
+                        ?, ?, ?, ?, ?,
+                        ?, ?, ?, ?, ?
+                    )
                 """, (
+
                     mock_test_id,
+
                     board,
+
                     class_name,
+
                     subject,
-                    topic,
-                    subtopic,
-                    difficulty,
+
+                    "",
+
+                    "",
+
+                    "mixed",
+
                     question,
+
                     option_a,
+
                     option_b,
+
                     option_c,
+
                     option_d,
+
                     correct_answer,
+
                     explanation,
+
                     hint,
+
                     2,
+
                     1
+
                 ))
 
+
                 imported += 1
+
 
             except Exception as row_error:
 
                 skipped += 1
 
                 errors.append(
-                    f"Row {excel_row}: {str(row_error)}"
+                    f"Row {excel_row}: "
+                    f"{str(row_error)}"
                 )
 
-        # -------------------------------------------------
-        # UPDATE ALL TEST COUNTS
-        # -------------------------------------------------
 
-        for mock_test_id in test_cache.values():
+        # =================================================
+        # 13. UPDATE QUESTION COUNT
+        # =================================================
 
-            c.execute("""
-                SELECT COUNT(*)
-                FROM mock_questions
-                WHERE mock_test_id=?
-                  AND active=1
-            """, (mock_test_id,))
+        c.execute("""
+            SELECT COUNT(*)
+            FROM mock_questions
+            WHERE mock_test_id=?
+              AND active=1
+        """, (
+            mock_test_id,
+        ))
 
-            count = c.fetchone()[0]
 
-            c.execute("""
-                UPDATE mock_tests
-                SET total_questions=?,
-                    total_marks=?
-                WHERE id=?
-            """, (
-                count,
-                count * 2,
-                mock_test_id
-            ))
+        question_count = c.fetchone()[0]
+
+
+        c.execute("""
+            UPDATE mock_tests
+            SET
+                total_questions=?,
+                total_marks=?,
+                active=1
+            WHERE id=?
+        """, (
+
+            question_count,
+
+            question_count * 2,
+
+            mock_test_id
+
+        ))
+
+
+        # =================================================
+        # 14. COMMIT
+        # =================================================
 
         conn.commit()
+
         conn.close()
 
+        conn = None
+
+
+        # =================================================
+        # 15. RESPONSE
+        # =================================================
+
         return jsonify({
+
             "success": True,
-            "imported": imported,
-            "skipped": skipped,
-            "errors": errors[:50]
+
+            "message":
+                "Mock Test Excel imported successfully.",
+
+            "mock_test_id":
+                mock_test_id,
+
+            "mock_type":
+                mock_type,
+
+            "board":
+                board,
+
+            "class_name":
+                class_name,
+
+            "subject":
+                subject,
+
+            "chapter_scope":
+                chapter_scope,
+
+            "imported":
+                imported,
+
+            "skipped":
+                skipped,
+
+            "question_count":
+                question_count,
+
+            "errors":
+                errors[:50]
+
         })
+
 
     except Exception as e:
 
+        if conn:
+
+            try:
+                conn.rollback()
+                conn.close()
+            except:
+                pass
+
+
         print(
             "IMPORT MOCK EXCEL ERROR:",
-            e
+            str(e)
         )
 
+
         return jsonify({
+
             "success": False,
-            "error": str(e)
+
+            "error":
+                str(e)
+
         }), 500
-        
+
+
 
 @app.route("/download-salary-pdf")
 def download_salary_pdf():
