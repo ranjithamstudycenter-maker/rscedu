@@ -2616,29 +2616,16 @@ tbody tr:last-child td{
         <table>
 
             <thead>
-
                 <tr>
-
-                    <th>Test No</th>
-
                     <th>Mock Type</th>
-
                     <th>Board</th>
-
                     <th>Class</th>
-
                     <th>Subject</th>
-
-                    <th>Test Name</th>
-
+                    <th>Chapter / Scope</th>
                     <th>Questions</th>
-
                     <th>Status</th>
-
                     <th>Action</th>
-
                 </tr>
-
             </thead>
 
 
@@ -2865,21 +2852,167 @@ tbody tr:last-child td{
 
 <script>
 async function loadMockTests(){
-    const tbody=document.getElementById("mockTestTable");
+
+    const tbody =
+        document.getElementById("mockTestTable");
+
+    if(!tbody){
+        return;
+    }
+
     try{
-        const r=await fetch("/admin/mock-test-list");
-        const d=await r.json();
-        if(!d.success){tbody.innerHTML=`<tr><td colspan="8" style="color:red;text-align:center">${esc(d.error||"Unable to load")}</td></tr>`;return}
-        if(!d.tests.length){tbody.innerHTML='<tr><td colspan="8" style="text-align:center">No Mock Tests created yet.</td></tr>';return}
-        tbody.innerHTML=d.tests.map(t=>`
-        <tr>
-            <td>${t.mock_test_no}</td><td>${esc(t.board)}</td><td>${esc(t.class_name)}</td>
-            <td>${esc(t.subject)}</td><td>${esc(t.test_name)}</td>
-            <td>${t.question_count}</td>
-            <td>${t.active ? '<span class="badge">ACTIVE</span>' : 'INACTIVE'}</td>
-            <td><button class="danger" onclick="deleteMockTest(${t.id})">🗑️ Delete Test</button></td>
-        </tr>`).join("");
-    }catch(e){console.error(e)}
+
+        const response =
+            await fetch("/admin/mock-test-list", {
+                cache: "no-store"
+            });
+
+        const data =
+            await response.json();
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            tbody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="8"
+                        style="color:red;text-align:center">
+                        ${esc(
+                            data.error ||
+                            "Unable to load Mock Tests."
+                        )}
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        if(
+            !data.tests ||
+            !data.tests.length
+        ){
+
+            tbody.innerHTML = `
+                <tr>
+                    <td
+                        colspan="8"
+                        style="text-align:center">
+                        No Mock Tests created yet.
+                    </td>
+                </tr>
+            `;
+
+            return;
+        }
+
+        tbody.innerHTML =
+            data.tests.map(function(test){
+
+                const typeNames = {
+                    chapter:
+                        "Chapter-wise Mock",
+
+                    four_chapter:
+                        "4-Chapter Mock",
+
+                    full_syllabus:
+                        "Final Test"
+                };
+
+                const mockType =
+                    typeNames[test.mock_type]
+                    || test.mock_type
+                    || "—";
+
+                let scope =
+                    test.chapter_scope
+                    || "";
+
+                if(
+                    test.mock_type ===
+                    "full_syllabus"
+                ){
+                    scope =
+                        "Full Syllabus";
+                }
+
+                if(!scope){
+                    scope = "—";
+                }
+
+                return `
+                    <tr>
+
+                        <td>
+                            <span class="badge">
+                                ${esc(mockType)}
+                            </span>
+                        </td>
+
+                        <td>
+                            ${esc(test.board)}
+                        </td>
+
+                        <td>
+                            ${esc(test.class_name)}
+                        </td>
+
+                        <td>
+                            ${esc(test.subject)}
+                        </td>
+
+                        <td>
+                            ${esc(scope)}
+                        </td>
+
+                        <td>
+                            <strong>
+                                ${test.question_count || 0}
+                            </strong>
+                        </td>
+
+                        <td>
+                            ${
+                                test.active
+                                ? '<span class="badge">ACTIVE</span>'
+                                : 'INACTIVE'
+                            }
+                        </td>
+
+                        <td>
+                            <button
+                                class="danger"
+                                onclick="deleteMockTest(${test.id})">
+                                🗑️ Delete
+                            </button>
+                        </td>
+
+                    </tr>
+                `;
+
+            }).join("");
+
+    }catch(error){
+
+        console.error(
+            "LOAD MOCK TESTS ERROR:",
+            error
+        );
+
+        tbody.innerHTML = `
+            <tr>
+                <td
+                    colspan="8"
+                    style="color:red;text-align:center">
+                    ❌ Unable to load Mock Tests.
+                </td>
+            </tr>
+        `;
+    }
 }
 
 async function loadMockQuestions(){
