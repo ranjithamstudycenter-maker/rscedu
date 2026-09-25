@@ -937,6 +937,786 @@ tbody tr:last-child td{
     }
 
 }
+/* =========================================================
+   MOCK TEST MANAGEMENT
+========================================================= */
+
+.mock-management-card{
+    margin-top:28px;
+}
+
+
+/* =========================================================
+   CATEGORY CARDS
+========================================================= */
+
+.mock-category-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:18px;
+
+    margin-top:24px;
+}
+
+.mock-category-card{
+
+    position:relative;
+
+    display:flex;
+
+    gap:16px;
+
+    padding:22px;
+
+    border-radius:20px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+
+    cursor:pointer;
+
+    transition:
+        transform .2s ease,
+        box-shadow .2s ease,
+        border-color .2s ease;
+
+    overflow:hidden;
+}
+
+.mock-category-card::before{
+
+    content:"";
+
+    position:absolute;
+
+    left:0;
+    top:0;
+    right:0;
+
+    height:4px;
+
+    background:
+        linear-gradient(
+            90deg,
+            #4f46e5,
+            #7c3aed,
+            #db2777
+        );
+}
+
+.mock-category-card:hover{
+
+    transform:translateY(-4px);
+
+    border-color:#a5b4fc;
+
+    box-shadow:
+        0 15px 30px
+        rgba(79,70,229,.12);
+}
+
+.mock-category-card.active{
+
+    border-color:#6366f1;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8faff,
+            #faf5ff
+        );
+
+    box-shadow:
+        0 12px 28px
+        rgba(79,70,229,.13);
+}
+
+.mock-category-icon{
+
+    flex:0 0 52px;
+
+    width:52px;
+    height:52px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:15px;
+
+    background:#eef2ff;
+
+    font-size:27px;
+}
+
+.mock-category-content{
+
+    flex:1;
+}
+
+.mock-category-title{
+
+    color:#172554;
+
+    font-size:17px;
+
+    font-weight:900;
+
+    margin-bottom:7px;
+}
+
+.mock-category-description{
+
+    color:#64748b;
+
+    font-size:12px;
+
+    line-height:1.6;
+}
+
+.mock-category-description b{
+
+    color:#4338ca;
+}
+
+.mock-category-meta{
+
+    display:flex;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+
+    margin-top:13px;
+}
+
+.mock-category-meta span{
+
+    padding:5px 9px;
+
+    border-radius:999px;
+
+    background:#f1f5f9;
+
+    color:#475569;
+
+    font-size:10px;
+
+    font-weight:800;
+}
+
+.mock-upload-btn{
+
+    margin-top:15px;
+
+    width:100%;
+}
+
+
+/* =========================================================
+   UPLOAD PANEL
+========================================================= */
+
+.mock-upload-panel{
+
+    margin-top:25px;
+
+    padding:24px;
+
+    border-radius:20px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8faff,
+            #faf5ff
+        );
+
+    border:1px solid #c7d2fe;
+}
+
+.upload-panel-header h3{
+
+    margin:0 0 5px;
+
+    color:#312e81;
+
+    font-size:19px;
+
+    font-weight:900;
+}
+
+.upload-panel-header p{
+
+    margin:0;
+
+    color:#64748b;
+
+    font-size:12px;
+}
+
+.mock-upload-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:15px;
+
+    margin-top:20px;
+}
+
+
+/* =========================================================
+   SCOPE BOX
+========================================================= */
+
+.mock-scope-box{
+
+    margin-top:18px;
+
+    padding:18px;
+
+    border-radius:15px;
+
+    background:#fff;
+
+    border:1px solid #e0e7ff;
+}
+
+.scope-title{
+
+    color:#312e81;
+
+    font-size:14px;
+
+    font-weight:900;
+}
+
+.mock-scope-box p{
+
+    margin:5px 0 13px;
+
+    color:#64748b;
+
+    font-size:12px;
+
+    line-height:1.5;
+}
+
+.mock-scope-box select{
+
+    width:100%;
+
+    padding:11px 12px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:10px;
+
+    background:#fff;
+
+    font-size:12px;
+}
+
+.four-chapter-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,1fr);
+
+    gap:10px;
+}
+
+.full-syllabus-badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    flex-wrap:wrap;
+
+    padding:10px 13px;
+
+    border-radius:10px;
+
+    background:#eef2ff;
+
+    color:#4338ca;
+
+    font-size:11px;
+
+    font-weight:800;
+}
+
+
+/* =========================================================
+   EXCEL UPLOAD
+========================================================= */
+
+.mock-excel-box{
+
+    display:flex;
+
+    gap:18px;
+
+    align-items:flex-start;
+
+    margin-top:20px;
+}
+
+.excel-upload-icon{
+
+    width:52px;
+    height:52px;
+
+    flex:0 0 52px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:14px;
+
+    background:#dcfce7;
+
+    font-size:26px;
+}
+
+.excel-upload-content{
+
+    flex:1;
+}
+
+.excel-upload-content h3{
+
+    margin:0 0 6px;
+
+    color:#172554;
+
+    font-size:16px;
+
+    font-weight:900;
+}
+
+.excel-upload-content p{
+
+    margin:0 0 10px;
+
+    color:#64748b;
+
+    font-size:12px;
+
+    line-height:1.6;
+}
+
+.excel-format-note{
+
+    padding:10px 12px;
+
+    border-radius:10px;
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    color:#475569;
+
+    font-size:11px;
+
+    line-height:1.6;
+}
+
+.excel-upload-action{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    margin-top:14px;
+
+    flex-wrap:wrap;
+}
+
+
+/* =========================================================
+   UPLOADED MOCK TESTS
+========================================================= */
+
+.uploaded-mock-section{
+
+    margin-top:30px;
+
+    padding-top:5px;
+}
+
+.uploaded-mock-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:15px;
+
+    margin-top:18px;
+}
+
+.uploaded-mock-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:13px;
+
+    padding:17px;
+
+    border-radius:15px;
+
+    border:1px solid #e2e8f0;
+
+    background:#fff;
+
+    box-shadow:
+        0 7px 20px
+        rgba(15,23,42,.05);
+}
+
+.uploaded-mock-icon{
+
+    width:43px;
+    height:43px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:12px;
+
+    background:#eef2ff;
+
+    font-size:22px;
+}
+
+.uploaded-mock-card strong{
+
+    display:block;
+
+    color:#172554;
+
+    font-size:13px;
+
+    font-weight:900;
+}
+
+.uploaded-mock-card span{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:#16a34a;
+
+    font-size:10px;
+
+    font-weight:800;
+}
+
+
+/* =========================================================
+   RESPONSIVE
+========================================================= */
+
+@media(max-width:1000px){
+
+    .mock-category-grid,
+    .uploaded-mock-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .mock-upload-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+    .four-chapter-grid{
+
+        grid-template-columns:
+            repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:700px){
+
+    .mock-category-grid,
+    .uploaded-mock-grid,
+    .mock-upload-grid,
+    .four-chapter-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .mock-category-card{
+
+        flex-direction:column;
+    }
+
+    .mock-excel-box{
+
+        flex-direction:column;
+    }
+
+    .excel-upload-action{
+
+        flex-direction:column;
+
+        align-items:stretch;
+    }
+
+    .excel-upload-action button{
+
+        width:100%;
+    }
+/* =========================================================
+   MOCK TEST STRUCTURE
+========================================================= */
+
+.mock-structure-section{
+
+    margin-top:22px;
+
+    padding:22px;
+
+    border-radius:17px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8faff,
+            #faf5ff
+        );
+
+    border:1px solid #e0e7ff;
+}
+
+
+.mock-structure-title{
+
+    margin-bottom:18px;
+
+    color:#312e81;
+
+    font-size:15px;
+
+    font-weight:900;
+}
+
+
+/* CHAPTER SELECTION */
+
+.mock-chapter-selection{
+
+    margin-top:20px;
+
+    padding:18px;
+
+    border-radius:14px;
+
+    background:#fff;
+
+    border:1px solid #dbe3ef;
+}
+
+
+.selection-label{
+
+    margin-bottom:9px;
+
+    color:#334155;
+
+    font-size:12px;
+
+    font-weight:900;
+}
+
+
+.mock-chapter-selection select{
+
+    width:100%;
+
+    padding:12px 13px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:11px;
+
+    background:#fff;
+
+    color:#1e293b;
+
+    font-size:13px;
+}
+
+
+.selection-help{
+
+    margin:9px 0 0;
+
+    color:#64748b;
+
+    font-size:11px;
+
+    line-height:1.5;
+}
+
+
+/* FOUR CHAPTER */
+
+.four-chapter-select-grid{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:13px;
+}
+
+
+.four-chapter-select-grid select{
+
+    width:100%;
+
+    padding:12px 13px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:11px;
+
+    background:#fff;
+
+    color:#1e293b;
+
+    font-size:13px;
+}
+
+
+/* FINAL TEST */
+
+.mock-final-selection{
+
+    margin-top:20px;
+
+    padding:18px;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff7ed,
+            #fffbeb
+        );
+
+    border:1px solid #fed7aa;
+}
+
+
+.final-test-info{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:15px;
+}
+
+
+.final-test-icon{
+
+    width:50px;
+
+    height:50px;
+
+    min-width:50px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:13px;
+
+    background:#fff;
+
+    font-size:25px;
+
+    box-shadow:
+        0 5px 15px
+        rgba(234,88,12,.10);
+}
+
+
+.final-test-info strong{
+
+    display:block;
+
+    color:#9a3412;
+
+    font-size:14px;
+
+    font-weight:900;
+}
+
+
+.final-test-info p{
+
+    margin:5px 0 0;
+
+    color:#78716c;
+
+    font-size:11px;
+
+    line-height:1.5;
+}
+
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .four-chapter-select-grid{
+
+        grid-template-columns:1fr;
+    }
+
+    .final-test-info{
+
+        align-items:flex-start;
+    }
+
+}
+}
 
 </style>
 </head>
@@ -976,9 +1756,8 @@ tbody tr:last-child td{
         <p>
             Required columns:
             <b>
-                Mock Type, Mock Test No, Board, Class,
-                Subject, Topic, Subtopic, Question,
-                A, B, C, D, Answer
+                Board, Class, Subject, Chapter,
+                Question, A, B, C, D, Answer
             </b>.
             Optional:
             <b>Explanation, Hint</b>.
@@ -987,18 +1766,18 @@ tbody tr:last-child td{
 
         <div class="excel-file-row">
 
-            <input
+           <input
                 type="file"
                 id="mockExcelFile"
                 accept=".xlsx,.xls">
-
+            
             <button
                 class="green"
                 type="button"
                 onclick="importMockExcel()">
-
+            
                 📥 Import Questions
-
+            
             </button>
 
         </div>
@@ -1073,7 +1852,9 @@ tbody tr:last-child td{
                 🏫 Board
             </label>
 
-            <select id="mqBoard">
+            <select
+                id="mqBoard"
+                onchange="resetMockChapterSelections()">
 
                 <option value="">
                     Select Board
@@ -1104,7 +1885,9 @@ tbody tr:last-child td{
                 🎓 Class
             </label>
 
-            <select id="mqClass">
+            <select
+                id="mqClass"
+                onchange="resetMockChapterSelections()">
 
                 <option value="">
                     Select Class
@@ -1131,7 +1914,9 @@ tbody tr:last-child td{
                 📚 Subject
             </label>
 
-            <select id="mqSubject">
+            <select
+                id="mqSubject"
+                onchange="loadMockChapters()">
 
                 <option value="">
                     Select Subject
@@ -1180,151 +1965,289 @@ tbody tr:last-child td{
     </div>
 
 
-    <!-- MOCK TYPE -->
+<!-- =========================================================
+     MOCK TEST TYPE
+========================================================= -->
 
-    <div class="mock-type-section">
+<div class="mock-type-section">
 
-        <div class="mock-type-title">
+    <div class="mock-type-title">
+        🎯 Select Mock Test Type
+    </div>
 
-            🎯 Select Mock Test Type
+    <div class="mock-type-grid">
 
-        </div>
+        <!-- CHAPTER-WISE -->
 
+        <label
+            class="mock-type-option active"
+            onclick="selectMockType('chapter',this)">
 
-        <div class="mock-type-grid">
+            <input
+                type="radio"
+                name="mockType"
+                id="mqMockTypeChapter"
+                value="chapter"
+                checked>
 
+            <div class="mock-type-icon">
+                📘
+            </div>
 
-            <!-- CHAPTER -->
+            <strong>
+                Chapter-wise Mock
+            </strong>
 
-            <label
-                class="mock-type-option active"
-                onclick="selectMockType('chapter',this)">
+            <span>
+                Mixed questions from one chapter.
+            </span>
 
-                <input
-                    type="radio"
-                    name="mockType"
-                    id="mqMockTypeChapter"
-                    value="chapter"
-                    checked>
-
-                <div class="mock-type-icon">
-                    📘
-                </div>
-
-                <strong>
-                    Chapter-wise Mock
-                </strong>
-
-                <span>
-                    Questions from one chapter.
-                </span>
-
-            </label>
+        </label>
 
 
-            <!-- FOUR CHAPTER -->
+        <!-- 4-CHAPTER -->
 
-            <label
-                class="mock-type-option"
-                onclick="selectMockType('four_chapter',this)">
+        <label
+            class="mock-type-option"
+            onclick="selectMockType('four_chapter',this)">
 
-                <input
-                    type="radio"
-                    name="mockType"
-                    id="mqMockTypeFour"
-                    value="four_chapter">
+            <input
+                type="radio"
+                name="mockType"
+                id="mqMockTypeFour"
+                value="four_chapter">
 
-                <div class="mock-type-icon">
-                    📚
-                </div>
+            <div class="mock-type-icon">
+                📚
+            </div>
 
-                <strong>
-                    4-Chapter Mock
-                </strong>
+            <strong>
+                4-Chapter Mock
+            </strong>
 
-                <span>
-                    Questions covering four chapters.
-                </span>
+            <span>
+                Mixed questions from four chapters.
+            </span>
 
-            </label>
-
-
-            <!-- FULL SYLLABUS -->
-
-            <label
-                class="mock-type-option"
-                onclick="selectMockType('full_syllabus',this)">
-
-                <input
-                    type="radio"
-                    name="mockType"
-                    id="mqMockTypeFull"
-                    value="full_syllabus">
-
-                <div class="mock-type-icon">
-                    🏆
-                </div>
-
-                <strong>
-                    Full-Syllabus Mock
-                </strong>
-
-                <span>
-                    Questions from the complete syllabus.
-                </span>
-
-            </label>
+        </label>
 
 
-        </div>
+        <!-- FINAL TEST -->
+
+        <label
+            class="mock-type-option"
+            onclick="selectMockType('full_syllabus',this)">
+
+            <input
+                type="radio"
+                name="mockType"
+                id="mqMockTypeFull"
+                value="full_syllabus">
+
+            <div class="mock-type-icon">
+                🏆
+            </div>
+
+            <strong>
+                Final Test
+            </strong>
+
+            <span>
+                Mixed questions from the whole syllabus.
+            </span>
+
+        </label>
 
     </div>
 
+</div>
 
-    <!-- MOCK STRUCTURE -->
+<!-- =========================================================
+     MOCK TEST STRUCTURE
+========================================================= -->
+
+<div class="mock-structure-section" id="mockStructureSection">
+
+    <div class="mock-structure-title">
+        📋 Mock Test Details
+    </div>
 
     <div class="mock-form-grid">
 
-        <!-- CHAPTER / GROUP -->
-
-        <div
-            class="form-field"
-            id="mqTopicField">
-
-            <label id="mqTopicLabel">
-                📖 Chapter
-            </label>
-
-            <input
-                id="mqTopic"
-                placeholder="Example: Real Numbers">
-
-        </div>
-
-
-        <!-- SUBTOPIC -->
+        <!-- BOARD -->
 
         <div class="form-field">
 
             <label>
-                📑 Subtopic
+                🏫 Board
             </label>
 
-            <input
-                id="mqSubtopic"
-                placeholder="Example: Euclid's Division Lemma">
+            <select
+                id="mqBoard"
+                onchange="loadMockClasses()">
+            
+                <option value="">
+                    Select Board
+                </option>
+            
+            </select>
+
+                <option value="CBSE">
+                    CBSE
+                </option>
+
+                <option value="State Board">
+                    State Board
+                </option>
+
+                <option value="Matric">
+                    Matric
+                </option>
+            </select>
 
         </div>
 
+ </div>
 
-        <!-- HIDDEN COMPATIBILITY VALUE -->
 
-        <input
-            type="hidden"
-            id="mqDifficulty"
-            value="mixed">
+    <!-- =====================================================
+         CHAPTER-WISE
+    ====================================================== -->
+
+    <div
+        id="chapterWiseSelection"
+        class="mock-chapter-selection"
+        style="display:none;">
+
+        <div class="selection-label">
+            📖 Select Chapter
+        </div>
+
+        <select
+            id="mqChapter"
+            disabled
+            onchange="updateMockChapterSelection()">
+        
+            <option value="">
+                Select Chapter
+            </option>
+        
+        </select>
+
+        <p class="selection-help">
+            Select one chapter. The uploaded Excel file will
+            contain mixed questions from this chapter.
+        </p>
 
     </div>
+
+
+    <!-- =====================================================
+         4-CHAPTER
+    ====================================================== -->
+
+    <div
+        id="fourChapterSelection"
+        class="mock-chapter-selection"
+        style="display:none;">
+
+        <div class="selection-label">
+            📚 Select 4 Chapters
+        </div>
+
+        <div class="four-chapter-select-grid">
+
+            <select
+                id="mqChapter1"
+                disabled
+                onchange="validateFourChapterSelection()">
+            
+                <option value="">
+                    Select Chapter 1
+                </option>
+            
+            </select>
+
+
+            <select
+                id="mqChapter2"
+                disabled
+                onchange="validateFourChapterSelection()">
+            
+                <option value="">
+                    Select Chapter 2
+                </option>
+            
+            </select>
+            
+            
+            <select
+                id="mqChapter3"
+                disabled
+                onchange="validateFourChapterSelection()">
+            
+                <option value="">
+                    Select Chapter 3
+                </option>
+            
+            </select>
+            
+            
+            <select
+                id="mqChapter4"
+                disabled
+                onchange="validateFourChapterSelection()">
+            
+                <option value="">
+                    Select Chapter 4
+                </option>
+            
+            </select>
+
+        </div>
+
+        <p class="selection-help">
+            Select exactly four chapters. The uploaded Excel
+            file will contain mixed questions from these four
+            chapters.
+        </p>
+
+    </div>
+
+
+    <!-- =====================================================
+         FINAL TEST
+    ====================================================== -->
+
+    <div
+        id="finalTestSelection"
+        class="mock-final-selection"
+        style="display:none;">
+
+        <div class="final-test-info">
+
+            <div class="final-test-icon">
+                🏆
+            </div>
+
+            <div>
+
+                <strong>
+                    Full Syllabus
+                </strong>
+
+                <p>
+                    The uploaded Excel file will contain mixed
+                    questions from the complete syllabus.
+                </p>
+
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
     <!-- QUESTION -->
@@ -1980,111 +2903,988 @@ async function loadMockQuestions(){
 ========================================================= */
 
 let selectedMockType = "chapter";
+let mockSyllabusOptions = [];
+let mockChapterOptions = [];
 
-
-function selectMockType(type, card){
+function selectMockType(type, element){
 
     selectedMockType = type;
 
 
+    /* ---------------------------------------------
+       UPDATE RADIO
+    --------------------------------------------- */
+
+    const radio = document.querySelector(
+        'input[name="mockType"][value="' + type + '"]'
+    );
+
+    if(radio){
+        radio.checked = true;
+    }
+
+
+    /* ---------------------------------------------
+       UPDATE CARD ACTIVE STATE
+    --------------------------------------------- */
+
     document
         .querySelectorAll(".mock-type-option")
-        .forEach(function(item){
+        .forEach(function(card){
 
-            item.classList.remove("active");
+            card.classList.remove("active");
 
         });
 
 
-    if(card){
+    if(element){
 
-        card.classList.add("active");
+        element.classList.add("active");
+
+    }else if(radio){
+
+        const parent = radio.closest(
+            ".mock-type-option"
+        );
+
+        if(parent){
+
+            parent.classList.add("active");
+
+        }
 
     }
 
 
-    const topicLabel =
+    /* ---------------------------------------------
+       GET SECTIONS
+    --------------------------------------------- */
+
+    const chapterWise =
         document.getElementById(
-            "mqTopicLabel"
+            "chapterWiseSelection"
         );
 
-    const topicInput =
+    const fourChapter =
         document.getElementById(
-            "mqTopic"
+            "fourChapterSelection"
         );
 
+    const finalTest =
+        document.getElementById(
+            "finalTestSelection"
+        );
+
+
+    /* ---------------------------------------------
+       HIDE ALL
+    --------------------------------------------- */
+
+    if(chapterWise){
+        chapterWise.style.display = "none";
+    }
+
+    if(fourChapter){
+        fourChapter.style.display = "none";
+    }
+
+    if(finalTest){
+        finalTest.style.display = "none";
+    }
+
+
+    /* ---------------------------------------------
+       SHOW SELECTED TYPE
+    --------------------------------------------- */
 
     if(type === "chapter"){
 
-        topicLabel.textContent =
-            "📖 Chapter";
+        if(chapterWise){
 
-        topicInput.placeholder =
-            "Example: Real Numbers";
+            chapterWise.style.display = "block";
 
-    }
-
-
-    else if(type === "four_chapter"){
-
-        topicLabel.textContent =
-            "📚 Chapter Group";
-
-        topicInput.placeholder =
-            "Example: Chapters 1 – 4";
+        }
 
     }
 
 
-    else if(type === "full_syllabus"){
+    if(type === "four_chapter"){
 
-        topicLabel.textContent =
-            "📚 Syllabus";
+        if(fourChapter){
 
-        topicInput.placeholder =
-            "Example: Full Syllabus";
+            fourChapter.style.display = "block";
+
+        }
+
+    }
+
+
+    if(type === "full_syllabus"){
+
+        if(finalTest){
+
+            finalTest.style.display = "block";
+
+        }
 
     }
 
 }
-async function addMockQuestion(){
-    const data={
-        mock_test_no:parseInt(mqTestNo.value,10),
-        board:mqBoard.value.trim(),class_name:mqClass.value.trim(),
-        subject:mqSubject.value.trim(),topic:mqTopic.value.trim(),
-        subtopic:mqSubtopic.value.trim(),difficulty:mqDifficulty.value.trim(),
-        question:mqQuestion.value.trim(),option_a:mqA.value.trim(),
-        option_b:mqB.value.trim(),option_c:mqC.value.trim(),option_d:mqD.value.trim(),
-        correct_answer:mqAnswer.value.trim(),explanation:mqExplanation.value.trim(),
-        hint:mqHint.value.trim()
-    };
-    const required=["mock_test_no","board","class_name","subject","topic","subtopic","difficulty","question","option_a","option_b","option_c","option_d","correct_answer"];
-    if(required.some(k=>!data[k])){mqMessage.style.color="red";mqMessage.textContent="❌ Please fill all required fields.";return}
+async function loadMockAdminOptions(){
+
+    const boardSelect =
+        document.getElementById("mqBoard");
+
+    const classSelect =
+        document.getElementById("mqClass");
+
+    const subjectSelect =
+        document.getElementById("mqSubject");
+
+
+    if(
+        !boardSelect ||
+        !classSelect ||
+        !subjectSelect
+    ){
+        return;
+    }
+
+
     try{
-        const r=await fetch("/admin/mock-questions/add",{
-            method:"POST",headers:{"Content-Type":"application/json"},body:JSON.stringify(data)
+
+        const response =
+            await fetch(
+                "/api/practice/options",
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.error ||
+                "Unable to load syllabus options."
+            );
+
+        }
+
+
+        mockSyllabusOptions =
+            data.options || [];
+
+
+        /* -----------------------------------------
+           BOARD
+        ----------------------------------------- */
+
+        boardSelect.innerHTML =
+            '<option value="">Select Board</option>';
+
+
+        const boards =
+            [
+                ...new Set(
+
+                    mockSyllabusOptions
+                        .map(item => item.board)
+                        .filter(Boolean)
+
+                )
+            ];
+
+
+        boards.forEach(function(board){
+
+            const option =
+                document.createElement("option");
+
+            option.value = board;
+
+            option.textContent = board;
+
+            boardSelect.appendChild(option);
+
         });
-        const d=await r.json();
-        if(!d.success){mqMessage.style.color="red";mqMessage.textContent="❌ "+(d.error||"Unable to add.");return}
-        mqMessage.style.color="green";mqMessage.textContent="✅ Mock question added successfully.";
-        ["mqQuestion","mqA","mqB","mqC","mqD","mqExplanation","mqHint"].forEach(id=>document.getElementById(id).value="");
-        mqAnswer.value="";
-        loadMockTests();loadMockQuestions();
-    }catch(e){mqMessage.style.color="red";mqMessage.textContent="❌ Server error.";console.error(e)}
+
+
+        /* -----------------------------------------
+           RESET
+        ----------------------------------------- */
+
+        classSelect.innerHTML =
+            '<option value="">Select Class</option>';
+
+        subjectSelect.innerHTML =
+            '<option value="">Select Subject</option>';
+
+        classSelect.disabled = true;
+        subjectSelect.disabled = true;
+
+
+    }catch(error){
+
+        console.error(
+            "MOCK SYLLABUS OPTIONS ERROR:",
+            error
+        );
+
+
+        boardSelect.innerHTML =
+            '<option value="">Unable to load</option>';
+
+    }
+
+}
+function loadMockClasses(){
+
+    const board =
+        document.getElementById("mqBoard").value;
+
+    const classSelect =
+        document.getElementById("mqClass");
+
+    const subjectSelect =
+        document.getElementById("mqSubject");
+
+
+    classSelect.innerHTML =
+        '<option value="">Select Class</option>';
+
+    subjectSelect.innerHTML =
+        '<option value="">Select Subject</option>';
+
+
+    classSelect.disabled = true;
+    subjectSelect.disabled = true;
+
+
+    resetMockChapterSelections();
+
+
+    if(!board){
+        return;
+    }
+
+
+    const classes =
+        [
+            ...new Set(
+
+                mockSyllabusOptions
+
+                    .filter(function(item){
+
+                        return item.board === board;
+
+                    })
+
+                    .map(function(item){
+
+                        return item.class_name;
+
+                    })
+
+                    .filter(Boolean)
+
+            )
+        ];
+
+
+    classes.forEach(function(className){
+
+        const option =
+            document.createElement("option");
+
+        option.value = className;
+
+        option.textContent = className;
+
+        classSelect.appendChild(option);
+
+    });
+
+
+    classSelect.disabled =
+        classes.length === 0;
+
+}
+function loadMockSubjects(){
+
+    const board =
+        document.getElementById("mqBoard").value;
+
+    const className =
+        document.getElementById("mqClass").value;
+
+    const subjectSelect =
+        document.getElementById("mqSubject");
+
+
+    subjectSelect.innerHTML =
+        '<option value="">Select Subject</option>';
+
+    subjectSelect.disabled = true;
+
+
+    resetMockChapterSelections();
+
+
+    if(
+        !board ||
+        !className
+    ){
+
+        return;
+
+    }
+
+
+    const subjects =
+        [
+            ...new Set(
+
+                mockSyllabusOptions
+
+                    .filter(function(item){
+
+                        return (
+                            item.board === board &&
+                            item.class_name === className
+                        );
+
+                    })
+
+                    .map(function(item){
+
+                        return item.subject;
+
+                    })
+
+                    .filter(Boolean)
+
+            )
+        ];
+
+
+    subjects.forEach(function(subject){
+
+        const option =
+            document.createElement("option");
+
+        option.value = subject;
+
+        option.textContent = subject;
+
+        subjectSelect.appendChild(option);
+
+    });
+
+
+    subjectSelect.disabled =
+        subjects.length === 0;
+
+}
+async function loadMockChapters(){
+
+    const board =
+        document.getElementById("mqBoard").value.trim();
+
+    const className =
+        document.getElementById("mqClass").value.trim();
+
+    const subject =
+        document.getElementById("mqSubject").value.trim();
+
+
+    resetMockChapterSelections();
+
+
+    if(!board || !className || !subject){
+        return;
+    }
+
+
+    /* ---------------------------------------------
+       LOAD CHAPTERS FROM EXISTING PRACTICE API
+    --------------------------------------------- */
+
+    try{
+
+        const response =
+            await fetch("/api/practice/topics", {
+
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                    "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    board:board,
+
+                    class_name:className,
+
+                    subject:subject
+
+                })
+
+            });
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            throw new Error(
+                data.error ||
+                "Unable to load chapters."
+            );
+
+        }
+
+
+        /*
+         * Existing API returns:
+         *
+         * data.topics
+         *
+         * Each item contains:
+         *
+         * {
+         *     topic: "...",
+         *     subtopics: [...]
+         * }
+         */
+
+        mockChapterOptions =
+            (data.topics || [])
+                .map(function(item){
+
+                    return item.topic;
+
+                })
+                .filter(Boolean);
+
+
+        populateMockChapterDropdowns();
+
+
+    }catch(error){
+
+        console.error(
+            "MOCK CHAPTER LOAD ERROR:",
+            error
+        );
+
+
+        alert(
+            error.message ||
+            "Unable to load chapters."
+        );
+
+    }
+
+}
+function populateMockChapterDropdowns(){
+
+    const chapterDropdown =
+        document.getElementById("mqChapter");
+
+
+    const chapter1 =
+        document.getElementById("mqChapter1");
+
+    const chapter2 =
+        document.getElementById("mqChapter2");
+
+    const chapter3 =
+        document.getElementById("mqChapter3");
+
+    const chapter4 =
+        document.getElementById("mqChapter4");
+
+
+    /* ---------------------------------------------
+       CHAPTER-WISE
+    --------------------------------------------- */
+
+    if(chapterDropdown){
+
+        chapterDropdown.innerHTML =
+            '<option value="">Select Chapter</option>';
+
+        mockChapterOptions.forEach(function(chapter){
+
+            const option =
+                document.createElement("option");
+
+            option.value = chapter;
+            option.textContent = chapter;
+
+            chapterDropdown.appendChild(option);
+
+        });
+
+        chapterDropdown.disabled =
+            mockChapterOptions.length === 0;
+    }
+
+
+    /* ---------------------------------------------
+       4-CHAPTER
+    --------------------------------------------- */
+
+    [
+        chapter1,
+        chapter2,
+        chapter3,
+        chapter4
+    ].forEach(function(dropdown, index){
+
+        if(!dropdown){
+            return;
+        }
+
+        dropdown.innerHTML =
+            `<option value="">Select Chapter ${index + 1}</option>`;
+
+        mockChapterOptions.forEach(function(chapter){
+
+            const option =
+                document.createElement("option");
+
+            option.value = chapter;
+            option.textContent = chapter;
+
+            dropdown.appendChild(option);
+
+        });
+
+        dropdown.disabled =
+            mockChapterOptions.length === 0;
+
+    });
+
+}
+function resetMockChapterSelections(){
+
+    mockChapterOptions = [];
+
+
+    const ids = [
+        "mqChapter",
+        "mqChapter1",
+        "mqChapter2",
+        "mqChapter3",
+        "mqChapter4"
+    ];
+
+
+    ids.forEach(function(id){
+
+        const element =
+            document.getElementById(id);
+
+        if(!element){
+            return;
+        }
+
+        element.innerHTML =
+            '<option value="">Select Chapter</option>';
+
+        element.disabled = true;
+
+    });
+
+}
+function validateFourChapterSelection(){
+
+    const ids = [
+        "mqChapter1",
+        "mqChapter2",
+        "mqChapter3",
+        "mqChapter4"
+    ];
+
+
+    const values = ids
+        .map(function(id){
+
+            const element =
+                document.getElementById(id);
+
+            return element
+                ? element.value
+                : "";
+
+        })
+        .filter(Boolean);
+
+
+    const duplicates =
+        values.filter(function(value,index){
+
+            return values.indexOf(value) !== index;
+
+        });
+
+
+    if(duplicates.length){
+
+        alert(
+            "⚠️ Please select four different chapters."
+        );
+
+
+        ids.forEach(function(id){
+
+            const element =
+                document.getElementById(id);
+
+            if(
+                element &&
+                element.value === duplicates[0]
+            ){
+
+                element.value = "";
+
+            }
+
+        });
+
+    }
+
 }
 
 async function importMockExcel(){
-    const input=document.getElementById("mockExcelFile"), box=document.getElementById("mockImportMessage");
-    if(!input.files.length){box.style.color="red";box.textContent="❌ Please select an Excel file.";return}
-    const fd=new FormData();fd.append("excel_file",input.files[0]);
-    box.style.color="#4338ca";box.textContent="⏳ Importing...";
+
+    const fileInput =
+        document.getElementById("mockExcelFile");
+
+    const messageBox =
+        document.getElementById("mockImportMessage");
+
+    if(!fileInput || !fileInput.files.length){
+
+        alert("⚠️ Please select an Excel file.");
+
+        return;
+    }
+
+    const file =
+        fileInput.files[0];
+
+    const board =
+        document.getElementById("mqBoard")?.value.trim();
+
+    const className =
+        document.getElementById("mqClass")?.value.trim();
+
+    const subject =
+        document.getElementById("mqSubject")?.value.trim();
+
+    if(!board){
+
+        alert("⚠️ Please select Board.");
+
+        return;
+    }
+
+    if(!className){
+
+        alert("⚠️ Please select Class.");
+
+        return;
+    }
+
+    if(!subject){
+
+        alert("⚠️ Please select Subject.");
+
+        return;
+    }
+
+    /* ---------------------------------------------
+       MOCK TYPE
+    --------------------------------------------- */
+
+    const selectedType =
+        document.querySelector(
+            'input[name="mockType"]:checked'
+        );
+
+    if(!selectedType){
+
+        alert("⚠️ Please select Mock Test Type.");
+
+        return;
+    }
+
+    const mockType =
+        selectedType.value;
+
+
+    /* ---------------------------------------------
+       CHAPTER SCOPE
+    --------------------------------------------- */
+
+    let chapterScope = "";
+
+    if(mockType === "chapter"){
+
+        const chapter =
+            document.getElementById("mqChapter")?.value.trim();
+
+        if(!chapter){
+
+            alert("⚠️ Please select a chapter.");
+
+            return;
+        }
+
+        chapterScope = chapter;
+    }
+
+
+    if(mockType === "four_chapter"){
+
+        const chapterIds = [
+            "mqChapter1",
+            "mqChapter2",
+            "mqChapter3",
+            "mqChapter4"
+        ];
+
+        const chapters =
+            chapterIds
+                .map(function(id){
+
+                    const element =
+                        document.getElementById(id);
+
+                    return element
+                        ? element.value.trim()
+                        : "";
+
+                })
+                .filter(Boolean);
+
+
+        if(chapters.length !== 4){
+
+            alert(
+                "⚠️ Please select all four chapters."
+            );
+
+            return;
+        }
+
+
+        const uniqueChapters =
+            [...new Set(chapters)];
+
+        if(uniqueChapters.length !== 4){
+
+            alert(
+                "⚠️ Please select four different chapters."
+            );
+
+            return;
+        }
+
+        chapterScope =
+            chapters.join(" | ");
+    }
+
+
+    if(mockType === "full_syllabus"){
+
+        chapterScope =
+            "FULL_SYLLABUS";
+    }
+
+
+    /* ---------------------------------------------
+       FORM DATA
+    --------------------------------------------- */
+
+    const formData =
+        new FormData();
+
+    formData.append(
+        "excel_file",
+        file
+    );
+
+    formData.append(
+        "mock_type",
+        mockType
+    );
+
+    formData.append(
+        "board",
+        board
+    );
+
+    formData.append(
+        "class_name",
+        className
+    );
+
+    formData.append(
+        "subject",
+        subject
+    );
+
+    formData.append(
+        "chapter_scope",
+        chapterScope
+    );
+
+
+    /* ---------------------------------------------
+       UI
+    --------------------------------------------- */
+
+    if(messageBox){
+
+        messageBox.style.display = "block";
+
+        messageBox.innerHTML =
+            "⏳ Importing questions...";
+    }
+
+
     try{
-        const r=await fetch("/admin/mock-questions/import-excel",{method:"POST",body:fd});
-        const d=await r.json();
-        if(!d.success){box.style.color="red";box.textContent="❌ "+(d.error||"Import failed.");return}
-        box.style.color="green";box.textContent=`✅ ${d.imported||0} imported, ${d.skipped||0} skipped.`;
-        input.value="";loadMockTests();loadMockQuestions();
-    }catch(e){box.style.color="red";box.textContent="❌ Server error during import.";console.error(e)}
+
+        const response =
+            await fetch(
+                "/admin/mock-questions/import-excel",
+                {
+                    method:"POST",
+                    body:formData
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(!response.ok || !data.success){
+
+            throw new Error(
+                data.error ||
+                "Excel import failed."
+            );
+        }
+
+
+        /* -----------------------------------------
+           SUCCESS MESSAGE
+        ----------------------------------------- */
+
+        let message =
+            "✅ Excel imported successfully.";
+
+        if(
+            typeof data.imported !== "undefined"
+        ){
+
+            message +=
+                `<br>Imported: ${data.imported}`;
+        }
+
+        if(
+            typeof data.skipped !== "undefined"
+        ){
+
+            message +=
+                `<br>Skipped: ${data.skipped}`;
+        }
+
+
+        if(
+            data.errors &&
+            data.errors.length
+        ){
+
+            message +=
+                `<br><br>⚠️ Some rows were skipped.`;
+
+            console.warn(
+                "Mock Excel import errors:",
+                data.errors
+            );
+        }
+
+
+        if(messageBox){
+
+            messageBox.innerHTML =
+                message;
+        }
+
+
+        /* -----------------------------------------
+           REFRESH TABLES
+        ----------------------------------------- */
+
+        if(typeof loadMockTests === "function"){
+
+            await loadMockTests();
+        }
+
+        if(typeof loadMockQuestions === "function"){
+
+            await loadMockQuestions();
+        }
+
+
+        /* -----------------------------------------
+           RESET FILE
+        ----------------------------------------- */
+
+        fileInput.value = "";
+
+
+    }catch(error){
+
+        console.error(
+            "MOCK EXCEL IMPORT ERROR:",
+            error
+        );
+
+
+        if(messageBox){
+
+            messageBox.style.display = "block";
+
+            messageBox.innerHTML =
+                "❌ " +
+                (
+                    error.message ||
+                    "Excel import failed."
+                );
+        }
+    }
 }
 
 async function deleteMockQuestion(id){
@@ -2100,7 +3900,18 @@ async function deleteMockTest(id){
 }
 
 function esc(v){return String(v??"").replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;").replace(/'/g,"&#039;")}
-document.addEventListener("DOMContentLoaded",()=>{loadMockTests();loadMockQuestions()});
+document.addEventListener(
+    "DOMContentLoaded",
+    function(){
+
+        loadMockAdminOptions();
+
+        loadMockTests();
+
+        loadMockQuestions();
+
+    }
+);
 </script>
 </body>
 </html>
