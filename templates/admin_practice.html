@@ -204,6 +204,84 @@ th{
     .card{padding:18px}
     .stats{grid-template-columns:1fr 1fr}
 }
+/* ================================
+   QUESTION FILTERS
+================================ */
+
+.question-filters{
+    display:grid;
+    grid-template-columns:repeat(4,1fr);
+    gap:14px;
+    margin:18px 0 10px;
+    padding:18px;
+    background:linear-gradient(135deg,#f8faff,#fdf4ff);
+    border:1px solid #e0e7ff;
+    border-radius:16px;
+}
+
+.filter-field label{
+    display:block;
+    margin-bottom:7px;
+    font-size:13px;
+    font-weight:800;
+    color:#374151;
+}
+
+.filter-field select{
+    width:100%;
+    background:#fff;
+    border:1px solid #cbd5e1;
+    border-radius:10px;
+    padding:11px 12px;
+    font-size:14px;
+}
+
+.filter-field select:focus{
+    outline:none;
+    border-color:#6366f1;
+    box-shadow:0 0 0 3px rgba(99,102,241,.12);
+}
+
+.filter-actions{
+    display:flex;
+    justify-content:flex-end;
+    margin-bottom:16px;
+}
+
+.filter-reset-btn{
+    background:#64748b;
+    color:#fff;
+    padding:9px 15px;
+    font-size:13px;
+}
+
+.filter-reset-btn:hover{
+    background:#475569;
+}
+
+@media(max-width:900px){
+
+    .question-filters{
+        grid-template-columns:repeat(2,1fr);
+    }
+
+}
+
+@media(max-width:550px){
+
+    .question-filters{
+        grid-template-columns:1fr;
+    }
+
+    .filter-actions{
+        justify-content:stretch;
+    }
+
+    .filter-reset-btn{
+        width:100%;
+    }
+
+}
 </style>
 </head>
 
@@ -308,7 +386,18 @@ th{
 
             <div class="field">
                 <label>Subject</label>
-                <input id="pqSubject" placeholder="Example: Mathematics">
+                <select id="pqSubject">
+                    <option value="">Select Subject</option>
+                    <option value="Mathematics">Mathematics</option>
+                    <option value="Science">Science</option>
+                    <option value="Biology">Biology</option>
+                    <option value="Social Science">Social Science</option>
+                    <option value="Physics">Physics</option>
+                    <option value="Chemistry">Chemistry</option>
+                    <option value="English">English</option>
+                    <option value="Tamil">Tamil</option>
+                    <option value="Computer Science">Computer Science</option>
+                </select>
             </div>
 
             <div class="field">
@@ -395,7 +484,63 @@ th{
     <!-- EXISTING QUESTIONS -->
     <div class="card">
         <h2>📋 Existing Practice Questions</h2>
-     <div style="margin:12px 0 18px;display:flex;justify-content:flex-end;">
+    <div style="margin:12px 0 18px;display:flex;justify-content:flex-end;">
+
+    <!-- QUESTION FILTERS -->
+<div class="question-filters">
+
+    <div class="filter-field">
+        <label>Board</label>
+        <select id="filterBoard" onchange="applyQuestionFilters()">
+            <option value="">All Boards</option>
+            <option value="CBSE">CBSE</option>
+            <option value="State Board">State Board</option>
+            <option value="Matric">Matric</option>
+        </select>
+    </div>
+
+    <div class="filter-field">
+        <label>Class</label>
+        <select id="filterClass" onchange="applyQuestionFilters()">
+            <option value="">All Classes</option>
+            <option value="Class 9">Class 9</option>
+            <option value="Class 10">Class 10</option>
+            <option value="Class 11">Class 11</option>
+            <option value="Class 12">Class 12</option>
+        </select>
+    </div>
+
+    <div class="filter-field">
+        <label>Subject</label>
+        <select id="filterSubject" onchange="applyQuestionFilters()">
+            <option value="">All Subjects</option>
+            <option value="Mathematics">Mathematics</option>
+            <option value="Science">Science</option>
+            <option value="Biology">Biology</option>
+            <option value="Social Science">Social Science</option>
+        </select>
+    </div>
+
+    <div class="filter-field">
+        <label>Difficulty</label>
+        <select id="filterDifficulty" onchange="applyQuestionFilters()">
+            <option value="">All Levels</option>
+            <option value="easy">Easy</option>
+            <option value="medium">Medium</option>
+            <option value="hard">Hard</option>
+        </select>
+    </div>
+
+</div>
+
+    <div class="filter-actions">
+        <button
+            type="button"
+            class="filter-reset-btn"
+            onclick="resetQuestionFilters()">
+            🔄 Reset Filters
+        </button>
+    </div>
         <button
             type="button"
             class="danger"
@@ -442,7 +587,7 @@ th{
 </div>
 
 <script>
-
+let allPracticeQuestions = [];
 function setMessage(id, message, success){
     const box = document.getElementById(id);
     box.textContent = message;
@@ -701,73 +846,172 @@ async function loadPracticeQuestions(){
         const data = await response.json();
 
         if(!data.success){
-            tbody.innerHTML =
-                `<tr>
-                    <td colspan="10" class="empty" style="color:#b91c1c;">
-                        ${escapeHTML(data.error || "Unable to load questions.")}
+
+            tbody.innerHTML = `
+                <tr>
+                    <td colspan="10"
+                        class="empty"
+                        style="color:#b91c1c;">
+                        ${escapeHTML(
+                            data.error ||
+                            "Unable to load questions."
+                        )}
                     </td>
-                </tr>`;
-            return;
-        }
-
-        if(!data.questions || data.questions.length === 0){
-            tbody.innerHTML =
-                `<tr>
-                    <td colspan="10" class="empty">
-                        No practice questions added yet.
-                    </td>
-                </tr>`;
-            return;
-        }
-
-        tbody.innerHTML = "";
-
-        data.questions.forEach(function(q, index){
-
-            const row = document.createElement("tr");
-
-            row.innerHTML = `
-                <td>${index + 1}</td>
-                <td>${escapeHTML(q.board)}</td>
-                <td>${escapeHTML(q.class_name)}</td>
-                <td>${escapeHTML(q.subject)}</td>
-                <td>${escapeHTML(q.topic)}</td>
-                <td>${escapeHTML(q.subtopic)}</td>
-                <td>
-                    <span class="badge ${escapeHTML(q.difficulty)}">
-                        ${escapeHTML(q.difficulty)}
-                    </span>
-                </td>
-                <td class="question-cell">
-                    ${escapeHTML(q.question)}
-                </td>
-                <td><strong>${escapeHTML(q.correct_answer)}</strong></td>
-                <td>
-                    <button
-                        type="button"
-                        class="danger"
-                        onclick="deletePracticeQuestion(${Number(q.id)})">
-                        🗑️ Delete
-                    </button>
-                </td>
+                </tr>
             `;
 
-            tbody.appendChild(row);
-        });
+            return;
+        }
+
+        /*
+         * Store all questions in memory.
+         * The filter system will use this array
+         * to display only the selected questions.
+         */
+        allPracticeQuestions =
+            Array.isArray(data.questions)
+                ? data.questions
+                : [];
+
+        /*
+         * Display questions through the filter system.
+         *
+         * If no filter is selected,
+         * all questions will be displayed.
+         */
+        applyQuestionFilters();
 
     }catch(error){
 
-        console.error("Load questions error:", error);
+        console.error(
+            "Load questions error:",
+            error
+        );
 
-        tbody.innerHTML =
-            `<tr>
-                <td colspan="10" class="empty" style="color:#b91c1c;">
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10"
+                    class="empty"
+                    style="color:#b91c1c;">
                     Server error while loading questions.
                 </td>
-            </tr>`;
+            </tr>
+        `;
     }
 }
+function applyQuestionFilters(){
 
+    const tbody =
+        document.getElementById("practiceQuestionTable");
+
+    const board =
+        document.getElementById("filterBoard").value;
+
+    const className =
+        document.getElementById("filterClass").value;
+
+    const subject =
+        document.getElementById("filterSubject").value;
+
+    const difficulty =
+        document.getElementById("filterDifficulty").value;
+
+    const filtered =
+        allPracticeQuestions.filter(function(q){
+
+            return (
+                (!board || q.board === board) &&
+                (!className || q.class_name === className) &&
+                (!subject || q.subject === subject) &&
+                (!difficulty || q.difficulty === difficulty)
+            );
+
+        });
+
+    if(filtered.length === 0){
+
+        tbody.innerHTML = `
+            <tr>
+                <td colspan="10" class="empty">
+                    🔍 No questions found for the selected filters.
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+    tbody.innerHTML = "";
+
+    filtered.forEach(function(q, index){
+
+        const row =
+            document.createElement("tr");
+
+        row.innerHTML = `
+            <td>${index + 1}</td>
+
+            <td>
+                ${escapeHTML(q.board)}
+            </td>
+
+            <td>
+                ${escapeHTML(q.class_name)}
+            </td>
+
+            <td>
+                <strong>
+                    ${escapeHTML(q.subject)}
+                </strong>
+            </td>
+
+            <td>
+                ${escapeHTML(q.topic)}
+            </td>
+
+            <td>
+                ${escapeHTML(q.subtopic)}
+            </td>
+
+            <td>
+                <span class="badge ${escapeHTML(q.difficulty)}">
+                    ${escapeHTML(q.difficulty)}
+                </span>
+            </td>
+
+            <td class="question-cell">
+                ${escapeHTML(q.question)}
+            </td>
+
+            <td>
+                <strong>
+                    ${escapeHTML(q.correct_answer)}
+                </strong>
+            </td>
+
+            <td>
+                <button
+                    type="button"
+                    class="danger"
+                    onclick="deletePracticeQuestion(${Number(q.id)})">
+                    🗑️ Delete
+                </button>
+            </td>
+        `;
+
+        tbody.appendChild(row);
+
+    });
+}
+function resetQuestionFilters(){
+
+    document.getElementById("filterBoard").value = "";
+    document.getElementById("filterClass").value = "";
+    document.getElementById("filterSubject").value = "";
+    document.getElementById("filterDifficulty").value = "";
+
+    applyQuestionFilters();
+}
 async function deletePracticeQuestion(id){
 
     if(!confirm(
