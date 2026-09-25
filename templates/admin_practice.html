@@ -204,82 +204,580 @@ th{
     .card{padding:18px}
     .stats{grid-template-columns:1fr 1fr}
 }
-/* ================================
-   QUESTION FILTERS
-================================ */
+/* =========================================================
+   PROFESSIONAL PRACTICE QUESTION BANK
+========================================================= */
 
-.question-filters{
-    display:grid;
-    grid-template-columns:repeat(4,1fr);
-    gap:14px;
-    margin:18px 0 10px;
-    padding:18px;
-    background:linear-gradient(135deg,#f8faff,#fdf4ff);
-    border:1px solid #e0e7ff;
-    border-radius:16px;
+.question-bank-card{
+    overflow:hidden;
 }
 
-.filter-field label{
-    display:block;
-    margin-bottom:7px;
-    font-size:13px;
-    font-weight:800;
-    color:#374151;
-}
 
-.filter-field select{
-    width:100%;
-    background:#fff;
-    border:1px solid #cbd5e1;
-    border-radius:10px;
-    padding:11px 12px;
-    font-size:14px;
-}
+/* ---------- HEADER ---------- */
 
-.filter-field select:focus{
-    outline:none;
-    border-color:#6366f1;
-    box-shadow:0 0 0 3px rgba(99,102,241,.12);
-}
-
-.filter-actions{
+.question-bank-header{
     display:flex;
-    justify-content:flex-end;
+    align-items:center;
+    justify-content:space-between;
+    gap:20px;
+
+    margin-bottom:20px;
+}
+
+.question-bank-header h2{
+    margin:0 0 6px;
+
+    color:#172554;
+
+    font-size:24px;
+    font-weight:900;
+}
+
+.question-bank-header p{
+    margin:0;
+
+    color:#64748b;
+
+    font-size:13px;
+}
+
+
+.question-bank-total{
+    min-width:110px;
+
+    padding:14px 18px;
+
+    text-align:center;
+
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f5f3ff
+        );
+
+    border:1px solid #c7d2fe;
+}
+
+.question-bank-total span{
+    display:block;
+
+    color:#4338ca;
+
+    font-size:25px;
+    font-weight:900;
+}
+
+.question-bank-total small{
+    color:#64748b;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+}
+
+
+/* ---------- FILTER PANEL ---------- */
+
+.question-filter-panel{
+
+    padding:20px;
+
+    border-radius:18px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8faff,
+            #faf5ff
+        );
+
+    border:1px solid #e0e7ff;
+
+    box-shadow:
+        inset 0 1px 0 rgba(255,255,255,.8);
+
     margin-bottom:16px;
 }
 
-.filter-reset-btn{
-    background:#64748b;
-    color:#fff;
-    padding:9px 15px;
-    font-size:13px;
+
+.filter-title{
+    margin-bottom:14px;
+
+    color:#312e81;
+
+    font-size:15px;
+
+    font-weight:900;
 }
 
-.filter-reset-btn:hover{
-    background:#475569;
+
+.question-filters{
+    display:grid;
+
+    grid-template-columns:
+        repeat(4,minmax(150px,1fr));
+
+    gap:14px;
 }
+
+
+.filter-field label{
+    display:block;
+
+    margin-bottom:7px;
+
+    color:#374151;
+
+    font-size:12px;
+
+    font-weight:900;
+}
+
+
+.filter-field select{
+
+    width:100%;
+
+    padding:11px 12px;
+
+    border:1px solid #cbd5e1;
+
+    border-radius:11px;
+
+    background:#fff;
+
+    color:#1e293b;
+
+    font-size:13px;
+
+    font-weight:600;
+
+    cursor:pointer;
+
+    transition:.2s ease;
+}
+
+
+.filter-field select:hover{
+    border-color:#a5b4fc;
+}
+
+
+.filter-field select:focus{
+
+    outline:none;
+
+    border-color:#6366f1;
+
+    box-shadow:
+        0 0 0 3px
+        rgba(99,102,241,.12);
+}
+
+
+/* ---------- ACTION BUTTONS ---------- */
+
+.filter-actions{
+
+    display:flex;
+
+    justify-content:flex-end;
+
+    align-items:center;
+
+    gap:10px;
+
+    margin-top:15px;
+
+    flex-wrap:wrap;
+}
+
+
+.filter-reset-btn,
+.filter-delete-btn,
+.filter-reset-tests-btn{
+
+    padding:10px 15px;
+
+    border-radius:10px;
+
+    font-size:12px;
+
+    font-weight:800;
+
+    transition:.2s ease;
+}
+
+
+.filter-reset-btn{
+
+    background:#64748b;
+
+    color:#fff;
+}
+
+
+.filter-reset-btn:hover{
+
+    background:#475569;
+
+    transform:translateY(-1px);
+}
+
+
+.filter-delete-btn{
+
+    background:#ef4444;
+
+    color:#fff;
+}
+
+
+.filter-delete-btn:hover{
+
+    background:#dc2626;
+
+    transform:translateY(-1px);
+}
+
+
+.filter-reset-tests-btn{
+
+    background:#f97316;
+
+    color:#fff;
+}
+
+
+.filter-reset-tests-btn:hover{
+
+    background:#ea580c;
+
+    transform:translateY(-1px);
+}
+
+
+/* ---------- ACTIVE FILTER SUMMARY ---------- */
+
+.active-filter-summary{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    margin:14px 0;
+
+    padding:10px 14px;
+
+    border-radius:10px;
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    color:#475569;
+
+    font-size:12px;
+
+    font-weight:700;
+}
+
+
+.active-filter-summary::before{
+
+    content:"●";
+
+    color:#6366f1;
+
+    font-size:10px;
+}
+
+
+/* ---------- TABLE ---------- */
+
+.professional-question-table{
+
+    width:100%;
+
+    border-collapse:separate;
+
+    border-spacing:0;
+
+    min-width:1000px;
+}
+
+
+.professional-question-table thead th{
+
+    position:sticky;
+
+    top:0;
+
+    z-index:2;
+
+    padding:13px 11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f5f3ff
+        );
+
+    color:#312e81;
+
+    border-bottom:2px solid #c7d2fe;
+
+    font-size:12px;
+
+    font-weight:900;
+
+    white-space:nowrap;
+}
+
+
+.professional-question-table tbody td{
+
+    padding:13px 11px;
+
+    border-bottom:1px solid #edf0f5;
+
+    color:#334155;
+
+    font-size:13px;
+
+    vertical-align:middle;
+}
+
+
+.professional-question-table tbody tr{
+
+    transition:.18s ease;
+}
+
+
+.professional-question-table tbody tr:hover{
+
+    background:#f8faff;
+
+    box-shadow:
+        inset 3px 0 0 #6366f1;
+}
+
+
+.professional-question-table tbody tr:last-child td{
+
+    border-bottom:none;
+}
+
+
+/* ---------- QUESTION COLUMN ---------- */
+
+.professional-question-table
+.question-cell{
+
+    min-width:320px;
+
+    max-width:480px;
+
+    color:#1e293b;
+
+    line-height:1.55;
+
+    font-weight:500;
+}
+
+
+/* ---------- SUBJECT ---------- */
+
+.professional-question-table
+td:nth-child(4){
+
+    color:#312e81;
+
+    font-weight:800;
+}
+
+
+/* ---------- CLASS ---------- */
+
+.professional-question-table
+td:nth-child(3){
+
+    color:#475569;
+
+    font-weight:800;
+}
+
+
+/* ---------- ANSWER ---------- */
+
+.professional-question-table
+td:nth-child(9){
+
+    color:#047857;
+
+    font-weight:900;
+}
+
+
+/* ---------- BADGES ---------- */
+
+.professional-question-table
+.badge{
+
+    display:inline-flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    min-width:58px;
+
+    padding:5px 9px;
+
+    border-radius:999px;
+
+    font-size:10px;
+
+    font-weight:900;
+
+    text-transform:uppercase;
+}
+
+
+.professional-question-table
+.badge.easy{
+
+    background:#dbeafe;
+
+    color:#1d4ed8;
+}
+
+
+.professional-question-table
+.badge.medium{
+
+    background:#fef3c7;
+
+    color:#b45309;
+}
+
+
+.professional-question-table
+.badge.hard{
+
+    background:#fee2e2;
+
+    color:#b91c1c;
+}
+
+
+/* ---------- DELETE BUTTON ---------- */
+
+.professional-question-table
+.danger{
+
+    padding:8px 11px;
+
+    border-radius:9px;
+
+    background:#ef4444;
+
+    color:#fff;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    white-space:nowrap;
+}
+
+
+.professional-question-table
+.danger:hover{
+
+    background:#dc2626;
+
+    transform:translateY(-1px);
+}
+
+
+/* ---------- EMPTY ---------- */
+
+.professional-question-table
+.empty{
+
+    padding:45px 20px;
+
+    text-align:center;
+
+    color:#64748b;
+
+    font-size:14px;
+
+    font-weight:700;
+}
+
+
+/* ---------- RESPONSIVE ---------- */
 
 @media(max-width:900px){
 
+    .question-bank-header{
+
+        align-items:flex-start;
+
+        flex-direction:column;
+    }
+
+
+    .question-bank-total{
+
+        width:100%;
+    }
+
+
     .question-filters{
-        grid-template-columns:repeat(2,1fr);
+
+        grid-template-columns:
+            repeat(2,1fr);
     }
 
 }
 
-@media(max-width:550px){
+
+@media(max-width:600px){
 
     .question-filters{
+
         grid-template-columns:1fr;
     }
 
+
     .filter-actions{
-        justify-content:stretch;
+
+        flex-direction:column;
+
+        align-items:stretch;
     }
 
-    .filter-reset-btn{
+
+    .filter-reset-btn,
+    .filter-delete-btn,
+    .filter-reset-tests-btn{
+
         width:100%;
     }
+
+}
 
 }
 </style>
@@ -481,108 +979,303 @@ th{
         </div>
     </div>
 
-    <!-- EXISTING QUESTIONS -->
-    <div class="card">
-        <h2>📋 Existing Practice Questions</h2>
-    <div style="margin:12px 0 18px;display:flex;justify-content:flex-end;">
+   <!-- =========================================================
+     EXISTING PRACTICE QUESTIONS
+========================================================= -->
 
-    <!-- QUESTION FILTERS -->
-<div class="question-filters">
+<div class="card question-bank-card">
 
-    <div class="filter-field">
-        <label>Board</label>
-        <select id="filterBoard" onchange="applyQuestionFilters()">
-            <option value="">All Boards</option>
-            <option value="CBSE">CBSE</option>
-            <option value="State Board">State Board</option>
-            <option value="Matric">Matric</option>
-        </select>
+    <!-- HEADER -->
+    <div class="question-bank-header">
+
+        <div>
+            <h2>📋 Practice Question Bank</h2>
+
+            <p>
+                Browse, filter and manage questions by
+                Board, Class, Subject and Difficulty.
+            </p>
+        </div>
+
+        <div class="question-bank-total">
+            <span id="filteredQuestionCount">0</span>
+            <small>Questions</small>
+        </div>
+
     </div>
 
-    <div class="filter-field">
-        <label>Class</label>
-        <select id="filterClass" onchange="applyQuestionFilters()">
-            <option value="">All Classes</option>
-            <option value="Class 9">Class 9</option>
-            <option value="Class 10">Class 10</option>
-            <option value="Class 11">Class 11</option>
-            <option value="Class 12">Class 12</option>
-        </select>
+
+    <!-- FILTER PANEL -->
+    <div class="question-filter-panel">
+
+        <div class="filter-title">
+            🔎 Filter Questions
+        </div>
+
+
+        <div class="question-filters">
+
+            <!-- BOARD -->
+            <div class="filter-field">
+
+                <label>
+                    🏫 Board
+                </label>
+
+                <select
+                    id="filterBoard"
+                    onchange="applyQuestionFilters()">
+
+                    <option value="">
+                        All Boards
+                    </option>
+
+                    <option value="CBSE">
+                        CBSE
+                    </option>
+
+                    <option value="State Board">
+                        State Board
+                    </option>
+
+                    <option value="Matric">
+                        Matric
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- CLASS -->
+            <div class="filter-field">
+
+                <label>
+                    🎓 Class
+                </label>
+
+                <select
+                    id="filterClass"
+                    onchange="applyQuestionFilters()">
+
+                    <option value="">
+                        All Classes
+                    </option>
+
+                    <option value="9">
+                        Class 9
+                    </option>
+
+                    <option value="10">
+                        Class 10
+                    </option>
+
+                    <option value="11">
+                        Class 11
+                    </option>
+
+                    <option value="12">
+                        Class 12
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- SUBJECT -->
+            <div class="filter-field">
+
+                <label>
+                    📚 Subject
+                </label>
+
+                <select
+                    id="filterSubject"
+                    onchange="applyQuestionFilters()">
+
+                    <option value="">
+                        All Subjects
+                    </option>
+
+                    <option value="Mathematics">
+                        Mathematics
+                    </option>
+
+                    <option value="Science">
+                        Science
+                    </option>
+
+                    <option value="Biology">
+                        Biology
+                    </option>
+
+                    <option value="Social Science">
+                        Social Science
+                    </option>
+
+                    <option value="Physics">
+                        Physics
+                    </option>
+
+                    <option value="Chemistry">
+                        Chemistry
+                    </option>
+
+                    <option value="English">
+                        English
+                    </option>
+
+                    <option value="Tamil">
+                        Tamil
+                    </option>
+
+                    <option value="Computer Science">
+                        Computer Science
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- DIFFICULTY -->
+            <div class="filter-field">
+
+                <label>
+                    🎯 Difficulty
+                </label>
+
+                <select
+                    id="filterDifficulty"
+                    onchange="applyQuestionFilters()">
+
+                    <option value="">
+                        All Levels
+                    </option>
+
+                    <option value="easy">
+                        Easy
+                    </option>
+
+                    <option value="medium">
+                        Medium
+                    </option>
+
+                    <option value="hard">
+                        Hard
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- FILTER ACTIONS -->
+
+        <div class="filter-actions">
+
+            <button
+                type="button"
+                class="filter-reset-btn"
+                onclick="resetQuestionFilters()">
+
+                🔄 Reset Filters
+
+            </button>
+
+            <button
+                type="button"
+                class="danger filter-delete-btn"
+                onclick="deleteAllPracticeQuestions()">
+
+                🗑️ Delete All Questions
+
+            </button>
+
+            <button
+                type="button"
+                class="danger filter-reset-tests-btn"
+                onclick="resetActivePracticeSessions()">
+
+                🔄 Reset Active Tests
+
+            </button>
+
+        </div>
+
     </div>
 
-    <div class="filter-field">
-        <label>Subject</label>
-        <select id="filterSubject" onchange="applyQuestionFilters()">
-            <option value="">All Subjects</option>
-            <option value="Mathematics">Mathematics</option>
-            <option value="Science">Science</option>
-            <option value="Biology">Biology</option>
-            <option value="Social Science">Social Science</option>
-        </select>
+
+    <!-- ACTIVE FILTER SUMMARY -->
+
+    <div
+        id="activeFilterSummary"
+        class="active-filter-summary">
+
+        Showing all practice questions
+
     </div>
 
-    <div class="filter-field">
-        <label>Difficulty</label>
-        <select id="filterDifficulty" onchange="applyQuestionFilters()">
-            <option value="">All Levels</option>
-            <option value="easy">Easy</option>
-            <option value="medium">Medium</option>
-            <option value="hard">Hard</option>
-        </select>
+
+    <!-- QUESTION TABLE -->
+
+    <div class="table-wrap">
+
+        <table class="professional-question-table">
+
+            <thead>
+
+                <tr>
+
+                    <th>ID</th>
+
+                    <th>Board</th>
+
+                    <th>Class</th>
+
+                    <th>Subject</th>
+
+                    <th>Topic</th>
+
+                    <th>Subtopic</th>
+
+                    <th>Difficulty</th>
+
+                    <th>Question</th>
+
+                    <th>Answer</th>
+
+                    <th>Action</th>
+
+                </tr>
+
+            </thead>
+
+
+            <tbody id="practiceQuestionTable">
+
+                <tr>
+
+                    <td
+                        colspan="10"
+                        class="empty">
+
+                        ⏳ Loading questions...
+
+                    </td>
+
+                </tr>
+
+            </tbody>
+
+        </table>
+
     </div>
 
 </div>
-
-    <div class="filter-actions">
-        <button
-            type="button"
-            class="filter-reset-btn"
-            onclick="resetQuestionFilters()">
-            🔄 Reset Filters
-        </button>
-    </div>
-        <button
-            type="button"
-            class="danger"
-            style="padding:10px 16px;font-size:14px;"
-            onclick="deleteAllPracticeQuestions()">
-            🗑️ Delete All Questions
-        </button>
-         <button
-            type="button"
-            class="danger"
-            style="padding:10px 16px;font-size:14px;"
-            onclick="resetActivePracticeSessions()">
-            🔄 Reset Active Tests
-        </button>
-     </div>
-        <div class="table-wrap">
-            <table>
-                <thead>
-                    <tr>
-                        <th>ID</th>
-                        <th>Board</th>
-                        <th>Class</th>
-                        <th>Subject</th>
-                        <th>Topic</th>
-                        <th>Subtopic</th>
-                        <th>Difficulty</th>
-                        <th>Question</th>
-                        <th>Answer</th>
-                        <th>Action</th>
-                    </tr>
-                </thead>
-
-                <tbody id="practiceQuestionTable">
-                    <tr>
-                        <td colspan="10" class="empty">
-                            Loading questions...
-                        </td>
-                    </tr>
-                </tbody>
-            </table>
-        </div>
-    </div>
 
 </div>
 
@@ -902,106 +1595,328 @@ async function loadPracticeQuestions(){
 function applyQuestionFilters(){
 
     const tbody =
-        document.getElementById("practiceQuestionTable");
+        document.getElementById(
+            "practiceQuestionTable"
+        );
+
 
     const board =
-        document.getElementById("filterBoard").value;
+        document.getElementById(
+            "filterBoard"
+        ).value.trim();
+
 
     const className =
-        document.getElementById("filterClass").value;
+        document.getElementById(
+            "filterClass"
+        ).value.trim();
+
 
     const subject =
-        document.getElementById("filterSubject").value;
+        document.getElementById(
+            "filterSubject"
+        ).value.trim();
+
 
     const difficulty =
-        document.getElementById("filterDifficulty").value;
+        document.getElementById(
+            "filterDifficulty"
+        ).value.trim().toLowerCase();
+
+
+    /*
+     * Normalize class values.
+     *
+     * Database may contain:
+     *     10
+     *     Class 10
+     *
+     * Both should be treated as Class 10.
+     */
+    function normalizeClass(value){
+
+        if(value === null ||
+           value === undefined){
+
+            return "";
+        }
+
+        return String(value)
+            .trim()
+            .replace(/^class\s*/i,"")
+            .trim();
+
+    }
+
 
     const filtered =
         allPracticeQuestions.filter(function(q){
 
+            const questionClass =
+                normalizeClass(
+                    q.class_name
+                );
+
+
+            const selectedClass =
+                normalizeClass(
+                    className
+                );
+
+
+            const questionDifficulty =
+                String(
+                    q.difficulty || ""
+                )
+                .trim()
+                .toLowerCase();
+
+
             return (
-                (!board || q.board === board) &&
-                (!className || q.class_name === className) &&
-                (!subject || q.subject === subject) &&
-                (!difficulty || q.difficulty === difficulty)
+
+                (!board ||
+                 String(q.board || "")
+                     .trim() === board)
+
+                &&
+
+                (!selectedClass ||
+                 questionClass === selectedClass)
+
+                &&
+
+                (!subject ||
+                 String(q.subject || "")
+                     .trim() === subject)
+
+                &&
+
+                (!difficulty ||
+                 questionDifficulty === difficulty)
+
             );
 
         });
 
+
+    /* ---------- QUESTION COUNT ---------- */
+
+    const countElement =
+        document.getElementById(
+            "filteredQuestionCount"
+        );
+
+    if(countElement){
+
+        countElement.textContent =
+            filtered.length;
+
+    }
+
+
+    /* ---------- FILTER SUMMARY ---------- */
+
+    const summary =
+        document.getElementById(
+            "activeFilterSummary"
+        );
+
+
+    if(summary){
+
+        const parts = [];
+
+
+        if(board){
+
+            parts.push(
+                "🏫 " + board
+            );
+
+        }
+
+
+        if(className){
+
+            parts.push(
+                "🎓 Class " +
+                normalizeClass(className)
+            );
+
+        }
+
+
+        if(subject){
+
+            parts.push(
+                "📚 " + subject
+            );
+
+        }
+
+
+        if(difficulty){
+
+            parts.push(
+                "🎯 " +
+                difficulty.charAt(0).toUpperCase() +
+                difficulty.slice(1)
+            );
+
+        }
+
+
+        summary.textContent =
+            parts.length
+                ? "Showing: " + parts.join("  •  ")
+                : "Showing all practice questions";
+
+    }
+
+
+    /* ---------- NO RESULTS ---------- */
+
     if(filtered.length === 0){
 
         tbody.innerHTML = `
+
             <tr>
-                <td colspan="10" class="empty">
-                    🔍 No questions found for the selected filters.
+
+                <td
+                    colspan="10"
+                    class="empty">
+
+                    🔍 No questions found
+                    for the selected filters.
+
                 </td>
+
             </tr>
+
         `;
 
         return;
+
     }
+
+
+    /* ---------- RENDER ---------- */
 
     tbody.innerHTML = "";
 
-    filtered.forEach(function(q, index){
+
+    filtered.forEach(function(q,index){
 
         const row =
             document.createElement("tr");
 
+
         row.innerHTML = `
-            <td>${index + 1}</td>
 
             <td>
-                ${escapeHTML(q.board)}
+                ${index + 1}
             </td>
 
+
             <td>
-                ${escapeHTML(q.class_name)}
+                ${escapeHTML(
+                    q.board
+                )}
             </td>
+
+
+            <td>
+                Class
+                ${escapeHTML(
+                    normalizeClass(
+                        q.class_name
+                    )
+                )}
+            </td>
+
 
             <td>
                 <strong>
-                    ${escapeHTML(q.subject)}
+                    ${escapeHTML(
+                        q.subject
+                    )}
                 </strong>
             </td>
 
-            <td>
-                ${escapeHTML(q.topic)}
-            </td>
 
             <td>
-                ${escapeHTML(q.subtopic)}
+                ${escapeHTML(
+                    q.topic
+                )}
             </td>
 
+
             <td>
-                <span class="badge ${escapeHTML(q.difficulty)}">
-                    ${escapeHTML(q.difficulty)}
+                ${escapeHTML(
+                    q.subtopic
+                )}
+            </td>
+
+
+            <td>
+
+                <span
+                    class="badge
+                    ${escapeHTML(
+                        q.difficulty
+                    )}">
+
+                    ${escapeHTML(
+                        q.difficulty
+                    )}
+
                 </span>
+
             </td>
+
 
             <td class="question-cell">
-                ${escapeHTML(q.question)}
+
+                ${escapeHTML(
+                    q.question
+                )}
+
             </td>
 
+
             <td>
+
                 <strong>
-                    ${escapeHTML(q.correct_answer)}
+                    ${escapeHTML(
+                        q.correct_answer
+                    )}
                 </strong>
+
             </td>
 
+
             <td>
+
                 <button
                     type="button"
                     class="danger"
-                    onclick="deletePracticeQuestion(${Number(q.id)})">
+                    onclick="deletePracticeQuestion(
+                        ${Number(q.id)}
+                    )">
+
                     🗑️ Delete
+
                 </button>
+
             </td>
+
         `;
+
 
         tbody.appendChild(row);
 
     });
+
 }
 function resetQuestionFilters(){
 
