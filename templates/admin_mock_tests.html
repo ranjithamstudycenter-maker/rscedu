@@ -1497,6 +1497,357 @@ tbody tr:last-child td{
         width:100%;
     }
 /* =========================================================
+   NEW MOCK UPLOAD BUILDER
+========================================================= */
+
+.mock-selection-summary{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(3,1fr);
+
+    gap:12px;
+
+    margin-top:18px;
+
+    padding:15px;
+
+    border-radius:14px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #faf5ff
+        );
+
+    border:1px solid #c7d2fe;
+}
+
+
+.summary-item{
+
+    padding:12px 14px;
+
+    border-radius:11px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+}
+
+
+.summary-item span{
+
+    display:block;
+
+    color:#64748b;
+
+    font-size:10px;
+
+    font-weight:800;
+
+    text-transform:uppercase;
+
+    margin-bottom:4px;
+}
+
+
+.summary-item strong{
+
+    display:block;
+
+    color:#312e81;
+
+    font-size:13px;
+
+    font-weight:900;
+}
+
+
+/* =========================================================
+   CHAPTER UPLOAD LIST
+========================================================= */
+
+.chapter-upload-list{
+
+    display:flex;
+
+    flex-direction:column;
+
+    gap:12px;
+
+    margin-top:20px;
+}
+
+
+.chapter-upload-row{
+
+    display:grid;
+
+    grid-template-columns:
+        55px
+        minmax(180px,1fr)
+        minmax(240px,1.5fr)
+        auto
+        120px;
+
+    align-items:center;
+
+    gap:14px;
+
+    padding:14px 16px;
+
+    border-radius:14px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+
+    transition:.2s ease;
+}
+
+
+.chapter-upload-row:hover{
+
+    border-color:#a5b4fc;
+
+    box-shadow:
+        0 8px 20px
+        rgba(79,70,229,.08);
+}
+
+
+.chapter-number{
+
+    width:38px;
+
+    height:38px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:11px;
+
+    background:#eef2ff;
+
+    color:#4338ca;
+
+    font-size:13px;
+
+    font-weight:900;
+}
+
+
+.chapter-name{
+
+    color:#172554;
+
+    font-size:13px;
+
+    font-weight:900;
+}
+
+
+.chapter-description{
+
+    color:#64748b;
+
+    font-size:11px;
+
+}
+
+
+.chapter-file{
+
+    width:100%;
+
+    font-size:11px;
+}
+
+
+.chapter-add-btn{
+
+    white-space:nowrap;
+}
+
+
+.chapter-status{
+
+    font-size:10px;
+
+    font-weight:800;
+
+    color:#64748b;
+
+    text-align:right;
+}
+
+
+.chapter-status.success{
+
+    color:#16a34a;
+}
+
+
+.chapter-status.error{
+
+    color:#dc2626;
+}
+
+
+/* =========================================================
+   FOUR CHAPTER / FINAL UPLOAD
+========================================================= */
+
+.mock-excel-box{
+
+    padding:18px;
+
+    border-radius:15px;
+
+    background:#fff;
+
+    border:1px solid #e0e7ff;
+}
+
+
+.final-test-upload-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+    margin-top:20px;
+
+    padding:20px;
+
+    border-radius:16px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #fff7ed,
+            #fffbeb
+        );
+
+    border:1px solid #fed7aa;
+}
+
+
+.final-test-upload-content{
+
+    flex:1;
+}
+
+
+.final-test-upload-content strong{
+
+    display:block;
+
+    color:#9a3412;
+
+    font-size:15px;
+
+    font-weight:900;
+}
+
+
+.final-test-upload-content span{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:#78716c;
+
+    font-size:11px;
+}
+
+
+.empty-upload-message{
+
+    padding:18px;
+
+    text-align:center;
+
+    border-radius:13px;
+
+    background:#f8fafc;
+
+    border:1px dashed #cbd5e1;
+
+    color:#64748b;
+
+    font-size:12px;
+
+    font-weight:700;
+}
+
+
+@media(max-width:1000px){
+
+    .chapter-upload-row{
+
+        grid-template-columns:
+            45px
+            1fr
+            1fr;
+    }
+
+    .chapter-add-btn{
+
+        width:100%;
+    }
+
+    .chapter-status{
+
+        text-align:left;
+    }
+
+}
+
+
+@media(max-width:700px){
+
+    .mock-selection-summary{
+
+        grid-template-columns:1fr;
+    }
+
+    .chapter-upload-row{
+
+        grid-template-columns:1fr;
+
+        gap:10px;
+    }
+
+    .chapter-number{
+
+        width:42px;
+    }
+
+    .chapter-status{
+
+        text-align:left;
+    }
+
+    .final-test-upload-card{
+
+        flex-direction:column;
+
+        align-items:flex-start;
+    }
+
+}
+
+/* =========================================================
    MOCK TEST STRUCTURE
 ========================================================= */
 
@@ -1728,20 +2079,20 @@ tbody tr:last-child td{
 </div>
 
 <!-- =========================================================
-     EXCEL IMPORT
+     MOCK TEST BUILDER
 ========================================================= -->
 
-<div class="card">
+<div class="card mock-management-card">
 
     <div class="section-heading">
 
         <div class="section-heading-left">
 
-            <h2>📥 Import Mock Questions</h2>
+            <h2>🏆 Mock Test Builder</h2>
 
             <p>
-                Upload multiple mock-test questions
-                directly from an Excel file.
+                Select Board, Class and Subject, then upload
+                questions according to the Mock Test category.
             </p>
 
         </div>
@@ -1749,79 +2100,430 @@ tbody tr:last-child td{
     </div>
 
 
-    <div class="excel-upload-box">
+    <!-- =====================================================
+         BASIC SYLLABUS SELECTION
+    ====================================================== -->
 
-        <h3>📊 Excel Question Import</h3>
+    <div class="mock-structure-section">
 
-        <p>
-            Required columns:
-            <b>
-                Board, Class, Subject, Chapter,
-                Question, A, B, C, D, Answer
-            </b>.
-            Optional:
-            <b>Explanation, Hint</b>.
-        </p>
+        <div class="mock-structure-title">
+            📚 Select Syllabus
+        </div>
 
 
-        <div class="excel-file-row">
+        <div class="mock-form-grid">
 
-           <input
-                type="file"
-                id="mockExcelFile"
-                accept=".xlsx,.xls">
-            
-            <button
-                class="green"
-                type="button"
-                onclick="importMockExcel()">
-            
-                📥 Import Questions
-            
-            </button>
+            <!-- BOARD -->
+
+            <div class="form-field">
+
+                <label>
+                    🏫 Board
+                </label>
+
+                <select
+                    id="mqBoard"
+                    onchange="loadMockClasses()">
+
+                    <option value="">
+                        Select Board
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- CLASS -->
+
+            <div class="form-field">
+
+                <label>
+                    🎓 Class
+                </label>
+
+                <select
+                    id="mqClass"
+                    onchange="loadMockSubjects()"
+                    disabled>
+
+                    <option value="">
+                        Select Class
+                    </option>
+
+                </select>
+
+            </div>
+
+
+            <!-- SUBJECT -->
+
+            <div class="form-field">
+
+                <label>
+                    📚 Subject
+                </label>
+
+                <select
+                    id="mqSubject"
+                    onchange="loadMockChapters()"
+                    disabled>
+
+                    <option value="">
+                        Select Subject
+                    </option>
+
+                </select>
+
+            </div>
+
+        </div>
+
+
+        <!-- SELECTED SYLLABUS SUMMARY -->
+
+        <div
+            id="mockSelectionSummary"
+            class="mock-selection-summary"
+            style="display:none;">
+
+            <div class="summary-item">
+                <span>🏫 Board</span>
+                <strong id="summaryBoard">—</strong>
+            </div>
+
+            <div class="summary-item">
+                <span>🎓 Class</span>
+                <strong id="summaryClass">—</strong>
+            </div>
+
+            <div class="summary-item">
+                <span>📚 Subject</span>
+                <strong id="summarySubject">—</strong>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         MOCK TYPE
+    ====================================================== -->
+
+    <div
+        class="mock-type-section"
+        id="mockTypeSection"
+        style="display:none;">
+
+        <div class="mock-type-title">
+            🎯 Select Mock Test Type
+        </div>
+
+
+        <div class="mock-type-grid">
+
+
+            <!-- CHAPTER-WISE -->
+
+            <label
+                class="mock-type-option active"
+                onclick="selectMockAdminType('chapter',this)">
+
+                <input
+                    type="radio"
+                    name="mockAdminType"
+                    value="chapter">
+
+                <div class="mock-type-icon">
+                    📘
+                </div>
+
+                <strong>
+                    Chapter-wise Mock
+                </strong>
+
+                <span>
+                    One Excel file for each chapter.
+                    You can add chapters later.
+                </span>
+
+            </label>
+
+
+            <!-- 4-CHAPTER -->
+
+            <label
+                class="mock-type-option"
+                onclick="selectMockAdminType('four_chapter',this)">
+
+                <input
+                    type="radio"
+                    name="mockAdminType"
+                    value="four_chapter">
+
+                <div class="mock-type-icon">
+                    📚
+                </div>
+
+                <strong>
+                    4-Chapter Mock
+                </strong>
+
+                <span>
+                    Select four chapters and upload
+                    one Excel question paper.
+                </span>
+
+            </label>
+
+
+            <!-- FINAL TEST -->
+
+            <label
+                class="mock-type-option"
+                onclick="selectMockAdminType('full_syllabus',this)">
+
+                <input
+                    type="radio"
+                    name="mockAdminType"
+                    value="full_syllabus">
+
+                <div class="mock-type-icon">
+                    🏆
+                </div>
+
+                <strong>
+                    Final Test
+                </strong>
+
+                <span>
+                    One Excel file containing
+                    the complete syllabus.
+                </span>
+
+            </label>
+
+
+        </div>
+
+    </div>
+
+
+    <!-- =====================================================
+         CHAPTER-WISE UPLOAD
+    ====================================================== -->
+
+    <div
+        id="chapterMockPanel"
+        class="mock-upload-panel"
+        style="display:none;">
+
+        <div class="upload-panel-header">
+
+            <h3>
+                📘 Chapter-wise Mock Questions
+            </h3>
+
+            <p>
+                Each chapter has its own Excel question paper.
+                Select a file and click Add.
+            </p>
 
         </div>
 
 
         <div
-            id="mockImportMessage"
-            class="message">
+            id="chapterUploadList"
+            class="chapter-upload-list">
+
+            <div class="empty-upload-message">
+                Select Board, Class and Subject first.
+            </div>
+
         </div>
 
     </div>
 
-</div>
 
-<!-- =========================================================
-     ADD MOCK QUESTION
-========================================================= -->
+    <!-- =====================================================
+         4-CHAPTER UPLOAD
+    ====================================================== -->
 
-<div class="card">
+    <div
+        id="fourChapterMockPanel"
+        class="mock-upload-panel"
+        style="display:none;">
 
-    <div class="section-heading">
+        <div class="upload-panel-header">
 
-        <div class="section-heading-left">
-
-            <h2>➕ Add Mock Test Question</h2>
+            <h3>
+                📚 4-Chapter Mock Questions
+            </h3>
 
             <p>
-                Add a question to a Chapter-wise,
-                4-Chapter or Full-Syllabus Mock Test.
+                Select exactly four chapters and upload
+                one Excel question paper containing mixed
+                questions from those four chapters.
             </p>
 
         </div>
 
+
+        <div class="four-chapter-select-grid">
+
+            <select id="mqFourChapter1">
+                <option value="">
+                    Select Chapter 1
+                </option>
+            </select>
+
+            <select id="mqFourChapter2">
+                <option value="">
+                    Select Chapter 2
+                </option>
+            </select>
+
+            <select id="mqFourChapter3">
+                <option value="">
+                    Select Chapter 3
+                </option>
+            </select>
+
+            <select id="mqFourChapter4">
+                <option value="">
+                    Select Chapter 4
+                </option>
+            </select>
+
+        </div>
+
+
+        <div class="mock-excel-box">
+
+            <div class="excel-upload-icon">
+                📊
+            </div>
+
+            <div class="excel-upload-content">
+
+                <h3>
+                    Upload 4-Chapter Excel
+                </h3>
+
+                <p>
+                    The Excel file should contain mixed
+                    questions from the four selected chapters.
+                </p>
+
+                <div class="excel-upload-action">
+
+                    <input
+                        type="file"
+                        id="fourChapterExcelFile"
+                        accept=".xlsx,.xls">
+
+                    <button
+                        type="button"
+                        class="green"
+                        onclick="uploadFourChapterMock()">
+
+                        ➕ Add 4-Chapter Mock
+
+                    </button>
+
+                </div>
+
+                <div
+                    id="fourChapterUploadStatus"
+                    class="message">
+                </div>
+
+            </div>
+
+        </div>
+
     </div>
 
 
-    <div class="note">
+    <!-- =====================================================
+         FINAL TEST UPLOAD
+    ====================================================== -->
 
-        💡 Mock Tests contain
-        <b>mixed Easy, Medium and Hard questions</b>.
-        Difficulty is not selected separately here.
+    <div
+        id="finalTestMockPanel"
+        class="mock-upload-panel"
+        style="display:none;">
+
+        <div class="upload-panel-header">
+
+            <h3>
+                🏆 Final Test — Full Syllabus
+            </h3>
+
+            <p>
+                Upload one Excel question paper containing
+                mixed questions from the complete syllabus.
+            </p>
+
+        </div>
+
+
+        <div class="final-test-upload-card">
+
+            <div class="final-test-icon">
+                🏆
+            </div>
+
+            <div class="final-test-upload-content">
+
+                <strong>
+                    Full Syllabus Question Paper
+                </strong>
+
+                <span>
+                    One Excel file only.
+                </span>
+
+                <div class="excel-upload-action">
+
+                    <input
+                        type="file"
+                        id="finalSyllabusExcelFile"
+                        accept=".xlsx,.xls">
+
+                    <button
+                        type="button"
+                        class="green"
+                        onclick="uploadFinalSyllabusMock()">
+
+                        ➕ Add Final Test
+
+                    </button>
+
+                </div>
+
+                <div
+                    id="finalTestUploadStatus"
+                    class="message">
+                </div>
+
+            </div>
+
+        </div>
 
     </div>
 
+
+    <!-- GLOBAL MESSAGE -->
+
+    <div
+        id="mockCategoryMessage"
+        class="message">
+    </div>
+
+</div>
+    
 
     <!-- BASIC DETAILS -->
 
@@ -3394,6 +4096,8 @@ function loadMockSubjects(){
     subjectSelect.disabled =
         subjects.length === 0;
 
+    updateMockSelectionSummary();
+
 }
 async function loadMockChapters(){
 
@@ -3482,6 +4186,17 @@ async function loadMockChapters(){
 
                 })
                 .filter(Boolean);
+        if(selectedMockAdminType === "chapter"){
+
+            renderChapterUploadList();
+
+        }
+
+        if(selectedMockAdminType === "four_chapter"){
+
+            populateFourChapterSelectors();
+
+        }
 
 
         populateMockChapterDropdowns();
@@ -3503,194 +4218,17 @@ async function loadMockChapters(){
     }
 
 }
-function populateMockChapterDropdowns(){
-
-    const chapterDropdown =
-        document.getElementById("mqChapter");
-
-
-    const chapter1 =
-        document.getElementById("mqChapter1");
-
-    const chapter2 =
-        document.getElementById("mqChapter2");
-
-    const chapter3 =
-        document.getElementById("mqChapter3");
-
-    const chapter4 =
-        document.getElementById("mqChapter4");
-
-
-    /* ---------------------------------------------
-       CHAPTER-WISE
-    --------------------------------------------- */
-
-    if(chapterDropdown){
-
-        chapterDropdown.innerHTML =
-            '<option value="">Select Chapter</option>';
-
-        mockChapterOptions.forEach(function(chapter){
-
-            const option =
-                document.createElement("option");
-
-            option.value = chapter;
-            option.textContent = chapter;
-
-            chapterDropdown.appendChild(option);
-
-        });
-
-        chapterDropdown.disabled =
-            mockChapterOptions.length === 0;
-    }
-
-
-    /* ---------------------------------------------
-       4-CHAPTER
-    --------------------------------------------- */
-
-    [
-        chapter1,
-        chapter2,
-        chapter3,
-        chapter4
-    ].forEach(function(dropdown, index){
-
-        if(!dropdown){
-            return;
-        }
-
-        dropdown.innerHTML =
-            `<option value="">Select Chapter ${index + 1}</option>`;
-
-        mockChapterOptions.forEach(function(chapter){
-
-            const option =
-                document.createElement("option");
-
-            option.value = chapter;
-            option.textContent = chapter;
-
-            dropdown.appendChild(option);
-
-        });
-
-        dropdown.disabled =
-            mockChapterOptions.length === 0;
-
-    });
-
-}
-function resetMockChapterSelections(){
-
-    mockChapterOptions = [];
-
-
-    const ids = [
-        "mqChapter",
-        "mqChapter1",
-        "mqChapter2",
-        "mqChapter3",
-        "mqChapter4"
-    ];
-
-
-    ids.forEach(function(id){
-
-        const element =
-            document.getElementById(id);
-
-        if(!element){
-            return;
-        }
-
-        element.innerHTML =
-            '<option value="">Select Chapter</option>';
-
-        element.disabled = true;
-
-    });
-
-}
-function validateFourChapterSelection(){
-
-    const ids = [
-        "mqChapter1",
-        "mqChapter2",
-        "mqChapter3",
-        "mqChapter4"
-    ];
-
-
-    const values = ids
-        .map(function(id){
-
-            const element =
-                document.getElementById(id);
-
-            return element
-                ? element.value
-                : "";
-
-        })
-        .filter(Boolean);
-
-
-    const duplicates =
-        values.filter(function(value,index){
-
-            return values.indexOf(value) !== index;
-
-        });
-
-
-    if(duplicates.length){
-
-        alert(
-            "⚠️ Please select four different chapters."
-        );
-
-
-        ids.forEach(function(id){
-
-            const element =
-                document.getElementById(id);
-
-            if(
-                element &&
-                element.value === duplicates[0]
-            ){
-
-                element.value = "";
-
-            }
-
-        });
-
-    }
-
-}
-
-async function importMockExcel(){
-
-    const fileInput =
-        document.getElementById("mockExcelFile");
-
-    const messageBox =
-        document.getElementById("mockImportMessage");
-
-    if(!fileInput || !fileInput.files.length){
-
-        alert("⚠️ Please select an Excel file.");
-
-        return;
-    }
-
-    const file =
-        fileInput.files[0];
+/* =========================================================
+   COMMON MOCK EXCEL UPLOAD
+========================================================= */
+
+async function uploadMockExcelFile(
+    file,
+    mockType,
+    chapterScope,
+    statusElement,
+    buttonElement
+){
 
     const board =
         document.getElementById("mqBoard")?.value.trim();
@@ -3701,176 +4239,102 @@ async function importMockExcel(){
     const subject =
         document.getElementById("mqSubject")?.value.trim();
 
-    if(!board){
 
-        alert("⚠️ Please select Board.");
+    if(!board || !className || !subject){
 
-        return;
-    }
-
-    if(!className){
-
-        alert("⚠️ Please select Class.");
-
-        return;
-    }
-
-    if(!subject){
-
-        alert("⚠️ Please select Subject.");
-
-        return;
-    }
-
-    /* ---------------------------------------------
-       MOCK TYPE
-    --------------------------------------------- */
-
-    const selectedType =
-        document.querySelector(
-            'input[name="mockType"]:checked'
+        alert(
+            "⚠️ Please select Board, Class and Subject first."
         );
 
-    if(!selectedType){
+        return;
 
-        alert("⚠️ Please select Mock Test Type.");
+    }
+
+
+    if(!file){
+
+        alert(
+            "⚠️ Please select an Excel file."
+        );
 
         return;
-    }
 
-    const mockType =
-        selectedType.value;
-
-
-    /* ---------------------------------------------
-       CHAPTER SCOPE
-    --------------------------------------------- */
-
-    let chapterScope = "";
-
-    if(mockType === "chapter"){
-
-        const chapter =
-            document.getElementById("mqChapter")?.value.trim();
-
-        if(!chapter){
-
-            alert("⚠️ Please select a chapter.");
-
-            return;
-        }
-
-        chapterScope = chapter;
     }
 
 
-    if(mockType === "four_chapter"){
+    if(
+        !file.name.toLowerCase().endsWith(".xlsx") &&
+        !file.name.toLowerCase().endsWith(".xls")
+    ){
 
-        const chapterIds = [
-            "mqChapter1",
-            "mqChapter2",
-            "mqChapter3",
-            "mqChapter4"
-        ];
+        alert(
+            "⚠️ Please select an Excel file (.xlsx or .xls)."
+        );
 
-        const chapters =
-            chapterIds
-                .map(function(id){
+        return;
 
-                    const element =
-                        document.getElementById(id);
-
-                    return element
-                        ? element.value.trim()
-                        : "";
-
-                })
-                .filter(Boolean);
-
-
-        if(chapters.length !== 4){
-
-            alert(
-                "⚠️ Please select all four chapters."
-            );
-
-            return;
-        }
-
-
-        const uniqueChapters =
-            [...new Set(chapters)];
-
-        if(uniqueChapters.length !== 4){
-
-            alert(
-                "⚠️ Please select four different chapters."
-            );
-
-            return;
-        }
-
-        chapterScope =
-            chapters.join(" | ");
     }
 
 
-    if(mockType === "full_syllabus"){
+    if(buttonElement){
 
-        chapterScope =
-            "FULL_SYLLABUS";
+        buttonElement.disabled = true;
+
+        buttonElement.textContent =
+            "⏳ Uploading...";
+
     }
 
 
-    /* ---------------------------------------------
-       FORM DATA
-    --------------------------------------------- */
+    if(statusElement){
+
+        statusElement.className =
+            "chapter-status";
+
+        statusElement.textContent =
+            "Uploading...";
+
+    }
+
 
     const formData =
         new FormData();
+
 
     formData.append(
         "excel_file",
         file
     );
 
+
     formData.append(
         "mock_type",
         mockType
     );
+
 
     formData.append(
         "board",
         board
     );
 
+
     formData.append(
         "class_name",
         className
     );
+
 
     formData.append(
         "subject",
         subject
     );
 
+
     formData.append(
         "chapter_scope",
         chapterScope
     );
-
-
-    /* ---------------------------------------------
-       UI
-    --------------------------------------------- */
-
-    if(messageBox){
-
-        messageBox.style.display = "block";
-
-        messageBox.innerHTML =
-            "⏳ Importing questions...";
-    }
 
 
     try{
@@ -3889,104 +4353,700 @@ async function importMockExcel(){
             await response.json();
 
 
-        if(!response.ok || !data.success){
+        if(
+            !response.ok ||
+            !data.success
+        ){
 
             throw new Error(
                 data.error ||
-                "Excel import failed."
+                "Excel upload failed."
             );
+
         }
 
 
-        /* -----------------------------------------
-           SUCCESS MESSAGE
-        ----------------------------------------- */
+        if(statusElement){
 
-        let message =
-            "✅ Excel imported successfully.";
+            statusElement.className =
+                "chapter-status success";
 
-        if(
-            typeof data.imported !== "undefined"
-        ){
+            statusElement.textContent =
+                `✅ ${data.imported || 0} questions added`;
 
-            message +=
-                `<br>Imported: ${data.imported}`;
         }
 
-        if(
-            typeof data.skipped !== "undefined"
-        ){
 
-            message +=
-                `<br>Skipped: ${data.skipped}`;
+        if(buttonElement){
+
+            buttonElement.disabled = false;
+
+            buttonElement.textContent =
+                "✅ Added";
+
         }
 
 
         if(
-            data.errors &&
-            data.errors.length
+            typeof loadMockTests === "function"
         ){
-
-            message +=
-                `<br><br>⚠️ Some rows were skipped.`;
-
-            console.warn(
-                "Mock Excel import errors:",
-                data.errors
-            );
-        }
-
-
-        if(messageBox){
-
-            messageBox.innerHTML =
-                message;
-        }
-
-
-        /* -----------------------------------------
-           REFRESH TABLES
-        ----------------------------------------- */
-
-        if(typeof loadMockTests === "function"){
 
             await loadMockTests();
-        }
 
-        if(typeof loadMockQuestions === "function"){
-
-            await loadMockQuestions();
         }
 
 
-        /* -----------------------------------------
-           RESET FILE
-        ----------------------------------------- */
-
-        fileInput.value = "";
+        return data;
 
 
     }catch(error){
 
         console.error(
-            "MOCK EXCEL IMPORT ERROR:",
+            "MOCK EXCEL UPLOAD ERROR:",
             error
         );
 
 
-        if(messageBox){
+        if(statusElement){
 
-            messageBox.style.display = "block";
+            statusElement.className =
+                "chapter-status error";
 
-            messageBox.innerHTML =
-                "❌ " +
-                (
-                    error.message ||
-                    "Excel import failed."
-                );
+            statusElement.textContent =
+                "❌ Upload failed";
+
         }
+
+
+        if(buttonElement){
+
+            buttonElement.disabled = false;
+
+            buttonElement.textContent =
+                "➕ Add";
+
+        }
+
+
+        alert(
+            error.message ||
+            "Excel upload failed."
+        );
+
     }
+
 }
+/* =========================================================
+   CHAPTER-WISE UPLOAD
+========================================================= */
+
+async function uploadChapterMock(
+    chapter,
+    fileInput,
+    button,
+    status
+){
+
+    if(
+        !fileInput ||
+        !fileInput.files ||
+        !fileInput.files.length
+    ){
+
+        alert(
+            "⚠️ Please select an Excel file for " +
+            chapter + "."
+        );
+
+        return;
+
+    }
+
+
+    const file =
+        fileInput.files[0];
+
+
+    await uploadMockExcelFile(
+        file,
+        "chapter",
+        chapter,
+        status,
+        button
+    );
+
+}
+/* =========================================================
+   4-CHAPTER UPLOAD
+========================================================= */
+
+async function uploadFourChapterMock(){
+
+    const ids = [
+
+        "mqFourChapter1",
+        "mqFourChapter2",
+        "mqFourChapter3",
+        "mqFourChapter4"
+
+    ];
+
+
+    const chapters =
+        ids.map(function(id){
+
+            return document
+                .getElementById(id)
+                ?.value
+                .trim() || "";
+
+        });
+
+
+    if(chapters.some(function(value){
+        return !value;
+    })){
+
+        alert(
+            "⚠️ Please select all four chapters."
+        );
+
+        return;
+
+    }
+
+
+    if(
+        new Set(chapters).size !== 4
+    ){
+
+        alert(
+            "⚠️ Please select four different chapters."
+        );
+
+        return;
+
+    }
+
+
+    const fileInput =
+        document.getElementById(
+            "fourChapterExcelFile"
+        );
+
+
+    const status =
+        document.getElementById(
+            "fourChapterUploadStatus"
+        );
+
+
+    const button =
+        document.querySelector(
+            "#fourChapterMockPanel .green"
+        );
+
+
+    if(
+        !fileInput ||
+        !fileInput.files.length
+    ){
+
+        alert(
+            "⚠️ Please select the 4-Chapter Excel file."
+        );
+
+        return;
+
+    }
+
+
+    const chapterScope =
+        chapters.join(" | ");
+
+
+    await uploadMockExcelFile(
+        fileInput.files[0],
+        "four_chapter",
+        chapterScope,
+        status,
+        button
+    );
+
+}
+/* =========================================================
+   FINAL TEST UPLOAD
+========================================================= */
+
+async function uploadFinalSyllabusMock(){
+
+    const fileInput =
+        document.getElementById(
+            "finalSyllabusExcelFile"
+        );
+
+
+    const status =
+        document.getElementById(
+            "finalTestUploadStatus"
+        );
+
+
+    const button =
+        document.querySelector(
+            "#finalTestMockPanel .green"
+        );
+
+
+    if(
+        !fileInput ||
+        !fileInput.files.length
+    ){
+
+        alert(
+            "⚠️ Please select the Final Test Excel file."
+        );
+
+        return;
+
+    }
+
+
+    await uploadMockExcelFile(
+        fileInput.files[0],
+        "full_syllabus",
+        "FULL_SYLLABUS",
+        status,
+        button
+    );
+
+}
+
+/* =========================================================
+   MOCK ADMIN TYPE SELECTION
+========================================================= */
+
+let selectedMockAdminType = "";
+
+
+/* ---------- SELECT TYPE ---------- */
+
+function selectMockAdminType(type, card){
+
+    selectedMockAdminType = type;
+
+
+    document
+        .querySelectorAll(".mock-type-option")
+        .forEach(function(item){
+
+            item.classList.remove("active");
+
+        });
+
+
+    if(card){
+
+        card.classList.add("active");
+
+    }
+
+
+    const radio =
+        card
+        ? card.querySelector(
+            'input[type="radio"]'
+        )
+        : null;
+
+
+    if(radio){
+
+        radio.checked = true;
+
+    }
+
+
+    hideMockUploadPanels();
+
+
+    if(type === "chapter"){
+
+        const panel =
+            document.getElementById(
+                "chapterMockPanel"
+            );
+
+        if(panel){
+
+            panel.style.display = "block";
+
+        }
+
+        renderChapterUploadList();
+
+    }
+
+
+    if(type === "four_chapter"){
+
+        const panel =
+            document.getElementById(
+                "fourChapterMockPanel"
+            );
+
+        if(panel){
+
+            panel.style.display = "block";
+
+        }
+
+        populateFourChapterSelectors();
+
+    }
+
+
+    if(type === "full_syllabus"){
+
+        const panel =
+            document.getElementById(
+                "finalTestMockPanel"
+            );
+
+        if(panel){
+
+            panel.style.display = "block";
+
+        }
+
+    }
+
+}
+
+
+/* ---------- HIDE ALL ---------- */
+
+function hideMockUploadPanels(){
+
+    const ids = [
+
+        "chapterMockPanel",
+        "fourChapterMockPanel",
+        "finalTestMockPanel"
+
+    ];
+
+
+    ids.forEach(function(id){
+
+        const element =
+            document.getElementById(id);
+
+        if(element){
+
+            element.style.display = "none";
+
+        }
+
+    });
+
+}
+
+
+/* =========================================================
+   SYLLABUS SUMMARY
+========================================================= */
+
+function updateMockSelectionSummary(){
+
+    const board =
+        document.getElementById("mqBoard")?.value || "";
+
+    const className =
+        document.getElementById("mqClass")?.value || "";
+
+    const subject =
+        document.getElementById("mqSubject")?.value || "";
+
+
+    const summary =
+        document.getElementById(
+            "mockSelectionSummary"
+        );
+
+
+    const typeSection =
+        document.getElementById(
+            "mockTypeSection"
+        );
+
+
+    if(!board || !className || !subject){
+
+        if(summary){
+
+            summary.style.display = "none";
+
+        }
+
+        if(typeSection){
+
+            typeSection.style.display = "none";
+
+        }
+
+        selectedMockAdminType = "";
+
+        hideMockUploadPanels();
+
+        return;
+
+    }
+
+
+    document.getElementById(
+        "summaryBoard"
+    ).textContent = board;
+
+
+    document.getElementById(
+        "summaryClass"
+    ).textContent = className;
+
+
+    document.getElementById(
+        "summarySubject"
+    ).textContent = subject;
+
+
+    if(summary){
+
+        summary.style.display = "grid";
+
+    }
+
+
+    if(typeSection){
+
+        typeSection.style.display = "block";
+
+    }
+
+}
+
+
+/* =========================================================
+   FOUR CHAPTER SELECTORS
+========================================================= */
+
+function populateFourChapterSelectors(){
+
+    const ids = [
+
+        "mqFourChapter1",
+        "mqFourChapter2",
+        "mqFourChapter3",
+        "mqFourChapter4"
+
+    ];
+
+
+    ids.forEach(function(id, index){
+
+        const select =
+            document.getElementById(id);
+
+        if(!select){
+
+            return;
+
+        }
+
+
+        select.innerHTML =
+            `<option value="">
+                Select Chapter ${index + 1}
+            </option>`;
+
+
+        mockChapterOptions.forEach(
+            function(chapter){
+
+                const option =
+                    document.createElement(
+                        "option"
+                    );
+
+                option.value = chapter;
+
+                option.textContent = chapter;
+
+                select.appendChild(option);
+
+            }
+        );
+
+    });
+
+}
+
+
+/* =========================================================
+   CHAPTER-WISE LIST
+========================================================= */
+
+function renderChapterUploadList(){
+
+    const container =
+        document.getElementById(
+            "chapterUploadList"
+        );
+
+
+    if(!container){
+
+        return;
+
+    }
+
+
+    if(!mockChapterOptions.length){
+
+        container.innerHTML = `
+            <div class="empty-upload-message">
+                ⚠️ No chapters found for this syllabus.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    container.innerHTML = "";
+
+
+    mockChapterOptions.forEach(
+        function(chapter, index){
+
+            const row =
+                document.createElement("div");
+
+            row.className =
+                "chapter-upload-row";
+
+
+            /* NUMBER */
+
+            const number =
+                document.createElement("div");
+
+            number.className =
+                "chapter-number";
+
+            number.textContent =
+                index + 1;
+
+
+            /* NAME */
+
+            const name =
+                document.createElement("div");
+
+            name.className =
+                "chapter-name";
+
+            name.textContent =
+                chapter;
+
+
+            /* DESCRIPTION */
+
+            const description =
+                document.createElement("div");
+
+            description.className =
+                "chapter-description";
+
+            description.textContent =
+                "Upload questions for this chapter";
+
+
+            /* FILE */
+
+            const fileInput =
+                document.createElement("input");
+
+            fileInput.type = "file";
+
+            fileInput.accept =
+                ".xlsx,.xls";
+
+            fileInput.className =
+                "chapter-file";
+
+
+            /* BUTTON */
+
+            const button =
+                document.createElement("button");
+
+            button.type = "button";
+
+            button.className =
+                "green chapter-add-btn";
+
+            button.textContent =
+                "➕ Add";
+
+
+            /* STATUS */
+
+            const status =
+                document.createElement("div");
+
+            status.className =
+                "chapter-status";
+
+            status.textContent =
+                "Not uploaded";
+
+
+            button.onclick =
+                function(){
+
+                    uploadChapterMock(
+                        chapter,
+                        fileInput,
+                        button,
+                        status
+                    );
+
+                };
+
+
+            row.appendChild(number);
+
+            row.appendChild(name);
+
+            row.appendChild(description);
+
+            row.appendChild(fileInput);
+
+            row.appendChild(button);
+
+            row.appendChild(status);
+
+
+            container.appendChild(row);
+
+        }
+    );
+
+}
+    
+
+
 
 async function deleteMockTest(id){
     if(!confirm("Delete this Mock Test and all its questions?"))return;
