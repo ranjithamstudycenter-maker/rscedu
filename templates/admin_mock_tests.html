@@ -1846,6 +1846,159 @@ tbody tr:last-child td{
     }
 
 }
+/* =========================================================
+   PROFESSIONAL EXCEL FILE PICKER
+========================================================= */
+
+.mock-file-picker{
+    display:flex;
+    align-items:center;
+    gap:10px;
+    width:100%;
+    min-width:0;
+}
+
+.mock-file-input{
+    display:none;
+}
+
+.mock-file-label{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+
+    padding:10px 15px;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #f5f3ff
+        );
+
+    border:1px solid #c7d2fe;
+
+    color:#4338ca;
+
+    font-size:11px;
+    font-weight:900;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+
+    transition:.2s ease;
+}
+
+.mock-file-label:hover{
+    transform:translateY(-1px);
+
+    border-color:#818cf8;
+
+    background:
+        linear-gradient(
+            135deg,
+            #e0e7ff,
+            #ede9fe
+        );
+
+    box-shadow:
+        0 6px 16px
+        rgba(79,70,229,.12);
+}
+
+.mock-file-name{
+    flex:1;
+
+    min-width:0;
+
+    overflow:hidden;
+    text-overflow:ellipsis;
+    white-space:nowrap;
+
+    color:#64748b;
+
+    font-size:11px;
+    font-weight:700;
+}
+
+.mock-file-name.selected{
+    color:#166534;
+}
+
+.mock-file-name.error{
+    color:#dc2626;
+}
+
+
+/* 4-CHAPTER / FINAL */
+
+.professional-excel-picker{
+    display:flex;
+    align-items:center;
+    gap:12px;
+
+    flex-wrap:wrap;
+
+    margin-top:14px;
+}
+
+.professional-excel-picker .mock-file-label{
+    min-width:170px;
+}
+
+.professional-excel-picker .mock-file-name{
+    max-width:350px;
+}
+
+
+/* ADD BUTTON */
+
+.chapter-add-btn{
+    min-width:115px;
+}
+
+.professional-add-btn{
+    min-width:170px;
+}
+
+
+/* STATUS */
+
+.chapter-status{
+    min-width:100px;
+}
+
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .mock-file-picker,
+    .professional-excel-picker{
+        flex-direction:column;
+        align-items:stretch;
+    }
+
+    .mock-file-label{
+        width:100%;
+    }
+
+    .mock-file-name{
+        width:100%;
+        max-width:none !important;
+        text-align:center;
+    }
+
+    .chapter-add-btn,
+    .professional-add-btn{
+        width:100%;
+    }
+
+}
 
 /* =========================================================
    MOCK TEST STRUCTURE
@@ -2416,24 +2569,44 @@ tbody tr:last-child td{
                     questions from the four selected chapters.
                 </p>
 
-                <div class="excel-upload-action">
+                <div class="professional-excel-picker">
 
-                    <input
-                        type="file"
-                        id="fourChapterExcelFile"
-                        accept=".xlsx,.xls">
-
-                    <button
-                        type="button"
-                        class="green"
-                        onclick="uploadFourChapterMock()">
-
-                        ➕ Add 4-Chapter Mock
-
-                    </button>
-
-                </div>
-
+                <input
+                    type="file"
+                    id="fourChapterExcelFile"
+                    class="mock-file-input"
+                    accept=".xlsx,.xls"
+                    onchange="showMockSelectedFile(
+                        'fourChapterExcelFile',
+                        'fourChapterFileName'
+                    )">
+            
+                <label
+                    for="fourChapterExcelFile"
+                    class="mock-file-label">
+            
+                    📊 Choose Excel File
+            
+                </label>
+            
+                <span
+                    id="fourChapterFileName"
+                    class="mock-file-name">
+            
+                    No file selected
+            
+                </span>
+            
+                <button
+                    type="button"
+                    class="green professional-add-btn"
+                    onclick="uploadFourChapterMock()">
+            
+                    ➕ Add 4-Chapter Mock
+            
+                </button>
+            
+            </div>
                 <div
                     id="fourChapterUploadStatus"
                     class="message">
@@ -2485,23 +2658,44 @@ tbody tr:last-child td{
                     One Excel file only.
                 </span>
 
-                <div class="excel-upload-action">
+                <div class="professional-excel-picker">
 
-                    <input
-                        type="file"
-                        id="finalSyllabusExcelFile"
-                        accept=".xlsx,.xls">
-
-                    <button
-                        type="button"
-                        class="green"
-                        onclick="uploadFinalSyllabusMock()">
-
-                        ➕ Add Final Test
-
-                    </button>
-
-                </div>
+                <input
+                    type="file"
+                    id="finalSyllabusExcelFile"
+                    class="mock-file-input"
+                    accept=".xlsx,.xls"
+                    onchange="showMockSelectedFile(
+                        'finalSyllabusExcelFile',
+                        'finalSyllabusFileName'
+                    )">
+            
+                <label
+                    for="finalSyllabusExcelFile"
+                    class="mock-file-label">
+            
+                    📊 Choose Excel File
+            
+                </label>
+            
+                <span
+                    id="finalSyllabusFileName"
+                    class="mock-file-name">
+            
+                    No file selected
+            
+                </span>
+            
+                <button
+                    type="button"
+                    class="green professional-add-btn"
+                    onclick="uploadFinalSyllabusMock()">
+            
+                    ➕ Add Final Test
+            
+                </button>
+            
+            </div>
 
                 <div
                     id="finalTestUploadStatus"
@@ -2520,248 +2714,6 @@ tbody tr:last-child td{
     <div
         id="mockCategoryMessage"
         class="message">
-    </div>
-
-</div>
-
-<!-- =========================================================
-     MOCK TEST TYPE
-========================================================= -->
-
-<div class="mock-type-section">
-
-    <div class="mock-type-title">
-        🎯 Select Mock Test Type
-    </div>
-
-    <div class="mock-type-grid">
-
-        <!-- CHAPTER-WISE -->
-
-        <label
-            class="mock-type-option active"
-            onclick="selectMockType('chapter',this)">
-
-            <input
-                type="radio"
-                name="mockType"
-                id="mqMockTypeChapter"
-                value="chapter"
-                checked>
-
-            <div class="mock-type-icon">
-                📘
-            </div>
-
-            <strong>
-                Chapter-wise Mock
-            </strong>
-
-            <span>
-                Mixed questions from one chapter.
-            </span>
-
-        </label>
-
-
-        <!-- 4-CHAPTER -->
-
-        <label
-            class="mock-type-option"
-            onclick="selectMockType('four_chapter',this)">
-
-            <input
-                type="radio"
-                name="mockType"
-                id="mqMockTypeFour"
-                value="four_chapter">
-
-            <div class="mock-type-icon">
-                📚
-            </div>
-
-            <strong>
-                4-Chapter Mock
-            </strong>
-
-            <span>
-                Mixed questions from four chapters.
-            </span>
-
-        </label>
-
-
-        <!-- FINAL TEST -->
-
-        <label
-            class="mock-type-option"
-            onclick="selectMockType('full_syllabus',this)">
-
-            <input
-                type="radio"
-                name="mockType"
-                id="mqMockTypeFull"
-                value="full_syllabus">
-
-            <div class="mock-type-icon">
-                🏆
-            </div>
-
-            <strong>
-                Final Test
-            </strong>
-
-            <span>
-                Mixed questions from the whole syllabus.
-            </span>
-
-        </label>
-
-    </div>
-
-</div>
-
-<!-- =========================================================
-     MOCK TEST STRUCTURE
-========================================================= -->
-
-<div class="mock-structure-section" id="mockStructureSection">
-
-    <!-- =====================================================
-         CHAPTER-WISE
-    ====================================================== -->
-
-    <div
-        id="chapterWiseSelection"
-        class="mock-chapter-selection"
-        style="display:none;">
-
-        <div class="selection-label">
-            📖 Select Chapter
-        </div>
-
-        <select
-            id="mqChapter"
-            disabled
-            onchange="updateMockChapterSelection()">
-        
-            <option value="">
-                Select Chapter
-            </option>
-        
-        </select>
-
-        <p class="selection-help">
-            Select one chapter. The uploaded Excel file will
-            contain mixed questions from this chapter.
-        </p>
-
-    </div>
-
-
-    <!-- =====================================================
-         4-CHAPTER
-    ====================================================== -->
-
-    <div
-        id="fourChapterSelection"
-        class="mock-chapter-selection"
-        style="display:none;">
-
-        <div class="selection-label">
-            📚 Select 4 Chapters
-        </div>
-
-        <div class="four-chapter-select-grid">
-
-            <select
-                id="mqChapter1"
-                disabled
-                onchange="validateFourChapterSelection()">
-            
-                <option value="">
-                    Select Chapter 1
-                </option>
-            
-            </select>
-
-
-            <select
-                id="mqChapter2"
-                disabled
-                onchange="validateFourChapterSelection()">
-            
-                <option value="">
-                    Select Chapter 2
-                </option>
-            
-            </select>
-            
-            
-            <select
-                id="mqChapter3"
-                disabled
-                onchange="validateFourChapterSelection()">
-            
-                <option value="">
-                    Select Chapter 3
-                </option>
-            
-            </select>
-            
-            
-            <select
-                id="mqChapter4"
-                disabled
-                onchange="validateFourChapterSelection()">
-            
-                <option value="">
-                    Select Chapter 4
-                </option>
-            
-            </select>
-
-        </div>
-
-        <p class="selection-help">
-            Select exactly four chapters. The uploaded Excel
-            file will contain mixed questions from these four
-            chapters.
-        </p>
-
-    </div>
-
-
-    <!-- =====================================================
-         FINAL TEST
-    ====================================================== -->
-
-    <div
-        id="finalTestSelection"
-        class="mock-final-selection"
-        style="display:none;">
-
-        <div class="final-test-info">
-
-            <div class="final-test-icon">
-                🏆
-            </div>
-
-            <div>
-
-                <strong>
-                    Full Syllabus
-                </strong>
-
-                <p>
-                    The uploaded Excel file will contain mixed
-                    questions from the complete syllabus.
-                </p>
-
-            </div>
-
-        </div>
-
     </div>
 
 </div>
@@ -4111,6 +4063,51 @@ async function uploadChapterMock(
     );
 
 }
+function showMockSelectedFile(
+    inputId,
+    fileNameId
+){
+
+    const input =
+        document.getElementById(inputId);
+
+    const nameElement =
+        document.getElementById(fileNameId);
+
+
+    if(
+        !input ||
+        !nameElement
+    ){
+        return;
+    }
+
+
+    if(
+        input.files &&
+        input.files.length
+    ){
+
+        nameElement.textContent =
+            input.files[0].name;
+
+        nameElement.classList.add(
+            "selected"
+        );
+
+    }else{
+
+        nameElement.textContent =
+            "No file selected";
+
+        nameElement.classList.remove(
+            "selected"
+        );
+
+    }
+
+}
+    
 /* =========================================================
    4-CHAPTER UPLOAD
 ========================================================= */
@@ -4539,9 +4536,7 @@ function renderChapterUploadList(){
 
 
     if(!container){
-
         return;
-
     }
 
 
@@ -4554,7 +4549,6 @@ function renderChapterUploadList(){
         `;
 
         return;
-
     }
 
 
@@ -4562,7 +4556,7 @@ function renderChapterUploadList(){
 
 
     mockChapterOptions.forEach(
-        function(chapter, index){
+        function(chapter,index){
 
             const row =
                 document.createElement("div");
@@ -4571,7 +4565,9 @@ function renderChapterUploadList(){
                 "chapter-upload-row";
 
 
-            /* NUMBER */
+            /* =========================
+               NUMBER
+            ========================= */
 
             const number =
                 document.createElement("div");
@@ -4580,10 +4576,12 @@ function renderChapterUploadList(){
                 "chapter-number";
 
             number.textContent =
-                index + 1;
+                String(index + 1).padStart(2,"0");
 
 
-            /* NAME */
+            /* =========================
+               CHAPTER NAME
+            ========================= */
 
             const name =
                 document.createElement("div");
@@ -4595,7 +4593,9 @@ function renderChapterUploadList(){
                 chapter;
 
 
-            /* DESCRIPTION */
+            /* =========================
+               DESCRIPTION
+            ========================= */
 
             const description =
                 document.createElement("div");
@@ -4607,35 +4607,120 @@ function renderChapterUploadList(){
                 "Upload questions for this chapter";
 
 
-            /* FILE */
+            /* =========================
+               FILE PICKER
+            ========================= */
+
+            const picker =
+                document.createElement("div");
+
+            picker.className =
+                "mock-file-picker";
+
 
             const fileInput =
                 document.createElement("input");
 
-            fileInput.type = "file";
+            fileInput.type =
+                "file";
 
             fileInput.accept =
                 ".xlsx,.xls";
 
             fileInput.className =
-                "chapter-file";
+                "mock-file-input";
+
+            fileInput.id =
+                "chapterExcel_" + index;
 
 
-            /* BUTTON */
+            const fileLabel =
+                document.createElement("label");
+
+            fileLabel.className =
+                "mock-file-label";
+
+            fileLabel.htmlFor =
+                fileInput.id;
+
+            fileLabel.innerHTML =
+                "📊 Choose Excel File";
+
+
+            const fileName =
+                document.createElement("span");
+
+            fileName.className =
+                "mock-file-name";
+
+            fileName.textContent =
+                "No file selected";
+
+
+            fileInput.addEventListener(
+                "change",
+                function(){
+
+                    if(
+                        fileInput.files &&
+                        fileInput.files.length
+                    ){
+
+                        fileName.textContent =
+                            fileInput.files[0].name;
+
+                        fileName.classList.add(
+                            "selected"
+                        );
+
+                    }else{
+
+                        fileName.textContent =
+                            "No file selected";
+
+                        fileName.classList.remove(
+                            "selected"
+                        );
+
+                    }
+
+                }
+            );
+
+
+            picker.appendChild(
+                fileInput
+            );
+
+            picker.appendChild(
+                fileLabel
+            );
+
+            picker.appendChild(
+                fileName
+            );
+
+
+            /* =========================
+               ADD BUTTON
+            ========================= */
 
             const button =
                 document.createElement("button");
 
-            button.type = "button";
+            button.type =
+                "button";
 
             button.className =
                 "green chapter-add-btn";
 
             button.textContent =
-                "➕ Add";
+                "➕ Add Questions";
 
 
-            /* STATUS */
+            /* =========================
+               STATUS
+            ========================= */
 
             const status =
                 document.createElement("div");
@@ -4646,6 +4731,10 @@ function renderChapterUploadList(){
             status.textContent =
                 "Not uploaded";
 
+
+            /* =========================
+               ADD CLICK
+            ========================= */
 
             button.onclick =
                 function(){
@@ -4660,26 +4749,43 @@ function renderChapterUploadList(){
                 };
 
 
-            row.appendChild(number);
+            /* =========================
+               BUILD ROW
+            ========================= */
 
-            row.appendChild(name);
+            row.appendChild(
+                number
+            );
 
-            row.appendChild(description);
+            row.appendChild(
+                name
+            );
 
-            row.appendChild(fileInput);
+            row.appendChild(
+                description
+            );
 
-            row.appendChild(button);
+            row.appendChild(
+                picker
+            );
 
-            row.appendChild(status);
+            row.appendChild(
+                button
+            );
+
+            row.appendChild(
+                status
+            );
 
 
-            container.appendChild(row);
+            container.appendChild(
+                row
+            );
 
         }
     );
 
 }
-    
 
 
 
