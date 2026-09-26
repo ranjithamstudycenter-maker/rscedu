@@ -3785,14 +3785,23 @@ async function loadMockChapters(){
         )?.value.trim() || "";
 
 
+    /* =====================================================
+       CLEAR OLD CHAPTER DATA
+    ===================================================== */
+
     mockChapterOptions = [];
 
 
-    resetMockUploadAreas();
-
+    /* =====================================================
+       UPDATE SUMMARY
+    ===================================================== */
 
     updateMockSelectionSummary();
 
+
+    /* =====================================================
+       IF SELECTION IS INCOMPLETE
+    ===================================================== */
 
     if(
         !board ||
@@ -3800,30 +3809,96 @@ async function loadMockChapters(){
         !subject
     ){
 
+        hideMockUploadPanels();
+
         return;
 
     }
 
+
+    /* =====================================================
+       FINAL TEST
+       No chapter list required
+    ===================================================== */
 
     if(
         selectedMockAdminType ===
         "full_syllabus"
     ){
 
-        const panel =
+        hideMockUploadPanels();
+
+
+        const finalPanel =
             document.getElementById(
                 "finalTestMockPanel"
             );
 
-        if(panel){
-            panel.style.display =
+        if(finalPanel){
+
+            finalPanel.style.display =
                 "block";
+
         }
 
         return;
 
     }
 
+
+    /* =====================================================
+       CHAPTER PANEL
+       SHOW IMMEDIATELY
+    ===================================================== */
+
+    if(
+        selectedMockAdminType ===
+        "chapter"
+    ){
+
+        const chapterPanel =
+            document.getElementById(
+                "chapterMockPanel"
+            );
+
+        if(chapterPanel){
+
+            chapterPanel.style.display =
+                "block";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       4-CHAPTER PANEL
+       SHOW IMMEDIATELY
+    ===================================================== */
+
+    if(
+        selectedMockAdminType ===
+        "four_chapter"
+    ){
+
+        const fourPanel =
+            document.getElementById(
+                "fourChapterMockPanel"
+            );
+
+        if(fourPanel){
+
+            fourPanel.style.display =
+                "block";
+
+        }
+
+    }
+
+
+    /* =====================================================
+       SHOW LOADING MESSAGE
+    ===================================================== */
 
     const chapterList =
         document.getElementById(
@@ -3833,13 +3908,22 @@ async function loadMockChapters(){
     if(chapterList){
 
         chapterList.innerHTML = `
+
             <div class="empty-upload-message">
-                ⏳ Loading chapters from Practice syllabus...
+
+                ⏳ Loading chapters from
+                Practice syllabus...
+
             </div>
+
         `;
 
     }
 
+
+    /* =====================================================
+       LOAD CHAPTERS FROM PRACTICE API
+    ===================================================== */
 
     try{
 
@@ -3847,6 +3931,7 @@ async function loadMockChapters(){
             await fetch(
                 "/api/practice/topics",
                 {
+
                     method:"POST",
 
                     headers:{
@@ -3875,18 +3960,28 @@ async function loadMockChapters(){
             await response.json();
 
 
+        /* =================================================
+           CHECK API RESPONSE
+        ================================================= */
+
         if(
             !response.ok ||
             !data.success
         ){
 
             throw new Error(
+
                 data.error ||
                 "Unable to load chapters."
+
             );
 
         }
 
+
+        /* =================================================
+           GET CHAPTER NAMES
+        ================================================= */
 
         mockChapterOptions =
             (data.topics || [])
@@ -3898,7 +3993,63 @@ async function loadMockChapters(){
                 .filter(Boolean);
 
 
-        renderSelectedMockPanel();
+        /* =================================================
+           NO CHAPTER FOUND
+        ================================================= */
+
+        if(
+            !mockChapterOptions.length
+        ){
+
+            if(chapterList){
+
+                chapterList.innerHTML = `
+
+                    <div
+                        class="empty-upload-message"
+                        style="color:#dc2626;"
+                    >
+
+                        ⚠️ No chapters found for
+                        ${esc(subject)}.
+
+                    </div>
+
+                `;
+
+            }
+
+            return;
+
+        }
+
+
+        /* =================================================
+           CHAPTER-WISE
+        ================================================= */
+
+        if(
+            selectedMockAdminType ===
+            "chapter"
+        ){
+
+            renderChapterUploadList();
+
+        }
+
+
+        /* =================================================
+           4-CHAPTER
+        ================================================= */
+
+        if(
+            selectedMockAdminType ===
+            "four_chapter"
+        ){
+
+            populateFourChapterSelectors();
+
+        }
 
 
     }catch(error){
@@ -3912,13 +4063,29 @@ async function loadMockChapters(){
         if(chapterList){
 
             chapterList.innerHTML = `
-                <div class="empty-upload-message"
-                     style="color:#dc2626;">
-                    ❌ ${esc(
-                        error.message ||
-                        "Unable to load chapters."
-                    )}
+
+                <div
+                    class="empty-upload-message"
+                    style="
+                        color:#dc2626;
+                        border-color:#fecaca;
+                        background:#fff7f7;
+                    "
+                >
+
+                    ❌ Unable to load chapters.
+
+                    <br>
+
+                    <small>
+                        ${esc(
+                            error.message ||
+                            "Please try again."
+                        )}
+                    </small>
+
                 </div>
+
             `;
 
         }
@@ -3926,8 +4093,6 @@ async function loadMockChapters(){
     }
 
 }
-
-
 /* =========================================================
    SUMMARY + PANEL ROUTING
 ========================================================= */
