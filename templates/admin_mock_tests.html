@@ -3770,285 +3770,200 @@ function loadMockSubjects(){
 async function loadMockChapters(){
 
     const board =
-        document.getElementById(
-            "mqBoard"
-        )?.value.trim() || "";
+        document.getElementById("mqBoard")?.value.trim() || "";
 
     const className =
-        document.getElementById(
-            "mqClass"
-        )?.value.trim() || "";
+        document.getElementById("mqClass")?.value.trim() || "";
 
     const subject =
-        document.getElementById(
-            "mqSubject"
-        )?.value.trim() || "";
+        document.getElementById("mqSubject")?.value.trim() || "";
+
+    const chapterPanel =
+        document.getElementById("chapterMockPanel");
+
+    const chapterList =
+        document.getElementById("chapterUploadList");
 
 
-    /* =====================================================
-       CLEAR OLD CHAPTER DATA
-    ===================================================== */
+    /* ==========================================
+       RESET
+    ========================================== */
 
     mockChapterOptions = [];
 
 
-    /* =====================================================
-       UPDATE SUMMARY
-    ===================================================== */
+    /* ==========================================
+       VALIDATION
+    ========================================== */
 
-    updateMockSelectionSummary();
-
-
-    /* =====================================================
-       IF SELECTION IS INCOMPLETE
-    ===================================================== */
-
-    if(
-        !board ||
-        !className ||
-        !subject
-    ){
-
-        hideMockUploadPanels();
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       FINAL TEST
-       No chapter list required
-    ===================================================== */
-
-    if(
-        selectedMockAdminType ===
-        "full_syllabus"
-    ){
-
-        hideMockUploadPanels();
-
-
-        const finalPanel =
-            document.getElementById(
-                "finalTestMockPanel"
-            );
-
-        if(finalPanel){
-
-            finalPanel.style.display =
-                "block";
-
-        }
-
-        return;
-
-    }
-
-
-    /* =====================================================
-       CHAPTER PANEL
-       SHOW IMMEDIATELY
-    ===================================================== */
-
-    if(
-        selectedMockAdminType ===
-        "chapter"
-    ){
-
-        const chapterPanel =
-            document.getElementById(
-                "chapterMockPanel"
-            );
+    if(!board || !className || !subject){
 
         if(chapterPanel){
-
-            chapterPanel.style.display =
-                "block";
-
+            chapterPanel.style.display = "none";
         }
 
+        return;
     }
 
 
-    /* =====================================================
-       4-CHAPTER PANEL
-       SHOW IMMEDIATELY
-    ===================================================== */
+    /* ==========================================
+       ONLY CHAPTER-WISE
+    ========================================== */
 
-    if(
-        selectedMockAdminType ===
-        "four_chapter"
-    ){
+    if(selectedMockAdminType !== "chapter"){
 
-        const fourPanel =
-            document.getElementById(
-                "fourChapterMockPanel"
-            );
-
-        if(fourPanel){
-
-            fourPanel.style.display =
-                "block";
-
+        if(chapterPanel){
+            chapterPanel.style.display = "none";
         }
 
+        return;
     }
 
 
-    /* =====================================================
-       SHOW LOADING MESSAGE
-    ===================================================== */
+    /* ==========================================
+       SHOW CHAPTER PANEL
+    ========================================== */
 
-    const chapterList =
-        document.getElementById(
-            "chapterUploadList"
-        );
+    if(chapterPanel){
+        chapterPanel.style.display = "block";
+    }
+
 
     if(chapterList){
 
         chapterList.innerHTML = `
-
             <div class="empty-upload-message">
-
-                ⏳ Loading chapters from
-                Practice syllabus...
-
+                ⏳ Loading chapters...
             </div>
-
         `;
-
     }
 
 
-    /* =====================================================
-       LOAD CHAPTERS FROM PRACTICE API
-    ===================================================== */
+    /* ==========================================
+       LOAD FROM PRACTICE SYLLABUS
+    ========================================== */
 
     try{
 
-        const response =
-            await fetch(
-                "/api/practice/topics",
-                {
+        const response = await fetch(
+            "/api/practice/topics",
+            {
+                method:"POST",
 
-                    method:"POST",
+                headers:{
+                    "Content-Type":"application/json"
+                },
 
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
+                body:JSON.stringify({
 
-                    body:JSON.stringify({
+                    board: board,
 
-                        board:
-                            board,
+                    class_name: className,
 
-                        class_name:
-                            className,
+                    subject: subject
 
-                        subject:
-                            subject
-
-                    })
-
-                }
-            );
+                })
+            }
+        );
 
 
-        const data =
-            await response.json();
+        const data = await response.json();
 
 
-        /* =================================================
-           CHECK API RESPONSE
-        ================================================= */
+        console.log(
+            "MOCK CHAPTER API RESPONSE:",
+            data
+        );
 
-        if(
-            !response.ok ||
-            !data.success
-        ){
+
+        if(!response.ok || !data.success){
 
             throw new Error(
-
                 data.error ||
                 "Unable to load chapters."
-
             );
-
         }
 
 
-        /* =================================================
+        /* ======================================
            GET CHAPTER NAMES
-        ================================================= */
+        ====================================== */
 
         mockChapterOptions =
             (data.topics || [])
-                .map(function(item){
+            .map(function(item){
 
-                    return item.topic;
+                return (
+                    typeof item === "string"
+                    ? item
+                    : item.topic
+                );
 
-                })
-                .filter(Boolean);
+            })
+            .filter(function(topic){
+
+                return topic &&
+                       String(topic).trim();
+
+            });
 
 
-        /* =================================================
-           NO CHAPTER FOUND
-        ================================================= */
+        console.log(
+            "MOCK CHAPTERS:",
+            mockChapterOptions
+        );
 
-        if(
-            !mockChapterOptions.length
-        ){
+
+        /* ======================================
+           NO CHAPTER
+        ====================================== */
+
+        if(!mockChapterOptions.length){
 
             if(chapterList){
 
                 chapterList.innerHTML = `
-
                     <div
                         class="empty-upload-message"
-                        style="color:#dc2626;"
+                        style="
+                            color:#dc2626;
+                            border-color:#fecaca;
+                            background:#fff7f7;
+                        "
                     >
-
                         ⚠️ No chapters found for
-                        ${esc(subject)}.
-
+                        <b>${subject}</b>.
                     </div>
-
                 `;
-
             }
 
             return;
-
         }
 
 
-        /* =================================================
-           CHAPTER-WISE
-        ================================================= */
+        /* ======================================
+           RENDER CHAPTERS
+        ====================================== */
 
-        if(
-            selectedMockAdminType ===
-            "chapter"
-        ){
-
-            renderChapterUploadList();
-
-        }
+        renderChapterUploadList();
 
 
-        /* =================================================
-           4-CHAPTER
-        ================================================= */
+        /* ======================================
+           MAKE SURE PANEL IS VISIBLE
+        ====================================== */
 
-        if(
-            selectedMockAdminType ===
-            "four_chapter"
-        ){
+        if(chapterPanel){
 
-            populateFourChapterSelectors();
+            chapterPanel.style.display = "block";
 
+            setTimeout(function(){
+
+                chapterPanel.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+
+            },100);
         }
 
 
@@ -4063,7 +3978,6 @@ async function loadMockChapters(){
         if(chapterList){
 
             chapterList.innerHTML = `
-
                 <div
                     class="empty-upload-message"
                     style="
@@ -4072,22 +3986,15 @@ async function loadMockChapters(){
                         background:#fff7f7;
                     "
                 >
-
                     ❌ Unable to load chapters.
 
                     <br>
 
                     <small>
-                        ${esc(
-                            error.message ||
-                            "Please try again."
-                        )}
+                        ${error.message}
                     </small>
-
                 </div>
-
             `;
-
         }
 
     }
