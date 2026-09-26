@@ -2645,7 +2645,470 @@ tbody tr:last-child td{
     }
 
 }
+/* =========================================================
+   FINAL PROFESSIONAL MOCK CHAPTER UPLOAD DESIGN
+========================================================= */
 
+.chapter-upload-list{
+    display:flex;
+    flex-direction:column;
+    gap:12px;
+    margin-top:20px;
+}
+
+
+/* =========================================================
+   ONE CHAPTER = ONE HORIZONTAL ROW
+========================================================= */
+
+.chapter-upload-row{
+
+    display:grid;
+
+    grid-template-columns:
+        52px
+        minmax(200px,1fr)
+        minmax(230px,280px)
+        135px
+        125px;
+
+    align-items:center;
+
+    gap:16px;
+
+    min-height:72px;
+
+    padding:12px 16px;
+
+    background:#ffffff;
+
+    border:1px solid #e2e8f0;
+
+    border-radius:14px;
+
+    box-shadow:
+        0 3px 12px rgba(15,23,42,.04);
+
+    transition:
+        transform .18s ease,
+        box-shadow .18s ease,
+        border-color .18s ease;
+
+}
+
+
+.chapter-upload-row:hover{
+
+    transform:translateY(-2px);
+
+    border-color:#a5b4fc;
+
+    box-shadow:
+        0 8px 24px rgba(79,70,229,.10);
+
+}
+
+
+/* =========================================================
+   CHAPTER NUMBER
+========================================================= */
+
+.chapter-number{
+
+    width:40px;
+    height:40px;
+
+    display:flex;
+
+    align-items:center;
+    justify-content:center;
+
+    border-radius:11px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #eef2ff,
+            #e0e7ff
+        );
+
+    color:#4338ca;
+
+    font-size:12px;
+
+    font-weight:900;
+
+}
+
+
+/* =========================================================
+   CHAPTER INFORMATION
+========================================================= */
+
+.chapter-info{
+
+    min-width:0;
+
+}
+
+
+.chapter-name{
+
+    display:block;
+
+    color:#172554;
+
+    font-size:14px;
+
+    font-weight:900;
+
+    line-height:1.3;
+
+    white-space:nowrap;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+}
+
+
+.chapter-description{
+
+    margin-top:4px;
+
+    color:#94a3b8;
+
+    font-size:10px;
+
+    font-weight:600;
+
+}
+
+
+/* =========================================================
+   EXCEL PICKER
+========================================================= */
+
+.chapter-file-wrapper{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:8px;
+
+    min-width:0;
+
+}
+
+
+/* IMPORTANT:
+   Hide native browser file input completely
+*/
+
+.chapter-file-input{
+
+    display:none !important;
+
+    width:0 !important;
+
+    height:0 !important;
+
+    opacity:0 !important;
+
+    position:absolute !important;
+
+}
+
+
+/* =========================================================
+   CHOOSE EXCEL BUTTON
+========================================================= */
+
+.chapter-file-label{
+
+    display:inline-flex;
+
+    align-items:center;
+    justify-content:center;
+
+    gap:6px;
+
+    width:145px;
+
+    height:38px;
+
+    padding:0 12px;
+
+    border-radius:10px;
+
+    background:#f8fafc;
+
+    border:1px solid #cbd5e1;
+
+    color:#334155;
+
+    font-size:11px;
+
+    font-weight:800;
+
+    cursor:pointer;
+
+    white-space:nowrap;
+
+    transition:.18s ease;
+
+}
+
+
+.chapter-file-label:hover{
+
+    background:#eef2ff;
+
+    border-color:#818cf8;
+
+    color:#4338ca;
+
+}
+
+
+/* =========================================================
+   SELECTED FILE NAME
+========================================================= */
+
+.chapter-file-name{
+
+    max-width:105px;
+
+    overflow:hidden;
+
+    text-overflow:ellipsis;
+
+    white-space:nowrap;
+
+    color:#94a3b8;
+
+    font-size:10px;
+
+    font-weight:700;
+
+}
+
+
+.chapter-file-name.selected{
+
+    color:#475569;
+
+}
+
+
+/* =========================================================
+   ADD QUESTIONS
+========================================================= */
+
+.chapter-add-btn{
+
+    width:135px;
+
+    height:38px;
+
+    padding:0 12px;
+
+    border:0;
+
+    border-radius:10px;
+
+    background:
+        linear-gradient(
+            135deg,
+            #4f46e5,
+            #7c3aed
+        );
+
+    color:#ffffff;
+
+    font-size:11px;
+
+    font-weight:900;
+
+    cursor:pointer;
+
+    transition:.18s ease;
+
+}
+
+
+.chapter-add-btn:hover{
+
+    transform:translateY(-1px);
+
+    box-shadow:
+        0 7px 18px rgba(79,70,229,.20);
+
+}
+
+
+.chapter-add-btn:disabled{
+
+    opacity:.6;
+
+    cursor:not-allowed;
+
+}
+
+
+/* =========================================================
+   STATUS
+========================================================= */
+
+.chapter-status{
+
+    display:inline-flex;
+
+    align-items:center;
+    justify-content:center;
+
+    width:115px;
+
+    min-height:32px;
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    background:#f8fafc;
+
+    border:1px solid #e2e8f0;
+
+    color:#94a3b8;
+
+    font-size:10px;
+
+    font-weight:900;
+
+    white-space:nowrap;
+
+}
+
+
+.chapter-status.success{
+
+    background:#ecfdf5;
+
+    color:#15803d;
+
+    border-color:#bbf7d0;
+
+}
+
+
+.chapter-status.error{
+
+    background:#fef2f2;
+
+    color:#b91c1c;
+
+    border-color:#fecaca;
+
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media(max-width:1050px){
+
+    .chapter-upload-row{
+
+        grid-template-columns:
+            45px
+            minmax(160px,1fr)
+            200px
+            120px;
+
+    }
+
+    .chapter-status{
+
+        grid-column:2 / -1;
+
+        justify-self:start;
+
+    }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media(max-width:700px){
+
+    .chapter-upload-row{
+
+        grid-template-columns:1fr;
+
+        gap:10px;
+
+        padding:15px;
+
+    }
+
+
+    .chapter-number{
+
+        width:38px;
+        height:38px;
+
+    }
+
+
+    .chapter-file-wrapper{
+
+        width:100%;
+
+        flex-direction:column;
+
+        align-items:stretch;
+
+    }
+
+
+    .chapter-file-label{
+
+        width:100%;
+
+    }
+
+
+    .chapter-file-name{
+
+        max-width:100%;
+
+        text-align:center;
+
+    }
+
+
+    .chapter-add-btn{
+
+        width:100%;
+
+    }
+
+
+    .chapter-status{
+
+        width:100%;
+
+        grid-column:auto;
+
+    }
+
+}
 </style>
 </head>
 <body>
@@ -3767,6 +4230,10 @@ function loadMockSubjects(){
    SUBJECT → CHAPTERS
 ========================================================= */
 
+/* =========================================================
+   SUBJECT → CHAPTERS → CATEGORY PANEL
+========================================================= */
+
 async function loadMockChapters(){
 
     const board =
@@ -3778,96 +4245,125 @@ async function loadMockChapters(){
     const subject =
         document.getElementById("mqSubject")?.value.trim() || "";
 
+
     const chapterPanel =
         document.getElementById("chapterMockPanel");
+
+    const fourPanel =
+        document.getElementById("fourChapterMockPanel");
+
+    const finalPanel =
+        document.getElementById("finalTestMockPanel");
 
     const chapterList =
         document.getElementById("chapterUploadList");
 
 
-    /* ==========================================
-       RESET
-    ========================================== */
+    /* =====================================================
+       HIDE ALL PANELS FIRST
+    ===================================================== */
+
+    if(chapterPanel){
+        chapterPanel.style.display = "none";
+    }
+
+    if(fourPanel){
+        fourPanel.style.display = "none";
+    }
+
+    if(finalPanel){
+        finalPanel.style.display = "none";
+    }
+
 
     mockChapterOptions = [];
 
 
-    /* ==========================================
-       VALIDATION
-    ========================================== */
+    /* =====================================================
+       CHECK SELECTION
+    ===================================================== */
 
     if(!board || !className || !subject){
 
-        if(chapterPanel){
-            chapterPanel.style.display = "none";
+        return;
+    }
+
+
+    /* =====================================================
+       FINAL TEST
+       No chapter loading required
+    ===================================================== */
+
+    if(selectedMockAdminType === "full_syllabus"){
+
+        if(finalPanel){
+
+            finalPanel.style.display = "block";
+
+            setTimeout(function(){
+
+                finalPanel.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+
+            },100);
+
         }
 
         return;
     }
 
 
-    /* ==========================================
-       ONLY CHAPTER-WISE
-    ========================================== */
+    /* =====================================================
+       SHOW LOADING
+    ===================================================== */
 
-    if(selectedMockAdminType !== "chapter"){
-
-        if(chapterPanel){
-            chapterPanel.style.display = "none";
-        }
-
-        return;
-    }
-
-
-    /* ==========================================
-       SHOW CHAPTER PANEL
-    ========================================== */
-
-    if(chapterPanel){
-        chapterPanel.style.display = "block";
-    }
-
-
-    if(chapterList){
+    if(
+        selectedMockAdminType === "chapter" &&
+        chapterList
+    ){
 
         chapterList.innerHTML = `
             <div class="empty-upload-message">
-                ⏳ Loading chapters...
+                ⏳ Loading chapters from Practice syllabus...
             </div>
         `;
+
     }
 
 
-    /* ==========================================
-       LOAD FROM PRACTICE SYLLABUS
-    ========================================== */
+    /* =====================================================
+       LOAD CHAPTERS FROM PRACTICE
+    ===================================================== */
 
     try{
 
-        const response = await fetch(
-            "/api/practice/topics",
-            {
-                method:"POST",
+        const response =
+            await fetch(
+                "/api/practice/topics",
+                {
+                    method:"POST",
 
-                headers:{
-                    "Content-Type":"application/json"
-                },
+                    headers:{
+                        "Content-Type":"application/json"
+                    },
 
-                body:JSON.stringify({
+                    body:JSON.stringify({
 
-                    board: board,
+                        board:board,
 
-                    class_name: className,
+                        class_name:className,
 
-                    subject: subject
+                        subject:subject
 
-                })
-            }
-        );
+                    })
+                }
+            );
 
 
-        const data = await response.json();
+        const data =
+            await response.json();
 
 
         console.log(
@@ -3876,18 +4372,22 @@ async function loadMockChapters(){
         );
 
 
-        if(!response.ok || !data.success){
+        if(
+            !response.ok ||
+            !data.success
+        ){
 
             throw new Error(
                 data.error ||
                 "Unable to load chapters."
             );
+
         }
 
 
-        /* ======================================
-           GET CHAPTER NAMES
-        ====================================== */
+        /* =================================================
+           SAVE CHAPTER NAMES
+        ================================================= */
 
         mockChapterOptions =
             (data.topics || [])
@@ -3900,10 +4400,10 @@ async function loadMockChapters(){
                 );
 
             })
-            .filter(function(topic){
+            .filter(function(item){
 
-                return topic &&
-                       String(topic).trim();
+                return item &&
+                       String(item).trim();
 
             });
 
@@ -3914,9 +4414,9 @@ async function loadMockChapters(){
         );
 
 
-        /* ======================================
-           NO CHAPTER
-        ====================================== */
+        /* =================================================
+           NO CHAPTER FOUND
+        ================================================= */
 
         if(!mockChapterOptions.length){
 
@@ -3932,38 +4432,85 @@ async function loadMockChapters(){
                         "
                     >
                         ⚠️ No chapters found for
-                        <b>${subject}</b>.
+                        <b>${esc(subject)}</b>.
                     </div>
                 `;
+
             }
 
             return;
         }
 
 
-        /* ======================================
-           RENDER CHAPTERS
-        ====================================== */
+        /* =================================================
+           CHAPTER-WISE
+        ================================================= */
 
-        renderChapterUploadList();
+        if(
+            selectedMockAdminType === "chapter"
+        ){
+
+            if(chapterPanel){
+
+                chapterPanel.style.display =
+                    "block";
+
+            }
 
 
-        /* ======================================
-           MAKE SURE PANEL IS VISIBLE
-        ====================================== */
+            renderChapterUploadList();
 
-        if(chapterPanel){
-
-            chapterPanel.style.display = "block";
 
             setTimeout(function(){
 
-                chapterPanel.scrollIntoView({
-                    behavior:"smooth",
-                    block:"start"
-                });
+                if(chapterPanel){
+
+                    chapterPanel.scrollIntoView({
+                        behavior:"smooth",
+                        block:"start"
+                    });
+
+                }
 
             },100);
+
+            return;
+        }
+
+
+        /* =================================================
+           4-CHAPTER
+        ================================================= */
+
+        if(
+            selectedMockAdminType === "four_chapter"
+        ){
+
+            if(fourPanel){
+
+                fourPanel.style.display =
+                    "block";
+
+            }
+
+
+            populateFourChapterSelectors();
+
+
+            setTimeout(function(){
+
+                if(fourPanel){
+
+                    fourPanel.scrollIntoView({
+                        behavior:"smooth",
+                        block:"start"
+                    });
+
+                }
+
+            },100);
+
+            return;
         }
 
 
@@ -3975,7 +4522,10 @@ async function loadMockChapters(){
         );
 
 
-        if(chapterList){
+        if(
+            selectedMockAdminType === "chapter" &&
+            chapterList
+        ){
 
             chapterList.innerHTML = `
                 <div
@@ -3991,10 +4541,11 @@ async function loadMockChapters(){
                     <br>
 
                     <small>
-                        ${error.message}
+                        ${esc(error.message)}
                     </small>
                 </div>
             `;
+
         }
 
     }
