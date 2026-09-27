@@ -3109,6 +3109,326 @@ tbody tr:last-child td{
     }
 
 }
+/* =========================================================
+   AUTOMATIC 4-CHAPTER DISPLAY
+========================================================= */
+
+.four-chapter-auto-card,
+.final-syllabus-auto-card,
+.four-chapter-excel-card,
+.final-test-excel-card{
+
+    margin-top:18px;
+
+    padding:20px;
+
+    border-radius:17px;
+
+    border:1px solid #dbe3ef;
+
+    background:
+        linear-gradient(
+            135deg,
+            #f8faff,
+            #faf5ff
+        );
+
+}
+
+
+.four-chapter-auto-title{
+
+    color:#312e81;
+
+    font-size:15px;
+
+    font-weight:900;
+
+    margin-bottom:14px;
+
+}
+
+
+.four-chapter-auto-list{
+
+    display:grid;
+
+    grid-template-columns:
+        repeat(2,minmax(0,1fr));
+
+    gap:12px;
+
+}
+
+
+.four-chapter-auto-item{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:12px;
+
+    padding:13px 15px;
+
+    border-radius:13px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+
+}
+
+
+.four-chapter-number{
+
+    width:34px;
+
+    height:34px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:10px;
+
+    background:#eef2ff;
+
+    color:#4338ca;
+
+    font-size:11px;
+
+    font-weight:900;
+
+}
+
+
+.four-chapter-name{
+
+    flex:1;
+
+    color:#1e293b;
+
+    font-size:13px;
+
+    font-weight:800;
+
+}
+
+
+.four-chapter-check{
+
+    color:#16a34a;
+
+    font-weight:900;
+
+    font-size:18px;
+
+}
+
+
+/* =========================================================
+   EXCEL UPLOAD CARDS
+========================================================= */
+
+.four-chapter-excel-card,
+.final-test-excel-card{
+
+    display:flex;
+
+    align-items:center;
+
+    gap:16px;
+
+}
+
+
+.four-chapter-excel-icon,
+.final-test-excel-icon{
+
+    width:52px;
+
+    height:52px;
+
+    flex:0 0 52px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:15px;
+
+    background:#eef2ff;
+
+    font-size:25px;
+
+}
+
+
+.four-chapter-excel-content,
+.final-test-excel-content{
+
+    flex:1;
+
+}
+
+
+.four-chapter-excel-content strong,
+.final-test-excel-content strong{
+
+    display:block;
+
+    color:#172554;
+
+    font-size:14px;
+
+    font-weight:900;
+
+}
+
+
+.four-chapter-excel-content span,
+.final-test-excel-content span{
+
+    display:block;
+
+    margin-top:4px;
+
+    color:#64748b;
+
+    font-size:11px;
+
+    line-height:1.5;
+
+}
+
+
+/* =========================================================
+   FINAL SYLLABUS
+========================================================= */
+
+.final-syllabus-auto-card{
+
+    display:flex;
+
+    align-items:flex-start;
+
+    gap:16px;
+
+}
+
+
+.final-syllabus-icon{
+
+    width:52px;
+
+    height:52px;
+
+    flex:0 0 52px;
+
+    display:flex;
+
+    align-items:center;
+
+    justify-content:center;
+
+    border-radius:15px;
+
+    background:#eef2ff;
+
+    font-size:26px;
+
+}
+
+
+.final-syllabus-content{
+
+    flex:1;
+
+}
+
+
+.final-syllabus-content strong{
+
+    display:block;
+
+    color:#172554;
+
+    font-size:15px;
+
+    font-weight:900;
+
+}
+
+
+.final-syllabus-count{
+
+    margin-top:10px;
+
+    color:#4338ca;
+
+    font-size:12px;
+
+    font-weight:900;
+
+}
+
+
+.final-syllabus-chapter-list{
+
+    display:flex;
+
+    flex-wrap:wrap;
+
+    gap:7px;
+
+    margin-top:10px;
+
+}
+
+
+.final-syllabus-chapter-list span{
+
+    padding:6px 10px;
+
+    border-radius:999px;
+
+    background:#fff;
+
+    border:1px solid #e2e8f0;
+
+    color:#475569;
+
+    font-size:10px;
+
+    font-weight:700;
+
+}
+
+
+/* MOBILE */
+
+@media(max-width:700px){
+
+    .four-chapter-auto-list{
+
+        grid-template-columns:1fr;
+
+    }
+
+    .four-chapter-excel-card,
+    .final-test-excel-card,
+    .final-syllabus-auto-card{
+
+        align-items:flex-start;
+
+    }
+
+}
 </style>
 </head>
 <body>
@@ -3353,184 +3673,202 @@ tbody tr:last-child td{
          STEP 3 — 4 CHAPTER
     ====================================================== -->
 
-    <div
-        id="fourChapterMockPanel"
-        class="mock-upload-panel"
-        style="display:none;">
+<div
+    id="fourChapterMockPanel"
+    class="mock-upload-panel"
+    style="display:none;">
 
-        <div class="upload-panel-header">
-            <h3>📚 4-Chapter Question Paper</h3>
-            <p>
-                Select exactly four different chapters and upload
-                one Excel file containing mixed questions from them.
-            </p>
+    <div class="upload-panel-header">
+
+        <h3>
+            📚 4-Chapter Mock
+        </h3>
+
+        <p>
+            The four chapters below are loaded automatically
+            from the selected Practice syllabus.
+        </p>
+
+    </div>
+
+
+    <!-- AUTOMATIC FOUR CHAPTERS -->
+
+    <div class="four-chapter-auto-card">
+
+        <div class="four-chapter-auto-title">
+            📚 Selected 4 Chapters
         </div>
 
+        <div
+            id="fourChapterAutoList"
+            class="four-chapter-auto-list">
 
-        <div class="four-chapter-select-grid">
-
-            <div class="form-field">
-                <label>Chapter 1</label>
-                <select id="mqFourChapter1">
-                    <option value="">Select Chapter 1</option>
-                </select>
-            </div>
-
-            <div class="form-field">
-                <label>Chapter 2</label>
-                <select id="mqFourChapter2">
-                    <option value="">Select Chapter 2</option>
-                </select>
-            </div>
-
-            <div class="form-field">
-                <label>Chapter 3</label>
-                <select id="mqFourChapter3">
-                    <option value="">Select Chapter 3</option>
-                </select>
-            </div>
-
-            <div class="form-field">
-                <label>Chapter 4</label>
-                <select id="mqFourChapter4">
-                    <option value="">Select Chapter 4</option>
-                </select>
-            </div>
-
-        </div>
-
-
-        <div class="mock-excel-box">
-
-            <div class="excel-upload-icon">📊</div>
-
-            <div class="excel-upload-content">
-
-                <h3>Upload 4-Chapter Excel</h3>
-
-                <p>
-                    The Excel file should contain mixed questions
-                    from the four selected chapters.
-                </p>
-
-                <div class="professional-excel-picker">
-
-                    <input
-                        type="file"
-                        id="fourChapterExcelFile"
-                        class="mock-file-input"
-                        accept=".xlsx,.xls"
-                        onchange="showMockSelectedFile(
-                            'fourChapterExcelFile',
-                            'fourChapterFileName'
-                        )">
-
-                    <label
-                        for="fourChapterExcelFile"
-                        class="mock-file-label">
-                        📊 Choose Excel File
-                    </label>
-
-                    <span
-                        id="fourChapterFileName"
-                        class="mock-file-name">
-                        No file selected
-                    </span>
-
-                    <button
-                        type="button"
-                        class="green professional-add-btn"
-                        onclick="uploadFourChapterMock()">
-                        ➕ Add 4-Chapter Mock
-                    </button>
-
-                </div>
-
-                <div
-                    id="fourChapterUploadStatus"
-                    class="message">
-                </div>
-
+            <div class="empty-upload-message">
+                Select Board, Class and Subject first.
             </div>
 
         </div>
 
     </div>
+
+
+    <!-- EXCEL UPLOAD -->
+
+    <div class="four-chapter-excel-card">
+
+        <div class="four-chapter-excel-icon">
+            📊
+        </div>
+
+        <div class="four-chapter-excel-content">
+
+            <strong>
+                4-Chapter Question Paper
+            </strong>
+
+            <span>
+                Upload one Excel file containing
+                mixed questions from these four chapters.
+            </span>
+
+
+            <div class="excel-upload-action">
+
+                <input
+                    type="file"
+                    id="fourChapterExcelFile"
+                    accept=".xlsx,.xls">
+
+                <button
+                    type="button"
+                    class="green"
+                    onclick="uploadFourChapterMock()">
+
+                    ⬆ Upload Excel
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="fourChapterUploadStatus"
+                class="message">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
     <!-- =====================================================
          STEP 3 — FINAL TEST
     ====================================================== -->
 
-    <div
-        id="finalTestMockPanel"
-        class="mock-upload-panel"
-        style="display:none;">
+<div
+    id="finalTestMockPanel"
+    class="mock-upload-panel"
+    style="display:none;">
 
-        <div class="upload-panel-header">
-            <h3>🏆 Final Test — Full Syllabus</h3>
-            <p>
-                Upload one Excel question paper containing
-                mixed questions from the complete syllabus.
-            </p>
+    <div class="upload-panel-header">
+
+        <h3>
+            🏆 Final Test — Full Syllabus
+        </h3>
+
+        <p>
+            The complete syllabus is loaded automatically
+            from the selected Board, Class and Subject.
+        </p>
+
+    </div>
+
+
+    <!-- FULL SYLLABUS -->
+
+    <div class="final-syllabus-auto-card">
+
+        <div class="final-syllabus-icon">
+            🏆
         </div>
 
+        <div class="final-syllabus-content">
 
-        <div class="final-test-upload-card">
+            <strong>
+                Complete Syllabus
+            </strong>
 
-            <div class="final-test-icon">🏆</div>
+            <span>
+                All chapters from the selected Practice
+                syllabus will be included automatically.
+            </span>
 
-            <div class="final-test-upload-content">
 
-                <strong>Full Syllabus Question Paper</strong>
+            <div
+                id="finalSyllabusSummary"
+                class="final-syllabus-summary">
 
-                <span>
-                    One Excel file for the complete syllabus.
-                </span>
-
-                <div class="professional-excel-picker">
-
-                    <input
-                        type="file"
-                        id="finalSyllabusExcelFile"
-                        class="mock-file-input"
-                        accept=".xlsx,.xls"
-                        onchange="showMockSelectedFile(
-                            'finalSyllabusExcelFile',
-                            'finalSyllabusFileName'
-                        )">
-
-                    <label
-                        for="finalSyllabusExcelFile"
-                        class="mock-file-label">
-                        📊 Choose Excel File
-                    </label>
-
-                    <span
-                        id="finalSyllabusFileName"
-                        class="mock-file-name">
-                        No file selected
-                    </span>
-
-                    <button
-                        type="button"
-                        class="green professional-add-btn"
-                        onclick="uploadFinalSyllabusMock()">
-                        ➕ Add Final Test
-                    </button>
-
-                </div>
-
-                <div
-                    id="finalTestUploadStatus"
-                    class="message">
-                </div>
+                Select Board, Class and Subject first.
 
             </div>
 
         </div>
 
     </div>
+
+
+    <!-- EXCEL -->
+
+    <div class="final-test-excel-card">
+
+        <div class="final-test-excel-icon">
+            📊
+        </div>
+
+        <div class="final-test-excel-content">
+
+            <strong>
+                Final Test Question Paper
+            </strong>
+
+            <span>
+                Upload one Excel file containing
+                mixed questions from the complete syllabus.
+            </span>
+
+
+            <div class="excel-upload-action">
+
+                <input
+                    type="file"
+                    id="finalSyllabusExcelFile"
+                    accept=".xlsx,.xls">
+
+                <button
+                    type="button"
+                    class="green"
+                    onclick="uploadFinalSyllabusMock()">
+
+                    ⬆ Upload Excel
+
+                </button>
+
+            </div>
+
+
+            <div
+                id="finalTestUploadStatus"
+                class="message">
+            </div>
+
+        </div>
+
+    </div>
+
+</div>
 
 
     <div
@@ -3826,6 +4164,10 @@ function selectMockAdminType(
         type;
 
 
+    /* -----------------------------------------
+       REMOVE ACTIVE FROM ALL CATEGORY CARDS
+    ----------------------------------------- */
+
     document
         .querySelectorAll(
             ".mock-category-card"
@@ -3839,23 +4181,35 @@ function selectMockAdminType(
         });
 
 
+    /* -----------------------------------------
+       ACTIVATE SELECTED CARD
+    ----------------------------------------- */
+
     if(card){
 
         card.classList.add(
             "active"
         );
 
+
         const radio =
             card.querySelector(
                 'input[type="radio"]'
             );
 
+
         if(radio){
+
             radio.checked = true;
+
         }
 
     }
 
+
+    /* -----------------------------------------
+       SHOW SYLLABUS SECTION
+    ----------------------------------------- */
 
     const syllabusSection =
         document.getElementById(
@@ -3871,25 +4225,72 @@ function selectMockAdminType(
     }
 
 
+    /* -----------------------------------------
+       UPDATE SUMMARY
+    ----------------------------------------- */
+
     updateMockSelectionSummary();
 
 
-    if(
-        document.getElementById("mqSubject")?.value
-    ){
+    /* -----------------------------------------
+       IF SUBJECT IS ALREADY SELECTED,
+          SHOW CORRESPONDING PANEL
+    ----------------------------------------- */
+
+    const subject =
+        document.getElementById(
+            "mqSubject"
+        )?.value;
+
+
+    if(subject){
 
         renderSelectedMockPanel();
 
     }
 
 
+    /* -----------------------------------------
+       FINAL TEST
+    ----------------------------------------- */
+
+    if(
+        type === "full_syllabus"
+    ){
+
+        const panel =
+            document.getElementById(
+                "finalTestMockPanel"
+            );
+
+
+        if(panel){
+
+            panel.style.display =
+                "block";
+
+        }
+
+
+        populateFinalSyllabusSummary();
+
+    }
+
+
+    /* -----------------------------------------
+       SCROLL TO SYLLABUS
+    ----------------------------------------- */
+
     setTimeout(function(){
 
         if(syllabusSection){
 
             syllabusSection.scrollIntoView({
+
                 behavior:"smooth",
+
                 block:"start"
+
             });
 
         }
@@ -3897,7 +4298,6 @@ function selectMockAdminType(
     },80);
 
 }
-
 
 /* =========================================================
    SYLLABUS OPTIONS
@@ -4225,11 +4625,6 @@ function loadMockSubjects(){
 
 }
 
-
-/* =========================================================
-   SUBJECT → CHAPTERS
-========================================================= */
-
 /* =========================================================
    SUBJECT → CHAPTERS → CATEGORY PANEL
 ========================================================= */
@@ -4264,59 +4659,48 @@ async function loadMockChapters(){
     ===================================================== */
 
     if(chapterPanel){
+
         chapterPanel.style.display = "none";
+
     }
 
     if(fourPanel){
+
         fourPanel.style.display = "none";
+
     }
 
     if(finalPanel){
+
         finalPanel.style.display = "none";
+
     }
 
+
+    /* =====================================================
+       RESET CHAPTER DATA
+    ===================================================== */
 
     mockChapterOptions = [];
 
 
     /* =====================================================
-       CHECK SELECTION
+       CHECK BOARD / CLASS / SUBJECT
     ===================================================== */
 
-    if(!board || !className || !subject){
+    if(
+        !board ||
+        !className ||
+        !subject
+    ){
 
         return;
+
     }
 
 
     /* =====================================================
-       FINAL TEST
-       No chapter loading required
-    ===================================================== */
-
-    if(selectedMockAdminType === "full_syllabus"){
-
-        if(finalPanel){
-
-            finalPanel.style.display = "block";
-
-            setTimeout(function(){
-
-                finalPanel.scrollIntoView({
-                    behavior:"smooth",
-                    block:"start"
-                });
-
-            },100);
-
-        }
-
-        return;
-    }
-
-
-    /* =====================================================
-       SHOW LOADING
+       SHOW LOADING FOR CHAPTER-WISE
     ===================================================== */
 
     if(
@@ -4334,7 +4718,7 @@ async function loadMockChapters(){
 
 
     /* =====================================================
-       LOAD CHAPTERS FROM PRACTICE
+       LOAD CHAPTERS FROM PRACTICE SYLLABUS
     ===================================================== */
 
     try{
@@ -4346,7 +4730,8 @@ async function loadMockChapters(){
                     method:"POST",
 
                     headers:{
-                        "Content-Type":"application/json"
+                        "Content-Type":
+                            "application/json"
                     },
 
                     body:JSON.stringify({
@@ -4358,6 +4743,7 @@ async function loadMockChapters(){
                         subject:subject
 
                     })
+
                 }
             );
 
@@ -4371,6 +4757,10 @@ async function loadMockChapters(){
             data
         );
 
+
+        /* =================================================
+           API ERROR
+        ================================================= */
 
         if(
             !response.ok ||
@@ -4402,8 +4792,10 @@ async function loadMockChapters(){
             })
             .filter(function(item){
 
-                return item &&
-                       String(item).trim();
+                return (
+                    item &&
+                    String(item).trim()
+                );
 
             });
 
@@ -4415,10 +4807,12 @@ async function loadMockChapters(){
 
 
         /* =================================================
-           NO CHAPTER FOUND
+           NO CHAPTERS FOUND
         ================================================= */
 
-        if(!mockChapterOptions.length){
+        if(
+            !mockChapterOptions.length
+        ){
 
             if(chapterList){
 
@@ -4431,14 +4825,35 @@ async function loadMockChapters(){
                             background:#fff7f7;
                         "
                     >
+
                         ⚠️ No chapters found for
                         <b>${esc(subject)}</b>.
+
                     </div>
                 `;
 
             }
 
+
+            if(
+                selectedMockAdminType ===
+                "full_syllabus"
+            ){
+
+                if(finalPanel){
+
+                    finalPanel.style.display =
+                        "block";
+
+                }
+
+                populateFinalSyllabusSummary();
+
+            }
+
+
             return;
+
         }
 
 
@@ -4466,15 +4881,20 @@ async function loadMockChapters(){
                 if(chapterPanel){
 
                     chapterPanel.scrollIntoView({
+
                         behavior:"smooth",
+
                         block:"start"
+
                     });
 
                 }
 
             },100);
 
+
             return;
+
         }
 
 
@@ -4483,7 +4903,8 @@ async function loadMockChapters(){
         ================================================= */
 
         if(
-            selectedMockAdminType === "four_chapter"
+            selectedMockAdminType ===
+            "four_chapter"
         ){
 
             if(fourPanel){
@@ -4502,15 +4923,67 @@ async function loadMockChapters(){
                 if(fourPanel){
 
                     fourPanel.scrollIntoView({
+
                         behavior:"smooth",
+
                         block:"start"
+
                     });
 
                 }
 
             },100);
 
+
             return;
+
+        }
+
+
+        /* =================================================
+           FINAL TEST
+        ================================================= */
+
+        if(
+            selectedMockAdminType ===
+            "full_syllabus"
+        ){
+
+            if(finalPanel){
+
+                finalPanel.style.display =
+                    "block";
+
+            }
+
+
+            /*
+             * Chapters are already loaded above.
+             * Now show complete syllabus.
+             */
+
+            populateFinalSyllabusSummary();
+
+
+            setTimeout(function(){
+
+                if(finalPanel){
+
+                    finalPanel.scrollIntoView({
+
+                        behavior:"smooth",
+
+                        block:"start"
+
+                    });
+
+                }
+
+            },100);
+
+
+            return;
+
         }
 
 
@@ -4521,6 +4994,10 @@ async function loadMockChapters(){
             error
         );
 
+
+        /* =================================================
+           CHAPTER-WISE ERROR
+        ================================================= */
 
         if(
             selectedMockAdminType === "chapter" &&
@@ -4536,15 +5013,53 @@ async function loadMockChapters(){
                         background:#fff7f7;
                     "
                 >
+
                     ❌ Unable to load chapters.
 
                     <br>
 
                     <small>
-                        ${esc(error.message)}
+                        ${esc(
+                            error.message ||
+                            "Please try again."
+                        )}
                     </small>
+
                 </div>
             `;
+
+        }
+
+
+        /* =================================================
+           FINAL TEST ERROR
+        ================================================= */
+
+        if(
+            selectedMockAdminType ===
+            "full_syllabus" &&
+            finalPanel
+        ){
+
+            finalPanel.style.display =
+                "block";
+
+
+            const summary =
+                document.getElementById(
+                    "finalSyllabusSummary"
+                );
+
+
+            if(summary){
+
+                summary.innerHTML = `
+                    <span style="color:#dc2626;">
+                        ❌ Unable to load syllabus.
+                    </span>
+                `;
+
+            }
 
         }
 
@@ -4846,55 +5361,127 @@ function resetMockUploadAreas(){
 
 function populateFourChapterSelectors(){
 
-    const ids = [
-        "mqFourChapter1",
-        "mqFourChapter2",
-        "mqFourChapter3",
-        "mqFourChapter4"
-    ];
-
-
-    ids.forEach(function(id,index){
-
-        const select =
-            document.getElementById(id);
-
-        if(!select){
-            return;
-        }
-
-
-        select.innerHTML =
-            `<option value="">
-                Select Chapter ${index + 1}
-            </option>`;
-
-
-        mockChapterOptions.forEach(
-            function(chapter){
-
-                const option =
-                    document.createElement(
-                        "option"
-                    );
-
-                option.value =
-                    chapter;
-
-                option.textContent =
-                    chapter;
-
-                select.appendChild(
-                    option
-                );
-
-            }
+    const container =
+        document.getElementById(
+            "fourChapterAutoList"
         );
+
+    if(!container){
+        return;
+    }
+
+
+    if(!mockChapterOptions.length){
+
+        container.innerHTML = `
+            <div class="empty-upload-message">
+                ⏳ Loading chapters...
+            </div>
+        `;
+
+        return;
+    }
+
+
+    /*
+     * First four chapters from the selected
+     * Board → Class → Subject syllabus
+     */
+
+    const chapters =
+        mockChapterOptions.slice(0,4);
+
+
+    let html = "";
+
+
+    chapters.forEach(function(chapter,index){
+
+        html += `
+            <div class="four-chapter-auto-item">
+
+                <div class="four-chapter-number">
+                    ${String(index + 1).padStart(2,"0")}
+                </div>
+
+                <div class="four-chapter-name">
+                    ${esc(chapter)}
+                </div>
+
+                <div class="four-chapter-check">
+                    ✓
+                </div>
+
+            </div>
+        `;
 
     });
 
-}
 
+    container.innerHTML = html;
+
+
+    /*
+     * If syllabus has less than four chapters
+     */
+
+    if(chapters.length < 4){
+
+        container.innerHTML += `
+            <div class="empty-upload-message"
+                 style="color:#dc2626;margin-top:10px;">
+
+                ⚠️ This syllabus contains only
+                ${chapters.length} chapter(s).
+
+            </div>
+        `;
+
+    }
+
+}
+function populateFinalSyllabusSummary(){
+
+    const summary =
+        document.getElementById(
+            "finalSyllabusSummary"
+        );
+
+    if(!summary){
+        return;
+    }
+
+
+    if(!mockChapterOptions.length){
+
+        summary.innerHTML =
+            "⏳ Loading complete syllabus...";
+
+        return;
+
+    }
+
+
+    summary.innerHTML = `
+        <div class="final-syllabus-count">
+            📚 ${mockChapterOptions.length} Chapters
+        </div>
+
+        <div class="final-syllabus-chapter-list">
+            ${mockChapterOptions.map(function(chapter,index){
+
+                return `
+                    <span>
+                        ${String(index + 1).padStart(2,"0")}.
+                        ${esc(chapter)}
+                    </span>
+                `;
+
+            }).join("")}
+        </div>
+    `;
+
+}
 
 /* =========================================================
    CHAPTER-WISE LIST
