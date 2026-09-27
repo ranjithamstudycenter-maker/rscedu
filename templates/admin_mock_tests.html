@@ -5113,7 +5113,7 @@ function renderChapterUploadList(){
                 "chapter-add-btn";
 
             button.textContent =
-                "➕ Add Questions";
+                "⬆ Upload Excel";
 
 
             /* -----------------------------------------
@@ -5399,12 +5399,19 @@ async function uploadMockExcelFile(
 
             statusElement.className =
                 "chapter-status success";
-
+        
+            const count =
+                data.question_count ||
+                data.imported ||
+                0;
+        
             statusElement.textContent =
-                  "✅ Uploaded";
-
+                "✓ Uploaded • " +
+                count +
+                " Questions";
+        
         }
-
+        
 
         if(buttonElement){
 
@@ -5412,7 +5419,7 @@ async function uploadMockExcelFile(
                 false;
 
             buttonElement.textContent =
-                "✅ Added";
+                "✅ Uploaded";
 
         }
 
