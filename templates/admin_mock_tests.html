@@ -3954,7 +3954,9 @@ let mockSyllabusOptions = [];
 let mockChapterOptions = [];
 let selectedMockAdminType = "";
 
-
+/* Existing uploaded Mock Tests */
+let mockTestsCache = [];
+    
 /* =========================================================
    MOCK TEST LIBRARY
 ========================================================= */
@@ -3978,8 +3980,19 @@ async function loadMockTests(){
                 }
             );
 
-        const data =
+       const data =
             await response.json();
+        
+        
+        /* =========================================
+           SAVE EXISTING MOCK TESTS FOR
+           CATEGORY + SYLLABUS CHECK
+        ========================================= */
+        
+        mockTestsCache =
+            Array.isArray(data.tests)
+                ? data.tests
+                : [];
 
         if(
             !response.ok ||
@@ -4150,7 +4163,137 @@ async function loadMockTests(){
 
 }
 
+function hasExistingMockForSelection(
+    type,
+    board,
+    className,
+    subject
+){
 
+    if(
+        !type ||
+        !board ||
+        !className ||
+        !subject
+    ){
+
+        return false;
+
+    }
+
+
+    return mockTestsCache.some(function(test){
+
+        return (
+
+            String(test.mock_type || "")
+                .trim()
+                === type
+
+            &&
+
+            String(test.board || "")
+                .trim()
+                === board
+
+            &&
+
+            String(test.class_name || "")
+                .trim()
+                === className
+
+            &&
+
+            String(test.subject || "")
+                .trim()
+                === subject
+
+        );
+
+    });
+
+}
+function resetMockSyllabusSelection(){
+
+    const boardSelect =
+        document.getElementById(
+            "mqBoard"
+        );
+
+    const classSelect =
+        document.getElementById(
+            "mqClass"
+        );
+
+    const subjectSelect =
+        document.getElementById(
+            "mqSubject"
+        );
+
+
+    /* =========================================
+       RESET BOARD
+    ========================================= */
+
+    if(boardSelect){
+
+        boardSelect.value = "";
+
+    }
+
+
+    /* =========================================
+       RESET CLASS
+    ========================================= */
+
+    if(classSelect){
+
+        classSelect.innerHTML = `
+            <option value="">
+                Select Class
+            </option>
+        `;
+
+        classSelect.value = "";
+
+        classSelect.disabled = true;
+
+    }
+
+
+    /* =========================================
+       RESET SUBJECT
+    ========================================= */
+
+    if(subjectSelect){
+
+        subjectSelect.innerHTML = `
+            <option value="">
+                Select Subject
+            </option>
+        `;
+
+        subjectSelect.value = "";
+
+        subjectSelect.disabled = true;
+
+    }
+
+
+    /* =========================================
+       RESET UPLOAD AREA
+    ========================================= */
+
+    resetMockUploadAreas();
+
+
+    /* =========================================
+       UPDATE SUMMARY
+    ========================================= */
+
+    updateMockSelectionSummary();
+
+}
 /* =========================================================
    CATEGORY SELECTION
 ========================================================= */
@@ -4160,13 +4303,17 @@ function selectMockAdminType(
     card
 ){
 
+    /* =========================================
+       SAVE NEW CATEGORY
+    ========================================= */
+
     selectedMockAdminType =
         type;
 
 
-    /* -----------------------------------------
-       REMOVE ACTIVE FROM ALL CATEGORY CARDS
-    ----------------------------------------- */
+    /* =========================================
+       REMOVE ACTIVE FROM ALL CARDS
+    ========================================= */
 
     document
         .querySelectorAll(
@@ -4181,9 +4328,9 @@ function selectMockAdminType(
         });
 
 
-    /* -----------------------------------------
-       ACTIVATE SELECTED CARD
-    ----------------------------------------- */
+    /* =========================================
+       ACTIVATE CLICKED CARD
+    ========================================= */
 
     if(card){
 
@@ -4207,9 +4354,9 @@ function selectMockAdminType(
     }
 
 
-    /* -----------------------------------------
+    /* =========================================
        SHOW SYLLABUS SECTION
-    ----------------------------------------- */
+    ========================================= */
 
     const syllabusSection =
         document.getElementById(
@@ -4225,61 +4372,89 @@ function selectMockAdminType(
     }
 
 
-    /* -----------------------------------------
-       UPDATE SUMMARY
-    ----------------------------------------- */
+    /* =========================================
+       READ CURRENT SELECTION
+    ========================================= */
 
-    updateMockSelectionSummary();
+    const board =
+        document.getElementById(
+            "mqBoard"
+        )?.value.trim() || "";
 
 
-    /* -----------------------------------------
-       IF SUBJECT IS ALREADY SELECTED,
-          SHOW CORRESPONDING PANEL
-    ----------------------------------------- */
+    const className =
+        document.getElementById(
+            "mqClass"
+        )?.value.trim() || "";
+
 
     const subject =
         document.getElementById(
             "mqSubject"
-        )?.value;
+        )?.value.trim() || "";
 
 
-    if(subject){
-
-        renderSelectedMockPanel();
-
-    }
-
-
-    /* -----------------------------------------
-       FINAL TEST
-    ----------------------------------------- */
+    /* =========================================
+       NO SYLLABUS SELECTED YET
+       → KEEP FRESH STATE
+    ========================================= */
 
     if(
-        type === "full_syllabus"
+        !board ||
+        !className ||
+        !subject
     ){
 
-        const panel =
-            document.getElementById(
-                "finalTestMockPanel"
-            );
+        resetMockUploadAreas();
 
+        updateMockSelectionSummary();
 
-        if(panel){
-
-            panel.style.display =
-                "block";
-
-        }
-
-
-        populateFinalSyllabusSummary();
+        return;
 
     }
 
 
-    /* -----------------------------------------
+    /* =========================================
+       CHECK WHETHER THIS CATEGORY
+       ALREADY EXISTS FOR THIS SYLLABUS
+    ========================================= */
+
+    const exists =
+        hasExistingMockForSelection(
+            type,
+            board,
+            className,
+            subject
+        );
+
+
+    /* =========================================
+       EXISTING CATEGORY + SYLLABUS
+       → KEEP SELECTION
+       → LOAD ITS PANEL
+    ========================================= */
+
+    if(exists){
+
+        loadMockChapters();
+
+        return;
+
+    }
+
+
+    /* =========================================
+       CATEGORY DOES NOT EXIST FOR THIS
+       BOARD + CLASS + SUBJECT
+       → RESET SYLLABUS
+    ========================================= */
+
+    resetMockSyllabusSelection();
+
+
+    /* =========================================
        SCROLL TO SYLLABUS
-    ----------------------------------------- */
+    ========================================= */
 
     setTimeout(function(){
 
