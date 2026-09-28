@@ -281,9 +281,43 @@ def init_db():
     except sqlite3.OperationalError:
         pass
         # =====================================================
-    # RSC PRACTICE + MOCK TEST DATABASE
-    # =====================================================
-
+        # RSC PRACTICE + MOCK TEST DATABASE
+        # =====================================================
+        # -----------------------------------------------------
+        # PRACTICE MASTER SYLLABUS
+        # -----------------------------------------------------
+        
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS practice_syllabus (
+        
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+        
+            board TEXT NOT NULL,
+        
+            class_name TEXT NOT NULL,
+        
+            subject TEXT NOT NULL,
+        
+            topic TEXT NOT NULL,
+        
+            subtopic TEXT NOT NULL,
+        
+            display_order INTEGER DEFAULT 0,
+        
+            active INTEGER DEFAULT 1,
+        
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+        
+            UNIQUE(
+                board,
+                class_name,
+                subject,
+                topic,
+                subtopic
+            )
+        
+        )
+        """)
     # -----------------------------------------------------
     # 1. PRACTICE QUESTION BANK
     # -----------------------------------------------------
@@ -7906,14 +7940,18 @@ def practice_topics():
         c = conn.cursor()
 
         c.execute("""
-            SELECT DISTINCT topic, subtopic
-            FROM practice_questions
+            SELECT topic, subtopic
+            FROM practice_syllabus
             WHERE board=?
               AND class_name=?
               AND subject=?
               AND active=1
-            ORDER BY topic, subtopic
-        """, (board, class_name, subject))
+            ORDER BY display_order, id
+        """, (
+            board,
+            class_name,
+            subject
+        ))
 
         grouped = {}
 
@@ -7951,7 +7989,96 @@ def practice_topics():
             "success": False,
             "error": str(e)
         }), 500
+        
+@app.route("/admin/practice-syllabus", methods=["GET"])
+def admin_practice_syllabus():
 
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+
+        board = request.args.get("board", "").strip()
+        class_name = request.args.get("class_name", "").strip()
+        subject = request.args.get("subject", "").strip()
+
+        if not board or not class_name or not subject:
+            return jsonify({
+                "success": False,
+                "error": "Board, Class and Subject are required."
+            }), 400
+
+        conn = sqlite3.connect("/var/data/students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT
+                id,
+                topic,
+                subtopic,
+                display_order,
+                active
+            FROM practice_syllabus
+            WHERE board=?
+              AND class_name=?
+              AND subject=?
+            ORDER BY display_order, id
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+        rows = c.fetchall()
+
+        topics = {}
+
+        for row in rows:
+
+            topic = row["topic"]
+
+            if topic not in topics:
+                topics[topic] = []
+
+            topics[topic].append({
+                "id": row["id"],
+                "subtopic": row["subtopic"],
+                "display_order": row["display_order"],
+                "active": bool(row["active"])
+            })
+
+        conn.close()
+
+        result = []
+
+        for topic, subtopics in topics.items():
+
+            result.append({
+                "topic": topic,
+                "subtopics": subtopics
+            })
+
+        return jsonify({
+            "success": True,
+            "topics": result
+        })
+
+    except Exception as e:
+
+        print(
+            "ADMIN PRACTICE SYLLABUS ERROR:",
+            e
+        )
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+        
 # =====================================================
 # RSC MOCK TEST - LOAD COMPLETE SYLLABUS CHAPTERS
 # =====================================================
