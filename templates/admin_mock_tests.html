@@ -4363,6 +4363,15 @@ function resetMockSyllabusSelection(){
    Board → Class → Subject selection.
 ========================================================= */
 
+/* =========================================================
+   CATEGORY SELECTION
+   ---------------------------------------------------------
+   Category change:
+   → Keep Board / Class / Subject
+   → Do NOT reset syllabus
+   → Show selected category only after syllabus is selected
+========================================================= */
+
 function selectMockAdminType(type, card){
 
     /* -----------------------------------------
@@ -4373,7 +4382,7 @@ function selectMockAdminType(type, card){
 
 
     /* -----------------------------------------
-       ACTIVE CATEGORY CARD
+       ACTIVE CARD
     ----------------------------------------- */
 
     document
@@ -4389,18 +4398,33 @@ function selectMockAdminType(type, card){
 
         card.classList.add("active");
 
-
         const radio =
             card.querySelector(
                 'input[type="radio"]'
             );
-
 
         if(radio){
 
             radio.checked = true;
 
         }
+
+    }
+
+
+    /* -----------------------------------------
+       ALWAYS SHOW SYLLABUS SECTION
+    ----------------------------------------- */
+
+    const syllabusSection =
+        document.getElementById(
+            "mockSyllabusSection"
+        );
+
+    if(syllabusSection){
+
+        syllabusSection.style.display =
+            "block";
 
     }
 
@@ -4428,14 +4452,42 @@ function selectMockAdminType(type, card){
 
 
     /* -----------------------------------------
-       HIDE ALL CATEGORY PANELS
+       IMPORTANT
+
+       Board / Class / Subject not selected yet
+
+       → KEEP SYLLABUS SECTION
+       → HIDE ALL CATEGORY PANELS
+       → DO NOT RESET BOARD / CLASS / SUBJECT
+    ----------------------------------------- */
+
+    if(
+        !board ||
+        !className ||
+        !subject
+    ){
+
+        hideMockUploadPanels();
+
+        updateMockSelectionSummary();
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------
+       SYLLABUS ALREADY SELECTED
+
+       → KEEP SAME SUBJECT CHAPTER LIST
+       → ONLY CHANGE CATEGORY PANEL
     ----------------------------------------- */
 
     hideMockUploadPanels();
 
 
     /* -----------------------------------------
-       SHOW SELECTED CATEGORY
+       CHAPTER-WISE
     ----------------------------------------- */
 
     if(type === "chapter"){
@@ -4445,7 +4497,6 @@ function selectMockAdminType(type, card){
                 "chapterMockPanel"
             );
 
-
         if(panel){
 
             panel.style.display =
@@ -4453,8 +4504,26 @@ function selectMockAdminType(type, card){
 
         }
 
+
+        if(
+            mockChapterOptions &&
+            mockChapterOptions.length
+        ){
+
+            renderChapterUploadList();
+
+        }else{
+
+            loadMockChapters();
+
+        }
+
     }
 
+
+    /* -----------------------------------------
+       4-CHAPTER
+    ----------------------------------------- */
 
     if(type === "four_chapter"){
 
@@ -4463,7 +4532,6 @@ function selectMockAdminType(type, card){
                 "fourChapterMockPanel"
             );
 
-
         if(panel){
 
             panel.style.display =
@@ -4471,8 +4539,26 @@ function selectMockAdminType(type, card){
 
         }
 
+
+        if(
+            mockChapterOptions &&
+            mockChapterOptions.length
+        ){
+
+            populateFourChapterSelectors();
+
+        }else{
+
+            loadMockChapters();
+
+        }
+
     }
 
+
+    /* -----------------------------------------
+       FINAL TEST
+    ----------------------------------------- */
 
     if(type === "full_syllabus"){
 
@@ -4481,7 +4567,6 @@ function selectMockAdminType(type, card){
                 "finalTestMockPanel"
             );
 
-
         if(panel){
 
             panel.style.display =
@@ -4490,65 +4575,6 @@ function selectMockAdminType(type, card){
         }
 
     }
-
-
-    /* -----------------------------------------
-       NO SUBJECT YET
-       → DO NOT LOAD ANYTHING
-    ----------------------------------------- */
-
-    if(
-        !board ||
-        !className ||
-        !subject
-    ){
-
-        return;
-
-    }
-
-
-    /* -----------------------------------------
-       IMPORTANT
-       -----------------------------
-
-       SAME SUBJECT:
-       Keep existing chapter list.
-
-       If chapter list is already loaded,
-       do NOT reload/reset it.
-    ----------------------------------------- */
-
-    if(
-        mockChapterOptions &&
-        mockChapterOptions.length > 0
-    ){
-
-        if(type === "chapter"){
-
-            renderChapterUploadList();
-
-        }
-
-
-        if(type === "four_chapter"){
-
-            populateFourChapterSelectors();
-
-        }
-
-
-        return;
-
-    }
-
-
-    /* -----------------------------------------
-       CHAPTER LIST NOT LOADED YET
-       → LOAD ONCE
-    ----------------------------------------- */
-
-    loadMockChapters();
 
 }
 /* =========================================================
@@ -4910,11 +4936,10 @@ async function loadMockChapters(){
         )?.value.trim() || "";
 
 
-    /* -----------------------------------------
-       IMPORTANT:
-       SUBJECT CHANGED
-       → RESET OLD CHAPTER DATA
-    ----------------------------------------- */
+    /*
+       SUBJECT / SYLLABUS CHANGED
+       → OLD CHAPTER DATA CLEAR
+    */
 
     mockChapterOptions = [];
 
@@ -4924,10 +4949,6 @@ async function loadMockChapters(){
 
     updateMockSelectionSummary();
 
-
-    /* -----------------------------------------
-       BOARD / CLASS / SUBJECT NOT COMPLETE
-    ----------------------------------------- */
 
     if(
         !board ||
@@ -4941,11 +4962,7 @@ async function loadMockChapters(){
 
 
     /* -----------------------------------------
-       FINAL TEST
-       -----------------------------
-
-       Final Test does not need chapter
-       selection UI.
+       FINAL TEST DOES NOT NEED CHAPTER LIST UI
     ----------------------------------------- */
 
     if(
@@ -4958,6 +4975,98 @@ async function loadMockChapters(){
                 "finalTestMockPanel"
             );
 
+        if(panel){
+
+            panel.style.display =
+                "block";
+
+        }
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------
+       LOAD CHAPTERS
+       FROM PRACTICE SYLLABUS
+    ----------------------------------------- */
+
+    const response =
+        await fetch(
+            "/api/practice/topics",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    board:
+                        board,
+
+                    class_name:
+                        className,
+
+                    subject:
+                        subject
+
+                })
+
+            }
+        );
+
+
+    const data =
+        await response.json();
+
+
+    if(
+        !response.ok ||
+        !data.success
+    ){
+
+        throw new Error(
+            data.error ||
+            "Unable to load chapters."
+        );
+
+    }
+
+
+    /* -----------------------------------------
+       SAVE CHAPTER LIST
+    ----------------------------------------- */
+
+    mockChapterOptions =
+        (data.topics || [])
+            .map(function(item){
+
+                return item.topic;
+
+            })
+            .filter(Boolean);
+
+
+    /* -----------------------------------------
+       SHOW CURRENT CATEGORY
+    ----------------------------------------- */
+
+    hideMockUploadPanels();
+
+
+    if(
+        selectedMockAdminType ===
+        "chapter"
+    ){
+
+        const panel =
+            document.getElementById(
+                "chapterMockPanel"
+            );
 
         if(panel){
 
@@ -4966,199 +5075,29 @@ async function loadMockChapters(){
 
         }
 
-
-        return;
-
-    }
-
-
-    /* -----------------------------------------
-       SHOW LOADING
-    ----------------------------------------- */
-
-    const chapterList =
-        document.getElementById(
-            "chapterUploadList"
-        );
-
-
-    if(chapterList){
-
-        chapterList.innerHTML = `
-            <div class="empty-upload-message">
-                ⏳ Loading chapters from Practice syllabus...
-            </div>
-        `;
+        renderChapterUploadList();
 
     }
 
 
-    try{
+    if(
+        selectedMockAdminType ===
+        "four_chapter"
+    ){
 
-        const response =
-            await fetch(
-                "/api/mock/topics",
-                {
-                    method:"POST",
-
-                    headers:{
-                        "Content-Type":
-                            "application/json"
-                    },
-
-                    body:JSON.stringify({
-
-                        board:
-                            board,
-
-                        class_name:
-                            className,
-
-                        subject:
-                            subject
-
-                    })
-
-                }
+        const panel =
+            document.getElementById(
+                "fourChapterMockPanel"
             );
 
+        if(panel){
 
-        const data =
-            await response.json();
-
-
-        if(
-            !response.ok ||
-            !data.success
-        ){
-
-            throw new Error(
-                data.error ||
-                "Unable to load chapters."
-            );
+            panel.style.display =
+                "block";
 
         }
 
-
-        /* -----------------------------------------
-           STORE CHAPTER LIST
-        ----------------------------------------- */
-
-        mockChapterOptions =
-            (data.topics || [])
-                .map(function(item){
-
-                    return item.topic;
-
-                })
-                .filter(Boolean);
-
-
-        /* -----------------------------------------
-           SHOW CORRECT CATEGORY
-        ----------------------------------------- */
-
-        hideMockUploadPanels();
-
-
-        if(
-            selectedMockAdminType ===
-            "chapter"
-        ){
-
-            const panel =
-                document.getElementById(
-                    "chapterMockPanel"
-                );
-
-
-            if(panel){
-
-                panel.style.display =
-                    "block";
-
-            }
-
-
-            renderChapterUploadList();
-
-        }
-
-
-        if(
-            selectedMockAdminType ===
-            "four_chapter"
-        ){
-
-            const panel =
-                document.getElementById(
-                    "fourChapterMockPanel"
-                );
-
-
-            if(panel){
-
-                panel.style.display =
-                    "block";
-
-            }
-
-
-            populateFourChapterSelectors();
-
-        }
-
-
-        if(
-            selectedMockAdminType ===
-            "full_syllabus"
-        ){
-
-            const panel =
-                document.getElementById(
-                    "finalTestMockPanel"
-                );
-
-
-            if(panel){
-
-                panel.style.display =
-                    "block";
-
-            }
-
-        }
-
-
-    }catch(error){
-
-        console.error(
-            "MOCK CHAPTER LOAD ERROR:",
-            error
-        );
-
-
-        mockChapterOptions = [];
-
-
-        if(chapterList){
-
-            chapterList.innerHTML = `
-                <div class="empty-upload-message">
-                    ❌ ${esc(
-                        error.message ||
-                        "Unable to load chapters."
-                    )}
-                </div>
-            `;
-
-        }
-
-
-        alert(
-            error.message ||
-            "Unable to load chapters."
-        );
+        populateFourChapterSelectors();
 
     }
 
