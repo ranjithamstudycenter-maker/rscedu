@@ -7922,73 +7922,295 @@ def practice_options():
 
 @app.route("/api/practice/topics", methods=["POST"])
 def practice_topics():
+
     try:
+
         data = request.get_json() or {}
 
-        board = str(data.get("board", "")).strip()
-        class_name = str(data.get("class_name", "")).strip()
-        subject = str(data.get("subject", "")).strip()
+        board = str(
+            data.get("board", "")
+        ).strip()
+
+        class_name = str(
+            data.get("class_name", "")
+        ).strip()
+
+        subject = str(
+            data.get("subject", "")
+        ).strip()
+
 
         if not board or not class_name or not subject:
+
             return jsonify({
                 "success": False,
-                "error": "Board, Class and Subject are required."
+                "error":
+                    "Board, Class and Subject are required."
             }), 400
 
-        conn = sqlite3.connect("/var/data/students.db")
+
+        conn = sqlite3.connect(
+            "/var/data/students.db"
+        )
+
         conn.row_factory = sqlite3.Row
+
         c = conn.cursor()
 
+
+        # =================================================
+        # FIRST SOURCE:
+        # OFFICIAL / ADMIN SYLLABUS TOPIC CACHE
+        # =================================================
+
         c.execute("""
-            SELECT topic, subtopic
-            FROM practice_syllabus
+            SELECT topics_json
+            FROM ai_syllabus_topics
             WHERE board=?
               AND class_name=?
               AND subject=?
-              AND active=1
-            ORDER BY display_order, id
+            ORDER BY id DESC
+            LIMIT 1
         """, (
             board,
             class_name,
             subject
         ))
 
+        row = c.fetchone()
+
+
+        if row:
+
+            try:
+
+                topic_data = json.loads(
+                    row["topics_json"]
+                )
+
+                raw_topics = topic_data.get(
+                    "topics",
+                    []
+                )
+
+                topics = []
+
+
+                for item in raw_topics:
+
+                    if not isinstance(item, dict):
+                        continue
+
+
+                    topic = str(
+                        item.get(
+                            "topic",
+                            ""
+                        )
+                    ).strip()
+
+
+                    if not topic:
+                        continue
+
+
+                    raw_subtopics = item.get(
+                        "subtopics",
+                        []
+                    )
+
+
+                    if not isinstance(
+                        raw_subtopics,
+                        list
+                    ):
+                        raw_subtopics = []
+
+
+                    subtopics = []
+
+
+                    for subtopic in raw_subtopics:
+
+                        subtopic = str(
+                            subtopic
+                        ).strip()
+
+
+                        if (
+                            subtopic
+                            and subtopic
+                            not in subtopics
+                        ):
+
+                            subtopics.append(
+                                subtopic
+                            )
+
+
+                    topics.append({
+
+                        "topic":
+                            topic,
+
+                        "subtopics":
+                            subtopics
+
+                    })
+
+
+                if topics:
+
+                    conn.close()
+
+                    return jsonify({
+
+                        "success":
+                            True,
+
+                        "source":
+                            "syllabus",
+
+                        "board":
+                            board,
+
+                        "class_name":
+                            class_name,
+
+                        "subject":
+                            subject,
+
+                        "topics":
+                            topics
+
+                    })
+
+
+            except Exception as e:
+
+                print(
+                    "SYLLABUS TOPIC CACHE ERROR:",
+                    e
+                )
+
+
+        # =================================================
+        # FALLBACK:
+        # EXISTING PRACTICE QUESTIONS
+        # =================================================
+
+        c.execute("""
+            SELECT DISTINCT
+                topic,
+                subtopic
+
+            FROM practice_questions
+
+            WHERE board=?
+              AND class_name=?
+              AND subject=?
+              AND active=1
+
+            ORDER BY
+                topic,
+                subtopic
+
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+
         grouped = {}
+
 
         for row in c.fetchall():
 
-            topic = row["topic"]
-            subtopic = row["subtopic"]
+            topic = str(
+                row["topic"] or ""
+            ).strip()
+
+            subtopic = str(
+                row["subtopic"] or ""
+            ).strip()
+
+
+            if not topic:
+                continue
+
 
             if topic not in grouped:
+
                 grouped[topic] = []
 
-            if subtopic and subtopic not in grouped[topic]:
-                grouped[topic].append(subtopic)
+
+            if (
+                subtopic
+                and subtopic
+                not in grouped[topic]
+            ):
+
+                grouped[topic].append(
+                    subtopic
+                )
+
 
         conn.close()
 
+
         topics = [
+
             {
                 "topic": topic,
                 "subtopics": subtopics
             }
-            for topic, subtopics in grouped.items()
+
+            for topic, subtopics
+            in grouped.items()
+
         ]
 
+
         return jsonify({
-            "success": True,
-            "topics": topics
+
+            "success":
+                True,
+
+            "source":
+                "practice_questions",
+
+            "board":
+                board,
+
+            "class_name":
+                class_name,
+
+            "subject":
+                subject,
+
+            "topics":
+                topics
+
         })
+
 
     except Exception as e:
 
-        print("PRACTICE TOPICS ERROR:", e)
+        print(
+            "PRACTICE TOPICS ERROR:",
+            e
+        )
 
         return jsonify({
-            "success": False,
-            "error": str(e)
-        }), 500
+
+            "success":
+                False,
+
+            "error":
+                str(e)
+
+        }), 5000
         
 @app.route("/admin/practice-syllabus", methods=["GET"])
 def admin_practice_syllabus():
@@ -8103,10 +8325,6 @@ def mock_topics():
         ).strip()
 
 
-        # -------------------------------------------------
-        # VALIDATION
-        # -------------------------------------------------
-
         if not board or not class_name or not subject:
 
             return jsonify({
@@ -8115,10 +8333,6 @@ def mock_topics():
                     "Board, Class and Subject are required."
             }), 400
 
-
-        # -------------------------------------------------
-        # DATABASE
-        # -------------------------------------------------
 
         conn = sqlite3.connect(
             "/var/data/students.db"
@@ -8129,9 +8343,9 @@ def mock_topics():
         c = conn.cursor()
 
 
-        # -------------------------------------------------
-        # FIRST: LOAD COMPLETE AI SYLLABUS TOPICS
-        # -------------------------------------------------
+        # =================================================
+        # SAME SYLLABUS USED BY PRACTICE
+        # =================================================
 
         c.execute("""
             SELECT topics_json
@@ -8147,187 +8361,181 @@ def mock_topics():
             subject
         ))
 
-        cached_row = c.fetchone()
+
+        row = c.fetchone()
 
 
-        # -------------------------------------------------
-        # IF AI SYLLABUS EXISTS
-        # -------------------------------------------------
+        if not row:
 
-        if cached_row:
+            # Fallback to Practice topics
+            c.execute("""
+                SELECT DISTINCT
+                    topic,
+                    subtopic
 
-            try:
+                FROM practice_questions
 
-                topic_data = json.loads(
-                    cached_row["topics_json"]
+                WHERE board=?
+                  AND class_name=?
+                  AND subject=?
+                  AND active=1
+
+                ORDER BY
+                    topic,
+                    subtopic
+
+            """, (
+                board,
+                class_name,
+                subject
+            ))
+
+
+            grouped = {}
+
+
+            for item in c.fetchall():
+
+                topic = str(
+                    item["topic"] or ""
+                ).strip()
+
+
+                if not topic:
+                    continue
+
+
+                if topic not in grouped:
+
+                    grouped[topic] = []
+
+
+            conn.close()
+
+
+            return jsonify({
+
+                "success": True,
+
+                "source":
+                    "practice_questions",
+
+                "topics": [
+                    {
+                        "topic": topic
+                    }
+
+                    for topic
+                    in grouped.keys()
+                ]
+
+            })
+
+
+        try:
+
+            topic_data = json.loads(
+                row["topics_json"]
+            )
+
+            raw_topics = topic_data.get(
+                "topics",
+                []
+            )
+
+
+            topics = []
+
+
+            for item in raw_topics:
+
+                if isinstance(item, dict):
+
+                    topic = str(
+                        item.get(
+                            "topic",
+                            ""
+                        )
+                    ).strip()
+
+                elif isinstance(item, str):
+
+                    topic = item.strip()
+
+                else:
+
+                    continue
+
+
+                if not topic:
+                    continue
+
+
+                # Avoid duplicate chapters
+
+                exists = any(
+                    str(x["topic"]).lower()
+                    == topic.lower()
+                    for x in topics
                 )
 
-                topics = topic_data.get(
-                    "topics",
-                    []
-                )
 
+                if exists:
+                    continue
 
-                clean_topics = []
-
-
-                if isinstance(topics, list):
-
-                    for item in topics:
-
-                        # -----------------------------
-                        # NORMAL TOPIC OBJECT
-                        # -----------------------------
-
-                        if isinstance(
-                            item,
-                            dict
-                        ):
-
-                            topic_name = str(
-                                item.get(
-                                    "topic",
-                                    ""
-                                )
-                            ).strip()
-
-
-                        # -----------------------------
-                        # STRING TOPIC
-                        # -----------------------------
-
-                        elif isinstance(
-                            item,
-                            str
-                        ):
-
-                            topic_name = item.strip()
-
-
-                        else:
-
-                            continue
-
-
-                        if not topic_name:
-                            continue
-
-
-                        # Avoid duplicates
-
-                        if topic_name.lower() in [
-                            str(x["topic"]).lower()
-                            for x in clean_topics
-                        ]:
-
-                            continue
-
-
-                        clean_topics.append({
-                            "topic": topic_name
-                        })
-
-
-                # -----------------------------------------
-                # RETURN COMPLETE SYLLABUS CHAPTERS
-                # -----------------------------------------
-
-                if clean_topics:
-
-                    conn.close()
-
-                    return jsonify({
-
-                        "success": True,
-
-                        "source":
-                            "ai_syllabus_topics",
-
-                        "board":
-                            board,
-
-                        "class_name":
-                            class_name,
-
-                        "subject":
-                            subject,
-
-                        "topics":
-                            clean_topics
-
-                    })
-
-
-            except Exception as e:
-
-                print(
-                    "MOCK TOPIC CACHE ERROR:",
-                    e
-                )
-
-
-        # -------------------------------------------------
-        # FALLBACK
-        # If AI syllabus cache is not available,
-        # use existing Practice Question topics.
-        # -------------------------------------------------
-
-        c.execute("""
-            SELECT DISTINCT topic
-            FROM practice_questions
-            WHERE board=?
-              AND class_name=?
-              AND subject=?
-              AND active=1
-            ORDER BY topic
-        """, (
-            board,
-            class_name,
-            subject
-        ))
-
-
-        rows = c.fetchall()
-
-
-        topics = []
-
-        for row in rows:
-
-            topic = str(
-                row["topic"] or ""
-            ).strip()
-
-            if topic:
 
                 topics.append({
-                    "topic": topic
+
+                    "topic":
+                        topic
+
                 })
 
 
-        conn.close()
+            conn.close()
 
 
-        return jsonify({
+            return jsonify({
 
-            "success": True,
+                "success":
+                    True,
 
-            "source":
-                "practice_questions",
+                "source":
+                    "syllabus",
 
-            "board":
-                board,
+                "board":
+                    board,
 
-            "class_name":
-                class_name,
+                "class_name":
+                    class_name,
 
-            "subject":
-                subject,
+                "subject":
+                    subject,
 
-            "topics":
-                topics
+                "topics":
+                    topics
 
-        })
+            })
+
+
+        except Exception as e:
+
+            conn.close()
+
+            print(
+                "MOCK SYLLABUS JSON ERROR:",
+                e
+            )
+
+            return jsonify({
+
+                "success":
+                    False,
+
+                "error":
+                    "Unable to read syllabus topics."
+
+            }), 500
 
 
     except Exception as e:
@@ -8339,7 +8547,8 @@ def mock_topics():
 
         return jsonify({
 
-            "success": False,
+            "success":
+                False,
 
             "error":
                 str(e)
