@@ -367,7 +367,37 @@ def init_db():
     )
     """)
 
-
+    # =====================================================
+    # MOCK TEST CATEGORY COLUMNS - DATABASE SAFETY MIGRATION
+    # =====================================================
+    
+    try:
+    
+        c.execute("""
+            ALTER TABLE mock_tests
+            ADD COLUMN mock_type TEXT DEFAULT 'chapter'
+        """)
+    
+    except sqlite3.OperationalError:
+    
+        # Column already exists
+        pass
+    
+    
+    try:
+    
+        c.execute("""
+            ALTER TABLE mock_tests
+            ADD COLUMN chapter_scope TEXT DEFAULT ''
+        """)
+    
+    except sqlite3.OperationalError:
+    
+        # Column already exists
+        pass
+    
+    
+    conn.commit()
     # -----------------------------------------------------
     # 3. MOCK QUESTION BANK
     # -----------------------------------------------------
