@@ -4353,24 +4353,28 @@ function resetMockSyllabusSelection(){
    Board / Class / Subject.
 ========================================================= */
 
-async function selectMockAdminType(
-    type,
-    card
-){
+/* =========================================================
+   MOCK ADMIN TYPE SELECTION
+========================================================= */
 
-    /* =========================================
-       SAVE SELECTED CATEGORY
-    ========================================= */
+let selectedMockAdminType = "";
+
+
+/* ---------- SELECT TYPE ---------- */
+
+function selectMockAdminType(type, card){
 
     selectedMockAdminType = type;
 
 
-    /* =========================================
-       ACTIVE CATEGORY CARD
-    ========================================= */
+    /* ---------------------------------------------
+       ACTIVE CARD
+    --------------------------------------------- */
 
     document
-        .querySelectorAll(".mock-category-card")
+        .querySelectorAll(
+            "#mockTypeSection .mock-type-option"
+        )
         .forEach(function(item){
 
             item.classList.remove("active");
@@ -4382,42 +4386,99 @@ async function selectMockAdminType(
 
         card.classList.add("active");
 
+    }
 
-        const radio =
-            card.querySelector(
-                'input[type="radio"]'
+
+    /* ---------------------------------------------
+       RADIO
+    --------------------------------------------- */
+
+    const radio =
+        card
+        ? card.querySelector(
+            'input[type="radio"]'
+        )
+        : null;
+
+
+    if(radio){
+
+        radio.checked = true;
+
+    }
+
+
+    /* ---------------------------------------------
+       HIDE ALL PANELS
+    --------------------------------------------- */
+
+    hideMockUploadPanels();
+
+
+    /* ---------------------------------------------
+       CHAPTER-WISE
+    --------------------------------------------- */
+
+    if(type === "chapter"){
+
+        const panel =
+            document.getElementById(
+                "chapterMockPanel"
             );
 
-        if(radio){
+        if(panel){
 
-            radio.checked = true;
+            panel.style.display = "block";
 
         }
 
     }
 
 
-    /* =========================================
-       SHOW SYLLABUS SECTION
-    ========================================= */
+    /* ---------------------------------------------
+       4-CHAPTER
+    --------------------------------------------- */
 
-    const syllabusSection =
-        document.getElementById(
-            "mockSyllabusSection"
-        );
+    if(type === "four_chapter"){
 
-    if(syllabusSection){
+        const panel =
+            document.getElementById(
+                "fourChapterMockPanel"
+            );
 
-        syllabusSection.style.display =
-            "block";
+        if(panel){
+
+            panel.style.display = "block";
+
+        }
 
     }
 
 
-    /* =========================================
-       READ CURRENT SYLLABUS
-       DO NOT RESET THESE VALUES
-    ========================================= */
+    /* ---------------------------------------------
+       FINAL TEST
+    --------------------------------------------- */
+
+    if(type === "full_syllabus"){
+
+        const panel =
+            document.getElementById(
+                "finalTestMockPanel"
+            );
+
+        if(panel){
+
+            panel.style.display = "block";
+
+        }
+
+    }
+
+
+    /* ---------------------------------------------
+       IMPORTANT:
+       RELOAD CHAPTERS FROM MASTER SYLLABUS
+    --------------------------------------------- */
 
     const board =
         document.getElementById(
@@ -4437,32 +4498,15 @@ async function selectMockAdminType(
         )?.value.trim() || "";
 
 
-    /* =========================================
-       BOARD / CLASS / SUBJECT NOT SELECTED YET
-       → JUST WAIT FOR USER TO SELECT THEM
-    ========================================= */
-
     if(
-        !board ||
-        !className ||
-        !subject
+        board &&
+        className &&
+        subject
     ){
 
-        resetMockUploadAreas();
-
-        updateMockSelectionSummary();
-
-        return;
+        loadMockChapters();
 
     }
-
-
-    /* =========================================
-       BOARD + CLASS + SUBJECT ALREADY SELECTED
-       → DIRECTLY LOAD SELECTED CATEGORY
-    ========================================= */
-
-    await loadMockChapters();
 
 }
 /* =========================================================
