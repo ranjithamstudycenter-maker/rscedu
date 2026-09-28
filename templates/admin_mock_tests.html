@@ -4358,17 +4358,20 @@ function resetMockSyllabusSelection(){
 
 function selectMockAdminType(type, card){
 
+    /* =========================================
+       SAVE CATEGORY
+    ========================================= */
+
     selectedMockAdminType = type;
 
 
-    /* =====================================================
-       1. ACTIVE CATEGORY CARD
-    ===================================================== */
+    /* =========================================
+       ONLY CHANGE CATEGORY CARD
+       DO NOT RESET SYLLABUS
+    ========================================= */
 
     document
-        .querySelectorAll(
-            ".mock-category-card"
-        )
+        .querySelectorAll(".mock-category-card")
         .forEach(function(item){
 
             item.classList.remove("active");
@@ -4380,40 +4383,25 @@ function selectMockAdminType(type, card){
 
         card.classList.add("active");
 
-    }
+
+        const radio =
+            card.querySelector(
+                'input[type="radio"]'
+            );
 
 
-    /* =====================================================
-       2. RADIO
-    ===================================================== */
+        if(radio){
 
-    const radio =
-        card
-        ? card.querySelector(
-            'input[type="radio"]'
-        )
-        : null;
+            radio.checked = true;
 
-
-    if(radio){
-
-        radio.checked = true;
+        }
 
     }
 
 
-    /* =====================================================
-       3. HIDE UPLOAD PANELS
-       DO NOT SHOW THEM YET
-       Board/Class/Subject must be selected first
-    ===================================================== */
-
-    hideMockUploadPanels();
-
-
-    /* =====================================================
-       4. SHOW EXISTING SELECT SYLLABUS
-    ===================================================== */
+    /* =========================================
+       SHOW EXISTING SYLLABUS SECTION
+    ========================================= */
 
     const syllabusSection =
         document.getElementById(
@@ -4429,24 +4417,11 @@ function selectMockAdminType(type, card){
     }
 
 
-    /* =====================================================
-       5. LOAD BOARD / CLASS / SUBJECT
-    ===================================================== */
-
-    loadMockAdminOptions();
-
-
-    /* =====================================================
-       6. UPDATE SUMMARY
-    ===================================================== */
-
-    updateMockSelectionSummary();
-
-
-    /* =====================================================
-       7. IF SYLLABUS WAS ALREADY SELECTED,
-          LOAD CHAPTERS AGAIN
-    ===================================================== */
+    /* =========================================
+       READ CURRENT SYLLABUS
+       IMPORTANT:
+       DO NOT RESET THESE
+    ========================================= */
 
     const board =
         document.getElementById(
@@ -4466,6 +4441,18 @@ function selectMockAdminType(type, card){
         )?.value.trim() || "";
 
 
+    /* =========================================
+       UPDATE SUMMARY
+    ========================================= */
+
+    updateMockSelectionSummary();
+
+
+    /* =========================================
+       IF SYLLABUS IS ALREADY SELECTED
+       → LOAD THIS CATEGORY
+    ========================================= */
+
     if(
         board &&
         className &&
@@ -4474,7 +4461,17 @@ function selectMockAdminType(type, card){
 
         loadMockChapters();
 
+        return;
+
     }
+
+
+    /* =========================================
+       FIRST TIME
+       → JUST WAIT FOR SYLLABUS SELECTION
+    ========================================= */
+
+    resetMockUploadAreas();
 
 }
 /* =========================================================
