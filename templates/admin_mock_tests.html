@@ -4356,22 +4356,28 @@ function resetMockSyllabusSelection(){
 
 /* ---------- SELECT TYPE ---------- */
 
+/* =========================================================
+   CATEGORY SELECTION
+   ---------------------------------------------------------
+   Category changes keep the current
+   Board → Class → Subject selection.
+========================================================= */
+
 function selectMockAdminType(type, card){
 
-    /* =========================================
+    /* -----------------------------------------
        SAVE CATEGORY
-    ========================================= */
+    ----------------------------------------- */
 
     selectedMockAdminType = type;
 
 
-    /* =========================================
-       ONLY CHANGE CATEGORY CARD
-       DO NOT RESET SYLLABUS
-    ========================================= */
+    /* -----------------------------------------
+       ACTIVE CATEGORY CARD
+    ----------------------------------------- */
 
     document
-        .querySelectorAll(".mock-category-card")
+        .querySelectorAll(".mock-type-option")
         .forEach(function(item){
 
             item.classList.remove("active");
@@ -4399,29 +4405,9 @@ function selectMockAdminType(type, card){
     }
 
 
-    /* =========================================
-       SHOW EXISTING SYLLABUS SECTION
-    ========================================= */
-
-    const syllabusSection =
-        document.getElementById(
-            "mockSyllabusSection"
-        );
-
-
-    if(syllabusSection){
-
-        syllabusSection.style.display =
-            "block";
-
-    }
-
-
-    /* =========================================
+    /* -----------------------------------------
        READ CURRENT SYLLABUS
-       IMPORTANT:
-       DO NOT RESET THESE
-    ========================================= */
+    ----------------------------------------- */
 
     const board =
         document.getElementById(
@@ -4441,37 +4427,128 @@ function selectMockAdminType(type, card){
         )?.value.trim() || "";
 
 
-    /* =========================================
-       UPDATE SUMMARY
-    ========================================= */
+    /* -----------------------------------------
+       HIDE ALL CATEGORY PANELS
+    ----------------------------------------- */
 
-    updateMockSelectionSummary();
+    hideMockUploadPanels();
 
 
-    /* =========================================
-       IF SYLLABUS IS ALREADY SELECTED
-       → LOAD THIS CATEGORY
-    ========================================= */
+    /* -----------------------------------------
+       SHOW SELECTED CATEGORY
+    ----------------------------------------- */
+
+    if(type === "chapter"){
+
+        const panel =
+            document.getElementById(
+                "chapterMockPanel"
+            );
+
+
+        if(panel){
+
+            panel.style.display =
+                "block";
+
+        }
+
+    }
+
+
+    if(type === "four_chapter"){
+
+        const panel =
+            document.getElementById(
+                "fourChapterMockPanel"
+            );
+
+
+        if(panel){
+
+            panel.style.display =
+                "block";
+
+        }
+
+    }
+
+
+    if(type === "full_syllabus"){
+
+        const panel =
+            document.getElementById(
+                "finalTestMockPanel"
+            );
+
+
+        if(panel){
+
+            panel.style.display =
+                "block";
+
+        }
+
+    }
+
+
+    /* -----------------------------------------
+       NO SUBJECT YET
+       → DO NOT LOAD ANYTHING
+    ----------------------------------------- */
 
     if(
-        board &&
-        className &&
-        subject
+        !board ||
+        !className ||
+        !subject
     ){
-
-        loadMockChapters();
 
         return;
 
     }
 
 
-    /* =========================================
-       FIRST TIME
-       → JUST WAIT FOR SYLLABUS SELECTION
-    ========================================= */
+    /* -----------------------------------------
+       IMPORTANT
+       -----------------------------
 
-    resetMockUploadAreas();
+       SAME SUBJECT:
+       Keep existing chapter list.
+
+       If chapter list is already loaded,
+       do NOT reload/reset it.
+    ----------------------------------------- */
+
+    if(
+        mockChapterOptions &&
+        mockChapterOptions.length > 0
+    ){
+
+        if(type === "chapter"){
+
+            renderChapterUploadList();
+
+        }
+
+
+        if(type === "four_chapter"){
+
+            populateFourChapterSelectors();
+
+        }
+
+
+        return;
+
+    }
+
+
+    /* -----------------------------------------
+       CHAPTER LIST NOT LOADED YET
+       → LOAD ONCE
+    ----------------------------------------- */
+
+    loadMockChapters();
 
 }
 /* =========================================================
