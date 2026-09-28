@@ -5109,26 +5109,21 @@ async function loadMockChapters(){
 function updateMockSelectionSummary(){
 
     const board =
-        document.getElementById(
-            "mqBoard"
-        )?.value || "";
+        document.getElementById("mqBoard")?.value || "";
 
     const className =
-        document.getElementById(
-            "mqClass"
-        )?.value || "";
+        document.getElementById("mqClass")?.value || "";
 
     const subject =
-        document.getElementById(
-            "mqSubject"
-        )?.value || "";
-
+        document.getElementById("mqSubject")?.value || "";
 
     const summary =
-        document.getElementById(
-            "mockSelectionSummary"
-        );
+        document.getElementById("mockSelectionSummary");
 
+
+    /* =========================================
+       NOTHING SELECTED
+    ========================================= */
 
     if(
         !board ||
@@ -5137,14 +5132,62 @@ function updateMockSelectionSummary(){
     ){
 
         if(summary){
-            summary.style.display =
-                "none";
+
+            summary.style.display = "none";
+
         }
 
         return;
 
     }
 
+
+    /* =========================================
+       UPDATE BOARD
+    ========================================= */
+
+    const summaryBoard =
+        document.getElementById("summaryBoard");
+
+    if(summaryBoard){
+
+        summaryBoard.textContent = board;
+
+    }
+
+
+    /* =========================================
+       UPDATE CLASS
+    ========================================= */
+
+    const summaryClass =
+        document.getElementById("summaryClass");
+
+    if(summaryClass){
+
+        summaryClass.textContent = className;
+
+    }
+
+
+    /* =========================================
+       UPDATE SUBJECT
+    ========================================= */
+
+    const summarySubject =
+        document.getElementById("summarySubject");
+
+    if(summarySubject){
+
+        summarySubject.textContent = subject;
+
+    }
+
+
+    /* =========================================
+       SUMMARY TYPE
+       OPTIONAL — ELEMENT MAY NOT EXIST
+    ========================================= */
 
     const typeNames = {
 
@@ -5160,32 +5203,25 @@ function updateMockSelectionSummary(){
     };
 
 
-    document.getElementById(
-        "summaryBoard"
-    ).textContent =
-        board;
+    const summaryType =
+        document.getElementById("summaryType");
 
-    document.getElementById(
-        "summaryClass"
-    ).textContent =
-        className;
+    if(summaryType){
 
-    document.getElementById(
-        "summarySubject"
-    ).textContent =
-        subject;
+        summaryType.textContent =
+            typeNames[selectedMockAdminType] || "—";
 
-    document.getElementById(
-        "summaryType"
-    ).textContent =
-        typeNames[
-            selectedMockAdminType
-        ] || "—";
+    }
 
+
+    /* =========================================
+       SHOW SUMMARY
+    ========================================= */
 
     if(summary){
-        summary.style.display =
-            "grid";
+
+        summary.style.display = "grid";
+
     }
 
 }
