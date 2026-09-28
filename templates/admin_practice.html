@@ -1299,7 +1299,97 @@ async function importPracticeExcel(){
         );
     }
 }
+async function importPracticeExcelForClass(classNumber){
 
+    const fileInput =
+        document.getElementById(`practiceExcelFile${classNumber}`);
+
+    const messageId = `excelImportMessage${classNumber}`;
+
+    if(!fileInput.files.length){
+        setMessage(
+            messageId,
+            `❌ Please select the Class ${classNumber} Excel file.`,
+            false
+        );
+        return;
+    }
+
+    const file = fileInput.files[0];
+
+    const formData = new FormData();
+    formData.append("excel_file", file);
+
+    setMessage(
+        messageId,
+        `⏳ Importing Class ${classNumber} questions...`,
+        true
+    );
+
+    try{
+
+        const response = await fetch(
+            "/admin/practice-questions/import-excel",
+            {
+                method:"POST",
+                body:formData
+            }
+        );
+
+        const data = await response.json();
+
+        if(!response.ok || !data.success){
+
+            setMessage(
+                messageId,
+                "❌ " + (data.error || "Excel import failed."),
+                false
+            );
+
+            return;
+        }
+
+        let msg =
+            `✅ Class ${classNumber}: ` +
+            (data.imported || 0) +
+            " question(s) imported.";
+
+        if(data.skipped > 0){
+            msg += " " + data.skipped + " skipped.";
+        }
+
+        setMessage(
+            messageId,
+            msg,
+            true
+        );
+
+        fileInput.value = "";
+
+        // Refresh summary and question list
+        loadPracticeQuestionCount();
+        loadPracticeQuestions();
+
+    }catch(error){
+
+        console.error(
+            `Class ${classNumber} Excel import error:`,
+            error
+        );
+
+        setMessage(
+            messageId,
+            "❌ Server error during Excel import.",
+            false
+        );
+    }
+}
+
+// Keep the old function name available if any existing code calls it.
+async function importPracticeExcel(){
+    const classNumber = 9;
+    return importPracticeExcelForClass(classNumber);
+}
 async function addPracticeQuestion(){
 
     const board =
