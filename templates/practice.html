@@ -4216,31 +4216,67 @@ function updatePackageGateway(){
             "packageSelectionText"
         );
 
+
+    // ---------------------------------------------
+    // SAVE SELECTION
+    // ---------------------------------------------
+
     packageSelectedBoard = board;
     packageSelectedClass = cls;
 
-    const ready =
-        !!board && !!cls;
+
+    // ---------------------------------------------
+    // CONTINUE BUTTON
+    // Always available
+    // ---------------------------------------------
 
     if(continueBtn){
-        continueBtn.disabled = !ready;
+
+        continueBtn.disabled =
+            !(board && cls);
+
     }
+
+
+    // ---------------------------------------------
+    // SUMMARY
+    // ---------------------------------------------
 
     if(summary && summaryText){
 
-        if(ready){
+        if(board && cls){
 
             summaryText.textContent =
                 `${board} • ${cls}`;
 
-            summary.style.display = "block";
+            summary.style.display =
+                "block";
 
         }else{
 
-            summary.style.display = "none";
+            summary.style.display =
+                "none";
 
         }
+
     }
+
+
+    // ---------------------------------------------
+    // AUTOMATIC NAVIGATION
+    // Only when BOTH are selected
+    // ---------------------------------------------
+
+    if(board && cls){
+
+        setTimeout(function(){
+
+            continueFromPackageGateway();
+
+        }, 150);
+
+    }
+
 }
 
 
