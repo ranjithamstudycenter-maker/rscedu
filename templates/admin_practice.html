@@ -900,12 +900,16 @@ td:nth-child(9){
 
             <div class="field">
                 <label>Chapter / Topic</label>
-                <input id="pqTopic" placeholder="Example: Algebra">
+                <select id="pqTopic" onchange="loadAdminPracticeSubtopics()" disabled>
+                <option value="">Select Chapter / Topic</option>
+            </select>
             </div>
 
             <div class="field">
                 <label>Subtopic</label>
-                <input id="pqSubtopic" placeholder="Example: Factorisation">
+                <select id="pqSubtopic" disabled>
+                    <option value="">Select Subtopic</option>
+                </select>
             </div>
 
             <div class="field">
