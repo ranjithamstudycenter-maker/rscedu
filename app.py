@@ -7951,6 +7951,274 @@ def practice_topics():
             "success": False,
             "error": str(e)
         }), 500
+
+# =====================================================
+# RSC MOCK TEST - LOAD COMPLETE SYLLABUS CHAPTERS
+# =====================================================
+
+@app.route("/api/mock/topics", methods=["POST"])
+def mock_topics():
+
+    try:
+
+        data = request.get_json() or {}
+
+        board = str(
+            data.get("board", "")
+        ).strip()
+
+        class_name = str(
+            data.get("class_name", "")
+        ).strip()
+
+        subject = str(
+            data.get("subject", "")
+        ).strip()
+
+
+        # -------------------------------------------------
+        # VALIDATION
+        # -------------------------------------------------
+
+        if not board or not class_name or not subject:
+
+            return jsonify({
+                "success": False,
+                "error":
+                    "Board, Class and Subject are required."
+            }), 400
+
+
+        # -------------------------------------------------
+        # DATABASE
+        # -------------------------------------------------
+
+        conn = sqlite3.connect(
+            "/var/data/students.db"
+        )
+
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+
+        # -------------------------------------------------
+        # FIRST: LOAD COMPLETE AI SYLLABUS TOPICS
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT topics_json
+            FROM ai_syllabus_topics
+            WHERE board=?
+              AND class_name=?
+              AND subject=?
+            ORDER BY id DESC
+            LIMIT 1
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+        cached_row = c.fetchone()
+
+
+        # -------------------------------------------------
+        # IF AI SYLLABUS EXISTS
+        # -------------------------------------------------
+
+        if cached_row:
+
+            try:
+
+                topic_data = json.loads(
+                    cached_row["topics_json"]
+                )
+
+                topics = topic_data.get(
+                    "topics",
+                    []
+                )
+
+
+                clean_topics = []
+
+
+                if isinstance(topics, list):
+
+                    for item in topics:
+
+                        # -----------------------------
+                        # NORMAL TOPIC OBJECT
+                        # -----------------------------
+
+                        if isinstance(
+                            item,
+                            dict
+                        ):
+
+                            topic_name = str(
+                                item.get(
+                                    "topic",
+                                    ""
+                                )
+                            ).strip()
+
+
+                        # -----------------------------
+                        # STRING TOPIC
+                        # -----------------------------
+
+                        elif isinstance(
+                            item,
+                            str
+                        ):
+
+                            topic_name = item.strip()
+
+
+                        else:
+
+                            continue
+
+
+                        if not topic_name:
+                            continue
+
+
+                        # Avoid duplicates
+
+                        if topic_name.lower() in [
+                            str(x["topic"]).lower()
+                            for x in clean_topics
+                        ]:
+
+                            continue
+
+
+                        clean_topics.append({
+                            "topic": topic_name
+                        })
+
+
+                # -----------------------------------------
+                # RETURN COMPLETE SYLLABUS CHAPTERS
+                # -----------------------------------------
+
+                if clean_topics:
+
+                    conn.close()
+
+                    return jsonify({
+
+                        "success": True,
+
+                        "source":
+                            "ai_syllabus_topics",
+
+                        "board":
+                            board,
+
+                        "class_name":
+                            class_name,
+
+                        "subject":
+                            subject,
+
+                        "topics":
+                            clean_topics
+
+                    })
+
+
+            except Exception as e:
+
+                print(
+                    "MOCK TOPIC CACHE ERROR:",
+                    e
+                )
+
+
+        # -------------------------------------------------
+        # FALLBACK
+        # If AI syllabus cache is not available,
+        # use existing Practice Question topics.
+        # -------------------------------------------------
+
+        c.execute("""
+            SELECT DISTINCT topic
+            FROM practice_questions
+            WHERE board=?
+              AND class_name=?
+              AND subject=?
+              AND active=1
+            ORDER BY topic
+        """, (
+            board,
+            class_name,
+            subject
+        ))
+
+
+        rows = c.fetchall()
+
+
+        topics = []
+
+        for row in rows:
+
+            topic = str(
+                row["topic"] or ""
+            ).strip()
+
+            if topic:
+
+                topics.append({
+                    "topic": topic
+                })
+
+
+        conn.close()
+
+
+        return jsonify({
+
+            "success": True,
+
+            "source":
+                "practice_questions",
+
+            "board":
+                board,
+
+            "class_name":
+                class_name,
+
+            "subject":
+                subject,
+
+            "topics":
+                topics
+
+        })
+
+
+    except Exception as e:
+
+        print(
+            "MOCK TOPICS ERROR:",
+            e
+        )
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+        
         
 @app.route("/courses")
 def courses():
