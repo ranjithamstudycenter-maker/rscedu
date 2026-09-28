@@ -679,7 +679,7 @@ def init_db():
         class_name TEXT NOT NULL,
         subject TEXT NOT NULL,
 
-        amount REAL DEFAULT 299,
+        amount REAL DEFAULT 1,
 
         razorpay_order_id TEXT UNIQUE,
         razorpay_payment_id TEXT,
@@ -3309,7 +3309,7 @@ def admin_add_mock_question():
                 50,
                 100,
                 60,
-                299,
+                1,
                 1,
                 1
             ))
