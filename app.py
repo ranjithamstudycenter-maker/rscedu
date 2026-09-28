@@ -8415,7 +8415,7 @@ def ai_learning_topics():
         # =================================================
 
         conn = sqlite3.connect(
-            "students.db"
+            "/var/data/students.db"
         )
 
         conn.row_factory = sqlite3.Row
@@ -8970,7 +8970,7 @@ Return ONLY the JSON object.
         # =================================================
 
         conn = sqlite3.connect(
-            "students.db"
+            "/var/data/students.db"
         )
 
         c = conn.cursor()
@@ -9770,7 +9770,7 @@ def ai_question_batch():
         # -------------------------------------------------
 
         conn = sqlite3.connect(
-            "students.db"
+            "/var/data/students.db"
         )
 
         conn.row_factory = sqlite3.Row
@@ -10637,7 +10637,7 @@ def ai_session():
         # -------------------------------------------------
 
         conn = sqlite3.connect(
-            "students.db"
+            "/var/data/students.db"
         )
 
         conn.row_factory = sqlite3.Row
@@ -11226,7 +11226,7 @@ def ai_session_save_answer():
         # -------------------------------------------------
 
         conn = sqlite3.connect(
-            "students.db"
+            "/var/data/students.db"
         )
 
         conn.row_factory = sqlite3.Row
@@ -11458,7 +11458,7 @@ def ai_session_questions():
         # -------------------------------------------------
 
         conn = sqlite3.connect(
-            "students.db"
+            "/var/data/students.db"
         )
 
         conn.row_factory = sqlite3.Row
