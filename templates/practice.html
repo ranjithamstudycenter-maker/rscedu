@@ -5123,6 +5123,8 @@ function updateDifficultyState(){
     if(grid) grid.classList.toggle("locked", !ready);
     return ready;
 }
+
+
 async function selectSubjectPackage(subject, card){
 
     // ---------------------------------------------
@@ -6589,6 +6591,7 @@ function loadPracticeSubtopics(){
     document.getElementById("difficultyCard").style.display = "none";
 
     updateSelectionSummary();
+    
 }
 
 function updateSelectionSummary(){
