@@ -4346,26 +4346,31 @@ function resetMockSyllabusSelection(){
    CATEGORY SELECTION
 ========================================================= */
 
+/* =========================================================
+   CATEGORY SELECTION
+   IMPORTANT:
+   Changing category must NOT reset
+   Board / Class / Subject.
+========================================================= */
+
 async function selectMockAdminType(
     type,
     card
 ){
 
     /* =========================================
-       SAVE CATEGORY
+       SAVE SELECTED CATEGORY
     ========================================= */
 
     selectedMockAdminType = type;
 
 
     /* =========================================
-       ACTIVE CARD
+       ACTIVE CATEGORY CARD
     ========================================= */
 
     document
-        .querySelectorAll(
-            ".mock-category-card"
-        )
+        .querySelectorAll(".mock-category-card")
         .forEach(function(item){
 
             item.classList.remove("active");
@@ -4376,6 +4381,7 @@ async function selectMockAdminType(
     if(card){
 
         card.classList.add("active");
+
 
         const radio =
             card.querySelector(
@@ -4402,13 +4408,15 @@ async function selectMockAdminType(
 
     if(syllabusSection){
 
-        syllabusSection.style.display = "block";
+        syllabusSection.style.display =
+            "block";
 
     }
 
 
     /* =========================================
        READ CURRENT SYLLABUS
+       DO NOT RESET THESE VALUES
     ========================================= */
 
     const board =
@@ -4416,10 +4424,12 @@ async function selectMockAdminType(
             "mqBoard"
         )?.value.trim() || "";
 
+
     const className =
         document.getElementById(
             "mqClass"
         )?.value.trim() || "";
+
 
     const subject =
         document.getElementById(
@@ -4428,8 +4438,8 @@ async function selectMockAdminType(
 
 
     /* =========================================
-       NOTHING SELECTED
-       → JUST SHOW SYLLABUS
+       BOARD / CLASS / SUBJECT NOT SELECTED YET
+       → JUST WAIT FOR USER TO SELECT THEM
     ========================================= */
 
     if(
@@ -4448,99 +4458,11 @@ async function selectMockAdminType(
 
 
     /* =========================================
-       IMPORTANT:
-       REFRESH MOCK TEST CACHE BEFORE CHECKING
+       BOARD + CLASS + SUBJECT ALREADY SELECTED
+       → DIRECTLY LOAD SELECTED CATEGORY
     ========================================= */
 
-    try{
-
-        await loadMockTests();
-
-    }catch(error){
-
-        console.error(
-            "MOCK CACHE REFRESH ERROR:",
-            error
-        );
-
-    }
-
-
-    /* =========================================
-       CHECK CURRENT CATEGORY
-       FOR CURRENT SYLLABUS
-    ========================================= */
-
-    const exists =
-        hasExistingMockForSelection(
-            type,
-            board,
-            className,
-            subject
-        );
-
-
-    /* =========================================
-       EXISTS
-       → DO NOT RESET SYLLABUS
-       → DIRECTLY SHOW PANEL
-    ========================================= */
-
-    if(exists){
-
-        console.log(
-            "Existing category found:",
-            type,
-            board,
-            className,
-            subject
-        );
-
-
-        await loadMockChapters();
-
-        return;
-
-    }
-
-
-    /* =========================================
-       CATEGORY NOT AVAILABLE
-       FOR THIS SUBJECT
-       → RESET SYLLABUS
-    ========================================= */
-
-    console.log(
-        "No existing mock found:",
-        type,
-        board,
-        className,
-        subject
-    );
-
-
-    resetMockSyllabusSelection();
-
-
-    /* =========================================
-       SCROLL TO SYLLABUS
-    ========================================= */
-
-    setTimeout(function(){
-
-        if(syllabusSection){
-
-            syllabusSection.scrollIntoView({
-
-                behavior:"smooth",
-
-                block:"start"
-
-            });
-
-        }
-
-    },80);
+    await loadMockChapters();
 
 }
 /* =========================================================
