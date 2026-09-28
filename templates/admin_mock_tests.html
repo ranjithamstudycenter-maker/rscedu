@@ -4361,13 +4361,13 @@ function selectMockAdminType(type, card){
     selectedMockAdminType = type;
 
 
-    /* ---------------------------------------------
-       ACTIVE CARD
-    --------------------------------------------- */
+    /* =====================================================
+       1. ACTIVE CATEGORY CARD
+    ===================================================== */
 
     document
         .querySelectorAll(
-            "#mockTypeSection .mock-type-option"
+            ".mock-category-card"
         )
         .forEach(function(item){
 
@@ -4383,9 +4383,9 @@ function selectMockAdminType(type, card){
     }
 
 
-    /* ---------------------------------------------
-       RADIO
-    --------------------------------------------- */
+    /* =====================================================
+       2. RADIO
+    ===================================================== */
 
     const radio =
         card
@@ -4402,77 +4402,51 @@ function selectMockAdminType(type, card){
     }
 
 
-    /* ---------------------------------------------
-       HIDE ALL PANELS
-    --------------------------------------------- */
+    /* =====================================================
+       3. HIDE UPLOAD PANELS
+       DO NOT SHOW THEM YET
+       Board/Class/Subject must be selected first
+    ===================================================== */
 
     hideMockUploadPanels();
 
 
-    /* ---------------------------------------------
-       CHAPTER-WISE
-    --------------------------------------------- */
+    /* =====================================================
+       4. SHOW EXISTING SELECT SYLLABUS
+    ===================================================== */
 
-    if(type === "chapter"){
+    const syllabusSection =
+        document.getElementById(
+            "mockSyllabusSection"
+        );
 
-        const panel =
-            document.getElementById(
-                "chapterMockPanel"
-            );
 
-        if(panel){
+    if(syllabusSection){
 
-            panel.style.display = "block";
-
-        }
+        syllabusSection.style.display =
+            "block";
 
     }
 
 
-    /* ---------------------------------------------
-       4-CHAPTER
-    --------------------------------------------- */
+    /* =====================================================
+       5. LOAD BOARD / CLASS / SUBJECT
+    ===================================================== */
 
-    if(type === "four_chapter"){
-
-        const panel =
-            document.getElementById(
-                "fourChapterMockPanel"
-            );
-
-        if(panel){
-
-            panel.style.display = "block";
-
-        }
-
-    }
+    loadMockAdminOptions();
 
 
-    /* ---------------------------------------------
-       FINAL TEST
-    --------------------------------------------- */
+    /* =====================================================
+       6. UPDATE SUMMARY
+    ===================================================== */
 
-    if(type === "full_syllabus"){
-
-        const panel =
-            document.getElementById(
-                "finalTestMockPanel"
-            );
-
-        if(panel){
-
-            panel.style.display = "block";
-
-        }
-
-    }
+    updateMockSelectionSummary();
 
 
-    /* ---------------------------------------------
-       IMPORTANT:
-       RELOAD CHAPTERS FROM MASTER SYLLABUS
-    --------------------------------------------- */
+    /* =====================================================
+       7. IF SYLLABUS WAS ALREADY SELECTED,
+          LOAD CHAPTERS AGAIN
+    ===================================================== */
 
     const board =
         document.getElementById(
