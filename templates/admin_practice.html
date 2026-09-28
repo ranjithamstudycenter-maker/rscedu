@@ -821,169 +821,79 @@ td:nth-child(9){
         </div>
     </div>
 
+    
     <!-- EXCEL IMPORT -->
     <div class="card">
         <h2>📥 Bulk Upload Practice Questions</h2>
 
-        <div class="excel-box">
-            <h3>Import Questions from Excel</h3>
-            <p style="color:#6b7280;">
-                Upload an Excel file containing Practice MCQ questions.
-                Existing duplicate questions will be skipped by the server.
-            </p>
+        <p style="color:#6b7280;margin-bottom:18px;">
+            Upload each class separately. All four uploads are stored in the same Practice Question Bank,
+            while the Class column in the Excel keeps Class 9, 10, 11 and 12 questions separate.
+            Existing duplicate questions will be skipped by the server.
+        </p>
 
-            <input
-                type="file"
-                id="practiceExcelFile"
-                accept=".xlsx,.xls"
-            >
+        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
 
-            <div style="margin-top:14px;">
-                <button
-                    type="button"
-                    class="excel-btn"
-                    onclick="importPracticeExcel()"
-                >
-                    📥 Import Excel Questions
-                </button>
+            <!-- CLASS 9 -->
+            <div class="excel-box">
+                <h3>📘 Class 9</h3>
+                <p style="color:#6b7280;">Upload only the CBSE Class 9 Practice Excel file.</p>
+                <input type="file" id="practiceExcelFile9" accept=".xlsx,.xls">
+                <div style="margin-top:14px;">
+                    <button type="button" class="excel-btn"
+                            onclick="importPracticeExcelForClass(9)">
+                        📥 Import Class 9
+                    </button>
+                </div>
+                <div id="excelImportMessage9" class="message"></div>
             </div>
 
-            <div id="excelImportMessage" class="message"></div>
-        </div>
-    </div>
-
-    <!-- ADD QUESTION -->
-    <div class="card">
-        <h2>➕ Add Practice Question</h2>
-
-        <div class="grid">
-
-            <div class="field">
-                <label>Board</label>
-                <select id="pqBoard">
-                    <option value="">Select Board</option>
-                    <option value="CBSE">CBSE</option>
-                    <option value="State Board">State Board</option>
-                    <option value="Matric">Matric</option>
-                </select>
+            <!-- CLASS 10 -->
+            <div class="excel-box">
+                <h3>📗 Class 10</h3>
+                <p style="color:#6b7280;">Upload only the CBSE Class 10 Practice Excel file.</p>
+                <input type="file" id="practiceExcelFile10" accept=".xlsx,.xls">
+                <div style="margin-top:14px;">
+                    <button type="button" class="excel-btn"
+                            onclick="importPracticeExcelForClass(10)">
+                        📥 Import Class 10
+                    </button>
+                </div>
+                <div id="excelImportMessage10" class="message"></div>
             </div>
 
-            <div class="field">
-                <label>Class</label>
-                <select id="pqClass">
-                    <option value="">Select Class</option>
-                    <option value="Class 6">Class 6</option>
-                    <option value="Class 7">Class 7</option>
-                    <option value="Class 8">Class 8</option>
-                    <option value="Class 9">Class 9</option>
-                    <option value="Class 10">Class 10</option>
-                    <option value="Class 11">Class 11</option>
-                    <option value="Class 12">Class 12</option>
-                </select>
+            <!-- CLASS 11 -->
+            <div class="excel-box">
+                <h3>📙 Class 11</h3>
+                <p style="color:#6b7280;">Upload only the CBSE Class 11 Practice Excel file.</p>
+                <input type="file" id="practiceExcelFile11" accept=".xlsx,.xls">
+                <div style="margin-top:14px;">
+                    <button type="button" class="excel-btn"
+                            onclick="importPracticeExcelForClass(11)">
+                        📥 Import Class 11
+                    </button>
+                </div>
+                <div id="excelImportMessage11" class="message"></div>
             </div>
 
-            <div class="field">
-                <label>Subject</label>
-                <select id="pqSubject">
-                    <option value="">Select Subject</option>
-                    <option value="Mathematics">Mathematics</option>
-                    <option value="Science">Science</option>
-                    <option value="Biology">Biology</option>
-                    <option value="Social Science">Social Science</option>
-                    <option value="Physics">Physics</option>
-                    <option value="Chemistry">Chemistry</option>
-                    <option value="English">English</option>
-                    <option value="Tamil">Tamil</option>
-                    <option value="Computer Science">Computer Science</option>
-                </select>
-            </div>
-
-            <div class="field">
-                <label>Chapter / Topic</label>
-                <select id="pqTopic" onchange="loadAdminPracticeSubtopics()" disabled>
-                <option value="">Select Chapter / Topic</option>
-            </select>
-            </div>
-
-            <div class="field">
-                <label>Subtopic</label>
-                <select id="pqSubtopic" disabled>
-                    <option value="">Select Subtopic</option>
-                </select>
-            </div>
-
-            <div class="field">
-                <label>Difficulty</label>
-                <select id="pqDifficulty">
-                    <option value="">Select Difficulty</option>
-                    <option value="easy">Easy</option>
-                    <option value="medium">Medium</option>
-                    <option value="hard">Hard</option>
-                </select>
-            </div>
-
-            <div class="field full">
-                <label>Question</label>
-                <textarea id="pqQuestion"
-                    placeholder="Enter the MCQ question"></textarea>
-            </div>
-
-            <div class="field">
-                <label>Option A</label>
-                <input id="pqOptionA" placeholder="Enter option A">
-            </div>
-
-            <div class="field">
-                <label>Option B</label>
-                <input id="pqOptionB" placeholder="Enter option B">
-            </div>
-
-            <div class="field">
-                <label>Option C</label>
-                <input id="pqOptionC" placeholder="Enter option C">
-            </div>
-
-            <div class="field">
-                <label>Option D</label>
-                <input id="pqOptionD" placeholder="Enter option D">
-            </div>
-
-            <div class="field">
-                <label>Correct Answer</label>
-                <select id="pqCorrectAnswer">
-                    <option value="">Select Correct Answer</option>
-                    <option value="A">A</option>
-                    <option value="B">B</option>
-                    <option value="C">C</option>
-                    <option value="D">D</option>
-                </select>
-            </div>
-
-            <div class="field full">
-                <label>Explanation</label>
-                <textarea id="pqExplanation"
-                    placeholder="Explanation shown after the test"></textarea>
-            </div>
-
-            <div class="field full">
-                <label>Hint</label>
-                <textarea id="pqHint"
-                    placeholder="Optional hint for the student"></textarea>
-            </div>
-
-            <div class="full">
-                <button type="button" class="primary"
-                    onclick="addPracticeQuestion()">
-                    ➕ Add Question
-                </button>
-
-                <div id="pqMessage" class="message"></div>
+            <!-- CLASS 12 -->
+            <div class="excel-box">
+                <h3>📕 Class 12</h3>
+                <p style="color:#6b7280;">Upload only the CBSE Class 12 Practice Excel file.</p>
+                <input type="file" id="practiceExcelFile12" accept=".xlsx,.xls">
+                <div style="margin-top:14px;">
+                    <button type="button" class="excel-btn"
+                            onclick="importPracticeExcelForClass(12)">
+                        📥 Import Class 12
+                    </button>
+                </div>
+                <div id="excelImportMessage12" class="message"></div>
             </div>
 
         </div>
     </div>
 
-   <!-- =========================================================
+<!-- =========================================================
      EXISTING PRACTICE QUESTIONS
 ========================================================= -->
 
