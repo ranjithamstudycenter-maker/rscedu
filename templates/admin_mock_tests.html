@@ -4352,14 +4352,14 @@ async function selectMockAdminType(
 ){
 
     /* =========================================
-       SAVE SELECTED CATEGORY
+       SAVE CATEGORY
     ========================================= */
 
     selectedMockAdminType = type;
 
 
     /* =========================================
-       ACTIVE CATEGORY CARD
+       ACTIVE CARD
     ========================================= */
 
     document
@@ -4368,19 +4368,14 @@ async function selectMockAdminType(
         )
         .forEach(function(item){
 
-            item.classList.remove(
-                "active"
-            );
+            item.classList.remove("active");
 
         });
 
 
     if(card){
 
-        card.classList.add(
-            "active"
-        );
-
+        card.classList.add("active");
 
         const radio =
             card.querySelector(
@@ -4407,14 +4402,13 @@ async function selectMockAdminType(
 
     if(syllabusSection){
 
-        syllabusSection.style.display =
-            "block";
+        syllabusSection.style.display = "block";
 
     }
 
 
     /* =========================================
-       CURRENT SYLLABUS
+       READ CURRENT SYLLABUS
     ========================================= */
 
     const board =
@@ -4434,8 +4428,8 @@ async function selectMockAdminType(
 
 
     /* =========================================
-       NO SYLLABUS SELECTED
-       → USER MUST SELECT BOARD / CLASS / SUBJECT
+       NOTHING SELECTED
+       → JUST SHOW SYLLABUS
     ========================================= */
 
     if(
@@ -4454,12 +4448,31 @@ async function selectMockAdminType(
 
 
     /* =========================================
-       FIND EXISTING MOCK FOR
-       CURRENT CATEGORY + SYLLABUS
+       IMPORTANT:
+       REFRESH MOCK TEST CACHE BEFORE CHECKING
     ========================================= */
 
-    const existingMock =
-        getExistingMockForSelection(
+    try{
+
+        await loadMockTests();
+
+    }catch(error){
+
+        console.error(
+            "MOCK CACHE REFRESH ERROR:",
+            error
+        );
+
+    }
+
+
+    /* =========================================
+       CHECK CURRENT CATEGORY
+       FOR CURRENT SYLLABUS
+    ========================================= */
+
+    const exists =
+        hasExistingMockForSelection(
             type,
             board,
             className,
@@ -4468,22 +4481,23 @@ async function selectMockAdminType(
 
 
     /* =========================================
-       EXISTING MOCK FOUND
-       → KEEP CURRENT SYLLABUS
-       → DIRECTLY SHOW THAT CATEGORY
+       EXISTS
+       → DO NOT RESET SYLLABUS
+       → DIRECTLY SHOW PANEL
     ========================================= */
 
-    if(existingMock){
+    if(exists){
 
         console.log(
-            "EXISTING MOCK FOUND:",
-            existingMock
+            "Existing category found:",
+            type,
+            board,
+            className,
+            subject
         );
 
 
-        await loadMockChapters(
-            existingMock
-        );
+        await loadMockChapters();
 
         return;
 
@@ -4491,17 +4505,25 @@ async function selectMockAdminType(
 
 
     /* =========================================
-       CATEGORY DOES NOT EXIST
-       FOR CURRENT SYLLABUS
-       
-       → RESET TO ORIGINAL STAGE
+       CATEGORY NOT AVAILABLE
+       FOR THIS SUBJECT
+       → RESET SYLLABUS
     ========================================= */
+
+    console.log(
+        "No existing mock found:",
+        type,
+        board,
+        className,
+        subject
+    );
+
 
     resetMockSyllabusSelection();
 
 
     /* =========================================
-       FOCUS SYLLABUS SECTION
+       SCROLL TO SYLLABUS
     ========================================= */
 
     setTimeout(function(){
