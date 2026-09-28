@@ -4213,6 +4213,54 @@ function hasExistingMockForSelection(
     });
 
 }
+function getExistingMockForSelection(
+    type,
+    board,
+    className,
+    subject
+){
+
+    if(
+        !type ||
+        !board ||
+        !className ||
+        !subject
+    ){
+
+        return null;
+
+    }
+
+
+    return (
+        mockTestsCache || []
+    ).find(function(test){
+
+        return (
+
+            String(test.mock_type || "").trim()
+                === type
+
+            &&
+
+            String(test.board || "").trim()
+                === board
+
+            &&
+
+            String(test.class_name || "").trim()
+                === className
+
+            &&
+
+            String(test.subject || "").trim()
+                === subject
+
+        );
+
+    }) || null;
+
+}
 function resetMockSyllabusSelection(){
 
     const boardSelect =
@@ -4298,21 +4346,20 @@ function resetMockSyllabusSelection(){
    CATEGORY SELECTION
 ========================================================= */
 
-function selectMockAdminType(
+async function selectMockAdminType(
     type,
     card
 ){
 
     /* =========================================
-       SAVE NEW CATEGORY
+       SAVE SELECTED CATEGORY
     ========================================= */
 
-    selectedMockAdminType =
-        type;
+    selectedMockAdminType = type;
 
 
     /* =========================================
-       REMOVE ACTIVE FROM ALL CARDS
+       ACTIVE CATEGORY CARD
     ========================================= */
 
     document
@@ -4328,10 +4375,6 @@ function selectMockAdminType(
         });
 
 
-    /* =========================================
-       ACTIVATE CLICKED CARD
-    ========================================= */
-
     if(card){
 
         card.classList.add(
@@ -4343,7 +4386,6 @@ function selectMockAdminType(
             card.querySelector(
                 'input[type="radio"]'
             );
-
 
         if(radio){
 
@@ -4363,7 +4405,6 @@ function selectMockAdminType(
             "mockSyllabusSection"
         );
 
-
     if(syllabusSection){
 
         syllabusSection.style.display =
@@ -4373,7 +4414,7 @@ function selectMockAdminType(
 
 
     /* =========================================
-       READ CURRENT SELECTION
+       CURRENT SYLLABUS
     ========================================= */
 
     const board =
@@ -4381,12 +4422,10 @@ function selectMockAdminType(
             "mqBoard"
         )?.value.trim() || "";
 
-
     const className =
         document.getElementById(
             "mqClass"
         )?.value.trim() || "";
-
 
     const subject =
         document.getElementById(
@@ -4395,8 +4434,8 @@ function selectMockAdminType(
 
 
     /* =========================================
-       NO SYLLABUS SELECTED YET
-       → KEEP FRESH STATE
+       NO SYLLABUS SELECTED
+       → USER MUST SELECT BOARD / CLASS / SUBJECT
     ========================================= */
 
     if(
@@ -4415,12 +4454,12 @@ function selectMockAdminType(
 
 
     /* =========================================
-       CHECK WHETHER THIS CATEGORY
-       ALREADY EXISTS FOR THIS SYLLABUS
+       FIND EXISTING MOCK FOR
+       CURRENT CATEGORY + SYLLABUS
     ========================================= */
 
-    const exists =
-        hasExistingMockForSelection(
+    const existingMock =
+        getExistingMockForSelection(
             type,
             board,
             className,
@@ -4429,14 +4468,22 @@ function selectMockAdminType(
 
 
     /* =========================================
-       EXISTING CATEGORY + SYLLABUS
-       → KEEP SELECTION
-       → LOAD ITS PANEL
+       EXISTING MOCK FOUND
+       → KEEP CURRENT SYLLABUS
+       → DIRECTLY SHOW THAT CATEGORY
     ========================================= */
 
-    if(exists){
+    if(existingMock){
 
-        loadMockChapters();
+        console.log(
+            "EXISTING MOCK FOUND:",
+            existingMock
+        );
+
+
+        await loadMockChapters(
+            existingMock
+        );
 
         return;
 
@@ -4444,16 +4491,17 @@ function selectMockAdminType(
 
 
     /* =========================================
-       CATEGORY DOES NOT EXIST FOR THIS
-       BOARD + CLASS + SUBJECT
-       → RESET SYLLABUS
+       CATEGORY DOES NOT EXIST
+       FOR CURRENT SYLLABUS
+       
+       → RESET TO ORIGINAL STAGE
     ========================================= */
 
     resetMockSyllabusSelection();
 
 
     /* =========================================
-       SCROLL TO SYLLABUS
+       FOCUS SYLLABUS SECTION
     ========================================= */
 
     setTimeout(function(){
@@ -4473,7 +4521,6 @@ function selectMockAdminType(
     },80);
 
 }
-
 /* =========================================================
    SYLLABUS OPTIONS
 ========================================================= */
@@ -4804,7 +4851,9 @@ function loadMockSubjects(){
    SUBJECT → CHAPTERS → CATEGORY PANEL
 ========================================================= */
 
-async function loadMockChapters(){
+async function loadMockChapters(
+    existingMock = null
+){
 
     const board =
         document.getElementById("mqBoard")?.value.trim() || "";
@@ -5078,42 +5127,59 @@ async function loadMockChapters(){
         ================================================= */
 
         if(
-            selectedMockAdminType ===
-            "four_chapter"
-        ){
+    selectedMockAdminType ===
+    "four_chapter"
+){
 
-            if(fourPanel){
+    if(fourPanel){
 
-                fourPanel.style.display =
-                    "block";
+        fourPanel.style.display =
+            "block";
 
-            }
-
-
-            populateFourChapterSelectors();
+    }
 
 
-            setTimeout(function(){
+    /*
+     * If an existing 4-Chapter mock is found,
+     * use its saved chapter_scope.
+     *
+     * Do NOT take first 4 chapters
+     * from Practice syllabus.
+     */
 
-                if(fourPanel){
+    if(existingMock){
 
-                    fourPanel.scrollIntoView({
+        populateExistingFourChapterMock(
+            existingMock
+        );
 
-                        behavior:"smooth",
+    }else{
 
-                        block:"start"
+        populateFourChapterSelectors();
 
-                    });
-
-                }
-
-            },100);
+    }
 
 
-            return;
+    setTimeout(function(){
+
+        if(fourPanel){
+
+            fourPanel.scrollIntoView({
+
+                behavior:"smooth",
+
+                block:"start"
+
+            });
 
         }
 
+    },100);
+
+
+    return;
+
+}
 
         /* =================================================
            FINAL TEST
@@ -5613,6 +5679,101 @@ function populateFourChapterSelectors(){
         `;
 
     }
+
+}
+function populateExistingFourChapterMock(
+    existingMock
+){
+
+    const container =
+        document.getElementById(
+            "fourChapterAutoList"
+        );
+
+    if(!container){
+
+        return;
+
+    }
+
+
+    const chapterScope =
+        String(
+            existingMock.chapter_scope || ""
+        ).trim();
+
+
+    if(!chapterScope){
+
+        container.innerHTML = `
+            <div class="empty-upload-message">
+                ⚠️ 4-Chapter scope is not available.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    const chapters =
+        chapterScope
+            .split("|")
+            .map(function(chapter){
+
+                return chapter.trim();
+
+            })
+            .filter(Boolean);
+
+
+    if(!chapters.length){
+
+        container.innerHTML = `
+            <div class="empty-upload-message">
+                ⚠️ No chapters found for this 4-Chapter Mock.
+            </div>
+        `;
+
+        return;
+
+    }
+
+
+    let html = "";
+
+
+    chapters.forEach(function(
+        chapter,
+        index
+    ){
+
+        html += `
+
+            <div class="four-chapter-auto-item">
+
+                <div class="four-chapter-number">
+                    ${String(
+                        index + 1
+                    ).padStart(2,"0")}
+                </div>
+
+                <div class="four-chapter-name">
+                    ${esc(chapter)}
+                </div>
+
+                <div class="four-chapter-check">
+                    ✓
+                </div>
+
+            </div>
+
+        `;
+
+    });
+
+
+    container.innerHTML = html;
 
 }
 function populateFinalSyllabusSummary(){
