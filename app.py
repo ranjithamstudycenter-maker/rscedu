@@ -1591,7 +1591,22 @@ def mock_create_order():
         }), 400
 
     subject_name = PACKAGE_SUBJECTS[subject]
-
+    package_price = PACKAGE_PRICES.get(
+        normalized_class,
+        {}
+    ).get(
+        subject
+    )
+    
+    if package_price is None:
+    
+        conn.close()
+    
+        return jsonify({
+            "success": False,
+            "error":
+                "Package price is not configured for this class and subject."
+        }), 400
     # -------------------------------------------------
     # DATABASE
     # -------------------------------------------------
@@ -1662,7 +1677,7 @@ def mock_create_order():
 
         order = client.order.create({
 
-            "amount": PACKAGE_PRICE * 100,
+            "amount": package_price * 100,
 
             "currency": "INR",
 
@@ -1732,7 +1747,7 @@ def mock_create_order():
 
             class_name,
 
-            PACKAGE_PRICE,
+            package_price,
 
             order["id"],
 
@@ -1778,8 +1793,8 @@ def mock_create_order():
             order["id"],
 
         "amount":
-            PACKAGE_PRICE * 100,
-
+             package_price * 100,
+        
         "currency":
             "INR",
 
