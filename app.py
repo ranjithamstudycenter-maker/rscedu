@@ -1428,13 +1428,66 @@ def payment_success_api():
 # RSC SUBJECT PACKAGE - PRACTICE + MOCK
 # =====================================================
 
-PACKAGE_PRICE = 1
+# =====================================================
+# RSC SUBJECT PACKAGE - PRACTICE + MOCK
+# =====================================================
+
+# Temporary package price
+# Final pricing can be made class + subject wise later
+PACKAGE_PRICE = 299
+
 
 PACKAGE_SUBJECTS = {
+
     "math": "Mathematics",
-    "biology": "Biology",
+
     "science": "Science",
-    "social_science": "Social Science"
+
+    "social_science": "Social Science",
+
+    "english": "English",
+
+    "physics": "Physics",
+
+    "chemistry": "Chemistry",
+
+    "biology": "Biology"
+
+}
+# =====================================================
+# CLASS-WISE SUBJECT VALIDATION
+# =====================================================
+
+PACKAGE_CLASS_SUBJECTS = {
+
+    "9": [
+        "math",
+        "science",
+        "social_science",
+        "english"
+    ],
+
+    "10": [
+        "math",
+        "science",
+        "social_science",
+        "english"
+    ],
+
+    "11": [
+        "math",
+        "physics",
+        "chemistry",
+        "biology"
+    ],
+
+    "12": [
+        "math",
+        "physics",
+        "chemistry",
+        "biology"
+    ]
+
 }
 
 
@@ -1472,7 +1525,30 @@ def mock_create_order():
             "success": False,
             "error": "Invalid subject package."
         }), 400
-
+    # -------------------------------------------------
+    # CLASS-WISE SUBJECT VALIDATION
+    # -------------------------------------------------
+    
+    normalized_class = (
+        class_name
+        .strip()
+        .lower()
+        .replace("class", "")
+        .strip()
+    )
+    
+    allowed_subjects = PACKAGE_CLASS_SUBJECTS.get(
+        normalized_class,
+        []
+    )
+    
+    if subject not in allowed_subjects:
+    
+        return jsonify({
+            "success": False,
+            "error":
+                "This subject is not available for the selected class."
+        }), 400
     if not board or not class_name:
 
         return jsonify({
