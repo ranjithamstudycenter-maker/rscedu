@@ -1133,7 +1133,71 @@ td:nth-child(9){
 
     </div>
 
+    <!-- PAGINATION -->
 
+<div class="practice-pagination">
+
+    <div class="pagination-info">
+        <span id="practicePaginationInfo">
+            Showing 0–0 of 0
+        </span>
+    </div>
+
+    <div class="pagination-controls">
+
+        <button
+            type="button"
+            id="practicePrevBtn"
+            onclick="practicePreviousPage()"
+            disabled>
+            ← Previous
+        </button>
+
+        <span id="practicePageInfo">
+            Page 1 of 1
+        </span>
+
+        <button
+            type="button"
+            id="practiceNextBtn"
+            onclick="practiceNextPage()"
+            disabled>
+            Next →
+        </button>
+
+    </div>
+
+    <div class="pagination-size">
+
+        <label>
+            Show
+        </label>
+
+        <select
+            id="practicePageSize"
+            onchange="practicePageSizeChanged()">
+
+            <option value="25">
+                25
+            </option>
+
+            <option value="50" selected>
+                50
+            </option>
+
+            <option value="100">
+                100
+            </option>
+
+        </select>
+
+        <span>
+            per page
+        </span>
+
+    </div>
+
+</div>
     <!-- QUESTION TABLE -->
 
     <div class="table-wrap">
@@ -1195,6 +1259,17 @@ td:nth-child(9){
 
 <script>
 let allPracticeQuestions = [];
+
+let practiceCurrentPage = 1;
+
+let practiceTotalPages = 1;
+
+let practiceTotalQuestions = 0;
+
+let practicePageSize = 50;
+
+let practiceLoading = false;
+    
 function setMessage(id, message, success){
     const box = document.getElementById(id);
     box.textContent = message;
@@ -1533,20 +1608,117 @@ function clearQuestionFields(){
 async function loadPracticeQuestions(){
 
     const tbody =
-        document.getElementById("practiceQuestionTable");
+        document.getElementById(
+            "practiceQuestionTable"
+        );
+
+    if(!tbody){
+        return;
+    }
+
+    if(practiceLoading){
+        return;
+    }
+
+    practiceLoading = true;
+
+    tbody.innerHTML = `
+        <tr>
+            <td
+                colspan="10"
+                class="empty">
+                ⏳ Loading questions...
+            </td>
+        </tr>
+    `;
 
     try{
 
+        const board =
+            document.getElementById(
+                "filterBoard"
+            ).value.trim();
+
+        const className =
+            document.getElementById(
+                "filterClass"
+            ).value.trim();
+
+        const subject =
+            document.getElementById(
+                "filterSubject"
+            ).value.trim();
+
+        const difficulty =
+            document.getElementById(
+                "filterDifficulty"
+            ).value.trim().toLowerCase();
+
+
+        const params =
+            new URLSearchParams();
+
+
+        if(board){
+            params.append(
+                "board",
+                board
+            );
+        }
+
+        if(className){
+            params.append(
+                "class_name",
+                className
+            );
+        }
+
+        if(subject){
+            params.append(
+                "subject",
+                subject
+            );
+        }
+
+        if(difficulty){
+            params.append(
+                "difficulty",
+                difficulty
+            );
+        }
+
+
+        params.append(
+            "page",
+            practiceCurrentPage
+        );
+
+        params.append(
+            "limit",
+            practicePageSize
+        );
+
+
         const response =
-            await fetch("/admin/practice-questions");
+            await fetch(
+                "/admin/practice-questions?" +
+                params.toString(),
+                {
+                    cache: "no-store"
+                }
+            );
 
-        const data = await response.json();
 
-        if(!data.success){
+        const data =
+            await response.json();
+
+
+        if(!response.ok || !data.success){
 
             tbody.innerHTML = `
                 <tr>
-                    <td colspan="10"
+                    <td
+                        colspan="10"
                         class="empty"
                         style="color:#b91c1c;">
                         ${escapeHTML(
@@ -1560,23 +1732,53 @@ async function loadPracticeQuestions(){
             return;
         }
 
+
         /*
-         * Store all questions in memory.
-         * The filter system will use this array
-         * to display only the selected questions.
+         * Only current page questions
+         * are stored in memory.
          */
+
         allPracticeQuestions =
-            Array.isArray(data.questions)
+            Array.isArray(
+                data.questions
+            )
                 ? data.questions
                 : [];
 
-        /*
-         * Display questions through the filter system.
-         *
-         * If no filter is selected,
-         * all questions will be displayed.
-         */
-        applyQuestionFilters();
+
+        practiceTotalQuestions =
+            Number(
+                data.total || 0
+            );
+        
+        const countElement =
+            document.getElementById(
+                "filteredQuestionCount"
+            );
+        
+        if(countElement){
+        
+            countElement.textContent =
+                practiceTotalQuestions;
+        }
+
+        practiceTotalPages =
+            Number(
+                data.total_pages || 1
+            );
+
+
+        practiceCurrentPage =
+            Number(
+                data.page ||
+                practiceCurrentPage
+            );
+
+
+        renderPracticeQuestions();
+
+        updatePracticePagination();
+
 
     }catch(error){
 
@@ -1585,23 +1787,329 @@ async function loadPracticeQuestions(){
             error
         );
 
+
         tbody.innerHTML = `
             <tr>
-                <td colspan="10"
+                <td
+                    colspan="10"
                     class="empty"
                     style="color:#b91c1c;">
                     Server error while loading questions.
                 </td>
             </tr>
         `;
+
+    }finally{
+
+        practiceLoading = false;
+
     }
 }
 function applyQuestionFilters(){
+
+    /*
+     * Whenever a filter changes,
+     * go back to page 1.
+     */
+
+    practiceCurrentPage = 1;
+    updatePracticeFilterSummary();
+
+    loadPracticeQuestions();
+}
+function renderPracticeQuestions(){
 
     const tbody =
         document.getElementById(
             "practiceQuestionTable"
         );
+
+    if(!tbody){
+        return;
+    }
+
+
+    if(
+        !Array.isArray(
+            allPracticeQuestions
+        ) ||
+        allPracticeQuestions.length === 0
+    ){
+
+        tbody.innerHTML = `
+            <tr>
+                <td
+                    colspan="10"
+                    class="empty">
+
+                    🔍 No questions found
+                    for the selected filters.
+
+                </td>
+            </tr>
+        `;
+
+        return;
+    }
+
+
+    tbody.innerHTML = "";
+
+
+    allPracticeQuestions.forEach(
+        function(q,index){
+
+            const row =
+                document.createElement(
+                    "tr"
+                );
+
+
+            /*
+             * Global question number
+             */
+
+            const globalIndex =
+                (
+                    (
+                        practiceCurrentPage - 1
+                    )
+                    *
+                    practicePageSize
+                )
+                +
+                index
+                +
+                1;
+
+
+            row.innerHTML = `
+
+                <td>
+                    ${globalIndex}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(
+                        q.board
+                    )}
+                </td>
+
+
+                <td>
+                    Class
+                    ${escapeHTML(
+                        normalizePracticeClass(
+                            q.class_name
+                        )
+                    )}
+                </td>
+
+
+                <td>
+                    <strong>
+                        ${escapeHTML(
+                            q.subject
+                        )}
+                    </strong>
+                </td>
+
+
+                <td>
+                    ${escapeHTML(
+                        q.topic
+                    )}
+                </td>
+
+
+                <td>
+                    ${escapeHTML(
+                        q.subtopic
+                    )}
+                </td>
+
+
+                <td>
+
+                    <span
+                        class="badge
+                        ${escapeHTML(
+                            q.difficulty
+                        )}">
+
+                        ${escapeHTML(
+                            q.difficulty
+                        )}
+
+                    </span>
+
+                </td>
+
+
+                <td class="question-cell">
+
+                    ${escapeHTML(
+                        q.question
+                    )}
+
+                </td>
+
+
+                <td>
+
+                    <strong>
+                        ${escapeHTML(
+                            q.correct_answer
+                        )}
+                    </strong>
+
+                </td>
+
+
+                <td>
+
+                    <button
+                        type="button"
+                        class="danger"
+                        onclick="
+                            deletePracticeQuestion(
+                                ${Number(q.id)}
+                            )
+                        ">
+
+                        🗑️ Delete
+
+                    </button>
+
+                </td>
+
+            `;
+
+
+            tbody.appendChild(row);
+
+        }
+    );
+}
+function updatePracticePagination(){
+
+    const info =
+        document.getElementById(
+            "practicePaginationInfo"
+        );
+
+    const pageInfo =
+        document.getElementById(
+            "practicePageInfo"
+        );
+
+    const prevBtn =
+        document.getElementById(
+            "practicePrevBtn"
+        );
+
+    const nextBtn =
+        document.getElementById(
+            "practiceNextBtn"
+        );
+
+
+    if(!info){
+        return;
+    }
+
+
+    const start =
+        practiceTotalQuestions === 0
+            ? 0
+            :
+            (
+                (
+                    practiceCurrentPage - 1
+                )
+                *
+                practicePageSize
+            )
+            + 1;
+
+
+    const end =
+        Math.min(
+            practiceCurrentPage *
+                practicePageSize,
+
+            practiceTotalQuestions
+        );
+
+
+    info.textContent =
+        `Showing ${start}–${end} of ${practiceTotalQuestions} questions`;
+
+
+    pageInfo.textContent =
+        `Page ${practiceCurrentPage} of ${practiceTotalPages}`;
+
+
+    prevBtn.disabled =
+        practiceCurrentPage <= 1;
+
+
+    nextBtn.disabled =
+        practiceCurrentPage >=
+        practiceTotalPages;
+}
+function practicePreviousPage(){
+
+    if(
+        practiceCurrentPage <= 1
+    ){
+        return;
+    }
+
+    practiceCurrentPage--;
+
+    loadPracticeQuestions();
+}
+function practiceNextPage(){
+
+    if(
+        practiceCurrentPage >=
+        practiceTotalPages
+    ){
+        return;
+    }
+
+    practiceCurrentPage++;
+
+    loadPracticeQuestions();
+}
+function practicePageSizeChanged(){
+
+    const select =
+        document.getElementById(
+            "practicePageSize"
+        );
+
+    practicePageSize =
+        Number(
+            select.value
+        ) || 50;
+
+    practiceCurrentPage = 1;
+
+    loadPracticeQuestions();
+}
+function updatePracticeFilterSummary(){
+
+    const summary =
+        document.getElementById(
+            "activeFilterSummary"
+        );
+
+    if(!summary){
+        return;
+    }
 
 
     const board =
@@ -1625,19 +2133,77 @@ function applyQuestionFilters(){
     const difficulty =
         document.getElementById(
             "filterDifficulty"
-        ).value.trim().toLowerCase();
+        ).value.trim();
 
 
-    /*
-     * Normalize class values.
-     *
-     * Database may contain:
-     *     10
-     *     Class 10
-     *
-     * Both should be treated as Class 10.
-     */
-    function normalizeClass(value){
+    const parts = [];
+
+
+    if(board){
+        parts.push(
+            "🏫 " + board
+        );
+    }
+
+
+    if(className){
+        parts.push(
+            "🎓 Class " +
+            normalizePracticeClass(
+                className
+            )
+        );
+    }
+
+
+    if(subject){
+        parts.push(
+            "📚 " + subject
+        );
+    }
+
+
+    if(difficulty){
+        parts.push(
+            "🎯 " +
+            difficulty
+                .charAt(0)
+                .toUpperCase()
+            +
+            difficulty.slice(1)
+        );
+    }
+
+
+    summary.textContent =
+        parts.length
+            ?
+            "Showing: " +
+            parts.join(
+                "  •  "
+            )
+            :
+            "Showing all practice questions";
+}
+
+function normalizePracticeClass(value){
+
+    if(
+        value === null ||
+        value === undefined
+    ){
+        return "";
+    }
+
+    return String(value)
+        .trim()
+        .replace(
+            /^class\s*/i,
+            ""
+        )
+        .trim();
+}
+function normalizeClass(value){
 
         if(value === null ||
            value === undefined){
