@@ -3755,6 +3755,38 @@ const PACKAGE_SUBJECTS = {
     ]
 
 };
+const PACKAGE_PRICES = {
+
+    "9": {
+        math: 299,
+        science: 299,
+        social_science: 299,
+        english: 299
+    },
+
+    "10": {
+        math: 1,
+        science: 299,
+        social_science: 299,
+        english: 299
+    },
+
+    "11": {
+        math: 299,
+        physics: 299,
+        chemistry: 299,
+        biology: 299
+    },
+
+    "12": {
+        math: 299,
+        physics: 299,
+        chemistry: 299,
+        biology: 299
+    }
+
+};
+   
 /* =========================================================
    RENDER SUBJECT PACKAGE CARDS
    ========================================================= */
@@ -3792,6 +3824,9 @@ function renderSubjectPackageCards(){
     }
 
     subjects.forEach(function(subject){
+
+        const packagePrice =
+            PACKAGE_PRICES[classValue]?.[subject.id] ?? 0;
 
         const card =
             document.createElement("div");
