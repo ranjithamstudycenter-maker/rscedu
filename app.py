@@ -357,7 +357,44 @@ def init_db():
     )
     """)
 
-
+    # =====================================================
+    # PRACTICE QUESTION BANK PERFORMANCE INDEXES
+    # =====================================================
+    
+    c.execute("""
+        CREATE INDEX IF NOT EXISTS
+        idx_pq_board
+        ON practice_questions(board)
+    """)
+    
+    c.execute("""
+        CREATE INDEX IF NOT EXISTS
+        idx_pq_class
+        ON practice_questions(class_name)
+    """)
+    
+    c.execute("""
+        CREATE INDEX IF NOT EXISTS
+        idx_pq_subject
+        ON practice_questions(subject)
+    """)
+    
+    c.execute("""
+        CREATE INDEX IF NOT EXISTS
+        idx_pq_difficulty
+        ON practice_questions(difficulty)
+    """)
+    
+    c.execute("""
+        CREATE INDEX IF NOT EXISTS
+        idx_pq_filter
+        ON practice_questions(
+            board,
+            class_name,
+            subject,
+            difficulty
+        )
+    """)
     # -----------------------------------------------------
     # 2. MOCK TEST CONFIGURATION
     # -----------------------------------------------------
@@ -4751,19 +4788,205 @@ def admin_practice_questions():
         }), 403
 
     try:
-        board = request.args.get("board", "").strip()
-        class_name = request.args.get("class_name", "").strip()
-        subject = request.args.get("subject", "").strip()
-        topic = request.args.get("topic", "").strip()
-        subtopic = request.args.get("subtopic", "").strip()
-        difficulty = request.args.get("difficulty", "").strip().lower()
 
-        conn = sqlite3.connect("/var/data/students.db")
+        # =================================================
+        # FILTERS
+        # =================================================
+
+        board = request.args.get(
+            "board", ""
+        ).strip()
+
+        class_name = request.args.get(
+            "class_name", ""
+        ).strip()
+
+        subject = request.args.get(
+            "subject", ""
+        ).strip()
+
+        topic = request.args.get(
+            "topic", ""
+        ).strip()
+
+        subtopic = request.args.get(
+            "subtopic", ""
+        ).strip()
+
+        difficulty = request.args.get(
+            "difficulty", ""
+        ).strip().lower()
+
+
+        # =================================================
+        # PAGINATION
+        # =================================================
+
+        try:
+            page = int(
+                request.args.get(
+                    "page",
+                    1
+                )
+            )
+        except:
+            page = 1
+
+        try:
+            limit = int(
+                request.args.get(
+                    "limit",
+                    50
+                )
+            )
+        except:
+            limit = 50
+
+
+        # Safety limits
+        if page < 1:
+            page = 1
+
+        if limit < 1:
+            limit = 50
+
+        if limit > 100:
+            limit = 100
+
+
+        offset = (
+            page - 1
+        ) * limit
+
+
+        # =================================================
+        # DATABASE
+        # =================================================
+
+        conn = sqlite3.connect(
+            "/var/data/students.db"
+        )
+
         conn.row_factory = sqlite3.Row
+
         c = conn.cursor()
 
-        query = """
+
+        # =================================================
+        # BUILD WHERE CONDITION
+        # =================================================
+
+        where_conditions = []
+
+        params = []
+
+
+        if board:
+
+            where_conditions.append(
+                "board=?"
+            )
+
+            params.append(board)
+
+
+        if class_name:
+
+            where_conditions.append(
+                "class_name=?"
+            )
+
+            params.append(class_name)
+
+
+        if subject:
+
+            where_conditions.append(
+                "subject=?"
+            )
+
+            params.append(subject)
+
+
+        if topic:
+
+            where_conditions.append(
+                "topic=?"
+            )
+
+            params.append(topic)
+
+
+        if subtopic:
+
+            where_conditions.append(
+                "subtopic=?"
+            )
+
+            params.append(subtopic)
+
+
+        if difficulty:
+
+            where_conditions.append(
+                "difficulty=?"
+            )
+
+            params.append(difficulty)
+
+
+        # =================================================
+        # WHERE SQL
+        # =================================================
+
+        where_sql = ""
+
+        if where_conditions:
+
+            where_sql = (
+                " WHERE "
+                +
+                " AND ".join(
+                    where_conditions
+                )
+            )
+
+
+        # =================================================
+        # TOTAL COUNT
+        # =================================================
+
+        count_query = f"""
+            SELECT COUNT(*)
+            FROM practice_questions
+            {where_sql}
+        """
+
+        c.execute(
+            count_query,
+            params
+        )
+
+        total_count = c.fetchone()[0]
+
+
+        # =================================================
+        # TOTAL PAGES
+        # =================================================
+
+        total_pages = (
+            (total_count + limit - 1)
+            // limit
+        )
+
+
+        # =================================================
+        # GET ONLY CURRENT PAGE
+        # =================================================
+
+        question_query = f"""
             SELECT
+
                 id,
                 board,
                 class_name,
@@ -4782,81 +5005,154 @@ def admin_practice_questions():
                 marks,
                 active,
                 created_at
+
             FROM practice_questions
-            WHERE 1=1
+
+            {where_sql}
+
+            ORDER BY id DESC
+
+            LIMIT ?
+            OFFSET ?
         """
 
-        params = []
 
-        if board:
-            query += " AND board=?"
-            params.append(board)
+        question_params = (
+            params
+            + [
+                limit,
+                offset
+            ]
+        )
 
-        if class_name:
-            query += " AND class_name=?"
-            params.append(class_name)
 
-        if subject:
-            query += " AND subject=?"
-            params.append(subject)
+        c.execute(
+            question_query,
+            question_params
+        )
 
-        if topic:
-            query += " AND topic=?"
-            params.append(topic)
-
-        if subtopic:
-            query += " AND subtopic=?"
-            params.append(subtopic)
-
-        if difficulty:
-            query += " AND difficulty=?"
-            params.append(difficulty)
-
-        query += " ORDER BY id DESC"
-
-        c.execute(query, params)
 
         rows = c.fetchall()
 
+
+        # =================================================
+        # FORMAT QUESTIONS
+        # =================================================
+
         questions = []
 
+
         for row in rows:
+
             questions.append({
-                "id": row["id"],
-                "board": row["board"],
-                "class_name": row["class_name"],
-                "subject": row["subject"],
-                "topic": row["topic"],
-                "subtopic": row["subtopic"],
-                "difficulty": row["difficulty"],
-                "question": row["question"],
-                "option_a": row["option_a"],
-                "option_b": row["option_b"],
-                "option_c": row["option_c"],
-                "option_d": row["option_d"],
-                "correct_answer": row["correct_answer"],
-                "explanation": row["explanation"] or "",
-                "hint": row["hint"] or "",
-                "marks": row["marks"],
-                "active": bool(row["active"]),
-                "created_at": row["created_at"]
+
+                "id":
+                    row["id"],
+
+                "board":
+                    row["board"],
+
+                "class_name":
+                    row["class_name"],
+
+                "subject":
+                    row["subject"],
+
+                "topic":
+                    row["topic"],
+
+                "subtopic":
+                    row["subtopic"],
+
+                "difficulty":
+                    row["difficulty"],
+
+                "question":
+                    row["question"],
+
+                "option_a":
+                    row["option_a"],
+
+                "option_b":
+                    row["option_b"],
+
+                "option_c":
+                    row["option_c"],
+
+                "option_d":
+                    row["option_d"],
+
+                "correct_answer":
+                    row["correct_answer"],
+
+                "explanation":
+                    row["explanation"] or "",
+
+                "hint":
+                    row["hint"] or "",
+
+                "marks":
+                    row["marks"],
+
+                "active":
+                    bool(
+                        row["active"]
+                    ),
+
+                "created_at":
+                    row["created_at"]
+
             })
+
 
         conn.close()
 
+
+        # =================================================
+        # RESPONSE
+        # =================================================
+
         return jsonify({
-            "success": True,
-            "questions": questions,
-            "count": len(questions)
+
+            "success":
+                True,
+
+            "questions":
+                questions,
+
+            "count":
+                len(questions),
+
+            "total":
+                total_count,
+
+            "page":
+                page,
+
+            "limit":
+                limit,
+
+            "total_pages":
+                total_pages
+
         })
+
 
     except Exception as e:
 
-        print("ADMIN PRACTICE QUESTIONS ERROR:", e)
+        print(
+            "ADMIN PRACTICE QUESTIONS ERROR:",
+            e
+        )
 
         return jsonify({
-            "success": False,
-            "error": str(e)
+
+            "success":
+                False,
+
+            "error":
+                str(e)
+
         }), 500
 
 # =====================================================
