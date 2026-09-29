@@ -3822,14 +3822,15 @@ function renderSubjectPackageCards(){
             <div class="mock-package-content">
 
                 <div class="mock-package-label">
-                    ${subject.name.toUpperCase()}
-                    PRACTICE + MOCK TEST PACKAGE
-                </div>
+                   CLASS ${classValue} •
+                   ${subject.name.toUpperCase()}
+                   PRACTICE + MOCK TEST PACKAGE
+               </div>
 
                 <h2>
-                    Complete ${subject.name}
-                    Practice + Mock Test Series
-                </h2>
+                   Class ${classValue} ${subject.name}
+                   Practice + Mock Test Series
+               </h2>
 
                 <p>
                     One payment gives access to complete
@@ -3838,8 +3839,8 @@ function renderSubjectPackageCards(){
                 </p>
 
                 <div class="mock-price">
-                    <span>₹</span>299
-                </div>
+                   <span>₹</span>${packagePrice}
+               </div>
 
                 <div class="mock-package-features">
 
@@ -3872,7 +3873,7 @@ function renderSubjectPackageCards(){
                         );
                     "
                 >
-                    🔓 Unlock ${subject.name} Package — ₹299
+                   🔓 Unlock Class ${classValue} ${subject.name} Package — ₹${packagePrice}
                 </button>
 
                 <button
@@ -3889,10 +3890,9 @@ function renderSubjectPackageCards(){
                     📘 View ${subject.name} Package →
                 </button>
 
-                <p class="mock-payment-note">
-                    Practice + Mock Test • ₹299
-                </p>
-
+               <p class="mock-payment-note">
+                   Class ${classValue} • Practice + Mock Test • ₹${packagePrice}
+               </p>
             </div>
         `;
 
