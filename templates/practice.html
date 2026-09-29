@@ -5556,7 +5556,7 @@ async function startCombinedPackagePayment(subject, button){
                 "Ranjitham Study Center",
 
             description:
-                "Practice + Mock Test Package",
+                `Class ${packageSelectedClass} ${packageSubjectName} Practice + Mock Test Package`,
 
             order_id:
                 data.order_id,
@@ -5783,15 +5783,11 @@ function markPackageAsPurchased(subject){
 
     cards.forEach(function(card){
 
-        const onclickText =
-            card.getAttribute("onclick") || "";
+        const cardSubject =
+            card.getAttribute("data-subject");
 
 
-        if(
-            onclickText.includes(
-                "'" + subject + "'"
-            )
-        ){
+        if(cardSubject === subject){
 
             // ================================
             // PAYMENT BUTTON
