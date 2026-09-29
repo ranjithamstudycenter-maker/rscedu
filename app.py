@@ -1450,7 +1450,7 @@ PACKAGE_PRICES = {
 
     "10": {
         "math": 1,
-        "science": 299,
+        "science": 1,
         "social_science": 299,
         "english": 299
     },
