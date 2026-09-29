@@ -1600,7 +1600,7 @@ def mock_create_order():
     
     if package_price is None:
     
-        conn.close()
+        
     
         return jsonify({
             "success": False,
@@ -1977,11 +1977,17 @@ def mock_payment_success():
     # VERIFY PAYMENT DETAILS
     # -------------------------------------------------
     try:
-
+        print("===== PACKAGE PAYMENT DEBUG =====")
+        print("ORDER ID:", order_id)
+        print("PAYMENT ID:", payment_id)
+        print("PRACTICE ID:", practice_id)
+        print("PURCHASE ID:", purchase["id"])
+        print("PURCHASE AMOUNT:", purchase["amount"])
+        print("FETCHING RAZORPAY PAYMENT...")
         payment = client.payment.fetch(
             payment_id
         )
-
+        print("RAZORPAY PAYMENT FETCHED:", payment)
         payment_order_id = payment.get(
             "order_id"
         )
