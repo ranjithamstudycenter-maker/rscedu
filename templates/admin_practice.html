@@ -778,7 +778,163 @@ td:nth-child(9){
     }
 
 }
+/* =========================================================
+   PROFESSIONAL PAGINATION
+========================================================= */
 
+.practice-pagination{
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+
+    margin:14px 0 16px;
+    padding:12px 16px;
+
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+
+    box-shadow:0 2px 8px rgba(15,23,42,.04);
+}
+
+/* LEFT - INFO */
+
+.pagination-info{
+    flex:1;
+}
+
+#practicePaginationInfo{
+    color:#475569;
+    font-size:12px;
+    font-weight:700;
+}
+
+/* CENTER - PAGE CONTROLS */
+
+.pagination-controls{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+}
+
+.pagination-controls button{
+    min-width:88px;
+    padding:8px 12px;
+
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+
+    background:#fff;
+    color:#334155;
+
+    font-size:12px;
+    font-weight:800;
+
+    cursor:pointer;
+    transition:.2s ease;
+}
+
+.pagination-controls button:hover:not(:disabled){
+    background:#eef2ff;
+    border-color:#818cf8;
+    color:#4338ca;
+}
+
+.pagination-controls button:disabled{
+    opacity:.45;
+    cursor:not-allowed;
+}
+
+#practicePageInfo{
+    min-width:85px;
+    text-align:center;
+
+    color:#312e81;
+    font-size:12px;
+    font-weight:900;
+
+    padding:8px 10px;
+
+    background:#eef2ff;
+    border:1px solid #c7d2fe;
+    border-radius:8px;
+}
+
+/* RIGHT - PAGE SIZE */
+
+.pagination-size{
+    display:flex;
+    align-items:center;
+    justify-content:flex-end;
+    gap:7px;
+
+    color:#64748b;
+    font-size:12px;
+    font-weight:700;
+}
+
+.pagination-size label{
+    white-space:nowrap;
+}
+
+.pagination-size select{
+    width:72px;
+    padding:8px 9px;
+
+    border:1px solid #cbd5e1;
+    border-radius:8px;
+
+    background:#fff;
+    color:#1e293b;
+
+    font-size:12px;
+    font-weight:800;
+
+    cursor:pointer;
+}
+
+.pagination-size select:focus{
+    outline:none;
+    border-color:#6366f1;
+    box-shadow:0 0 0 3px rgba(99,102,241,.10);
+}
+
+.pagination-size span{
+    white-space:nowrap;
+}
+
+/* ---------- MOBILE ---------- */
+
+@media(max-width:700px){
+
+    .practice-pagination{
+        flex-direction:column;
+        align-items:stretch;
+        gap:10px;
+    }
+
+    .pagination-info{
+        text-align:center;
+    }
+
+    .pagination-controls{
+        width:100%;
+    }
+
+    .pagination-controls button{
+        flex:1;
+    }
+
+    #practicePageInfo{
+        flex:1;
+    }
+
+    .pagination-size{
+        justify-content:center;
+    }
+}
 }
 </style>
 </head>
@@ -1135,6 +1291,8 @@ td:nth-child(9){
 
     <!-- PAGINATION -->
 
+<!-- PAGINATION -->
+
 <div class="practice-pagination">
 
     <div class="pagination-info">
@@ -1169,31 +1327,19 @@ td:nth-child(9){
 
     <div class="pagination-size">
 
-        <label>
-            Show
-        </label>
+        <label>Rows:</label>
 
         <select
             id="practicePageSize"
             onchange="practicePageSizeChanged()">
 
-            <option value="25">
-                25
-            </option>
-
-            <option value="50" selected>
-                50
-            </option>
-
-            <option value="100">
-                100
-            </option>
+            <option value="25">25</option>
+            <option value="50" selected>50</option>
+            <option value="100">100</option>
 
         </select>
 
-        <span>
-            per page
-        </span>
+        <span>per page</span>
 
     </div>
 
