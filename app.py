@@ -1434,8 +1434,42 @@ def payment_success_api():
 
 # Temporary package price
 # Final pricing can be made class + subject wise later
-PACKAGE_PRICE = 299
+# =====================================================
+# RSC SUBJECT PACKAGE PRICES
+# CLASS + SUBJECT WISE
+# =====================================================
 
+PACKAGE_PRICES = {
+
+    "9": {
+        "math": 299,
+        "science": 299,
+        "social_science": 299,
+        "english": 299
+    },
+
+    "10": {
+        "math": 1,
+        "science": 299,
+        "social_science": 299,
+        "english": 299
+    },
+
+    "11": {
+        "math": 299,
+        "physics": 299,
+        "chemistry": 299,
+        "biology": 299
+    },
+
+    "12": {
+        "math": 299,
+        "physics": 299,
+        "chemistry": 299,
+        "biology": 299
+    }
+
+}
 
 PACKAGE_SUBJECTS = {
 
