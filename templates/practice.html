@@ -5541,7 +5541,31 @@ async function startCombinedPackagePayment(subject, button){
         // 5. RAZORPAY OPTIONS
         // =============================================
 
-        const options = {
+       const subjectNames = {
+
+          math: "Mathematics",
+      
+          science: "Science",
+      
+          social_science: "Social Science",
+      
+          english: "English",
+      
+          physics: "Physics",
+      
+          chemistry: "Chemistry",
+      
+          biology: "Biology"
+      
+      };
+      
+      const packageSubjectName =
+          subjectNames[packageSelectedSubject] ||
+          data.subject ||
+          packageSelectedSubject;
+ 
+       
+       const options = {
 
             key:
                 data.razorpay_key,
