@@ -5413,7 +5413,6 @@ function populateFourChapterSelectors(){
         return;
     }
 
-
     if(!mockChapterOptions.length){
 
         container.innerHTML = `
@@ -5426,36 +5425,156 @@ function populateFourChapterSelectors(){
     }
 
 
-    /*
-     * First four chapters from the selected
-     * Board → Class → Subject syllabus
-     */
+    /* =========================================
+       SPLIT ALL CHAPTERS INTO GROUPS OF 4
+    ========================================= */
 
-    const chapters =
-        mockChapterOptions.slice(0,4);
+    const groups = [];
+
+    for(
+        let i = 0;
+        i < mockChapterOptions.length;
+        i += 4
+    ){
+
+        groups.push(
+            mockChapterOptions.slice(i, i + 4)
+        );
+
+    }
 
 
     let html = "";
 
 
-    chapters.forEach(function(chapter,index){
+    /* =========================================
+       CREATE ONE CARD FOR EACH 4-CHAPTER GROUP
+    ========================================= */
+
+    groups.forEach(function(chapters, groupIndex){
+
+        const startNumber =
+            (groupIndex * 4) + 1;
+
+        const endNumber =
+            startNumber + chapters.length - 1;
+
+
+        const groupId =
+            `fourChapterGroup${groupIndex}`;
+
+
+        const fileId =
+            `fourChapterExcelFile${groupIndex}`;
+
+
+        const statusId =
+            `fourChapterUploadStatus${groupIndex}`;
+
 
         html += `
-            <div class="four-chapter-auto-item">
 
-                <div class="four-chapter-number">
-                    ${String(index + 1).padStart(2,"0")}
+            <div class="four-chapter-group-card">
+
+                <div class="four-chapter-group-header">
+
+                    <div>
+                        📚 Chapters ${startNumber}–${endNumber}
+                    </div>
+
+                    <span>
+                        ${chapters.length} Chapter${chapters.length > 1 ? "s" : ""}
+                    </span>
+
                 </div>
 
-                <div class="four-chapter-name">
-                    ${esc(chapter)}
+
+                <div class="four-chapter-auto-list">
+
+        `;
+
+
+        chapters.forEach(function(chapter,index){
+
+            html += `
+
+                <div class="four-chapter-auto-item">
+
+                    <div class="four-chapter-number">
+                        ${String(startNumber + index)
+                            .padStart(2,"0")}
+                    </div>
+
+                    <div class="four-chapter-name">
+                        ${esc(chapter)}
+                    </div>
+
+                    <div class="four-chapter-check">
+                        ✓
+                    </div>
+
                 </div>
 
-                <div class="four-chapter-check">
-                    ✓
+            `;
+
+        });
+
+
+        html += `
+
+                </div>
+
+
+                <div class="four-chapter-excel-card">
+
+                    <div class="four-chapter-excel-icon">
+                        📊
+                    </div>
+
+                    <div class="four-chapter-excel-content">
+
+                        <strong>
+                            Chapters ${startNumber}–${endNumber}
+                            Question Paper
+                        </strong>
+
+                        <span>
+                            Upload one Excel file containing
+                            questions from these chapters.
+                        </span>
+
+
+                        <div class="excel-upload-action">
+
+                            <input
+                                type="file"
+                                id="${fileId}"
+                                accept=".xlsx,.xls">
+
+
+                            <button
+                                type="button"
+                                class="green"
+                                onclick="uploadFourChapterGroup(${groupIndex})">
+
+                                ⬆ Upload Excel
+
+                            </button>
+
+                        </div>
+
+
+                        <div
+                            id="${statusId}"
+                            class="message">
+                        </div>
+
+                    </div>
+
                 </div>
 
             </div>
+
         `;
 
     });
@@ -5463,24 +5582,62 @@ function populateFourChapterSelectors(){
 
     container.innerHTML = html;
 
+}
+async function uploadFourChapterGroup(groupIndex){
 
-    /*
-     * If syllabus has less than four chapters
-     */
+    const start =
+        groupIndex * 4;
 
-    if(chapters.length < 4){
+    const chapters =
+        mockChapterOptions.slice(
+            start,
+            start + 4
+        );
 
-        container.innerHTML += `
-            <div class="empty-upload-message"
-                 style="color:#dc2626;margin-top:10px;">
 
-                ⚠️ This syllabus contains only
-                ${chapters.length} chapter(s).
+    if(!chapters.length){
+        return;
+    }
 
-            </div>
-        `;
+
+    const fileInput =
+        document.getElementById(
+            `fourChapterExcelFile${groupIndex}`
+        );
+
+
+    const status =
+        document.getElementById(
+            `fourChapterUploadStatus${groupIndex}`
+        );
+
+
+    if(
+        !fileInput ||
+        !fileInput.files ||
+        !fileInput.files.length
+    ){
+
+        alert(
+            "⚠️ Please select the Excel file."
+        );
+
+        return;
 
     }
+
+
+    const chapterScope =
+        chapters.join(" | ");
+
+
+    await uploadMockExcelFile(
+        fileInput.files[0],
+        "four_chapter",
+        chapterScope,
+        status,
+        null
+    );
 
 }
 function populateExistingFourChapterMock(
