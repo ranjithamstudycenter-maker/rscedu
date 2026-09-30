@@ -3827,6 +3827,9 @@ function renderSubjectPackageCards(){
 
         const packagePrice =
             PACKAGE_PRICES[classValue]?.[subject.id] ?? 0;
+       
+       const isPurchased =
+             purchasedSubjects.includes(subject.id);
 
         const card =
             document.createElement("div");
@@ -3897,33 +3900,65 @@ function renderSubjectPackageCards(){
 
                 </div>
 
-                <button
-                   type="button"
-                   class="mock-pay-btn"
-                   onclick="
-                       event.stopPropagation();
-                       startCombinedPackagePayment(
-                           '${subject.id}',
-                           this
-                       );
-                   "
-               >
-                  🔓 Unlock Class ${classValue} ${subject.name} Package — ₹${packagePrice}
-               </button>
+               ${isPurchased ? `
 
-                <button
-                    type="button"
-                    class="mock-view-btn"
-                    style="display:none;"
-                    onclick="
-                        event.stopPropagation();
-                        openPurchasedSubject(
-                            '${subject.id}'
-                        );
-                    "
-                >
-                    📘 View ${subject.name} Package →
-                </button>
+                   <button
+                       type="button"
+                       class="mock-pay-btn"
+                       disabled
+                       style="
+                           background:#16a34a;
+                           cursor:default;
+                       "
+                   >
+                       ✓ Paid Successfully
+                   </button>
+               
+                   <button
+                       type="button"
+                       class="mock-view-btn"
+                       style="display:inline-flex;"
+                       onclick="
+                           event.stopPropagation();
+                           openPurchasedSubject(
+                               '${subject.id}'
+                           );
+                       "
+                   >
+                       📘 View ${subject.name} Package →
+                   </button>
+               
+               ` : `
+               
+                   <button
+                       type="button"
+                       class="mock-pay-btn"
+                       onclick="
+                           event.stopPropagation();
+                           startCombinedPackagePayment(
+                               '${subject.id}',
+                               this
+                           );
+                       "
+                   >
+                       🔓 Unlock Class ${classValue} ${subject.name} Package — ₹${packagePrice}
+                   </button>
+               
+                   <button
+                       type="button"
+                       class="mock-view-btn"
+                       style="display:none;"
+                       onclick="
+                           event.stopPropagation();
+                           openPurchasedSubject(
+                               '${subject.id}'
+                           );
+                       "
+                   >
+                       📘 View ${subject.name} Package →
+                   </button>
+               
+               `}
 
                <p class="mock-payment-note">
                    Class ${classValue} • Practice + Mock Test • ₹${packagePrice}
