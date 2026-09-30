@@ -977,15 +977,49 @@ classes_per_month = 12  # 3 days/week * 4 weeks
 # =====================================================
 
 def get_practice_id():
+
     # -------------------------------------------------
     # PERMANENT BROWSER PRACTICE ID
     # -------------------------------------------------
-    practice_id = request.cookies.get("rsc_practice_id")
+
+    practice_id = request.cookies.get(
+        "rsc_practice_id"
+    )
 
     if not practice_id:
-        practice_id = str(uuid.uuid4())
+
+        practice_id = str(
+            uuid.uuid4()
+        )
+
+    # Keep same ID for all functions
+    # during this request
+    request._rsc_practice_id = practice_id
 
     return practice_id
+
+
+@app.after_request
+def persist_practice_id(response):
+
+    practice_id = getattr(
+        request,
+        "_rsc_practice_id",
+        None
+    )
+
+    if practice_id:
+
+        response.set_cookie(
+            "rsc_practice_id",
+            practice_id,
+            max_age=10 * 365 * 24 * 60 * 60,
+            httponly=True,
+            secure=True,
+            samesite="Lax"
+        )
+
+    return response
     
 def get_user(phone):
 
