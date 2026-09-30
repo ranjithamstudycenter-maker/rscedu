@@ -6024,17 +6024,32 @@ async function restorePurchasedPackageStatuses(){
 
 
     // =========================================
-    // RENDER CARDS ONLY AFTER SERVER CHECK
-    // =========================================
+// RENDER ALL PACKAGE CARDS
+// =========================================
 
-    renderSubjectPackageCards();
+renderSubjectPackageCards();
 
 
-    // =========================================
-    // APPLY PAID STATUS
-    // =========================================
+// =========================================
+// RESTORE PAID STATUS
+// SERVER OR LOCAL STORAGE
+// =========================================
 
-    for(const subject of paidSubjects){
+for(const subject of subjects){
+
+    const paidKey =
+        `rsc_package_paid_${savedBoard}_${savedClass}_${subject}`;
+
+    const locallyPaid =
+        localStorage.getItem(paidKey) === "true";
+
+    const serverPaid =
+        paidSubjects.includes(subject);
+
+    if(
+        serverPaid ||
+        locallyPaid
+    ){
 
         markPackageAsPurchased(
             subject
@@ -6042,28 +6057,7 @@ async function restorePurchasedPackageStatuses(){
 
     }
 
-
-    // =========================================
-    // ALSO RESTORE LOCAL STATUS
-    // =========================================
-
-    for(const subject of subjects){
-
-        const paidKey =
-            `rsc_package_paid_${savedBoard}_${savedClass}_${subject}`;
-
-        if(
-            localStorage.getItem(paidKey)
-            === "true"
-        ){
-
-            markPackageAsPurchased(
-                subject
-            );
-
-        }
-
-    }
+}
 
 }
 function openPurchasedSubject(subject){
