@@ -5818,6 +5818,17 @@ function markPackageAsPurchased(subject){
         return;
     }
 
+    // =========================================
+    // SAVE PAID STATUS PERMANENTLY IN BROWSER
+    // =========================================
+
+    const paidKey =
+        `rsc_package_paid_${packageSelectedBoard}_${packageSelectedClass}_${subject}`;
+
+    localStorage.setItem(
+        paidKey,
+        "true"
+    );
 
     // -----------------------------------------
     // SAVE PURCHASED SUBJECT
@@ -5829,9 +5840,8 @@ function markPackageAsPurchased(subject){
 
     }
 
-
     // -----------------------------------------
-    // FIND CORRESPONDING SUBJECT CARD
+    // UPDATE CARD
     // -----------------------------------------
 
     const cards =
@@ -5839,24 +5849,17 @@ function markPackageAsPurchased(subject){
             ".subject-package-card"
         );
 
-
     cards.forEach(function(card){
 
         const cardSubject =
             card.getAttribute("data-subject");
 
-
         if(cardSubject === subject){
-
-            // ================================
-            // PAYMENT BUTTON
-            // ================================
 
             const payBtn =
                 card.querySelector(
                     ".mock-pay-btn"
                 );
-
 
             if(payBtn){
 
@@ -5873,16 +5876,10 @@ function markPackageAsPurchased(subject){
 
             }
 
-
-            // ================================
-            // VIEW PACKAGE BUTTON
-            // ================================
-
             const viewBtn =
                 card.querySelector(
                     ".mock-view-btn"
                 );
-
 
             if(viewBtn){
 
@@ -5891,20 +5888,14 @@ function markPackageAsPurchased(subject){
 
             }
 
-
-            // ================================
-            // PAID CARD
-            // ================================
-
             card.classList.add(
                 "package-paid"
             );
-
         }
 
     });
-
 }
+   
 async function restorePurchasedPackageStatuses(){
 
     const savedBoard =
@@ -5995,7 +5986,20 @@ async function restorePurchasedPackageStatuses(){
                
                };
 
+            for(const subject of subjects){
 
+                const paidKey =
+                    `rsc_package_paid_${savedBoard}_${savedClass}_${subject}`;
+            
+                const locallyPaid =
+                    localStorage.getItem(paidKey) === "true";
+            
+                if(locallyPaid){
+            
+                    markPackageAsPurchased(subject);
+            
+                }
+            }
             const response =
                 await fetch(
                     "/api/mock/check-access?" +
