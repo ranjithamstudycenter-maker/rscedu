@@ -5908,28 +5908,21 @@ async function restorePurchasedPackageStatuses(){
             "rsc_package_class"
         );
 
-
-    // No previous Board/Class
     if(
         !savedBoard ||
         !savedClass
     ){
-
         return;
-
     }
 
+    packageSelectedBoard =
+        savedBoard;
 
-    // Restore current package selection
-      packageSelectedBoard =
-       savedBoard;
+    packageSelectedClass =
+        savedClass;
 
-      packageSelectedClass =
-          savedClass;
-      
-      renderSubjectPackageCards();
-      
-      // Update selected syllabus text
+    renderSubjectPackageCards();
+
     const selectedText =
         document.getElementById(
             "packageSelectedSyllabusText"
@@ -5942,64 +5935,60 @@ async function restorePurchasedPackageStatuses(){
 
     }
 
-
-    // -----------------------------------------
-    // SUBJECTS TO CHECK
-    // -----------------------------------------
-
     const subjects = [
-       "math",
-       "science",
-       "social_science",
-       "english",
-       "physics",
-       "chemistry",
-       "biology"
-   ];
+        "math",
+        "science",
+        "social_science",
+        "english",
+        "physics",
+        "chemistry",
+        "biology"
+    ];
+
+    const subjectNames = {
+
+        math: "Mathematics",
+        science: "Science",
+        social_science: "Social Science",
+        english: "English",
+        physics: "Physics",
+        chemistry: "Chemistry",
+        biology: "Biology"
+
+    };
 
 
-    // -----------------------------------------
-    // CHECK EACH SUBJECT FROM SERVER
-    // -----------------------------------------
+    // =========================================
+    // 1. RESTORE LOCAL PAID STATUS
+    // =========================================
 
-    for(
-        const subject of subjects
-    ){
+    for(const subject of subjects){
+
+        const paidKey =
+            `rsc_package_paid_${savedBoard}_${savedClass}_${subject}`;
+
+        if(
+            localStorage.getItem(paidKey)
+            === "true"
+        ){
+
+            markPackageAsPurchased(
+                subject
+            );
+
+        }
+
+    }
+
+
+    // =========================================
+    // 2. CONFIRM FROM SERVER
+    // =========================================
+
+    for(const subject of subjects){
 
         try{
 
-            const subjectNames = {
-
-                   math: "Mathematics",
-               
-                   science: "Science",
-               
-                   social_science: "Social Science",
-               
-                   english: "English",
-               
-                   physics: "Physics",
-               
-                   chemistry: "Chemistry",
-               
-                   biology: "Biology"
-               
-               };
-
-            for(const subject of subjects){
-
-                const paidKey =
-                    `rsc_package_paid_${savedBoard}_${savedClass}_${subject}`;
-            
-                const locallyPaid =
-                    localStorage.getItem(paidKey) === "true";
-            
-                if(locallyPaid){
-            
-                    markPackageAsPurchased(subject);
-            
-                }
-            }
             const response =
                 await fetch(
                     "/api/mock/check-access?" +
@@ -6017,14 +6006,12 @@ async function restorePurchasedPackageStatuses(){
                     }).toString(),
 
                     {
-                        cache:"no-store"
+                        cache: "no-store"
                     }
                 );
 
-
             const data =
                 await response.json();
-
 
             if(
                 response.ok &&
