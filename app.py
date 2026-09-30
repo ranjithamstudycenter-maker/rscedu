@@ -976,25 +976,30 @@ classes_per_month = 12  # 3 days/week * 4 weeks
 # ANONYMOUS PRACTICE ID
 # =====================================================
 
+# =====================================================
+# ANONYMOUS PRACTICE ID
+# =====================================================
+
 def get_practice_id():
 
-    # -------------------------------------------------
-    # PERMANENT BROWSER PRACTICE ID
-    # -------------------------------------------------
-
+    # First use the long-lived browser cookie
     practice_id = request.cookies.get(
         "rsc_practice_id"
     )
 
+    # Backward compatibility:
+    # use old Flask session ID if cookie is not available
     if not practice_id:
-
-        practice_id = str(
-            uuid.uuid4()
+        practice_id = session.get(
+            "practice_id"
         )
 
-    # Keep same ID for all functions
-    # during this request
-    request._rsc_practice_id = practice_id
+    # Create a new ID only if neither exists
+    if not practice_id:
+        practice_id = str(uuid.uuid4())
+
+    # Keep the same ID in Flask session too
+    session["practice_id"] = practice_id
 
     return practice_id
 
@@ -1002,10 +1007,8 @@ def get_practice_id():
 @app.after_request
 def persist_practice_id(response):
 
-    practice_id = getattr(
-        request,
-        "_rsc_practice_id",
-        None
+    practice_id = session.get(
+        "practice_id"
     )
 
     if practice_id:
@@ -1013,7 +1016,10 @@ def persist_practice_id(response):
         response.set_cookie(
             "rsc_practice_id",
             practice_id,
+
+            # 10 years
             max_age=10 * 365 * 24 * 60 * 60,
+
             httponly=True,
             secure=True,
             samesite="Lax"
