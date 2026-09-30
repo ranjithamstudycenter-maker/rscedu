@@ -1656,15 +1656,16 @@ def mock_create_order():
             "message":
                 "Practice + Mock Test package is already unlocked."
         })
-    response.set_cookie(
-        "rsc_practice_id",
-        practice_id,
-        max_age=60 * 60 * 24 * 365 * 10,
-        httponly=True,
-        secure=True,
-        samesite="Lax"
-    )
-    
+        
+        response.set_cookie(
+            "rsc_practice_id",
+            practice_id,
+            max_age=60 * 60 * 24 * 365 * 10,
+            httponly=True,
+            secure=True,
+            samesite="Lax"
+        )
+        
     return response
     # -------------------------------------------------
     # LOAD RAZORPAY
