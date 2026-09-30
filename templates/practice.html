@@ -5903,25 +5903,7 @@ async function restorePurchasedPackageStatuses(){
       
       renderSubjectPackageCards();
       
-      /* -----------------------------------------
-         RESTORE STEP 2 PACKAGE SCREEN
-         ----------------------------------------- */
-      
-      const packageGateway =
-          document.getElementById("packageGateway");
-      
-      const subjectPackageSection =
-          document.getElementById("subjectPackageSection");
-      
-      if(packageGateway){
-          packageGateway.style.display = "none";
-      }
-      
-      if(subjectPackageSection){
-          subjectPackageSection.style.display = "block";
-      }
-
-    // Update selected syllabus text
+      // Update selected syllabus text
     const selectedText =
         document.getElementById(
             "packageSelectedSyllabusText"
