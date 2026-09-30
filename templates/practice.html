@@ -5899,29 +5899,17 @@ function markPackageAsPurchased(subject){
 async function restorePurchasedPackageStatuses(){
 
     const savedBoard =
-        localStorage.getItem(
-            "rsc_package_board"
-        );
+        localStorage.getItem("rsc_package_board");
 
     const savedClass =
-        localStorage.getItem(
-            "rsc_package_class"
-        );
+        localStorage.getItem("rsc_package_class");
 
-    if(
-        !savedBoard ||
-        !savedClass
-    ){
+    if(!savedBoard || !savedClass){
         return;
     }
 
-
-    packageSelectedBoard =
-        savedBoard;
-
-    packageSelectedClass =
-        savedClass;
-
+    packageSelectedBoard = savedBoard;
+    packageSelectedClass = savedClass;
 
     const selectedText =
         document.getElementById(
@@ -5929,12 +5917,9 @@ async function restorePurchasedPackageStatuses(){
         );
 
     if(selectedText){
-
         selectedText.textContent =
             `${savedBoard} • Class ${savedClass}`;
-
     }
-
 
     const subjects = [
         "math",
@@ -5946,9 +5931,7 @@ async function restorePurchasedPackageStatuses(){
         "biology"
     ];
 
-
     const subjectNames = {
-
         math: "Mathematics",
         science: "Science",
         social_science: "Social Science",
@@ -5956,56 +5939,56 @@ async function restorePurchasedPackageStatuses(){
         physics: "Physics",
         chemistry: "Chemistry",
         biology: "Biology"
-
     };
 
+    // =========================================
+    // FIRST: RENDER ALL SUBJECT CARDS
+    // =========================================
+
+    renderSubjectPackageCards();
 
     // =========================================
-    // CHECK SERVER FIRST
+    // THEN: CHECK SERVER FOR EACH SUBJECT
     // =========================================
-
-    const paidSubjects = [];
-
 
     for(const subject of subjects){
 
         try{
 
+            const params =
+                new URLSearchParams({
+                    subject: subjectNames[subject],
+                    board: savedBoard,
+                    class_name: savedClass
+                });
+
             const response =
                 await fetch(
                     "/api/mock/check-access?" +
-                    new URLSearchParams({
-
-                        subject:
-                            subjectNames[subject],
-
-                        board:
-                            savedBoard,
-
-                        class_name:
-                            savedClass
-
-                    }).toString(),
-
+                    params.toString(),
                     {
-                        cache: "no-store"
+                        method: "GET",
+                        cache: "no-store",
+                        credentials: "same-origin"
                     }
                 );
-
 
             const data =
                 await response.json();
 
+            console.log(
+                "PACKAGE ACCESS:",
+                subject,
+                data
+            );
 
             if(
                 response.ok &&
                 data.success &&
-                data.unlocked
+                data.unlocked === true
             ){
 
-                paidSubjects.push(
-                    subject
-                );
+                markPackageAsPurchased(subject);
 
             }
 
@@ -6021,43 +6004,6 @@ async function restorePurchasedPackageStatuses(){
         }
 
     }
-
-
-    // =========================================
-// RENDER ALL PACKAGE CARDS
-// =========================================
-
-renderSubjectPackageCards();
-
-
-// =========================================
-// RESTORE PAID STATUS
-// SERVER OR LOCAL STORAGE
-// =========================================
-
-for(const subject of subjects){
-
-    const paidKey =
-        `rsc_package_paid_${savedBoard}_${savedClass}_${subject}`;
-
-    const locallyPaid =
-        localStorage.getItem(paidKey) === "true";
-
-    const serverPaid =
-        paidSubjects.includes(subject);
-
-    if(
-        serverPaid ||
-        locallyPaid
-    ){
-
-        markPackageAsPurchased(
-            subject
-        );
-
-    }
-
-}
 
 }
 function openPurchasedSubject(subject){
