@@ -5577,10 +5577,10 @@ async function startCombinedPackagePayment(subject, button){
                 data.currency || "INR",
 
             name:
-                `Ranjitham Study Center - ${packageSubjectName}`,
+                "Ranjitham Study Center",
 
             description:
-                 `${packageSubjectName} - Class ${packageSelectedClass} Practice + Mock Test`,
+                `${packageSubjectName} - Class ${packageSelectedClass} Practice + Mock Test`,
 
             order_id:
                 data.order_id,
@@ -5921,11 +5921,14 @@ async function restorePurchasedPackageStatuses(){
     // -----------------------------------------
 
     const subjects = [
-        "math",
-        "biology",
-        "science",
-        "social_science"
-    ];
+       "math",
+       "science",
+       "social_science",
+       "english",
+       "physics",
+       "chemistry",
+       "biology"
+   ];
 
 
     // -----------------------------------------
