@@ -3898,18 +3898,19 @@ function renderSubjectPackageCards(){
                 </div>
 
                 <button
-                    type="button"
-                    class="mock-pay-btn"
-                    onclick="
-                        event.stopPropagation();
-                        startCombinedPackagePayment(
-                            '${subject.id}',
-                            this
-                        );
-                    "
-                >
-                   🔓 Unlock Class ${classValue} ${subject.name} Package — ₹${packagePrice}
-                </button>
+                   type="button"
+                   class="mock-pay-btn"
+                   style="display:none;"
+                   onclick="
+                       event.stopPropagation();
+                       startCombinedPackagePayment(
+                           '${subject.id}',
+                           this
+                       );
+                   "
+               >
+                  🔓 Unlock Class ${classValue} ${subject.name} Package — ₹${packagePrice}
+               </button>
 
                 <button
                     type="button"
