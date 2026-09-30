@@ -5915,13 +5915,13 @@ async function restorePurchasedPackageStatuses(){
         return;
     }
 
+
     packageSelectedBoard =
         savedBoard;
 
     packageSelectedClass =
         savedClass;
 
-    renderSubjectPackageCards();
 
     const selectedText =
         document.getElementById(
@@ -5935,6 +5935,7 @@ async function restorePurchasedPackageStatuses(){
 
     }
 
+
     const subjects = [
         "math",
         "science",
@@ -5944,6 +5945,7 @@ async function restorePurchasedPackageStatuses(){
         "chemistry",
         "biology"
     ];
+
 
     const subjectNames = {
 
@@ -5959,31 +5961,11 @@ async function restorePurchasedPackageStatuses(){
 
 
     // =========================================
-    // 1. RESTORE LOCAL PAID STATUS
+    // CHECK SERVER FIRST
     // =========================================
 
-    for(const subject of subjects){
+    const paidSubjects = [];
 
-        const paidKey =
-            `rsc_package_paid_${savedBoard}_${savedClass}_${subject}`;
-
-        if(
-            localStorage.getItem(paidKey)
-            === "true"
-        ){
-
-            markPackageAsPurchased(
-                subject
-            );
-
-        }
-
-    }
-
-
-    // =========================================
-    // 2. CONFIRM FROM SERVER
-    // =========================================
 
     for(const subject of subjects){
 
@@ -6010,8 +5992,10 @@ async function restorePurchasedPackageStatuses(){
                     }
                 );
 
+
             const data =
                 await response.json();
+
 
             if(
                 response.ok &&
@@ -6019,7 +6003,7 @@ async function restorePurchasedPackageStatuses(){
                 data.unlocked
             ){
 
-                markPackageAsPurchased(
+                paidSubjects.push(
                     subject
                 );
 
@@ -6032,6 +6016,49 @@ async function restorePurchasedPackageStatuses(){
                 "Package restore error:",
                 subject,
                 error
+            );
+
+        }
+
+    }
+
+
+    // =========================================
+    // RENDER CARDS ONLY AFTER SERVER CHECK
+    // =========================================
+
+    renderSubjectPackageCards();
+
+
+    // =========================================
+    // APPLY PAID STATUS
+    // =========================================
+
+    for(const subject of paidSubjects){
+
+        markPackageAsPurchased(
+            subject
+        );
+
+    }
+
+
+    // =========================================
+    // ALSO RESTORE LOCAL STATUS
+    // =========================================
+
+    for(const subject of subjects){
+
+        const paidKey =
+            `rsc_package_paid_${savedBoard}_${savedClass}_${subject}`;
+
+        if(
+            localStorage.getItem(paidKey)
+            === "true"
+        ){
+
+            markPackageAsPurchased(
+                subject
             );
 
         }
