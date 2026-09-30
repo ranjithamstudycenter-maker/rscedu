@@ -977,11 +977,13 @@ classes_per_month = 12  # 3 days/week * 4 weeks
 # =====================================================
 
 def get_practice_id():
-    practice_id = session.get("practice_id")
+    # -------------------------------------------------
+    # PERMANENT BROWSER PRACTICE ID
+    # -------------------------------------------------
+    practice_id = request.cookies.get("rsc_practice_id")
 
     if not practice_id:
         practice_id = str(uuid.uuid4())
-        session["practice_id"] = practice_id
 
     return practice_id
     
@@ -1600,7 +1602,7 @@ def mock_create_order():
     
     if package_price is None:
     
-        conn.close()
+        
     
         return jsonify({
             "success": False,
@@ -1654,7 +1656,16 @@ def mock_create_order():
             "message":
                 "Practice + Mock Test package is already unlocked."
         })
-
+    response.set_cookie(
+        "rsc_practice_id",
+        practice_id,
+        max_age=60 * 60 * 24 * 365 * 10,
+        httponly=True,
+        secure=True,
+        samesite="Lax"
+    )
+    
+    return response
     # -------------------------------------------------
     # LOAD RAZORPAY
     # -------------------------------------------------
@@ -1778,42 +1789,53 @@ def mock_create_order():
 
     conn.close()
 
-    return jsonify({
+    response = jsonify({
 
         "success": True,
-
+    
         "already_paid": False,
-
+    
         "unlocked": False,
-
+    
         "package_type":
             "practice_mock",
-
+    
         "order_id":
             order["id"],
-
+    
         "amount":
              package_price * 100,
-        
+    
         "currency":
             "INR",
-
+    
         "razorpay_key":
             keys["razorpay_key"],
-
+    
         "subject":
             subject_name,
-
+    
         "subject_key":
             subject,
-
+    
         "board":
             board,
-
+    
         "class_name":
             class_name
-
+    
     })
+
+    response.set_cookie(
+        "rsc_practice_id",
+        practice_id,
+        max_age=60 * 60 * 24 * 365 * 10,
+        httponly=True,
+        secure=True,
+        samesite="Lax"
+    )
+    
+    return response
 
 # =====================================================
 # RSC MOCK TEST - VERIFY PAYMENT
