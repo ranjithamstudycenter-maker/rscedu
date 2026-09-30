@@ -5895,12 +5895,31 @@ async function restorePurchasedPackageStatuses(){
 
 
     // Restore current package selection
-    packageSelectedBoard =
-        savedBoard;
+      packageSelectedBoard =
+       savedBoard;
 
-    packageSelectedClass =
-        savedClass;
-    renderSubjectPackageCards();
+      packageSelectedClass =
+          savedClass;
+      
+      renderSubjectPackageCards();
+      
+      /* -----------------------------------------
+         RESTORE STEP 2 PACKAGE SCREEN
+         ----------------------------------------- */
+      
+      const packageGateway =
+          document.getElementById("packageGateway");
+      
+      const subjectPackageSection =
+          document.getElementById("subjectPackageSection");
+      
+      if(packageGateway){
+          packageGateway.style.display = "none";
+      }
+      
+      if(subjectPackageSection){
+          subjectPackageSection.style.display = "block";
+      }
 
     // Update selected syllabus text
     const selectedText =
