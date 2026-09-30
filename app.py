@@ -1601,9 +1601,7 @@ def mock_create_order():
     )
     
     if package_price is None:
-    
-        conn.close()
-    
+              
         return jsonify({
             "success": False,
             "error":
