@@ -75,6 +75,18 @@ def init_db():
         """)
     except:
         pass
+
+    # =====================================================
+    # STUDENT STATE - FOR MOCK LEADERBOARD
+    # =====================================================
+    
+    try:
+        c.execute("""
+        ALTER TABLE students
+        ADD COLUMN state TEXT DEFAULT ''
+        """)
+    except:
+        pass
         
      # 🔥 ADD THIS NEW TABLE
     c.execute("""
@@ -732,7 +744,34 @@ def init_db():
 
     )
     """)
+    # =====================================================
+    # MOCK RESULTS - STUDENT DETAILS FOR LEADERBOARD
+    # =====================================================
     
+    try:
+        c.execute("""
+            ALTER TABLE mock_results
+            ADD COLUMN student_phone TEXT DEFAULT ''
+        """)
+    except sqlite3.OperationalError:
+        pass
+    
+    try:
+        c.execute("""
+            ALTER TABLE mock_results
+            ADD COLUMN student_name TEXT DEFAULT ''
+        """)
+    except sqlite3.OperationalError:
+        pass
+    
+    try:
+        c.execute("""
+            ALTER TABLE mock_results
+            ADD COLUMN student_state TEXT DEFAULT ''
+        """)
+    except sqlite3.OperationalError:
+        pass
+        
     # -----------------------------------------------------
     # 9. MOCK TEST PACKAGE PURCHASES
     # -----------------------------------------------------
@@ -8221,6 +8260,735 @@ def practice():
 # RSC MOCK TEST - FINAL FULL SYLLABUS TEST
 # =====================================================
 
+# =====================================================
+# MOCK TEST - START
+# =====================================================
+
+@app.route("/api/mock/start", methods=["POST"])
+def mock_start():
+
+    data = request.get_json(silent=True) or {}
+
+    practice_id = get_practice_id()
+
+    mock_test_id = data.get("mock_test_id")
+
+    if not mock_test_id:
+        return jsonify({
+            "success": False,
+            "error": "Mock test ID is required."
+        }), 400
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    # -------------------------------------------------
+    # GET MOCK TEST
+    # -------------------------------------------------
+
+    c.execute("""
+        SELECT *
+        FROM mock_tests
+        WHERE id=?
+          AND active=1
+        LIMIT 1
+    """, (mock_test_id,))
+
+    test = c.fetchone()
+
+    if not test:
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "Mock test not found."
+        }), 404
+
+    # -------------------------------------------------
+    # CHECK PREVIOUS ATTEMPT
+    # -------------------------------------------------
+
+    c.execute("""
+        SELECT *
+        FROM mock_attempts
+        WHERE practice_id=?
+          AND mock_test_id=?
+        LIMIT 1
+    """, (
+        practice_id,
+        mock_test_id
+    ))
+
+    existing = c.fetchone()
+
+    # -------------------------------------------------
+    # IF ALREADY SUBMITTED
+    # -------------------------------------------------
+
+    if existing and existing["status"] == "submitted":
+
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "You have already completed this mock test."
+        }), 400
+
+    # -------------------------------------------------
+    # GET QUESTIONS
+    # -------------------------------------------------
+
+    c.execute("""
+        SELECT id
+        FROM mock_questions
+        WHERE mock_test_id=?
+          AND active=1
+        ORDER BY RANDOM()
+        LIMIT ?
+    """, (
+        mock_test_id,
+        test["total_questions"]
+    ))
+
+    questions = c.fetchall()
+
+    if len(questions) < int(test["total_questions"]):
+
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": (
+                f"Only {len(questions)} active questions "
+                f"are available. "
+                f"{test['total_questions']} are required."
+            )
+        }), 400
+
+    question_ids = [
+        row["id"]
+        for row in questions
+    ]
+
+    question_ids_json = json.dumps(question_ids)
+
+    started_at = datetime.utcnow().isoformat()
+
+    # -------------------------------------------------
+    # CREATE / RESET ATTEMPT
+    # -------------------------------------------------
+
+    if existing:
+
+        c.execute("""
+            UPDATE mock_attempts
+            SET
+                question_ids=?,
+                answers='{}',
+                status='started',
+                payment_status='paid',
+                total_questions=?,
+                total_marks=?,
+                correct_answers=0,
+                incorrect_answers=0,
+                unanswered=0,
+                score=0,
+                percentage=0,
+                rank=NULL,
+                started_at=?,
+                submitted_at=NULL
+            WHERE id=?
+        """, (
+            question_ids_json,
+            test["total_questions"],
+            test["total_marks"],
+            started_at,
+            existing["id"]
+        ))
+
+        attempt_id = existing["id"]
+
+    else:
+
+        c.execute("""
+            INSERT INTO mock_attempts (
+                practice_id,
+                mock_test_id,
+                board,
+                class_name,
+                subject,
+                question_ids,
+                answers,
+                status,
+                payment_status,
+                total_questions,
+                total_marks,
+                started_at
+            )
+            VALUES (?, ?, ?, ?, ?, ?, '{}',
+                    'started', 'paid', ?, ?, ?)
+        """, (
+            practice_id,
+            mock_test_id,
+            test["board"],
+            test["class_name"],
+            test["subject"],
+            question_ids_json,
+            test["total_questions"],
+            test["total_marks"],
+            started_at
+        ))
+
+        attempt_id = c.lastrowid
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+
+        "success": True,
+
+        "attempt_id": attempt_id,
+
+        "mock_test_id": mock_test_id,
+
+        "board": test["board"],
+
+        "class_name": test["class_name"],
+
+        "subject": test["subject"],
+
+        "test_name": test["test_name"],
+
+        "mock_type": test["mock_type"],
+
+        "chapter_scope": test["chapter_scope"],
+
+        "total_questions": test["total_questions"],
+
+        "total_marks": test["total_marks"],
+
+        "duration_minutes": test["duration_minutes"],
+
+        "question_ids": question_ids
+
+    })
+    
+# =====================================================
+# MOCK TEST - SUBMIT
+# =====================================================
+
+@app.route("/api/mock/submit", methods=["POST"])
+def mock_submit():
+
+    data = request.get_json(silent=True) or {}
+
+    practice_id = get_practice_id()
+    attempt_id = data.get("attempt_id")
+
+    # -------------------------------------------------
+    # GET STUDENT DETAILS
+    # -------------------------------------------------
+    
+    student_phone = session.get("phone", "")
+    
+    student_name = ""
+    student_state = ""
+    
+    if student_phone:
+    
+        student_conn = sqlite3.connect(DB_PATH)
+        student_conn.row_factory = sqlite3.Row
+        student_cursor = student_conn.cursor()
+    
+        student_cursor.execute("""
+            SELECT name, state
+            FROM students
+            WHERE phone=?
+            ORDER BY rowid DESC
+            LIMIT 1
+        """, (
+            student_phone,
+        ))
+    
+        student = student_cursor.fetchone()
+    
+        if student:
+    
+            student_name = (
+                student["name"] or ""
+            )
+    
+            student_state = (
+                student["state"] or ""
+            )
+    
+        student_conn.close()
+        
+
+    answers = data.get("answers", {})
+
+    if not attempt_id:
+        return jsonify({
+            "success": False,
+            "error": "Attempt ID is required."
+        }), 400
+
+    if not isinstance(answers, dict):
+        return jsonify({
+            "success": False,
+            "error": "Invalid answers format."
+        }), 400
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    # -------------------------------------------------
+    # GET ATTEMPT
+    # -------------------------------------------------
+
+    c.execute("""
+        SELECT *
+        FROM mock_attempts
+        WHERE id=?
+          AND practice_id=?
+        LIMIT 1
+    """, (
+        attempt_id,
+        practice_id
+    ))
+
+    attempt = c.fetchone()
+
+    if not attempt:
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "Mock attempt not found."
+        }), 404
+
+    # -------------------------------------------------
+    # PREVENT DOUBLE SUBMISSION
+    # -------------------------------------------------
+
+    if attempt["status"] == "submitted":
+
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "This mock test has already been submitted."
+        }), 400
+
+    # -------------------------------------------------
+    # GET QUESTION IDS
+    # -------------------------------------------------
+
+    try:
+        question_ids = json.loads(
+            attempt["question_ids"] or "[]"
+        )
+    except Exception:
+
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "Invalid question data."
+        }), 500
+
+    if not question_ids:
+
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "No questions found for this attempt."
+        }), 400
+
+    # -------------------------------------------------
+    # LOAD CORRECT ANSWERS
+    # -------------------------------------------------
+
+    placeholders = ",".join(
+        ["?"] * len(question_ids)
+    )
+
+    c.execute(
+        f"""
+        SELECT id, correct_answer, marks
+        FROM mock_questions
+        WHERE id IN ({placeholders})
+        """,
+        question_ids
+    )
+
+    question_rows = c.fetchall()
+
+    correct_map = {}
+
+    marks_map = {}
+
+    for row in question_rows:
+
+        correct_map[str(row["id"])] = (
+            str(row["correct_answer"])
+            .strip()
+            .upper()
+        )
+
+        marks_map[str(row["id"])] = (
+            int(row["marks"] or 1)
+        )
+
+    # -------------------------------------------------
+    # CALCULATE RESULT
+    # -------------------------------------------------
+
+    correct_answers = 0
+    incorrect_answers = 0
+    unanswered = 0
+    score = 0
+
+    for question_id in question_ids:
+
+        qid = str(question_id)
+
+        user_answer = answers.get(qid, "")
+
+        if user_answer is None:
+            user_answer = ""
+
+        user_answer = str(
+            user_answer
+        ).strip().upper()
+
+        correct_answer = correct_map.get(
+            qid,
+            ""
+        )
+
+        marks = marks_map.get(
+            qid,
+            1
+        )
+
+        # -----------------------------
+        # UNANSWERED
+        # -----------------------------
+
+        if not user_answer:
+
+            unanswered += 1
+
+        # -----------------------------
+        # CORRECT
+        # -----------------------------
+
+        elif user_answer == correct_answer:
+
+            correct_answers += 1
+
+            score += marks
+
+        # -----------------------------
+        # WRONG
+        # -----------------------------
+
+        else:
+
+            incorrect_answers += 1
+
+    # -------------------------------------------------
+    # PERCENTAGE
+    # -------------------------------------------------
+
+    total_marks = int(
+        attempt["total_marks"] or 100
+    )
+
+    if total_marks > 0:
+
+        percentage = round(
+            (score / total_marks) * 100,
+            2
+        )
+
+    else:
+
+        percentage = 0
+
+    submitted_at = datetime.utcnow().isoformat()
+
+    answers_json = json.dumps(
+        answers
+    )
+
+    # -------------------------------------------------
+    # UPDATE ATTEMPT
+    # -------------------------------------------------
+
+    c.execute("""
+        UPDATE mock_attempts
+        SET
+            answers=?,
+            status='submitted',
+            correct_answers=?,
+            incorrect_answers=?,
+            unanswered=?,
+            score=?,
+            percentage=?,
+            submitted_at=?
+        WHERE id=?
+          AND practice_id=?
+    """, (
+        answers_json,
+        correct_answers,
+        incorrect_answers,
+        unanswered,
+        score,
+        percentage,
+        submitted_at,
+        attempt_id,
+        practice_id
+    ))
+
+    # -------------------------------------------------
+    # SAVE RESULT
+    # -------------------------------------------------
+
+    c.execute("""
+        INSERT INTO mock_results (
+            mock_test_id,
+            practice_id,
+            student_phone,
+            student_name,
+            student_state,
+            score,
+            percentage,
+            correct_answers,
+            incorrect_answers,
+            unanswered,
+            submitted_at
+        )
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        ON CONFLICT(mock_test_id, practice_id)
+        DO UPDATE SET
+            student_phone=excluded.student_phone,
+            student_name=excluded.student_name,
+            student_state=excluded.student_state,
+            score=excluded.score,
+            percentage=excluded.percentage,
+            correct_answers=excluded.correct_answers,
+            incorrect_answers=excluded.incorrect_answers,
+            unanswered=excluded.unanswered,
+            submitted_at=excluded.submitted_at
+    """, (
+            attempt["mock_test_id"],
+            practice_id,
+            student_phone,
+            student_name,
+            student_state,
+            score,
+            percentage,
+            correct_answers,
+            incorrect_answers,
+            unanswered,
+            submitted_at
+    )   )
+
+    conn.commit()
+    conn.close()
+
+    # -------------------------------------------------
+    # RESPONSE
+    # -------------------------------------------------
+
+    return jsonify({
+
+        "success": True,
+
+        "attempt_id": attempt_id,
+
+        "mock_test_id": attempt["mock_test_id"],
+
+        "total_questions": attempt["total_questions"],
+
+        "total_marks": total_marks,
+
+        "correct_answers": correct_answers,
+
+        "incorrect_answers": incorrect_answers,
+
+        "unanswered": unanswered,
+
+        "score": score,
+
+        "percentage": percentage,
+
+        "submitted_at": submitted_at
+
+    })
+# =====================================================
+# MOCK TEST - TOP 10 LEADERBOARD
+# =====================================================
+
+@app.route("/api/mock/leaderboard")
+def mock_leaderboard():
+
+    mock_test_id = request.args.get(
+        "mock_test_id",
+        type=int
+    )
+
+    if not mock_test_id:
+
+        return jsonify({
+            "success": False,
+            "error": "Mock test ID is required."
+        }), 400
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    # -------------------------------------------------
+    # GET TEST DETAILS
+    # -------------------------------------------------
+
+    c.execute("""
+        SELECT
+            id,
+            board,
+            class_name,
+            subject,
+            test_name,
+            mock_type,
+            chapter_scope
+        FROM mock_tests
+        WHERE id=?
+          AND active=1
+        LIMIT 1
+    """, (
+        mock_test_id,
+    ))
+
+    test = c.fetchone()
+
+    if not test:
+
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "Mock test not found."
+        }), 404
+
+    # -------------------------------------------------
+    # TOP 10
+    # -------------------------------------------------
+    #
+    # 1. Higher score first
+    # 2. If same score, earlier submission first
+    #
+    # Later we can change this to exact time
+    # taken once duration tracking is connected.
+    # -------------------------------------------------
+
+    c.execute("""
+        SELECT
+            student_name,
+            student_state,
+            score,
+            percentage,
+            correct_answers,
+            incorrect_answers,
+            unanswered,
+            submitted_at
+        FROM mock_results
+        WHERE mock_test_id=?
+        ORDER BY
+            score DESC,
+            submitted_at ASC
+        LIMIT 10
+    """, (
+        mock_test_id,
+    ))
+
+    rows = c.fetchall()
+
+    leaderboard = []
+
+    for index, row in enumerate(rows, start=1):
+
+        leaderboard.append({
+
+            "rank": index,
+
+            "student_name":
+                row["student_name"] or "Student",
+
+            "state":
+                row["student_state"] or "",
+
+            "score":
+                row["score"] or 0,
+
+            "percentage":
+                row["percentage"] or 0,
+
+            "correct_answers":
+                row["correct_answers"] or 0,
+
+            "incorrect_answers":
+                row["incorrect_answers"] or 0,
+
+            "unanswered":
+                row["unanswered"] or 0
+
+        })
+
+    conn.close()
+
+    return jsonify({
+
+        "success": True,
+
+        "mock_test": {
+
+            "id": test["id"],
+
+            "board":
+                test["board"],
+
+            "class_name":
+                test["class_name"],
+
+            "subject":
+                test["subject"],
+
+            "test_name":
+                test["test_name"],
+
+            "mock_type":
+                test["mock_type"],
+
+            "chapter_scope":
+                test["chapter_scope"]
+
+        },
+
+        "total":
+            len(leaderboard),
+
+        "leaderboard":
+            leaderboard
+
+    })
+    
 @app.route("/api/mock/final-test")
 def mock_final_test():
 
@@ -8361,7 +9129,283 @@ def mock_options():
             "error": str(e)
         }), 500
         
-       
+# =====================================================
+# RSC MOCK TEST - TOP 10 LEADERBOARD
+# =====================================================
+
+@app.route("/api/mock/leaderboard")
+def mock_leaderboard():
+
+    mock_test_id = request.args.get(
+        "mock_test_id",
+        ""
+    ).strip()
+
+    if not mock_test_id:
+
+        return jsonify({
+            "success": False,
+            "error": "Mock Test ID is required."
+        }), 400
+
+    try:
+
+        mock_test_id = int(mock_test_id)
+
+    except ValueError:
+
+        return jsonify({
+            "success": False,
+            "error": "Invalid Mock Test ID."
+        }), 400
+
+
+    conn = None
+
+    try:
+
+        conn = sqlite3.connect(
+            "/var/data/students.db"
+        )
+
+        conn.row_factory = sqlite3.Row
+
+        c = conn.cursor()
+
+
+        # =================================================
+        # GET MOCK TEST INFORMATION
+        # =================================================
+
+        c.execute("""
+            SELECT
+                id,
+                mock_type,
+                chapter_scope,
+                test_name,
+                board,
+                class_name,
+                subject
+            FROM mock_tests
+            WHERE id=?
+            LIMIT 1
+        """, (
+            mock_test_id,
+        ))
+
+        test_row = c.fetchone()
+
+
+        if not test_row:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error": "Mock Test not found."
+            }), 404
+
+
+        # =================================================
+        # GET TOP 10 RESULTS
+        #
+        # Higher score = higher rank
+        #
+        # Same score:
+        # Less time taken = higher rank
+        # =================================================
+
+        c.execute("""
+            SELECT
+
+                mr.id,
+
+                mr.mock_test_id,
+
+                mr.practice_id,
+
+                mr.score,
+
+                mr.percentage,
+
+                mr.correct_answers,
+
+                mr.incorrect_answers,
+
+                mr.unanswered,
+
+                mr.submitted_at,
+
+                ma.started_at,
+
+                ma.submitted_at AS attempt_submitted_at,
+
+                s.name AS student_name,
+
+                s.state AS student_state
+
+            FROM mock_results mr
+
+            LEFT JOIN mock_attempts ma
+                ON ma.practice_id = mr.practice_id
+               AND ma.mock_test_id = mr.mock_test_id
+
+            LEFT JOIN students s
+                ON s.phone = ma.practice_id
+
+            WHERE mr.mock_test_id=?
+
+            ORDER BY
+
+                mr.score DESC,
+
+                CASE
+
+                    WHEN ma.started_at IS NOT NULL
+                     AND ma.submitted_at IS NOT NULL
+
+                    THEN (
+                        strftime(
+                            '%s',
+                            ma.submitted_at
+                        )
+                        -
+                        strftime(
+                            '%s',
+                            ma.started_at
+                        )
+                    )
+
+                    ELSE 999999999
+
+                END ASC,
+
+                mr.submitted_at ASC
+
+            LIMIT 10
+
+        """, (
+            mock_test_id,
+        ))
+
+
+        rows = c.fetchall()
+
+
+        leaderboard = []
+
+
+        for index, row in enumerate(
+            rows,
+            start=1
+        ):
+
+            leaderboard.append({
+
+                "rank":
+                    index,
+
+                "name":
+                    row["student_name"]
+                    or "Student",
+
+                "state":
+                    row["student_state"]
+                    or "",
+
+                "score":
+                    row["score"] or 0,
+
+                "percentage":
+                    row["percentage"] or 0,
+
+                "correct_answers":
+                    row["correct_answers"] or 0,
+
+                "incorrect_answers":
+                    row["incorrect_answers"] or 0,
+
+                "unanswered":
+                    row["unanswered"] or 0,
+
+                "submitted_at":
+                    row["submitted_at"],
+
+                "started_at":
+                    row["started_at"]
+
+            })
+
+
+        conn.close()
+
+
+        # =================================================
+        # RESPONSE
+        # =================================================
+
+        return jsonify({
+
+            "success": True,
+
+            "mock_test": {
+
+                "id":
+                    test_row["id"],
+
+                "mock_type":
+                    test_row["mock_type"]
+                    or "chapter",
+
+                "chapter_scope":
+                    test_row["chapter_scope"]
+                    or "",
+
+                "test_name":
+                    test_row["test_name"],
+
+                "board":
+                    test_row["board"],
+
+                "class_name":
+                    test_row["class_name"],
+
+                "subject":
+                    test_row["subject"]
+
+            },
+
+            "leaderboard":
+                leaderboard
+
+        })
+
+
+    except Exception as e:
+
+        if conn:
+
+            try:
+                conn.close()
+            except:
+                pass
+
+
+        print(
+            "MOCK LEADERBOARD ERROR:",
+            e
+        )
+
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+        
 @app.route("/api/practice/options")
 def practice_options():
     try:
