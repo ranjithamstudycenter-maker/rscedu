@@ -8474,6 +8474,117 @@ def mock_start():
         "question_ids": question_ids
 
     })
+# =====================================================
+# MOCK TEST - GET QUESTIONS
+# =====================================================
+
+@app.route("/api/mock/questions")
+def mock_get_questions():
+
+    practice_id = get_practice_id()
+    attempt_id = request.args.get("attempt_id", type=int)
+
+    if not attempt_id:
+        return jsonify({
+            "success": False,
+            "error": "Attempt ID is required."
+        }), 400
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT *
+        FROM mock_attempts
+        WHERE id=?
+          AND practice_id=?
+        LIMIT 1
+    """, (attempt_id, practice_id))
+
+    attempt = c.fetchone()
+
+    if not attempt:
+        conn.close()
+        return jsonify({
+            "success": False,
+            "error": "Mock attempt not found."
+        }), 404
+
+    try:
+        question_ids = json.loads(
+            attempt["question_ids"] or "[]"
+        )
+    except Exception:
+        conn.close()
+        return jsonify({
+            "success": False,
+            "error": "Invalid question data."
+        }), 500
+
+    if not question_ids:
+        conn.close()
+        return jsonify({
+            "success": False,
+            "error": "No questions found."
+        }), 400
+
+    placeholders = ",".join(["?"] * len(question_ids))
+
+    c.execute(
+        f"""
+        SELECT
+            id,
+            question,
+            option_a,
+            option_b,
+            option_c,
+            option_d,
+            marks
+        FROM mock_questions
+        WHERE id IN ({placeholders})
+          AND active=1
+        """,
+        question_ids
+    )
+
+    rows = c.fetchall()
+
+    question_map = {}
+
+    for row in rows:
+
+        question_map[str(row["id"])] = {
+            "id": row["id"],
+            "question": row["question"],
+            "option_a": row["option_a"],
+            "option_b": row["option_b"],
+            "option_c": row["option_c"],
+            "option_d": row["option_d"],
+            "marks": row["marks"] or 1
+        }
+
+    # Preserve the randomized order stored in the attempt
+    questions = []
+
+    for question_id in question_ids:
+
+        question = question_map.get(str(question_id))
+
+        if question:
+            questions.append(question)
+
+    conn.close()
+
+    return jsonify({
+        "success": True,
+        "attempt_id": attempt_id,
+        "mock_test_id": attempt["mock_test_id"],
+        "total_questions": attempt["total_questions"],
+        "total_marks": attempt["total_marks"],
+        "started_at": attempt["started_at"],
+        "questions": questions
+    })
     
 # =====================================================
 # MOCK TEST - SUBMIT
