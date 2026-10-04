@@ -8388,16 +8388,6 @@ def mock_start():
     
     mock_test_id = test["id"]
 
-    test = c.fetchone()
-
-    if not test:
-        conn.close()
-
-        return jsonify({
-            "success": False,
-            "error": "Mock test not found."
-        }), 404
-
     # -------------------------------------------------
     # CHECK PREVIOUS ATTEMPT
     # -------------------------------------------------
