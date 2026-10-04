@@ -8864,6 +8864,139 @@ function openFourChapterMock(){
     });
 
 }
+async function startChapterMock(chapter){
+
+    console.log("START CHAPTER MOCK:", chapter);
+
+    if(!chapter){
+        alert("Chapter not selected.");
+        return;
+    }
+
+    if(!selectedMockBoard || !selectedMockClass || !selectedMockSubject){
+        alert("Please select Board, Class and Subject first.");
+        return;
+    }
+
+    try{
+
+        const response = await fetch("/api/mock/start", {
+
+            method: "POST",
+
+            headers: {
+                "Content-Type": "application/json"
+            },
+
+            body: JSON.stringify({
+
+                board: selectedMockBoard,
+
+                class_name: selectedMockClass,
+
+                subject: selectedMockSubject,
+
+                mock_type: "chapter",
+
+                chapter_scope: chapter
+
+            })
+
+        });
+
+        const data = await response.json();
+
+        console.log("MOCK START RESPONSE:", data);
+
+        if(!response.ok || !data.success){
+
+            alert(
+                data.error ||
+                "Unable to start mock test."
+            );
+
+            return;
+        }
+
+        /*
+         * Save current mock attempt
+         */
+
+        window.currentMockAttemptId =
+            data.attempt_id;
+
+        window.currentMockTestId =
+            data.mock_test_id;
+
+        window.currentMockQuestions =
+            [];
+
+        /*
+         * Save test information
+         */
+
+        window.currentMockTestInfo = {
+
+            board: data.board,
+
+            class_name: data.class_name,
+
+            subject: data.subject,
+
+            test_name: data.test_name,
+
+            mock_type: data.mock_type,
+
+            chapter_scope: data.chapter_scope,
+
+            total_questions:
+                data.total_questions,
+
+            total_marks:
+                data.total_marks,
+
+            duration_minutes:
+                data.duration_minutes
+
+        };
+
+        /*
+         * Next step:
+         * load questions using attempt_id
+         */
+
+        console.log(
+            "ATTEMPT ID:",
+            window.currentMockAttemptId
+        );
+
+        console.log(
+            "MOCK TEST ID:",
+            window.currentMockTestId
+        );
+
+        alert(
+            "Mock test started successfully.\n\n" +
+            "Attempt ID: " +
+            window.currentMockAttemptId
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "START MOCK ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to connect to the server."
+        );
+
+    }
+
+}
+   
 function continueSelectedChapter(){
 
     if(!selectedChapter){
