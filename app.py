@@ -8271,29 +8271,122 @@ def mock_start():
 
     practice_id = get_practice_id()
 
+    # -------------------------------------------------
+    # GET MOCK TEST DETAILS FROM FRONTEND
+    # -------------------------------------------------
+    
     mock_test_id = data.get("mock_test_id")
-
-    if not mock_test_id:
-        return jsonify({
-            "success": False,
-            "error": "Mock test ID is required."
-        }), 400
-
+    
+    board = str(
+        data.get("board", "")
+    ).strip()
+    
+    class_name = str(
+        data.get("class_name", "")
+    ).strip()
+    
+    subject = str(
+        data.get("subject", "")
+    ).strip()
+    
+    mock_type = str(
+        data.get("mock_type", "chapter")
+    ).strip()
+    
+    chapter_scope = str(
+        data.get("chapter_scope", "")
+    ).strip()
+    
+    
+    # -------------------------------------------------
+    # DATABASE
+    # -------------------------------------------------
+    
     conn = sqlite3.connect(DB_PATH)
     conn.row_factory = sqlite3.Row
     c = conn.cursor()
-
+    
+    
     # -------------------------------------------------
-    # GET MOCK TEST
+    # IF MOCK TEST ID IS NOT GIVEN,
+    # FIND IT USING BOARD + CLASS + SUBJECT +
+    # MOCK TYPE + CHAPTER SCOPE
     # -------------------------------------------------
-
-    c.execute("""
-        SELECT *
-        FROM mock_tests
-        WHERE id=?
-          AND active=1
-        LIMIT 1
-    """, (mock_test_id,))
+    
+    if not mock_test_id:
+    
+        if not board or not class_name or not subject:
+    
+            conn.close()
+    
+            return jsonify({
+                "success": False,
+                "error": "Board, Class and Subject are required."
+            }), 400
+    
+    
+        c.execute("""
+            SELECT *
+            FROM mock_tests
+            WHERE board=?
+              AND class_name=?
+              AND subject=?
+              AND mock_type=?
+              AND chapter_scope=?
+              AND active=1
+            LIMIT 1
+        """, (
+            board,
+            class_name,
+            subject,
+            mock_type,
+            chapter_scope
+        ))
+    
+        test = c.fetchone()
+    
+    
+    else:
+    
+        # -------------------------------------------------
+        # MOCK TEST ID WAS DIRECTLY PROVIDED
+        # -------------------------------------------------
+    
+        c.execute("""
+            SELECT *
+            FROM mock_tests
+            WHERE id=?
+              AND active=1
+            LIMIT 1
+        """, (
+            mock_test_id,
+        ))
+    
+        test = c.fetchone()
+    
+    
+    # -------------------------------------------------
+    # TEST NOT FOUND
+    # -------------------------------------------------
+    
+    if not test:
+    
+        conn.close()
+    
+        return jsonify({
+            "success": False,
+            "error": (
+                "Mock test is not configured yet for "
+                "this chapter."
+            )
+        }), 404
+    
+    
+    # -------------------------------------------------
+    # NOW USE THE REAL DATABASE TEST ID
+    # -------------------------------------------------
+    
+    mock_test_id = test["id"]
 
     test = c.fetchone()
 
