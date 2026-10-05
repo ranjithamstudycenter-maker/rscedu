@@ -3887,10 +3887,139 @@ def admin_delete_mock_test(test_id):
             "error": str(e)
         }), 500
 
+# =====================================================
+# ADMIN - RESET MOCK TEST
+# =====================================================
 
-# =====================================================
-# ADMIN - IMPORT MOCK QUESTIONS FROM EXCEL
-# =====================================================
+@app.route(
+    "/admin/mock-tests/reset/<int:test_id>",
+    methods=["POST"]
+)
+def admin_reset_mock_test(test_id):
+
+    if not session.get("admin"):
+
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+
+    conn = None
+
+    try:
+
+        conn = sqlite3.connect(DB_PATH)
+
+        c = conn.cursor()
+
+
+        # ---------------------------------------------
+        # CHECK MOCK TEST
+        # ---------------------------------------------
+
+        c.execute("""
+            SELECT id
+            FROM mock_tests
+            WHERE id=?
+        """, (
+            test_id,
+        ))
+
+
+        test = c.fetchone()
+
+
+        if not test:
+
+            conn.close()
+
+            return jsonify({
+                "success": False,
+                "error": "Mock Test not found."
+            }), 404
+
+
+        # ---------------------------------------------
+        # RESET ACTIVE / EXISTING ATTEMPTS
+        # ---------------------------------------------
+
+        c.execute("""
+            UPDATE mock_attempts
+            SET
+                status='expired',
+                submitted_at=NULL,
+                answers='{}',
+                correct_answers=0,
+                incorrect_answers=0,
+                unanswered=0,
+                score=0,
+                percentage=0,
+                rank=NULL
+            WHERE mock_test_id=?
+        """, (
+            test_id,
+        ))
+
+
+        reset_attempts = c.rowcount
+
+
+        # ---------------------------------------------
+        # CLEAR OLD LEADERBOARD RESULTS
+        # ---------------------------------------------
+
+        c.execute("""
+            DELETE FROM mock_results
+            WHERE mock_test_id=?
+        """, (
+            test_id,
+        ))
+
+
+        cleared_results = c.rowcount
+
+
+        conn.commit()
+
+        conn.close()
+
+
+        return jsonify({
+
+            "success": True,
+
+            "reset_attempts":
+                reset_attempts,
+
+            "cleared_results":
+                cleared_results
+
+        })
+
+
+    except Exception as e:
+
+        if conn:
+
+            conn.close()
+
+
+        print(
+            "RESET MOCK TEST ERROR:",
+            e
+        )
+
+
+        return jsonify({
+
+            "success": False,
+
+            "error":
+                str(e)
+
+        }), 500
+        
 
 # =====================================================
 # ADMIN - IMPORT MOCK QUESTIONS FROM EXCEL
