@@ -8365,14 +8365,11 @@ document.addEventListener(
          await restorePurchasedPackageStatuses();
          
          /* -----------------------------------------
-            DO NOT RESUME MOCK AFTER PAGE REFRESH
-            Always start again from syllabus selection
+            RESUME MOCK TEST AFTER PAGE REFRESH
          ----------------------------------------- */
          
-         localStorage.removeItem(
-             "rsc_active_mock_attempt_id"
-         );
-    }
+         await resumeActiveMockAttempt();
+             }
 );
 
 document.addEventListener("keydown", function(e){
