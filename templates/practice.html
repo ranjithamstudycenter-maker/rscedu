@@ -8873,42 +8873,65 @@ async function startChapterMock(chapter){
         return;
     }
 
-    if(!selectedMockBoard || !selectedMockClass || !selectedMockSubject){
-        alert("Please select Board, Class and Subject first.");
+    if(
+        !selectedMockBoard ||
+        !selectedMockClass ||
+        !selectedMockSubject
+    ){
+        alert(
+            "Please select Board, Class and Subject first."
+        );
         return;
     }
 
     try{
 
-        const response = await fetch("/api/mock/start", {
+        /* =========================================
+           STEP 1 — START MOCK ATTEMPT
+        ========================================= */
 
-            method: "POST",
+        const response = await fetch(
+            "/api/mock/start",
+            {
+                method: "POST",
 
-            headers: {
-                "Content-Type": "application/json"
-            },
+                headers: {
+                    "Content-Type": "application/json"
+                },
 
-            body: JSON.stringify({
+                body: JSON.stringify({
 
-                board: selectedMockBoard,
+                    board: selectedMockBoard,
 
-                class_name: selectedMockClass,
+                    class_name:
+                        selectedMockClass,
 
-                subject: selectedMockSubject,
+                    subject:
+                        selectedMockSubject,
 
-                mock_type: "chapter",
+                    mock_type:
+                        "chapter",
 
-                chapter_scope: chapter
+                    chapter_scope:
+                        chapter
 
-            })
+                })
+            }
+        );
 
-        });
+        const data =
+            await response.json();
 
-        const data = await response.json();
+        console.log(
+            "MOCK START RESPONSE:",
+            data
+        );
 
-        console.log("MOCK START RESPONSE:", data);
 
-        if(!response.ok || !data.success){
+        if(
+            !response.ok ||
+            !data.success
+        ){
 
             alert(
                 data.error ||
@@ -8918,9 +8941,10 @@ async function startChapterMock(chapter){
             return;
         }
 
-        /*
-         * Save current mock attempt
-         */
+
+        /* =========================================
+           SAVE ATTEMPT INFORMATION
+        ========================================= */
 
         window.currentMockAttemptId =
             data.attempt_id;
@@ -8931,23 +8955,26 @@ async function startChapterMock(chapter){
         window.currentMockQuestions =
             [];
 
-        /*
-         * Save test information
-         */
 
         window.currentMockTestInfo = {
 
-            board: data.board,
+            board:
+                data.board,
 
-            class_name: data.class_name,
+            class_name:
+                data.class_name,
 
-            subject: data.subject,
+            subject:
+                data.subject,
 
-            test_name: data.test_name,
+            test_name:
+                data.test_name,
 
-            mock_type: data.mock_type,
+            mock_type:
+                data.mock_type,
 
-            chapter_scope: data.chapter_scope,
+            chapter_scope:
+                data.chapter_scope,
 
             total_questions:
                 data.total_questions,
@@ -8960,10 +8987,6 @@ async function startChapterMock(chapter){
 
         };
 
-        /*
-         * Next step:
-         * load questions using attempt_id
-         */
 
         console.log(
             "ATTEMPT ID:",
@@ -8975,26 +8998,944 @@ async function startChapterMock(chapter){
             window.currentMockTestId
         );
 
-        alert(
-            "Mock test started successfully.\n\n" +
-            "Attempt ID: " +
-            window.currentMockAttemptId
+
+        /* =========================================
+           STEP 2 — LOAD QUESTIONS
+        ========================================= */
+
+        const questionResponse =
+            await fetch(
+                "/api/mock/questions?" +
+                new URLSearchParams({
+                    attempt_id:
+                        window.currentMockAttemptId
+                }).toString(),
+                {
+                    cache: "no-store"
+                }
+            );
+
+
+        const questionData =
+            await questionResponse.json();
+
+
+        console.log(
+            "MOCK QUESTIONS RESPONSE:",
+            questionData
+        );
+
+
+        if(
+            !questionResponse.ok ||
+            !questionData.success
+        ){
+
+            alert(
+                questionData.error ||
+                "Unable to load mock questions."
+            );
+
+            return;
+        }
+
+
+        /* =========================================
+           STEP 3 — NORMALIZE QUESTIONS
+        ========================================= */
+
+        window.currentMockQuestions =
+            (questionData.questions || []).map(
+                function(q){
+
+                    return {
+
+                        id:
+                            q.id,
+
+                        question:
+                            q.question || "",
+
+                        options: [
+
+                            q.option_a || "",
+
+                            q.option_b || "",
+
+                            q.option_c || "",
+
+                            q.option_d || ""
+
+                        ],
+
+                        marks:
+                            Number(q.marks || 2)
+
+                    };
+
+                }
+            );
+
+
+        console.log(
+            "TOTAL MOCK QUESTIONS:",
+            window.currentMockQuestions.length
+        );
+
+
+        /* =========================================
+           STEP 4 — CHECK QUESTIONS
+        ========================================= */
+
+        if(
+            !window.currentMockQuestions.length
+        ){
+
+            alert(
+                "No questions are available for this mock test."
+            );
+
+            return;
+        }
+
+
+        /* =========================================
+           STEP 5 — START MOCK EXAM UI
+        ========================================= */
+
+        window.currentMockQuestionIndex = 0;
+
+        window.currentMockAnswers = {};
+
+
+        /* Hide Mock Test selection screens */
+
+        const mockHome =
+            document.getElementById(
+                "mockHomeView"
+            );
+
+        const chapterView =
+            document.getElementById(
+                "chapterView"
+            );
+
+        const fourChapterView =
+            document.getElementById(
+                "fourChapterView"
+            );
+
+        const finalView =
+            document.getElementById(
+                "finalView"
+            );
+
+
+        if(mockHome){
+            mockHome.style.display = "none";
+        }
+
+        if(chapterView){
+            chapterView.style.display = "none";
+        }
+
+        if(fourChapterView){
+            fourChapterView.style.display = "none";
+        }
+
+        if(finalView){
+            finalView.style.display = "none";
+        }
+
+
+        /* Hide result */
+
+        const resultShell =
+            document.getElementById(
+                "resultShell"
+            );
+
+        if(resultShell){
+            resultShell.style.display = "none";
+        }
+
+
+        /* Show existing exam shell */
+
+        const examShell =
+            document.getElementById(
+                "examShell"
+            );
+
+        if(!examShell){
+
+            alert(
+                "Mock exam screen is not available."
+            );
+
+            return;
+        }
+
+
+        examShell.style.display = "block";
+
+
+        /* =========================================
+           UPDATE MOCK TEST HEADER
+        ========================================= */
+
+        const examTitle =
+            examShell.querySelector(
+                ".exam-title h2"
+            );
+
+        if(examTitle){
+
+            examTitle.textContent =
+                "📝 " +
+                data.test_name;
+
+        }
+
+
+        const examSubtitle =
+            document.getElementById(
+                "examSubtitle"
+            );
+
+        if(examSubtitle){
+
+            examSubtitle.textContent =
+                `${window.currentMockQuestions.length} Questions • ` +
+                `${data.total_marks} Marks • ` +
+                `${data.duration_minutes} Minutes`;
+
+        }
+
+
+        /* =========================================
+           SUBMIT BUTTON → MOCK SUBMIT
+        ========================================= */
+
+        const submitButton =
+            examShell.querySelector(
+                ".submit-btn"
+            );
+
+        if(submitButton){
+
+            submitButton.onclick =
+                function(){
+
+                    mockConfirmSubmit();
+
+                };
+
+        }
+
+
+        /* =========================================
+           ENTER EXAM MODE
+        ========================================= */
+
+        if(typeof enterExamLock === "function"){
+
+            enterExamLock();
+
+        }
+
+
+        /* =========================================
+           RENDER FIRST QUESTION
+        ========================================= */
+
+        renderMockQuestion();
+
+
+        /* =========================================
+           START MOCK TIMER
+        ========================================= */
+
+        startMockTimer(
+            data.duration_minutes,
+            data.started_at
+        );
+
+
+        /* =========================================
+           SCROLL TO EXAM
+        ========================================= */
+
+        examShell.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+
+
+        console.log(
+            "MOCK EXAM READY"
         );
 
     }
     catch(error){
 
-    console.error(
-        "START MOCK ERROR:",
-        error
-    );
+        console.error(
+            "START MOCK ERROR:",
+            error
+        );
 
-    alert(
-        "START MOCK ERROR:\n\n" +
-        error.message
+        alert(
+            "Unable to load mock test."
+        );
+
+    }
+
+}
+/* =====================================================
+   MOCK EXAM — QUESTION STATE
+===================================================== */
+
+window.currentMockQuestionIndex = 0;
+
+window.currentMockAnswers = {};
+
+window.mockTimerInterval = null;
+
+
+/* =====================================================
+   MOCK — RENDER QUESTION
+===================================================== */
+
+function renderMockQuestion(){
+
+    const questions =
+        window.currentMockQuestions || [];
+
+    if(!questions.length){
+        return;
+    }
+
+
+    let index =
+        Number(
+            window.currentMockQuestionIndex || 0
+        );
+
+
+    if(index < 0){
+        index = 0;
+    }
+
+
+    if(index >= questions.length){
+
+        index =
+            questions.length - 1;
+
+    }
+
+
+    window.currentMockQuestionIndex =
+        index;
+
+
+    const q =
+        questions[index];
+
+
+    const total =
+        questions.length;
+
+
+    /* ---------- QUESTION NUMBER ---------- */
+
+    const questionNumber =
+        document.getElementById(
+            "questionNumber"
+        );
+
+    if(questionNumber){
+
+        questionNumber.textContent =
+            `Question ${index + 1} of ${total}`;
+
+    }
+
+
+    /* ---------- PROGRESS TEXT ---------- */
+
+    const progressText =
+        document.getElementById(
+            "progressText"
+        );
+
+    if(progressText){
+
+        progressText.textContent =
+            `Question ${index + 1} of ${total}`;
+
+    }
+
+
+    /* ---------- ANSWERED COUNT ---------- */
+
+    const answeredCount =
+        Object.keys(
+            window.currentMockAnswers || {}
+        ).length;
+
+
+    const answeredText =
+        document.getElementById(
+            "answeredText"
+        );
+
+    if(answeredText){
+
+        answeredText.textContent =
+            `${answeredCount} Answered`;
+
+    }
+
+
+    /* ---------- PROGRESS BAR ---------- */
+
+    const progressFill =
+        document.getElementById(
+            "progressFill"
+        );
+
+    if(progressFill){
+
+        progressFill.style.width =
+            `${((index + 1) / total) * 100}%`;
+
+    }
+
+
+    /* ---------- QUESTION ---------- */
+
+    const questionText =
+        document.getElementById(
+            "questionText"
+        );
+
+    if(questionText){
+
+        questionText.textContent =
+            q.question || "";
+
+    }
+
+
+    /* ---------- MARKS ---------- */
+
+    const marksElement =
+        document.querySelector(
+            ".q-marks"
+        );
+
+    if(marksElement){
+
+        marksElement.textContent =
+            `${q.marks || 2} Marks`;
+
+    }
+
+
+    /* ---------- OPTIONS ---------- */
+
+    const optionsContainer =
+        document.getElementById(
+            "options"
+        );
+
+
+    if(optionsContainer){
+
+        optionsContainer.innerHTML = "";
+
+
+        (q.options || []).forEach(
+            function(option, optionIndex){
+
+                const button =
+                    document.createElement(
+                        "button"
+                    );
+
+
+                button.type =
+                    "button";
+
+
+                button.className =
+                    "exam-option";
+
+
+                if(
+                    Number(
+                        window.currentMockAnswers[
+                            String(q.id)
+                        ]
+                    ) === optionIndex
+                ){
+
+                    button.classList.add(
+                        "selected"
+                    );
+
+                }
+
+
+                const letter =
+                    document.createElement(
+                        "span"
+                    );
+
+
+                letter.className =
+                    "letter";
+
+
+                letter.textContent =
+                    String.fromCharCode(
+                        65 + optionIndex
+                    );
+
+
+                button.appendChild(
+                    letter
+                );
+
+
+                button.appendChild(
+                    document.createTextNode(
+                        option
+                    )
+                );
+
+
+                button.onclick =
+                    function(){
+
+                        mockSelectAnswer(
+                            q.id,
+                            optionIndex
+                        );
+
+                    };
+
+
+                optionsContainer.appendChild(
+                    button
+                );
+
+            }
+        );
+
+    }
+
+
+    /* ---------- PREVIOUS ---------- */
+
+    const previousButton =
+        document.getElementById(
+            "previousBtn"
+        );
+
+
+    if(previousButton){
+
+        previousButton.disabled =
+            index === 0;
+
+
+        previousButton.onclick =
+            function(){
+
+                mockPreviousQuestion();
+
+            };
+
+    }
+
+
+    /* ---------- NEXT ---------- */
+
+    const nextButton =
+        document.getElementById(
+            "nextBtn"
+        );
+
+
+    if(nextButton){
+
+        nextButton.disabled =
+            false;
+
+
+        if(index === total - 1){
+
+            nextButton.textContent =
+                "Last Question";
+
+        }else{
+
+            nextButton.textContent =
+                "Next →";
+
+        }
+
+
+        nextButton.onclick =
+            function(){
+
+                mockNextQuestion();
+
+            };
+
+    }
+
+
+    /* ---------- PALETTE ---------- */
+
+    renderMockPalette();
+
+}
+
+
+/* =====================================================
+   MOCK — SELECT ANSWER
+===================================================== */
+
+function mockSelectAnswer(
+    questionId,
+    answerIndex
+){
+
+    window.currentMockAnswers[
+        String(questionId)
+    ] = answerIndex;
+
+
+    renderMockQuestion();
+
+}
+
+
+/* =====================================================
+   MOCK — PREVIOUS
+===================================================== */
+
+function mockPreviousQuestion(){
+
+    if(
+        window.currentMockQuestionIndex > 0
+    ){
+
+        window.currentMockQuestionIndex--;
+
+        renderMockQuestion();
+
+    }
+
+}
+
+
+/* =====================================================
+   MOCK — NEXT
+===================================================== */
+
+function mockNextQuestion(){
+
+    const total =
+        (
+            window.currentMockQuestions ||
+            []
+        ).length;
+
+
+    if(
+        window.currentMockQuestionIndex <
+        total - 1
+    ){
+
+        window.currentMockQuestionIndex++;
+
+        renderMockQuestion();
+
+    }
+
+}
+
+
+/* =====================================================
+   MOCK — QUESTION PALETTE
+===================================================== */
+
+function renderMockPalette(){
+
+    const palette =
+        document.getElementById(
+            "questionPalette"
+        );
+
+
+    if(!palette){
+        return;
+    }
+
+
+    palette.innerHTML = "";
+
+
+    const questions =
+        window.currentMockQuestions || [];
+
+
+    questions.forEach(
+        function(q, index){
+
+            const button =
+                document.createElement(
+                    "button"
+                );
+
+
+            button.type =
+                "button";
+
+
+            button.textContent =
+                index + 1;
+
+
+            if(
+                window.currentMockAnswers[
+                    String(q.id)
+                ] !== undefined
+            ){
+
+                button.classList.add(
+                    "answered"
+                );
+
+            }
+
+
+            if(
+                index ===
+                window.currentMockQuestionIndex
+            ){
+
+                button.classList.remove(
+                    "answered"
+                );
+
+                button.classList.add(
+                    "current"
+                );
+
+            }
+
+
+            button.onclick =
+                function(){
+
+                    window.currentMockQuestionIndex =
+                        index;
+
+                    renderMockQuestion();
+
+                };
+
+
+            palette.appendChild(
+                button
+            );
+
+        }
     );
 
 }
+
+
+/* =====================================================
+   MOCK — TIMER
+===================================================== */
+
+function startMockTimer(
+    durationMinutes,
+    startedAt
+){
+
+    if(
+        window.mockTimerInterval
+    ){
+
+        clearInterval(
+            window.mockTimerInterval
+        );
+
+    }
+
+
+    const timerElement =
+        document.getElementById(
+            "practiceTimer"
+        );
+
+
+    if(!timerElement){
+        return;
+    }
+
+
+    const duration =
+        Number(durationMinutes || 60) *
+        60 *
+        1000;
+
+
+    let startTime;
+
+
+    if(startedAt){
+
+        let startString =
+            String(startedAt).trim();
+
+
+        if(
+            !startString.endsWith("Z")
+        ){
+
+            startString =
+                startString
+                .replace(" ","T") +
+                "Z";
+
+        }
+
+
+        startTime =
+            new Date(
+                startString
+            ).getTime();
+
+    }else{
+
+        startTime =
+            Date.now();
+
+    }
+
+
+    function tick(){
+
+        const elapsed =
+            Date.now() -
+            startTime;
+
+
+        const remaining =
+            Math.max(
+                0,
+                duration - elapsed
+            );
+
+
+        const totalSeconds =
+            Math.floor(
+                remaining / 1000
+            );
+
+
+        const minutes =
+            Math.floor(
+                totalSeconds / 60
+            );
+
+
+        const seconds =
+            totalSeconds % 60;
+
+
+        timerElement.textContent =
+            `${String(minutes).padStart(2,"0")}:` +
+            `${String(seconds).padStart(2,"0")}`;
+
+
+        if(remaining <= 0){
+
+            clearInterval(
+                window.mockTimerInterval
+            );
+
+
+            window.mockTimerInterval =
+                null;
+
+
+            mockConfirmSubmit(
+                true
+            );
+
+        }
+
+    }
+
+
+    tick();
+
+
+    window.mockTimerInterval =
+        setInterval(
+            tick,
+            1000
+        );
+
+}
+
+
+/* =====================================================
+   MOCK — SUBMIT PLACEHOLDER
+===================================================== */
+
+function mockConfirmSubmit(
+    autoSubmit = false
+){
+
+    const message =
+        autoSubmit
+            ? "Time is over. Submit the mock test?"
+            : "Are you sure you want to submit the mock test?";
+
+
+    if(
+        !confirm(message)
+    ){
+
+        return;
+
+    }
+
+
+    console.log(
+        "MOCK SUBMIT ANSWERS:",
+        window.currentMockAnswers
+    );
+
+
+    /*
+     * Actual /api/mock/submit connection
+     * will be added in the next step.
+     */
+
+    alert(
+        "Mock answers are ready for submission."
+    );
 
 }
    
