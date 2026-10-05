@@ -2501,6 +2501,16 @@ body.exam-running .exam-lock-bar{
     }
 
 }
+/* =========================================================
+   MOCK EXAM — HIDE SETUP / PACKAGE SECTIONS
+========================================================= */
+
+body.mock-exam-active #packageGateway,
+body.mock-exam-active #subjectPackageSection,
+body.mock-exam-active #practiceHero,
+body.mock-exam-active .mode-switch{
+    display:none !important;
+}
 }
 </style>
 
@@ -9163,6 +9173,7 @@ async function startChapterMock(chapter){
 
 
         examShell.style.display = "block";
+        document.body.classList.add("mock-exam-active");
 
 
         /* =========================================
