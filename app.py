@@ -8704,6 +8704,7 @@ def mock_get_questions():
         "success": True,
         "attempt_id": attempt_id,
         "mock_test_id": attempt["mock_test_id"],
+        "status": attempt["status"],
         "total_questions": attempt["total_questions"],
         "total_marks": attempt["total_marks"],
         "started_at": attempt["started_at"],
