@@ -813,33 +813,9 @@ def init_db():
     
     init_db()
 
-    # =====================================================
-    # MOCK TEST - NEW CATEGORY MIGRATION
-    # =====================================================
+    ensure_mock_test_columns()
+
     
-    conn = sqlite3.connect(DB_PATH)
-    c = conn.cursor()
-    
-    # New mock type
-    try:
-        c.execute("""
-            ALTER TABLE mock_tests
-            ADD COLUMN mock_type TEXT DEFAULT 'chapter'
-        """)
-    except sqlite3.OperationalError:
-        pass
-    
-    # New chapter scope
-    try:
-        c.execute("""
-            ALTER TABLE mock_tests
-            ADD COLUMN chapter_scope TEXT DEFAULT ''
-        """)
-    except sqlite3.OperationalError:
-        pass
-    
-    conn.commit()
-    conn.close()
     # =====================================================
     # RSC PRACTICE SESSION TABLE SAFETY MIGRATION
     # =====================================================
@@ -891,6 +867,67 @@ def init_db():
     """)
     
     conn.commit()
+    conn.close()
+# =====================================================
+# MOCK TEST DATABASE SCHEMA SAFETY
+# =====================================================
+
+def ensure_mock_test_columns():
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    # Check existing columns
+    c.execute("PRAGMA table_info(mock_tests)")
+
+    columns = [
+        row[1]
+        for row in c.fetchall()
+    ]
+
+    print("MOCK_TEST COLUMNS:", columns)
+
+    # -------------------------------------------------
+    # ADD mock_type IF MISSING
+    # -------------------------------------------------
+
+    if "mock_type" not in columns:
+
+        print("ADDING COLUMN: mock_type")
+
+        c.execute("""
+            ALTER TABLE mock_tests
+            ADD COLUMN mock_type TEXT DEFAULT 'chapter'
+        """)
+
+    # -------------------------------------------------
+    # ADD chapter_scope IF MISSING
+    # -------------------------------------------------
+
+    if "chapter_scope" not in columns:
+
+        print("ADDING COLUMN: chapter_scope")
+
+        c.execute("""
+            ALTER TABLE mock_tests
+            ADD COLUMN chapter_scope TEXT DEFAULT ''
+        """)
+
+    conn.commit()
+
+    # Verify again
+    c.execute("PRAGMA table_info(mock_tests)")
+
+    final_columns = [
+        row[1]
+        for row in c.fetchall()
+    ]
+
+    print(
+        "MOCK_TEST FINAL COLUMNS:",
+        final_columns
+    )
+
     conn.close()
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
