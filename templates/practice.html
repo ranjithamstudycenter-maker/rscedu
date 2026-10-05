@@ -9642,13 +9642,23 @@ function mockSelectAnswer(
             )
         );
 
+
+        /* Save current question also */
+        localStorage.setItem(
+            "rsc_mock_current_question_" +
+            window.currentMockAttemptId,
+
+            String(
+                window.currentMockQuestionIndex
+            )
+        );
+
     }
 
 
     renderMockQuestion();
 
 }
-
 
 /* =====================================================
    MOCK — PREVIOUS
@@ -9662,12 +9672,27 @@ function mockPreviousQuestion(){
 
         window.currentMockQuestionIndex--;
 
+
+        /* Save current question */
+        if(window.currentMockAttemptId){
+
+            localStorage.setItem(
+                "rsc_mock_current_question_" +
+                window.currentMockAttemptId,
+
+                String(
+                    window.currentMockQuestionIndex
+                )
+            );
+
+        }
+
+
         renderMockQuestion();
 
     }
 
 }
-
 
 /* =====================================================
    MOCK — NEXT
@@ -9680,6 +9705,7 @@ function mockNextQuestion(){
             window.currentMockQuestions ||
             []
         ).length;
+
 
     if(!total){
         return;
@@ -9698,8 +9724,22 @@ function mockNextQuestion(){
         /*
          * Last question → back to Question 1
          */
-
         window.currentMockQuestionIndex = 0;
+
+    }
+
+
+    /* Save current question */
+    if(window.currentMockAttemptId){
+
+        localStorage.setItem(
+            "rsc_mock_current_question_" +
+            window.currentMockAttemptId,
+
+            String(
+                window.currentMockQuestionIndex
+            )
+        );
 
     }
 
@@ -10151,8 +10191,29 @@ async function resumeActiveMockAttempt(){
         }
 
 
-        window.currentMockQuestionIndex =
-            0;
+       /* -----------------------------------------
+            RESTORE CURRENT QUESTION
+         ----------------------------------------- */
+         
+         const savedQuestionIndex =
+             localStorage.getItem(
+                 "rsc_mock_current_question_" +
+                 savedAttemptId
+             );
+         
+         if(
+             savedQuestionIndex !== null
+         ){
+         
+             window.currentMockQuestionIndex =
+                 Number(savedQuestionIndex);
+         
+         }else{
+         
+             window.currentMockQuestionIndex =
+                 0;
+         
+         }
 
 
         /* -----------------------------------------
