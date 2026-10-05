@@ -4312,8 +4312,46 @@ let mockHistoryIndex = -1;
 
 function showMode(mode){
 
+    /* =========================================
+       ACTIVE MOCK TEST
+       Do NOT interrupt the student.
+       Simply return to the running Mock exam.
+    ========================================= */
+
     if(examLockActive){
 
+        const activeMockAttempt =
+            localStorage.getItem(
+                "rsc_active_mock_attempt_id"
+            );
+
+        if(activeMockAttempt){
+
+            document.body.classList.add(
+                "mock-exam-active"
+            );
+
+            const examShell =
+                document.getElementById(
+                    "examShell"
+                );
+
+            if(examShell){
+
+                examShell.style.display =
+                    "block";
+
+                examShell.scrollIntoView({
+                    behavior:"smooth",
+                    block:"start"
+                });
+
+            }
+
+            return;
+        }
+
+        /* Practice test is running */
         alert(
             "🔒 Your test is in progress. Please finish and submit the test first."
         );
@@ -7593,8 +7631,17 @@ function enterExamLock(){
 }
 
 function exitExamLock(){
+
     examLockActive = false;
-    document.body.classList.remove("exam-running");
+
+    document.body.classList.remove(
+        "exam-running"
+    );
+
+    document.body.classList.remove(
+        "mock-exam-active"
+    );
+
     window.onbeforeunload = null;
 }
 
@@ -10218,6 +10265,13 @@ async function resumeActiveMockAttempt(){
                 "examShell"
             );
 
+        /* -----------------------------------------
+            ENTER MOCK EXAM VISUAL MODE
+         ----------------------------------------- */
+         
+         document.body.classList.add(
+             "mock-exam-active"
+         );
 
         examShell.style.display =
             "block";
