@@ -8984,16 +8984,17 @@ async function startChapterMock(chapter){
     }
     catch(error){
 
-        console.error(
-            "START MOCK ERROR:",
-            error
-        );
+    console.error(
+        "START MOCK ERROR:",
+        error
+    );
 
-        alert(
-            "Unable to connect to the server."
-        );
+    alert(
+        "START MOCK ERROR:\n\n" +
+        error.message
+    );
 
-    }
+}
 
 }
    
