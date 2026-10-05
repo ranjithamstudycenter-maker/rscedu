@@ -8362,10 +8362,16 @@ document.addEventListener(
 
         await loadPackageBoards();
 
-        await restorePurchasedPackageStatuses();
-
-        await resumeActiveMockAttempt();
-
+         await restorePurchasedPackageStatuses();
+         
+         /* -----------------------------------------
+            DO NOT RESUME MOCK AFTER PAGE REFRESH
+            Always start again from syllabus selection
+         ----------------------------------------- */
+         
+         localStorage.removeItem(
+             "rsc_active_mock_attempt_id"
+         );
     }
 );
 
