@@ -9343,10 +9343,6 @@ window.currentMockAnswers = {};
 window.mockTimerInterval = null;
 
 
-/* =====================================================
-   MOCK — RENDER QUESTION
-===================================================== */
-
 function renderMockQuestion(){
 
     const questions =
@@ -9356,33 +9352,23 @@ function renderMockQuestion(){
         return;
     }
 
-
     let index =
         Number(
             window.currentMockQuestionIndex || 0
         );
 
-
     if(index < 0){
         index = 0;
     }
 
-
     if(index >= questions.length){
-
-        index =
-            questions.length - 1;
-
+        index = 0;
     }
 
-
-    window.currentMockQuestionIndex =
-        index;
-
+    window.currentMockQuestionIndex = index;
 
     const q =
         questions[index];
-
 
     const total =
         questions.length;
@@ -9424,7 +9410,6 @@ function renderMockQuestion(){
         Object.keys(
             window.currentMockAnswers || {}
         ).length;
-
 
     const answeredText =
         document.getElementById(
@@ -9469,7 +9454,7 @@ function renderMockQuestion(){
     }
 
 
-    /* ---------- MARKS ---------- */
+    /* ---------- HIDE MARK DISTRIBUTION ---------- */
 
     const marksElement =
         document.querySelector(
@@ -9478,8 +9463,8 @@ function renderMockQuestion(){
 
     if(marksElement){
 
-        marksElement.textContent =
-            `${q.marks || 2} Marks`;
+        marksElement.style.display =
+            "none";
 
     }
 
@@ -9491,11 +9476,9 @@ function renderMockQuestion(){
             "options"
         );
 
-
     if(optionsContainer){
 
         optionsContainer.innerHTML = "";
-
 
         (q.options || []).forEach(
             function(option, optionIndex){
@@ -9505,14 +9488,14 @@ function renderMockQuestion(){
                         "button"
                     );
 
-
                 button.type =
                     "button";
-
 
                 button.className =
                     "exam-option";
 
+
+                /* Restore selected answer */
 
                 if(
                     Number(
@@ -9534,10 +9517,8 @@ function renderMockQuestion(){
                         "span"
                     );
 
-
                 letter.className =
                     "letter";
-
 
                 letter.textContent =
                     String.fromCharCode(
@@ -9548,7 +9529,6 @@ function renderMockQuestion(){
                 button.appendChild(
                     letter
                 );
-
 
                 button.appendChild(
                     document.createTextNode(
@@ -9585,12 +9565,10 @@ function renderMockQuestion(){
             "previousBtn"
         );
 
-
     if(previousButton){
 
         previousButton.disabled =
-            index === 0;
-
+            false;
 
         previousButton.onclick =
             function(){
@@ -9609,25 +9587,18 @@ function renderMockQuestion(){
             "nextBtn"
         );
 
-
     if(nextButton){
 
         nextButton.disabled =
             false;
 
+        /*
+         * Always show Next.
+         * No "Last Question".
+         */
 
-        if(index === total - 1){
-
-            nextButton.textContent =
-                "Last Question";
-
-        }else{
-
-            nextButton.textContent =
-                "Next →";
-
-        }
-
+        nextButton.textContent =
+            "Next →";
 
         nextButton.onclick =
             function(){
@@ -9639,12 +9610,11 @@ function renderMockQuestion(){
     }
 
 
-    /* ---------- PALETTE ---------- */
+    /* ---------- QUESTION PALETTE ---------- */
 
     renderMockPalette();
 
 }
-
 
 /* =====================================================
    MOCK — SELECT ANSWER
@@ -9711,6 +9681,10 @@ function mockNextQuestion(){
             []
         ).length;
 
+    if(!total){
+        return;
+    }
+
 
     if(
         window.currentMockQuestionIndex <
@@ -9719,9 +9693,18 @@ function mockNextQuestion(){
 
         window.currentMockQuestionIndex++;
 
-        renderMockQuestion();
+    }else{
+
+        /*
+         * Last question → back to Question 1
+         */
+
+        window.currentMockQuestionIndex = 0;
 
     }
+
+
+    renderMockQuestion();
 
 }
 
@@ -10365,7 +10348,7 @@ async function resumeActiveMockAttempt(){
    MOCK — SUBMIT PLACEHOLDER
 ===================================================== */
 
-function mockConfirmSubmit(
+async function mockConfirmSubmit(
     autoSubmit = false
 ){
 
@@ -10375,9 +10358,24 @@ function mockConfirmSubmit(
             : "Are you sure you want to submit the mock test?";
 
 
-    if(
-        !confirm(message)
-    ){
+    if(!autoSubmit){
+
+        if(!confirm(message)){
+            return;
+        }
+
+    }
+
+
+    const attemptId =
+        window.currentMockAttemptId;
+
+
+    if(!attemptId){
+
+        alert(
+            "Mock attempt is not available."
+        );
 
         return;
 
@@ -10390,14 +10388,320 @@ function mockConfirmSubmit(
     );
 
 
-    /*
-     * Actual /api/mock/submit connection
-     * will be added in the next step.
-     */
+    try{
 
-    alert(
-        "Mock answers are ready for submission."
-    );
+        const response =
+            await fetch(
+                "/api/mock/submit",
+                {
+                    method:"POST",
+
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
+
+                    body:JSON.stringify({
+
+                        attempt_id:
+                            attemptId,
+
+                        answers:
+                            window.currentMockAnswers || {}
+
+                    })
+
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "MOCK SUBMIT RESPONSE:",
+            data
+        );
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            alert(
+                data.error ||
+                "Unable to submit mock test."
+            );
+
+            return;
+
+        }
+
+
+        /* -----------------------------
+           STOP TIMER
+        ----------------------------- */
+
+        if(
+            window.mockTimerInterval
+        ){
+
+            clearInterval(
+                window.mockTimerInterval
+            );
+
+            window.mockTimerInterval =
+                null;
+
+        }
+
+
+        /* -----------------------------
+           CLEAR ACTIVE ATTEMPT
+        ----------------------------- */
+
+        localStorage.removeItem(
+            "rsc_active_mock_attempt_id"
+        );
+
+
+        localStorage.removeItem(
+            "rsc_mock_answers_" +
+            attemptId
+        );
+
+
+        /* -----------------------------
+           LEAVE EXAM MODE
+        ----------------------------- */
+
+        if(
+            typeof exitExamLock ===
+            "function"
+        ){
+
+            exitExamLock();
+
+        }
+
+
+        document.body.classList.remove(
+            "mock-exam-active"
+        );
+
+
+        /* -----------------------------
+           HIDE EXAM
+        ----------------------------- */
+
+        const examShell =
+            document.getElementById(
+                "examShell"
+            );
+
+        if(examShell){
+
+            examShell.style.display =
+                "none";
+
+        }
+
+
+        /* -----------------------------
+           SHOW RESULT
+        ----------------------------- */
+
+        const resultShell =
+            document.getElementById(
+                "resultShell"
+            );
+
+        if(resultShell){
+
+            resultShell.style.display =
+                "block";
+
+        }
+
+
+        /* -----------------------------
+           RESULT SCORE
+        ----------------------------- */
+
+        const resultScore =
+            document.getElementById(
+                "resultScore"
+            );
+
+        if(resultScore){
+
+            resultScore.textContent =
+                `${data.score || 0} / ${data.total_marks || 0} Marks`;
+
+        }
+
+
+        const resultPercentage =
+            document.getElementById(
+                "resultPercentage"
+            );
+
+        if(resultPercentage){
+
+            resultPercentage.textContent =
+                `${Number(
+                    data.percentage || 0
+                ).toFixed(1)}%`;
+
+        }
+
+
+        const correctCount =
+            document.getElementById(
+                "correctCount"
+            );
+
+        if(correctCount){
+
+            correctCount.textContent =
+                data.correct_answers || 0;
+
+        }
+
+
+        const wrongCount =
+            document.getElementById(
+                "wrongCount"
+            );
+
+        if(wrongCount){
+
+            wrongCount.textContent =
+                data.incorrect_answers || 0;
+
+        }
+
+
+        const unansweredCount =
+            document.getElementById(
+                "unansweredCount"
+            );
+
+        if(unansweredCount){
+
+            unansweredCount.textContent =
+                data.unanswered || 0;
+
+        }
+
+
+        const statusText =
+            document.getElementById(
+                "statusText"
+            );
+
+        if(statusText){
+
+            const percentage =
+                Number(
+                    data.percentage || 0
+                );
+
+            if(percentage >= 80){
+
+                statusText.textContent =
+                    "Excellent";
+
+            }else if(percentage >= 50){
+
+                statusText.textContent =
+                    "Good";
+
+            }else{
+
+                statusText.textContent =
+                    "Needs Practice";
+
+            }
+
+        }
+
+
+        const resultMessage =
+            document.getElementById(
+                "resultMessage"
+            );
+
+        if(resultMessage){
+
+            resultMessage.textContent =
+                autoSubmit
+                    ? "⏰ Time is over. Your Mock Test has been submitted automatically."
+                    : "🎉 Mock Test submitted successfully.";
+
+        }
+
+
+        /* Hide Practice-only focus/review */
+
+        const focusCard =
+            document.getElementById(
+                "practiceFocusCard"
+            );
+
+        if(focusCard){
+
+            focusCard.style.display =
+                "none";
+
+        }
+
+
+        const reviewHead =
+            document.querySelector(
+                "#resultShell .review-head"
+            );
+
+        if(reviewHead){
+
+            reviewHead.style.display =
+                "none";
+
+        }
+
+
+        const reviewContainer =
+            document.getElementById(
+                "reviewContainer"
+            );
+
+        if(reviewContainer){
+
+            reviewContainer.style.display =
+                "none";
+
+        }
+
+
+        console.log(
+            "MOCK TEST SUBMITTED SUCCESSFULLY"
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "MOCK SUBMIT ERROR:",
+            error
+        );
+
+        alert(
+            "Server error while submitting Mock Test."
+        );
+
+    }
 
 }
    
