@@ -811,11 +811,7 @@ def init_db():
     conn.commit()
     conn.close()
     
-    init_db()
-
-    ensure_mock_test_columns()
-
-    
+       
     # =====================================================
     # RSC PRACTICE SESSION TABLE SAFETY MIGRATION
     # =====================================================
@@ -929,6 +925,12 @@ def ensure_mock_test_columns():
     )
 
     conn.close()
+    # =====================================================
+    # INITIALIZE DATABASE
+    # =====================================================
+    
+    init_db()
+    ensure_mock_test_columns()
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 app.secret_key = os.environ.get("SECRET_KEY")
