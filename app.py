@@ -8594,32 +8594,6 @@ def mock_start():
     # IF ACTIVE ATTEMPT EXISTS
     # DO NOT RESTART THE TIMER
     # -------------------------------------------------
-    
-    if existing and existing["status"] == "started":
-    
-        try:
-    
-            started_dt = datetime.fromisoformat(
-                existing["started_at"]
-            )
-    
-            elapsed_seconds = (
-                datetime.utcnow() - started_dt
-            ).total_seconds()
-    
-            duration_seconds = (
-                int(test["duration_minutes"] or 60)
-                * 60
-            )
-
-        # -----------------------------------------
-        # STILL ACTIVE
-        # -----------------------------------------
-
-    # -------------------------------------------------
-    # IF ACTIVE ATTEMPT EXISTS
-    # DO NOT RESTART THE TIMER
-    # -------------------------------------------------
 
     if existing and existing["status"] == "started":
 
