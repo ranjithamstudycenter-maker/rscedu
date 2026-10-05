@@ -8307,6 +8307,8 @@ document.addEventListener(
 
         await restorePurchasedPackageStatuses();
 
+        await resumeActiveMockAttempt();
+
     }
 );
 
@@ -8928,6 +8930,12 @@ async function startChapterMock(chapter){
 
         window.currentMockTestId =
             data.mock_test_id;
+
+        /* Save active Mock attempt for refresh/resume */
+         localStorage.setItem(
+             "rsc_active_mock_attempt_id",
+             String(data.attempt_id)
+         );
 
         window.currentMockQuestions =
             [];
@@ -9596,6 +9604,21 @@ function mockSelectAnswer(
     ] = answerIndex;
 
 
+    /* Save answers for refresh */
+    if(window.currentMockAttemptId){
+
+        localStorage.setItem(
+            "rsc_mock_answers_" +
+            window.currentMockAttemptId,
+
+            JSON.stringify(
+                window.currentMockAnswers
+            )
+        );
+
+    }
+
+
     renderMockQuestion();
 
 }
@@ -9843,23 +9866,74 @@ function startMockTimer(
             `${String(minutes).padStart(2,"0")}:` +
             `${String(seconds).padStart(2,"0")}`;
 
-
-        if(remaining <= 0){
-
-            clearInterval(
-                window.mockTimerInterval
-            );
-
-
-            window.mockTimerInterval =
-                null;
-
-
-            mockConfirmSubmit(
-                true
-            );
-
-        }
+         if(remaining <= 0){
+         
+             clearInterval(
+                 window.mockTimerInterval
+             );
+         
+             window.mockTimerInterval =
+                 null;
+         
+         
+             const expiredAttemptId =
+                 window.currentMockAttemptId;
+         
+         
+             /* Clear active browser session */
+         
+             localStorage.removeItem(
+                 "rsc_active_mock_attempt_id"
+             );
+         
+         
+             localStorage.removeItem(
+                 "rsc_mock_answers_" +
+                 expiredAttemptId
+             );
+         
+         
+             alert(
+                 "⏰ Mock Test time is over.\n\n" +
+                 "You can start the Mock Test again."
+             );
+         
+         
+             /* Leave exam screen */
+         
+             exitExamLock();
+         
+         
+             document.getElementById(
+                 "examShell"
+             ).style.display = "none";
+         
+         
+             document.getElementById(
+                 "chapterView"
+             ).style.display = "block";
+         
+         
+             window.currentMockAttemptId =
+                 null;
+         
+         
+             window.currentMockTestId =
+                 null;
+         
+         
+             window.currentMockQuestions =
+                 [];
+         
+         
+             window.currentMockAnswers =
+                 {};
+         
+         
+             window.currentMockQuestionIndex =
+                 0;
+         
+         }
 
     }
 
@@ -9875,7 +9949,355 @@ function startMockTimer(
 
 }
 
+/* =====================================================
+   MOCK — RESUME ACTIVE ATTEMPT AFTER REFRESH
+===================================================== */
 
+async function resumeActiveMockAttempt(){
+
+    const savedAttemptId =
+        localStorage.getItem(
+            "rsc_active_mock_attempt_id"
+        );
+
+
+    if(!savedAttemptId){
+        return;
+    }
+
+
+    console.log(
+        "RESUMING MOCK ATTEMPT:",
+        savedAttemptId
+    );
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/mock/questions?" +
+                new URLSearchParams({
+                    attempt_id:
+                        savedAttemptId
+                }).toString(),
+                {
+                    cache:"no-store"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        console.log(
+            "RESUME MOCK RESPONSE:",
+            data
+        );
+
+
+        /* -----------------------------------------
+           ATTEMPT NO LONGER AVAILABLE
+        ----------------------------------------- */
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            localStorage.removeItem(
+                "rsc_active_mock_attempt_id"
+            );
+
+            localStorage.removeItem(
+                "rsc_mock_answers_" +
+                savedAttemptId
+            );
+
+            console.log(
+                "No active Mock attempt to resume."
+            );
+
+            return;
+        }
+
+
+        /* -----------------------------------------
+           RESTORE ATTEMPT
+        ----------------------------------------- */
+
+        window.currentMockAttemptId =
+            Number(
+                data.attempt_id
+            );
+
+
+        window.currentMockTestId =
+            Number(
+                data.mock_test_id
+            );
+
+
+        window.currentMockQuestions =
+            (data.questions || []).map(
+                function(q){
+
+                    return {
+
+                        id:
+                            q.id,
+
+                        question:
+                            q.question || "",
+
+                        options: [
+
+                            q.option_a || "",
+
+                            q.option_b || "",
+
+                            q.option_c || "",
+
+                            q.option_d || ""
+
+                        ],
+
+                        marks:
+                            Number(
+                                q.marks || 2
+                            )
+
+                    };
+
+                }
+            );
+
+
+        /* -----------------------------------------
+           RESTORE ANSWERS
+        ----------------------------------------- */
+
+        const savedAnswers =
+            localStorage.getItem(
+                "rsc_mock_answers_" +
+                savedAttemptId
+            );
+
+
+        if(savedAnswers){
+
+            try{
+
+                window.currentMockAnswers =
+                    JSON.parse(
+                        savedAnswers
+                    );
+
+            }catch(error){
+
+                console.error(
+                    "ANSWER RESTORE ERROR:",
+                    error
+                );
+
+                window.currentMockAnswers = {};
+
+            }
+
+        }else{
+
+            window.currentMockAnswers = {};
+
+        }
+
+
+        window.currentMockQuestionIndex =
+            0;
+
+
+        /* -----------------------------------------
+           CHECK WHETHER TIME HAS ALREADY EXPIRED
+        ----------------------------------------- */
+
+        const durationMinutes =
+            Number(
+                data.duration_minutes ||
+                60
+            );
+
+
+        const startTime =
+            new Date(
+                String(
+                    data.started_at
+                ).replace(" ","T") + "Z"
+            ).getTime();
+
+
+        const endTime =
+            startTime +
+            (
+                durationMinutes *
+                60 *
+                1000
+            );
+
+
+        const remaining =
+            endTime -
+            Date.now();
+
+
+        if(remaining <= 0){
+
+            console.log(
+                "MOCK ATTEMPT EXPIRED"
+            );
+
+
+            localStorage.removeItem(
+                "rsc_active_mock_attempt_id"
+            );
+
+
+            localStorage.removeItem(
+                "rsc_mock_answers_" +
+                savedAttemptId
+            );
+
+
+            alert(
+                "⏰ Mock Test time is over.\n\n" +
+                "You can start the Mock Test again."
+            );
+
+
+            return;
+
+        }
+
+
+        /* -----------------------------------------
+           RESTORE MOCK UI
+        ----------------------------------------- */
+
+        document.getElementById(
+            "mockHomeView"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "chapterView"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "fourChapterView"
+        ).style.display = "none";
+
+
+        document.getElementById(
+            "finalView"
+        ).style.display = "none";
+
+
+        const examShell =
+            document.getElementById(
+                "examShell"
+            );
+
+
+        examShell.style.display =
+            "block";
+
+
+        /* -----------------------------------------
+           RESTORE TITLE
+        ----------------------------------------- */
+
+        const examTitle =
+            examShell.querySelector(
+                ".exam-title h2"
+            );
+
+
+        if(examTitle){
+
+            examTitle.textContent =
+                "📝 Mock Test";
+
+        }
+
+
+        const examSubtitle =
+            document.getElementById(
+                "examSubtitle"
+            );
+
+
+        if(examSubtitle){
+
+            examSubtitle.textContent =
+                `${window.currentMockQuestions.length} Questions • ` +
+                `${data.total_marks} Marks • ` +
+                `${durationMinutes} Minutes`;
+
+        }
+
+
+        /* -----------------------------------------
+           RESTORE EXAM MODE
+        ----------------------------------------- */
+
+        if(
+            typeof enterExamLock ===
+            "function"
+        ){
+
+            enterExamLock();
+
+        }
+
+
+        /* -----------------------------------------
+           RENDER QUESTION
+        ----------------------------------------- */
+
+        renderMockQuestion();
+
+
+        /* -----------------------------------------
+           CONTINUE ORIGINAL TIMER
+        ----------------------------------------- */
+
+        startMockTimer(
+            durationMinutes,
+            data.started_at
+        );
+
+
+        examShell.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+
+        console.log(
+            "MOCK TEST RESUMED SUCCESSFULLY"
+        );
+
+    }
+    catch(error){
+
+        console.error(
+            "RESUME MOCK ERROR:",
+            error
+        );
+
+    }
+
+}
 /* =====================================================
    MOCK — SUBMIT PLACEHOLDER
 ===================================================== */
