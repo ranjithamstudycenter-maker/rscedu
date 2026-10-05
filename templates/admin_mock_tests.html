@@ -4473,6 +4473,19 @@ async function loadMockTests(){
 
                             </button>
 
+                            <button
+                                type="button"
+                                style="
+                                    background:#f59e0b;
+                                    color:#fff;
+                                    margin-right:6px;
+                                "
+                                onclick="resetMockTest(${test.id})">
+                            
+                                🔄 Reset
+                            
+                            </button>
+
                         </td>
 
                     </tr>
@@ -6879,7 +6892,85 @@ async function uploadFinalSyllabusMock(){
 
 }
 
+/* =========================================================
+   RESET MOCK TEST
+========================================================= */
 
+async function resetMockTest(id){
+
+    if(
+        !confirm(
+            "🔄 Reset this Mock Test?\n\n" +
+            "This will clear the active attempts and " +
+            "previous results for testing."
+        )
+    ){
+
+        return;
+
+    }
+
+
+    try{
+
+        const response =
+            await fetch(
+                "/admin/mock-tests/reset/" + id,
+                {
+                    method:"POST"
+                }
+            );
+
+
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            alert(
+                "❌ " +
+                (
+                    data.error ||
+                    "Unable to reset Mock Test."
+                )
+            );
+
+            return;
+
+        }
+
+
+        alert(
+            "✅ Mock Test reset successfully.\n\n" +
+            "Active attempts reset: " +
+            (data.reset_attempts || 0) +
+            "\nResults cleared: " +
+            (data.cleared_results || 0)
+        );
+
+
+        await loadMockTests();
+
+    }
+    catch(error){
+
+        console.error(
+            "RESET MOCK TEST ERROR:",
+            error
+        );
+
+
+        alert(
+            "❌ Server error while resetting Mock Test."
+        );
+
+    }
+
+}
 /* =========================================================
    DELETE MOCK TEST
 ========================================================= */
