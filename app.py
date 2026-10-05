@@ -8575,18 +8575,145 @@ def mock_start():
 
     existing = c.fetchone()
 
-    # -------------------------------------------------
-    # IF ALREADY SUBMITTED
-    # -------------------------------------------------
+   # -------------------------------------------------
+# CHECK PREVIOUS ATTEMPT
+# -------------------------------------------------
 
-    if existing and existing["status"] == "submitted":
+c.execute("""
+    SELECT *
+    FROM mock_attempts
+    WHERE practice_id=?
+      AND mock_test_id=?
+    LIMIT 1
+""", (
+    practice_id,
+    mock_test_id
+))
 
-        conn.close()
+existing = c.fetchone()
 
-        return jsonify({
-            "success": False,
-            "error": "You have already completed this mock test."
-        }), 400
+
+# -------------------------------------------------
+# IF ALREADY SUBMITTED
+# -------------------------------------------------
+
+if existing and existing["status"] == "submitted":
+
+    conn.close()
+
+    return jsonify({
+        "success": False,
+        "already_submitted": True,
+        "error": "You have already completed this mock test."
+    }), 400
+
+
+# -------------------------------------------------
+# IF ACTIVE ATTEMPT EXISTS
+# DO NOT RESTART THE TIMER
+# -------------------------------------------------
+
+if existing and existing["status"] == "started":
+
+    try:
+
+        started_dt = datetime.fromisoformat(
+            existing["started_at"]
+        )
+
+        elapsed_seconds = (
+            datetime.utcnow() - started_dt
+        ).total_seconds()
+
+        duration_seconds = (
+            int(test["duration_minutes"] or 60)
+            * 60
+        )
+
+        # -----------------------------------------
+        # STILL ACTIVE
+        # -----------------------------------------
+
+        if elapsed_seconds < duration_seconds:
+
+            conn.close()
+
+            return jsonify({
+
+                "success": True,
+
+                "resumed": True,
+
+                "attempt_id":
+                    existing["id"],
+
+                "mock_test_id":
+                    existing["mock_test_id"],
+
+                "board":
+                    existing["board"],
+
+                "class_name":
+                    existing["class_name"],
+
+                "subject":
+                    existing["subject"],
+
+                "test_name":
+                    test["test_name"],
+
+                "mock_type":
+                    test["mock_type"],
+
+                "chapter_scope":
+                    test["chapter_scope"],
+
+                "total_questions":
+                    existing["total_questions"],
+
+                "total_marks":
+                    existing["total_marks"],
+
+                "duration_minutes":
+                    test["duration_minutes"],
+
+                "started_at":
+                    existing["started_at"],
+
+                "status":
+                    "started"
+
+            })
+
+
+        # -----------------------------------------
+        # TIME EXPIRED
+        # -----------------------------------------
+
+        else:
+
+            c.execute("""
+                UPDATE mock_attempts
+                SET
+                    status='expired'
+                WHERE id=?
+            """, (
+                existing["id"],
+            ))
+
+            conn.commit()
+
+            print(
+                "MOCK ATTEMPT EXPIRED:",
+                existing["id"]
+            )
+
+    except Exception as e:
+
+        print(
+            "MOCK ATTEMPT TIME CHECK ERROR:",
+            e
+        )
 
     # -------------------------------------------------
     # GET QUESTIONS
