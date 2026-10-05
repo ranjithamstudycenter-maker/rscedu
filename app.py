@@ -8575,60 +8575,42 @@ def mock_start():
 
     existing = c.fetchone()
 
-   # -------------------------------------------------
-# CHECK PREVIOUS ATTEMPT
-# -------------------------------------------------
-
-c.execute("""
-    SELECT *
-    FROM mock_attempts
-    WHERE practice_id=?
-      AND mock_test_id=?
-    LIMIT 1
-""", (
-    practice_id,
-    mock_test_id
-))
-
-existing = c.fetchone()
+    # -------------------------------------------------
+    # IF ALREADY SUBMITTED
+    # -------------------------------------------------
+    
+    if existing and existing["status"] == "submitted":
+    
+        conn.close()
+    
+        return jsonify({
+            "success": False,
+            "already_submitted": True,
+            "error": "You have already completed this mock test."
+        }), 400
 
 
-# -------------------------------------------------
-# IF ALREADY SUBMITTED
-# -------------------------------------------------
-
-if existing and existing["status"] == "submitted":
-
-    conn.close()
-
-    return jsonify({
-        "success": False,
-        "already_submitted": True,
-        "error": "You have already completed this mock test."
-    }), 400
-
-
-# -------------------------------------------------
-# IF ACTIVE ATTEMPT EXISTS
-# DO NOT RESTART THE TIMER
-# -------------------------------------------------
-
-if existing and existing["status"] == "started":
-
-    try:
-
-        started_dt = datetime.fromisoformat(
-            existing["started_at"]
-        )
-
-        elapsed_seconds = (
-            datetime.utcnow() - started_dt
-        ).total_seconds()
-
-        duration_seconds = (
-            int(test["duration_minutes"] or 60)
-            * 60
-        )
+    # -------------------------------------------------
+    # IF ACTIVE ATTEMPT EXISTS
+    # DO NOT RESTART THE TIMER
+    # -------------------------------------------------
+    
+    if existing and existing["status"] == "started":
+    
+        try:
+    
+            started_dt = datetime.fromisoformat(
+                existing["started_at"]
+            )
+    
+            elapsed_seconds = (
+                datetime.utcnow() - started_dt
+            ).total_seconds()
+    
+            duration_seconds = (
+                int(test["duration_minutes"] or 60)
+                * 60
+            )
 
         # -----------------------------------------
         # STILL ACTIVE
