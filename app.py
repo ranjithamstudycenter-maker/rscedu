@@ -573,7 +573,17 @@ def init_db():
 
     )
     """)
-
+    # =====================================================
+    # PRACTICE RESULT REVIEW DATA
+    # =====================================================
+    
+    try:
+        c.execute("""
+            ALTER TABLE practice_sessions
+            ADD COLUMN review_data TEXT DEFAULT '[]'
+        """)
+    except sqlite3.OperationalError:
+        pass
 
     # -----------------------------------------------------
     # 5. PRACTICE ATTEMPT HISTORY
@@ -771,6 +781,18 @@ def init_db():
         """)
     except sqlite3.OperationalError:
         pass
+        
+    # =====================================================
+    # MOCK ATTEMPT RESUME STATE
+    # =====================================================
+    
+    try:
+        c.execute("""
+            ALTER TABLE mock_attempts
+            ADD COLUMN current_question INTEGER DEFAULT 0
+        """)
+    except sqlite3.OperationalError:
+        pass   
         
     # -----------------------------------------------------
     # 9. MOCK TEST PACKAGE PURCHASES
@@ -6517,7 +6539,7 @@ def practice_create_session():
                 existing["id"]
             )
 
-      
+        
         # -------------------------------------------------
         # 7. CHECK QUESTION BANK
         # -------------------------------------------------
