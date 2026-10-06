@@ -9222,18 +9222,34 @@ def mock_submit():
 
         user_answer = answers.get(qid, "")
 
-        if user_answer is None:
+        if user_answer is None or user_answer == "":
             user_answer = ""
-
-        user_answer = str(
-            user_answer
-        ).strip().upper()
-
+        
+        else:
+        
+            try:
+        
+                answer_index = int(user_answer)
+        
+                if 0 <= answer_index <= 3:
+        
+                    user_answer = "ABCD"[answer_index]
+        
+                else:
+        
+                    user_answer = ""
+        
+            except (ValueError, TypeError):
+        
+                user_answer = str(
+                    user_answer
+                ).strip().upper()
+        
+        
         correct_answer = correct_map.get(
             qid,
             ""
         )
-
         marks = marks_map.get(
             qid,
             1
