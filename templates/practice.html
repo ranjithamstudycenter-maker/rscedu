@@ -3110,7 +3110,7 @@ body.mock-exam-active .mode-switch{
         <div class="p-card result-shell" id="resultShell">
             <div class="result-banner">
                 <div class="result-icon">🏆</div>
-                <h2>Practice Completed</h2>
+                <h2>Mock Test Completed</h2>
                 <div class="result-score" id="resultScore">0 / 50</div>
                 <div class="result-sub" id="resultPercentage">0%</div>
                 <p id="resultMessage" style="margin:10px 0 0;color:#475569;font-weight:600;"></p>
@@ -10535,22 +10535,17 @@ async function mockConfirmSubmit(
 
 
         /* -----------------------------
-           LEAVE EXAM MODE
-        ----------------------------- */
-
-        if(
-            typeof exitExamLock ===
-            "function"
-        ){
-
-            exitExamLock();
-
-        }
-
-
-        document.body.classList.remove(
-            "mock-exam-active"
-        );
+            LEAVE EXAM LOCK
+            KEEP MOCK EXAM VISUAL MODE
+         ----------------------------- */
+         
+         examLockActive = false;
+         
+         document.body.classList.remove(
+             "exam-running"
+         );
+         
+         window.onbeforeunload = null;
 
 
         /* -----------------------------
@@ -10581,10 +10576,15 @@ async function mockConfirmSubmit(
 
         if(resultShell){
 
-            resultShell.style.display =
-                "block";
-
-        }
+             resultShell.style.display =
+                 "block";
+         
+             resultShell.scrollIntoView({
+                 behavior: "smooth",
+                 block: "start"
+             });
+         
+         }
 
 
         /* -----------------------------
