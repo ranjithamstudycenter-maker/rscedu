@@ -8947,7 +8947,97 @@ def mock_get_questions():
         "started_at": attempt["started_at"],
         "questions": questions
     })
-    
+@app.route("/api/mock/save-answer", methods=["POST"])
+def mock_save_answer():
+
+    data = request.get_json(silent=True) or {}
+
+    practice_id = get_practice_id()
+
+    attempt_id = data.get("attempt_id")
+    question_id = data.get("question_id")
+    answer = data.get("answer")
+
+    if not attempt_id:
+        return jsonify({
+            "success": False,
+            "error": "Attempt ID is required."
+        }), 400
+
+    if question_id is None:
+        return jsonify({
+            "success": False,
+            "error": "Question ID is required."
+        }), 400
+
+    if answer is None:
+        return jsonify({
+            "success": False,
+            "error": "Answer is required."
+        }), 400
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT id, answers, status
+        FROM mock_attempts
+        WHERE id=?
+          AND practice_id=?
+        LIMIT 1
+    """, (
+        attempt_id,
+        practice_id
+    ))
+
+    attempt = c.fetchone()
+
+    if not attempt:
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "Mock attempt not found."
+        }), 404
+
+    if attempt["status"] != "started":
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "This mock test is no longer active."
+        }), 400
+
+    try:
+
+        answers = json.loads(
+            attempt["answers"] or "{}"
+        )
+
+    except Exception:
+
+        answers = {}
+
+    answers[str(question_id)] = int(answer)
+
+    c.execute("""
+        UPDATE mock_attempts
+        SET answers=?
+        WHERE id=?
+    """, (
+        json.dumps(answers),
+        attempt_id
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "success": True,
+        "attempt_id": attempt_id,
+        "answers": answers
+    })    
 # =====================================================
 # MOCK TEST - SUBMIT
 # =====================================================
