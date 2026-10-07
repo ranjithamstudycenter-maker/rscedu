@@ -1325,64 +1325,7 @@ def demo_complete():
 
         conn.commit()
         conn.close()
-        try:
-            saved_answers = json.loads(
-                existing["answers"] or "{}"
-            )
-        except:
-            saved_answers = {}
-        return jsonify({
-
-            "success": True,
         
-            "resumed": True,
-        
-            "attempt_id":
-                existing["id"],
-        
-            "mock_test_id":
-                existing["mock_test_id"],
-        
-            "board":
-                existing["board"],
-        
-            "class_name":
-                existing["class_name"],
-        
-            "subject":
-                existing["subject"],
-        
-            "test_name":
-                test["test_name"],
-        
-            "mock_type":
-                test["mock_type"],
-        
-            "chapter_scope":
-                test["chapter_scope"],
-        
-            "total_questions":
-                existing["total_questions"],
-        
-            "total_marks":
-                existing["total_marks"],
-        
-            "duration_minutes":
-                test["duration_minutes"],
-        
-            "started_at":
-                existing["started_at"],
-        
-            "answers":
-                saved_answers,
-        
-            "current_question":
-                existing["current_question"] or 0,
-        
-            "status":
-                "started"
-        
-        })
 
     # =====================================================
     # 🔥 2. DEMO COMPLETE → UPDATE (YES)
@@ -7412,10 +7355,9 @@ def practice_session_save_answer():
                 answer,
 
             "current_question":
-                current_question,
+                current_question
 
-            "answers":
-                answers
+            
 
         })
 
@@ -9188,7 +9130,7 @@ def mock_save_answer():
     return jsonify({
         "success": True,
         "attempt_id": attempt_id,
-        "answers": answers
+        "answers": answers,
         "current_question": current_question
     })    
 # =====================================================
@@ -9661,7 +9603,7 @@ review.append({
             score=?,
             percentage=?,
             submitted_at=?,
-            review_data=?,
+            review_data=?
         WHERE id=?
           AND practice_id=?
     """, (
