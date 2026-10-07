@@ -6633,10 +6633,10 @@ def practice_create_session():
         question_count = c.fetchone()[0]
 
         # -------------------------------------------------
-        # 8. MINIMUM 25 QUESTIONS REQUIRED
+        # 8. MINIMUM 50 QUESTIONS REQUIRED
         # -------------------------------------------------
 
-        if question_count < 25:
+        if question_count < 50:
 
             conn.close()
 
@@ -6672,7 +6672,7 @@ def practice_create_session():
             AND difficulty=?
             AND active=1
             ORDER BY RANDOM()
-            LIMIT 25
+            LIMIT 50
         """, (
             board,
             class_name,
@@ -6690,7 +6690,7 @@ def practice_create_session():
         ]
 
         # Safety check
-        if len(question_ids) != 25:
+        if len(question_ids) != 50:
 
             conn.close()
 
@@ -6942,7 +6942,7 @@ def practice_session_questions():
         if not isinstance(
             question_ids,
             list
-        ) or len(question_ids) != 25:
+        ) or len(question_ids) != 50:
 
             conn.close()
 
@@ -7367,8 +7367,8 @@ def practice_session_save_answer():
         if current_question < 0:
             current_question = 0
 
-        if current_question > 24:
-            current_question = 24
+        if current_question > 49:
+            current_question = 49
 
         # -------------------------------------------------
         # UPDATE SESSION
@@ -7597,7 +7597,7 @@ def practice_session_submit():
 
             question_ids = []
 
-        if len(question_ids) != 25:
+        if len(question_ids) != 50:
 
             conn.close()
 
@@ -13589,7 +13589,7 @@ def ai_session():
 
         ORDER BY RANDOM()
 
-        LIMIT 25
+        LIMIT 50
         """, (
             board,
             class_name,
@@ -13612,7 +13612,7 @@ def ai_session():
         # QUESTION COUNT CHECK
         # -------------------------------------------------
 
-        if len(question_ids) != 25:
+        if len(question_ids) != 50:
 
             conn.close()
 
@@ -13620,7 +13620,7 @@ def ai_session():
                 "success": False,
                 "error":
                     f"Only {len(question_ids)} questions are available. "
-                    "Exactly 25 questions are required."
+                    "Exactly 50 questions are required."
             }), 400
 
         # -------------------------------------------------
@@ -14389,14 +14389,14 @@ def ai_session_questions():
                     "Invalid question list in exam session."
             }), 500
 
-        if len(question_ids) != 25:
+        if len(question_ids) != 50:
 
             conn.close()
 
             return jsonify({
                 "success": False,
                 "error":
-                    "Exam session does not contain exactly 25 questions."
+                    "Exam session does not contain exactly 50 questions."
             }), 500
 
         # -------------------------------------------------
@@ -14671,7 +14671,7 @@ def ai_session_submit():
 
             question_ids = []
 
-        if len(question_ids) != 25:
+        if len(question_ids) != 50:
 
             conn.close()
 
@@ -14833,9 +14833,9 @@ def ai_session_submit():
         # MARK CALCULATION
         # -------------------------------------------------
 
-        total_questions = 25
+        total_questions = 50
 
-        total_marks = 50
+        total_marks = 100
 
         score = correct_count * 2
 
