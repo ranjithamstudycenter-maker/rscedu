@@ -10344,15 +10344,25 @@ function startMockTimer(
          
              if(remaining <= 0){
 
-                clearInterval(
-                    window.mockTimerInterval
-                );
-            
-                window.mockTimerInterval = null;
-            
-                await mockConfirmSubmit(true);
-            
-            }
+                   clearInterval(
+                       window.mockTimerInterval
+                   );
+               
+                   window.mockTimerInterval = null;
+               
+                   console.log(
+                       "MOCK TIMER EXPIRED — AUTO SUBMIT"
+                   );
+               
+                   /*
+                    * DO NOT clear localStorage here.
+                    * mockConfirmSubmit() will clear it
+                    * only after successful submission.
+                    */
+               
+                   await mockConfirmSubmit(true);
+               
+               }
                      
          
              /* Leave exam screen */
@@ -10636,32 +10646,19 @@ async function resumeActiveMockAttempt(){
 
         if(remaining <= 0){
 
-            console.log(
-                "MOCK ATTEMPT EXPIRED"
-            );
-
-
-            localStorage.removeItem(
-                "rsc_active_mock_attempt_id"
-            );
-
-
-            localStorage.removeItem(
-                "rsc_mock_answers_" +
-                savedAttemptId
-            );
-
-
-            alert(
-                "⏰ Mock Test time is over.\n\n" +
-                "You can start the Mock Test again."
-            );
-
-
-            return;
-
-        }
-
+             console.log(
+                 "MOCK ATTEMPT EXPIRED — AUTO SUBMITTING"
+             );
+         
+             /*
+              * Keep the attempt ID and answers.
+              * mockConfirmSubmit() will submit them.
+              */
+         
+             await mockConfirmSubmit(true);
+         
+             return;
+         }
 
         /* -----------------------------------------
            RESTORE MOCK UI
