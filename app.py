@@ -8898,12 +8898,19 @@ def mock_get_questions():
     c = conn.cursor()
 
     c.execute("""
-        SELECT *
-        FROM mock_attempts
-        WHERE id=?
-          AND practice_id=?
-        LIMIT 1
-    """, (attempt_id, practice_id))
+    SELECT
+        mock_attempts.*,
+        mock_tests.duration_minutes
+    FROM mock_attempts
+    LEFT JOIN mock_tests
+        ON mock_tests.id = mock_attempts.mock_test_id
+    WHERE mock_attempts.id=?
+      AND mock_attempts.practice_id=?
+    LIMIT 1
+""", (
+    attempt_id,
+    practice_id
+))
 
     attempt = c.fetchone()
 
@@ -9004,9 +9011,12 @@ def mock_get_questions():
         "total_marks":
             attempt["total_marks"],
     
+        "duration_minutes":
+            attempt["duration_minutes"] or 60,
+
         "started_at":
             attempt["started_at"],
-    
+
         "current_question":
             attempt["current_question"] or 0,
     
