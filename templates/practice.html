@@ -3058,9 +3058,9 @@ body.mock-exam-active .mode-switch{
             <div class="exam-top">
                 <div class="exam-title">
                     <h2>📝 Mathematics Practice Test</h2>
-                    <p id="examSubtitle">25 Questions • 50 Marks</p>
+                    <p id="examSubtitle">50 Questions • 100 Marks</p>
                 </div>
-                <div class="timer" id="practiceTimer">30:00</div>
+                <div class="timer" id="practiceTimer">60:00</div>
             </div>
           
             <div class="progress-wrap">
@@ -3180,7 +3180,7 @@ body.mock-exam-active .mode-switch{
             </div>
                    
             <div class="review-head">
-                <h3>🔍 Review All 25 Questions</h3>
+                <h3>🔍 Review All 50 Questions</h3>
                 <span class="step-pill">AFTER TEST</span>
             </div>
 
@@ -7261,8 +7261,8 @@ async function loadPracticeQuestions(sessionData){
     practiceAnswers = data.answers || practiceAnswers || {};
     currentQuestion = Number(data.current_question || 0);
 
-    if(practiceQuestions.length !== 25){
-        throw new Error("Practice test must contain exactly 25 questions.");
+    if(practiceQuestions.length !== 50){
+        throw new Error("Practice test must contain exactly 50 questions.");
     }
 
     document.getElementById("setupCard").style.display = "none";
@@ -7274,7 +7274,7 @@ async function loadPracticeQuestions(sessionData){
 
     const label = currentDifficulty.charAt(0).toUpperCase() + currentDifficulty.slice(1);
     document.getElementById("examSubtitle").textContent =
-        `${label} Practice • 25 Questions • 50 Marks • 30 Minutes`;
+        `${label} Practice • 50 Questions • 100 Marks • 60 Minutes`;
 
     renderQuestion();
     if(sessionData.resumed){
@@ -7291,22 +7291,23 @@ function renderQuestion(){
     if(!practiceQuestions.length) return;
 
     if(currentQuestion < 0) currentQuestion = 0;
-    if(currentQuestion > 24) currentQuestion = 24;
+    if(currentQuestion > 49) currentQuestion = 49;
 
     const q = practiceQuestions[currentQuestion];
 
     document.getElementById("questionNumber").textContent =
-        `Question ${currentQuestion + 1} of 25`;
+        `Question ${currentQuestion + 1} of 50`;
+   
 
     document.getElementById("progressText").textContent =
-        `Question ${currentQuestion + 1} of 25`;
+        `Question ${currentQuestion + 1} of 50`;
 
     const answeredCount = Object.keys(practiceAnswers || {}).length;
     document.getElementById("answeredText").textContent =
         `${answeredCount} Answered`;
 
     document.getElementById("progressFill").style.width =
-        `${((currentQuestion + 1) / 25) * 100}%`;
+        `${((currentQuestion + 1) / 50) * 100}%`;
 
     document.getElementById("questionText").textContent =
         q.question || "";
@@ -7500,7 +7501,7 @@ function previousQuestion(){
 }
 
 function nextQuestion(){
-    if(currentQuestion < 24){
+    if(currentQuestion < 49){
         currentQuestion++;
         renderQuestion();
     }
