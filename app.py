@@ -9413,7 +9413,20 @@ def mock_submit():
 
     c.execute(
         f"""
-        SELECT id, correct_answer, marks
+        SELECT
+            id,
+            question,
+            option_a,
+            option_b,
+            option_c,
+            option_d,
+            topic,
+            subtopic,
+            difficulty,
+            correct_answer,
+            explanation,
+            hint,
+            marks
         FROM mock_questions
         WHERE id IN ({placeholders})
         """,
@@ -9446,6 +9459,7 @@ def mock_submit():
     incorrect_answers = 0
     unanswered = 0
     score = 0
+    review = []
 
     for question_id in question_ids:
 
@@ -9511,7 +9525,102 @@ def mock_submit():
         else:
 
             incorrect_answers += 1
+     correct_letter = (
+    str(
+        row["correct_answer"] or ""
+    )
+    .strip()
+    .upper()
+)
 
+letter_to_index = {
+    "A": 0,
+    "B": 1,
+    "C": 2,
+    "D": 3
+}
+
+correct_index =
+    letter_to_index.get(
+        correct_letter
+    )
+
+student_answer =
+    answers.get(
+        qid,
+        None
+    )
+
+if student_answer is not None:
+
+    try:
+        student_answer = int(
+            student_answer
+        )
+    except:
+        student_answer = None
+
+if student_answer is None:
+
+    result_status = "unanswered"
+
+elif student_answer == correct_index:
+
+    result_status = "correct"
+
+else:
+
+    result_status = "incorrect"
+
+
+review.append({
+
+    "id":
+        row["id"],
+
+    "question":
+        row["question"],
+
+    "options": [
+
+        row["option_a"],
+        row["option_b"],
+        row["option_c"],
+        row["option_d"]
+
+    ],
+
+    "student_answer":
+        student_answer,
+
+    "correct_answer":
+        correct_index,
+
+    "correct_letter":
+        correct_letter,
+
+    "result":
+        result_status,
+
+    "explanation":
+        row["explanation"] or "",
+
+    "hint":
+        row["hint"] or "",
+
+    "topic":
+        row["topic"] or "",
+
+    "subtopic":
+        row["subtopic"] or "",
+
+    "difficulty":
+        row["difficulty"] or "",
+
+    "marks":
+        row["marks"] or 2
+
+})
     # -------------------------------------------------
     # PERCENTAGE
     # -------------------------------------------------
@@ -9552,6 +9661,7 @@ def mock_submit():
             score=?,
             percentage=?,
             submitted_at=?
+            review_data=?,
         WHERE id=?
           AND practice_id=?
     """, (
@@ -9562,6 +9672,10 @@ def mock_submit():
         score,
         percentage,
         submitted_at,
+        json.dumps(
+            review,
+            ensure_ascii=False
+        ),
         attempt_id,
         practice_id
     ))
@@ -9639,7 +9753,133 @@ def mock_submit():
 
         "percentage": percentage,
 
-        "submitted_at": submitted_at
+        "submitted_at": submitted_at,
+        "review": review
+
+    })
+# =====================================================
+# MOCK TEST - RESULT ANALYSIS
+# =====================================================
+
+@app.route("/api/mock/result-analysis")
+def mock_result_analysis():
+
+    practice_id = get_practice_id()
+
+    attempt_id = request.args.get(
+        "attempt_id",
+        type=int
+    )
+
+    if not attempt_id:
+
+        return jsonify({
+            "success": False,
+            "error": "Attempt ID is required."
+        }), 400
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT *
+        FROM mock_attempts
+        WHERE id=?
+          AND practice_id=?
+        LIMIT 1
+    """, (
+        attempt_id,
+        practice_id
+    ))
+
+    attempt = c.fetchone()
+
+    if not attempt:
+
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "Mock attempt not found."
+        }), 404
+
+    if attempt["status"] != "submitted":
+
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error":
+                "Mock test has not been submitted yet."
+        }), 400
+
+    try:
+
+        review = json.loads(
+            attempt["review_data"] or "[]"
+        )
+
+    except:
+
+        review = []
+
+    c.execute("""
+        SELECT
+            test_name,
+            mock_type,
+            chapter_scope
+        FROM mock_tests
+        WHERE id=?
+        LIMIT 1
+    """, (
+        attempt["mock_test_id"],
+    ))
+
+    test = c.fetchone()
+
+    conn.close()
+
+    return jsonify({
+
+        "success": True,
+
+        "attempt_id":
+            attempt["id"],
+
+        "mock_test_id":
+            attempt["mock_test_id"],
+
+        "test_name":
+            test["test_name"]
+            if test else "Mock Test",
+
+        "total_questions":
+            attempt["total_questions"],
+
+        "total_marks":
+            attempt["total_marks"],
+
+        "correct_answers":
+            attempt["correct_answers"],
+
+        "incorrect_answers":
+            attempt["incorrect_answers"],
+
+        "unanswered":
+            attempt["unanswered"],
+
+        "score":
+            attempt["score"],
+
+        "percentage":
+            attempt["percentage"],
+
+        "submitted_at":
+            attempt["submitted_at"],
+
+        "review":
+            review
 
     })
 # =====================================================
@@ -9897,9 +10137,9 @@ def mock_leaderboard():
 
                 ma.submitted_at AS attempt_submitted_at,
 
-                s.name AS student_name,
+                mr.student_name,
 
-                s.state AS student_state
+                mr.student_state
 
             FROM mock_results mr
 
