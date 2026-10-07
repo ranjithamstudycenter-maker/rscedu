@@ -128,8 +128,8 @@ def init_db():
     
         difficulty TEXT,
     
-        total_questions INTEGER DEFAULT 25,
-        total_marks INTEGER DEFAULT 50,
+        total_questions INTEGER DEFAULT 50,
+        total_marks INTEGER DEFAULT 100,
     
         correct_answers INTEGER DEFAULT 0,
         incorrect_answers INTEGER DEFAULT 0,
@@ -245,8 +245,8 @@ def init_db():
     
         test_number INTEGER DEFAULT 0,
     
-        total_questions INTEGER DEFAULT 25,
-        total_marks INTEGER DEFAULT 50,
+        total_questions INTEGER DEFAULT 50,
+        total_marks INTEGER DEFAULT 100,
     
         question_ids TEXT,
     
@@ -546,8 +546,8 @@ def init_db():
 
         difficulty TEXT NOT NULL,
 
-        total_questions INTEGER DEFAULT 25,
-        total_marks INTEGER DEFAULT 50,
+        total_questions INTEGER DEFAULT 50,
+        total_marks INTEGER DEFAULT 100,
 
         question_ids TEXT NOT NULL,
 
@@ -605,8 +605,8 @@ def init_db():
 
         difficulty TEXT NOT NULL,
 
-        total_questions INTEGER DEFAULT 25,
-        total_marks INTEGER DEFAULT 50,
+        total_questions INTEGER DEFAULT 50,
+        total_marks INTEGER DEFAULT 100,
 
         correct_answers INTEGER DEFAULT 0,
         incorrect_answers INTEGER DEFAULT 0,
@@ -868,8 +868,8 @@ def init_db():
     
         difficulty TEXT NOT NULL,
     
-        total_questions INTEGER DEFAULT 25,
-        total_marks INTEGER DEFAULT 50,
+        total_questions INTEGER DEFAULT 50,
+        total_marks INTEGER DEFAULT 100,
     
         question_ids TEXT NOT NULL,
     
@@ -6748,8 +6748,8 @@ def practice_create_session():
             topic,
             subtopic,
             difficulty,
-            25,
             50,
+            100,
             json.dumps(question_ids),
             json.dumps(answers),
             0,
@@ -6798,10 +6798,10 @@ def practice_create_session():
                 difficulty,
 
             "total_questions":
-                25,
+                50,
 
             "total_marks":
-                50,
+                100,
 
             "question_ids":
                 question_ids,
@@ -7104,10 +7104,10 @@ def practice_session_questions():
                 ],
 
             "total_questions":
-                25,
+                50,
 
             "total_marks":
-                50
+                100
 
         })
 
@@ -7843,7 +7843,7 @@ def practice_session_submit():
         # -------------------------------------------------
 
         percentage = round(
-            (score / 50) * 100,
+            (score / 100) * 100,
             2
         )
 
@@ -7940,9 +7940,9 @@ def practice_session_submit():
 
             practice_session["difficulty"],
 
-            25,
-
             50,
+
+            100,
 
             correct_answers,
 
@@ -8054,7 +8054,7 @@ def practice_session_submit():
 
                 practice_session["difficulty"],
 
-                25,
+                50,
 
                 correct_answers,
 
@@ -8101,7 +8101,7 @@ def practice_session_submit():
                 WHERE id=?
             """, (
 
-                25,
+                50,
 
                 correct_answers,
 
@@ -8145,10 +8145,10 @@ def practice_session_submit():
                 session_id,
 
             "total_questions":
-                25,
+                50,
 
             "total_marks":
-                50,
+                100,
 
             "correct_answers":
                 correct_answers,
@@ -9038,42 +9038,42 @@ def mock_get_questions():
     conn.close()
 
     try:
-    saved_answers = json.loads(
-        attempt["answers"] or "{}"
-    )
-except:
-    saved_answers = {}
+        saved_answers = json.loads(
+            attempt["answers"] or "{}"
+        )
+    except:
+        saved_answers = {}
 
-return jsonify({
-    "success": True,
-
-    "attempt_id":
-        attempt_id,
-
-    "mock_test_id":
-        attempt["mock_test_id"],
-
-    "status":
-        attempt["status"],
-
-    "total_questions":
-        attempt["total_questions"],
-
-    "total_marks":
-        attempt["total_marks"],
-
-    "started_at":
-        attempt["started_at"],
-
-    "current_question":
-        attempt["current_question"] or 0,
-
-    "answers":
-        saved_answers,
-
-    "questions":
-        questions
-})
+    return jsonify({
+        "success": True,
+    
+        "attempt_id":
+            attempt_id,
+    
+        "mock_test_id":
+            attempt["mock_test_id"],
+    
+        "status":
+            attempt["status"],
+    
+        "total_questions":
+            attempt["total_questions"],
+    
+        "total_marks":
+            attempt["total_marks"],
+    
+        "started_at":
+            attempt["started_at"],
+    
+        "current_question":
+            attempt["current_question"] or 0,
+    
+        "answers":
+            saved_answers,
+    
+        "questions":
+            questions
+    })
 
 @app.route("/api/mock/save-answer", methods=["POST"])
 def mock_save_answer():
@@ -9660,7 +9660,7 @@ review.append({
             unanswered=?,
             score=?,
             percentage=?,
-            submitted_at=?
+            submitted_at=?,
             review_data=?,
         WHERE id=?
           AND practice_id=?
@@ -12375,8 +12375,8 @@ def save_ai_attempt():
         topic,
         subtopic,
         difficulty,
-        25,
         50,
+        100,
         correct_answers,
         incorrect_answers,
         score,
@@ -12490,7 +12490,7 @@ def save_ai_attempt():
                 topic,
                 subtopic,
                 difficulty,
-                25,
+                50,
                 correct_answers,
                 incorrect_answers,
                 score,
@@ -13536,8 +13536,8 @@ def ai_session():
 
             test_number INTEGER DEFAULT 0,
 
-            total_questions INTEGER DEFAULT 25,
-            total_marks INTEGER DEFAULT 50,
+            total_questions INTEGER DEFAULT 50,
+            total_marks INTEGER DEFAULT 100,
 
             question_ids TEXT,
 
@@ -13839,8 +13839,8 @@ def ai_session():
             ?,
             ?,
 
-            25,
             50,
+            100,
 
             ?,
             ?,
@@ -13920,10 +13920,10 @@ def ai_session():
                 test_number,
 
             "total_questions":
-                25,
+                50,
 
             "total_marks":
-                50
+                100
 
         })
         # -------------------------------------------------
@@ -13967,10 +13967,10 @@ def ai_session():
                 test_number,
 
             "total_questions":
-                25,
+                50,
 
             "total_marks":
-                50,
+                100,
 
             "question_ids":
                 question_ids,
@@ -14537,10 +14537,10 @@ def ai_session_questions():
                 ai_session["started_at"],
 
             "total_questions":
-                25,
+                50,
 
             "total_marks":
-                50
+                100
         })
 
     except Exception as e:
