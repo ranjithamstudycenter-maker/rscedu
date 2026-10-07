@@ -793,7 +793,18 @@ def init_db():
         """)
     except sqlite3.OperationalError:
         pass   
-        
+
+    # =====================================================
+    # MOCK RESULT ANALYSIS DATA
+    # =====================================================
+    
+    try:
+        c.execute("""
+            ALTER TABLE mock_attempts
+            ADD COLUMN review_data TEXT DEFAULT '[]'
+        """)
+    except sqlite3.OperationalError:
+        pass
     # -----------------------------------------------------
     # 9. MOCK TEST PACKAGE PURCHASES
     # -----------------------------------------------------
@@ -1314,8 +1325,64 @@ def demo_complete():
 
         conn.commit()
         conn.close()
+        try:
+            saved_answers = json.loads(
+                existing["answers"] or "{}"
+            )
+        except:
+            saved_answers = {}
+        return jsonify({
 
-        return jsonify({"status": "started"})
+            "success": True,
+        
+            "resumed": True,
+        
+            "attempt_id":
+                existing["id"],
+        
+            "mock_test_id":
+                existing["mock_test_id"],
+        
+            "board":
+                existing["board"],
+        
+            "class_name":
+                existing["class_name"],
+        
+            "subject":
+                existing["subject"],
+        
+            "test_name":
+                test["test_name"],
+        
+            "mock_type":
+                test["mock_type"],
+        
+            "chapter_scope":
+                test["chapter_scope"],
+        
+            "total_questions":
+                existing["total_questions"],
+        
+            "total_marks":
+                existing["total_marks"],
+        
+            "duration_minutes":
+                test["duration_minutes"],
+        
+            "started_at":
+                existing["started_at"],
+        
+            "answers":
+                saved_answers,
+        
+            "current_question":
+                existing["current_question"] or 0,
+        
+            "status":
+                "started"
+        
+        })
 
     # =====================================================
     # 🔥 2. DEMO COMPLETE → UPDATE (YES)
@@ -8606,9 +8673,20 @@ def mock_start():
         conn.close()
     
         return jsonify({
+
             "success": False,
+    
             "already_submitted": True,
-            "error": "You have already completed this mock test."
+    
+            "attempt_id":
+                existing["id"],
+    
+            "mock_test_id":
+                existing["mock_test_id"],
+    
+            "error":
+                "You have already completed this mock test."
+    
         }), 400
 
 
@@ -8616,7 +8694,7 @@ def mock_start():
     # IF ACTIVE ATTEMPT EXISTS
     # DO NOT RESTART THE TIMER
     # -------------------------------------------------
-
+    
     if existing and existing["status"] == "started":
 
         try:
@@ -8959,16 +9037,44 @@ def mock_get_questions():
 
     conn.close()
 
-    return jsonify({
-        "success": True,
-        "attempt_id": attempt_id,
-        "mock_test_id": attempt["mock_test_id"],
-        "status": attempt["status"],
-        "total_questions": attempt["total_questions"],
-        "total_marks": attempt["total_marks"],
-        "started_at": attempt["started_at"],
-        "questions": questions
-    })
+    try:
+    saved_answers = json.loads(
+        attempt["answers"] or "{}"
+    )
+except:
+    saved_answers = {}
+
+return jsonify({
+    "success": True,
+
+    "attempt_id":
+        attempt_id,
+
+    "mock_test_id":
+        attempt["mock_test_id"],
+
+    "status":
+        attempt["status"],
+
+    "total_questions":
+        attempt["total_questions"],
+
+    "total_marks":
+        attempt["total_marks"],
+
+    "started_at":
+        attempt["started_at"],
+
+    "current_question":
+        attempt["current_question"] or 0,
+
+    "answers":
+        saved_answers,
+
+    "questions":
+        questions
+})
+
 @app.route("/api/mock/save-answer", methods=["POST"])
 def mock_save_answer():
 
@@ -8979,6 +9085,7 @@ def mock_save_answer():
     attempt_id = data.get("attempt_id")
     question_id = data.get("question_id")
     answer = data.get("answer")
+    current_question = data.get("current_question")
 
     if not attempt_id:
         return jsonify({
@@ -9043,12 +9150,35 @@ def mock_save_answer():
 
     answers[str(question_id)] = int(answer)
 
+    # -------------------------------------------------
+    # CURRENT QUESTION
+    # -------------------------------------------------
+    
+    if current_question is None:
+        current_question = 0
+    
+    try:
+        current_question = int(current_question)
+    except:
+        current_question = 0
+    
+    if current_question < 0:
+        current_question = 0
+    
+    
+    # -------------------------------------------------
+    # SAVE ANSWER + CURRENT QUESTION
+    # -------------------------------------------------
+    
     c.execute("""
         UPDATE mock_attempts
-        SET answers=?
+        SET
+            answers=?,
+            current_question=?
         WHERE id=?
     """, (
         json.dumps(answers),
+        current_question,
         attempt_id
     ))
 
@@ -9059,7 +9189,86 @@ def mock_save_answer():
         "success": True,
         "attempt_id": attempt_id,
         "answers": answers
+        "current_question": current_question
     })    
+# =====================================================
+# MOCK TEST - SAVE CURRENT QUESTION
+# =====================================================
+
+@app.route("/api/mock/save-progress", methods=["POST"])
+def mock_save_progress():
+
+    data = request.get_json(silent=True) or {}
+
+    practice_id = get_practice_id()
+
+    attempt_id = data.get("attempt_id")
+    current_question = data.get("current_question")
+
+    if not attempt_id:
+        return jsonify({
+            "success": False,
+            "error": "Attempt ID is required."
+        }), 400
+
+    try:
+        current_question = int(current_question)
+    except:
+        current_question = 0
+
+    if current_question < 0:
+        current_question = 0
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT id, status
+        FROM mock_attempts
+        WHERE id=?
+          AND practice_id=?
+        LIMIT 1
+    """, (
+        attempt_id,
+        practice_id
+    ))
+
+    attempt = c.fetchone()
+
+    if not attempt:
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "Mock attempt not found."
+        }), 404
+
+    if attempt["status"] != "started":
+        conn.close()
+
+        return jsonify({
+            "success": False,
+            "error": "Mock test is no longer active."
+        }), 400
+
+    c.execute("""
+        UPDATE mock_attempts
+        SET current_question=?
+        WHERE id=?
+    """, (
+        current_question,
+        attempt_id
+    ))
+
+    conn.commit()
+    conn.close()
+
+    return jsonify({
+        "success": True,
+        "current_question": current_question
+    })
+    
 # =====================================================
 # MOCK TEST - SUBMIT
 # =====================================================
