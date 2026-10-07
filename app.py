@@ -10025,7 +10025,115 @@ def mock_options():
             "success": False,
             "error": str(e)
         }), 500
-        
+
+# =====================================================
+# MOCK TEST - STUDENT ATTEMPT STATUS
+# =====================================================
+
+@app.route("/api/mock/status")
+def mock_status():
+
+    practice_id = get_practice_id()
+
+    board = request.args.get(
+        "board",
+        ""
+    ).strip()
+
+    class_name = request.args.get(
+        "class_name",
+        ""
+    ).strip()
+
+    subject = request.args.get(
+        "subject",
+        ""
+    ).strip()
+
+    if not board or not class_name or not subject:
+
+        return jsonify({
+            "success": False,
+            "error":
+                "Board, Class and Subject are required."
+        }), 400
+
+    conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT
+            mt.id,
+            mt.mock_type,
+            mt.chapter_scope,
+            mt.test_name,
+            mt.duration_minutes,
+
+            ma.id AS attempt_id,
+            ma.status AS attempt_status
+
+        FROM mock_tests mt
+
+        LEFT JOIN mock_attempts ma
+            ON ma.mock_test_id = mt.id
+           AND ma.practice_id = ?
+
+        WHERE mt.board=?
+          AND mt.class_name=?
+          AND mt.subject=?
+          AND mt.active=1
+
+        ORDER BY mt.id
+    """, (
+        practice_id,
+        board,
+        class_name,
+        subject
+    ))
+
+    rows = c.fetchall()
+
+    conn.close()
+
+    tests = []
+
+    for row in rows:
+
+        tests.append({
+
+            "mock_test_id":
+                row["id"],
+
+            "mock_type":
+                row["mock_type"],
+
+            "chapter_scope":
+                row["chapter_scope"],
+
+            "test_name":
+                row["test_name"],
+
+            "duration_minutes":
+                row["duration_minutes"],
+
+            "attempt_id":
+                row["attempt_id"],
+
+            "status":
+                row["attempt_status"]
+                or "not_started"
+
+        })
+
+    return jsonify({
+
+        "success": True,
+
+        "tests":
+            tests
+
+    })
 # =====================================================
 # RSC MOCK TEST - TOP 10 LEADERBOARD
 # =====================================================
