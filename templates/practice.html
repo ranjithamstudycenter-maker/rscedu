@@ -8961,7 +8961,26 @@ async function startChapterMock(chapter){
             data
         );
 
-
+         if(
+             data.already_submitted
+         ){
+         
+             if(data.attempt_id){
+         
+                 await viewMockResultAnalysis(
+                     data.attempt_id
+                 );
+         
+             }else{
+         
+                 alert(
+                     "This Mock Test has already been completed."
+                 );
+         
+             }
+         
+             return;
+         }
         if(
             !response.ok ||
             !data.success
@@ -9078,7 +9097,17 @@ async function startChapterMock(chapter){
 
             return;
         }
+       if(questionData.answers){
 
+          window.currentMockAnswers =
+              questionData.answers || {};
+      
+       }
+      
+       window.currentMockQuestionIndex =
+          Number(
+              questionData.current_question || 0
+          );
 
         /* =========================================
            STEP 3 — NORMALIZE QUESTIONS
@@ -9143,9 +9172,11 @@ async function startChapterMock(chapter){
            STEP 5 — START MOCK EXAM UI
         ========================================= */
 
-        window.currentMockQuestionIndex = 0;
+         window.currentMockQuestionIndex =
+                Number(data.current_question || 0);
 
-        window.currentMockAnswers = {};
+         window.currentMockAnswers =
+                data.answers || {};
 
 
         /* Hide Mock Test selection screens */
@@ -9620,7 +9651,7 @@ function renderMockQuestion(){
    MOCK — SELECT ANSWER
 ===================================================== */
 
-function mockSelectAnswer(
+async function mockSelectAnswer(
     questionId,
     answerIndex
 ){
@@ -9655,7 +9686,66 @@ function mockSelectAnswer(
 
     }
 
+    try{
 
+    const response =
+        await fetch(
+            "/api/mock/save-answer",
+            {
+                method:"POST",
+
+                headers:{
+                    "Content-Type":
+                        "application/json"
+                },
+
+                body:JSON.stringify({
+
+                    attempt_id:
+                        window.currentMockAttemptId,
+
+                    question_id:
+                        questionId,
+
+                    answer:
+                        answerIndex,
+
+                    current_question:
+                        window.currentMockQuestionIndex
+
+                })
+            }
+        );
+
+    const data =
+        await response.json();
+
+    if(
+        !response.ok ||
+        !data.success
+    ){
+
+        console.error(
+            "MOCK ANSWER SAVE ERROR:",
+            data
+        );
+
+    }else{
+
+        window.currentMockAnswers =
+            data.answers ||
+            window.currentMockAnswers;
+
+    }
+
+}catch(error){
+
+    console.error(
+        "MOCK ANSWER SAVE ERROR:",
+        error
+    );
+
+}
     renderMockQuestion();
 
 }
@@ -9687,7 +9777,27 @@ function mockPreviousQuestion(){
 
         }
 
+        fetch(
+    "/api/mock/save-progress",
+    {
+        method:"POST",
+        headers:{
+            "Content-Type":"application/json"
+        },
+        body:JSON.stringify({
+            attempt_id:
+                window.currentMockAttemptId,
 
+            current_question:
+                window.currentMockQuestionIndex
+        })
+    }
+).catch(error =>
+    console.error(
+        "MOCK PROGRESS SAVE ERROR:",
+        error
+    )
+);
         renderMockQuestion();
 
     }
@@ -9820,14 +9930,53 @@ function renderMockPalette(){
 
 
             button.onclick =
-                function(){
+    async function(){
 
-                    window.currentMockQuestionIndex =
-                        index;
+        window.currentMockQuestionIndex =
+            index;
 
-                    renderMockQuestion();
+        if(
+            window.currentMockAttemptId
+        ){
 
-                };
+            try{
+
+                await fetch(
+                    "/api/mock/save-progress",
+                    {
+                        method:"POST",
+
+                        headers:{
+                            "Content-Type":
+                                "application/json"
+                        },
+
+                        body:JSON.stringify({
+
+                            attempt_id:
+                                window.currentMockAttemptId,
+
+                            current_question:
+                                index
+
+                        })
+                    }
+                );
+
+            }catch(error){
+
+                console.error(
+                    "PALETTE PROGRESS SAVE ERROR:",
+                    error
+                );
+
+            }
+
+        }
+
+        renderMockQuestion();
+
+    };
 
 
             palette.appendChild(
@@ -9911,8 +10060,7 @@ function startMockTimer(
     }
 
 
-    function tick(){
-
+    async function tick(){
         const elapsed =
             Date.now() -
             startTime;
@@ -9972,11 +10120,18 @@ function startMockTimer(
              );
          
          
-             alert(
-                 "⏰ Mock Test time is over.\n\n" +
-                 "You can start the Mock Test again."
-             );
-         
+             if(remaining <= 0){
+
+                clearInterval(
+                    window.mockTimerInterval
+                );
+            
+                window.mockTimerInterval = null;
+            
+                await mockConfirmSubmit(true);
+            
+            }
+                     
          
              /* Leave exam screen */
          
