@@ -3185,7 +3185,83 @@ body.mock-exam-active .mode-switch{
             </div>
 
             <div id="reviewContainer"></div>
-
+            <!-- MOCK LEADERBOARD -->
+            <div
+                id="mockLeaderboardCard"
+                style="
+                    display:none;
+                    margin-top:24px;
+                    padding:22px;
+                    border:1px solid #e2e8f0;
+                    border-radius:18px;
+                    background:#fff;
+                "
+            >
+            
+                <div style="
+                    display:flex;
+                    align-items:center;
+                    gap:10px;
+                    margin-bottom:16px;
+                ">
+            
+                    <span style="font-size:24px;">🏆</span>
+            
+                    <div>
+                        <h3 style="
+                            margin:0;
+                            color:#172554;
+                            font-size:19px;
+                        ">
+                            Mock Test Leaderboard
+                        </h3>
+            
+                        <p style="
+                            margin:4px 0 0;
+                            color:#64748b;
+                            font-size:12px;
+                        ">
+                            Top performers in this Mock Test
+                        </p>
+                    </div>
+            
+                </div>
+            
+                <div id="mockLeaderboardContent"></div>
+            
+            </div>
+            
+            <!-- MOCK RESULT ACTIONS -->
+            <div
+                id="mockResultActions"
+                style="
+                    display:none;
+                    margin-top:22px;
+                    justify-content:center;
+                    gap:12px;
+                    flex-wrap:wrap;
+                "
+            >
+            
+                <button
+                    type="button"
+                    class="action-primary"
+                    onclick="viewMockResultAnalysis()">
+            
+                    📊 View Result Analysis
+            
+                </button>
+            
+                <button
+                    type="button"
+                    class="action-secondary"
+                    onclick="backToMockChapter()">
+            
+                    ← Back to Chapter-wise Mock
+            
+                </button>
+            
+            </div>
             <div class="result-actions">
                 <button class="action-primary" onclick="startNewAttempt()">🔄 Start New Attempt</button>
                 <button class="action-secondary" onclick="backToSetup()">← Back to Selection</button>
@@ -8307,6 +8383,9 @@ function resetPracticeSelection(){
 
 function startNewAttempt(){
 
+    localStorage.removeItem(
+       "rsc_active_practice"
+    );
     practiceSessionId = null;
     practiceAnswers = {};
     practiceQuestions = [];
@@ -8325,6 +8404,9 @@ function startNewAttempt(){
 }
 function backToSetup(){
 
+    localStorage.removeItem(
+       "rsc_active_practice"
+   );
     practiceSessionId = null;
     practiceAnswers = {};
     practiceQuestions = [];
@@ -8707,7 +8789,7 @@ function backToMockSyllabus(){
 
 /* ---------- CHAPTER MOCK ---------- */
 
-function openChapterMock(){
+async function openChapterMock(){
 
     document.getElementById("mockShell").style.display = "block";
     updateMockHistory("chapter");
@@ -8742,11 +8824,151 @@ function openChapterMock(){
         "Statistics",
         "Probability"
     ];
+      let mockStatusMap = {};
 
+      try{
+      
+          const response =
+              await fetch(
+                  "/api/mock/status?" +
+                  new URLSearchParams({
+      
+                      board:
+                          selectedMockBoard,
+      
+                      class_name:
+                          selectedMockClass,
+      
+                      subject:
+                          selectedMockSubject
+      
+                  }).toString(),
+                  {
+                      cache:"no-store"
+                  }
+              );
+      
+          const data =
+              await response.json();
+      
+          if(
+              response.ok &&
+              data.success
+          ){
+      
+              (data.tests || []).forEach(
+                  function(test){
+      
+                      const key =
+                          `${test.mock_type}|||${test.chapter_scope}`;
+      
+                      mockStatusMap[key] =
+                          test;
+      
+                  }
+              );
+      
+          }
+      
+      }catch(error){
+      
+          console.error(
+              "MOCK STATUS LOAD ERROR:",
+              error
+          );
+      
+      }
     let html = "";
 
     chapters.forEach((chapter, index) => {
-
+    const testStatus =
+       mockStatusMap[
+           `chapter|||${chapter}`
+       ];
+   
+   let actionHtml = "";
+   
+   if(
+       testStatus &&
+       testStatus.status === "submitted"
+   ){
+   
+       actionHtml = `
+   
+           <div style="
+               display:flex;
+               gap:10px;
+               align-items:center;
+               flex-wrap:wrap;
+           ">
+   
+               <button
+                   type="button"
+                   class="premium-start-btn"
+                   disabled
+                   style="
+                       opacity:.55;
+                       cursor:not-allowed;
+                   ">
+   
+                   Test Completed
+   
+               </button>
+   
+               <button
+                   type="button"
+                   class="premium-start-btn"
+                   onclick="viewMockResultAnalysis(${testStatus.attempt_id})"
+                   style="
+                       background:linear-gradient(
+                           135deg,
+                           #16a34a,
+                           #059669
+                       );
+                   ">
+   
+                   View Result Analysis
+   
+               </button>
+   
+           </div>
+   
+       `;
+   
+   }else if(
+       testStatus &&
+       testStatus.status === "started"
+   ){
+   
+       actionHtml = `
+   
+           <button
+               type="button"
+               class="premium-start-btn"
+               onclick="startChapterMock('${chapter}')">
+   
+               Continue Test →
+   
+           </button>
+   
+       `;
+   
+   }else{
+   
+       actionHtml = `
+   
+           <button
+               type="button"
+               class="premium-start-btn"
+               onclick="startChapterMock('${chapter}')">
+   
+               Start Test →
+   
+           </button>
+   
+       `;
+   
+   }
      html += `
     <div class="premium-chapter-item">
 
@@ -10312,7 +10534,15 @@ async function resumeActiveMockAttempt(){
            RESTORE ANSWERS
         ----------------------------------------- */
 
-        const savedAnswers =
+       window.currentMockAnswers =
+             data.answers || {};
+    
+       window.currentMockQuestionIndex =
+          Number(
+              data.current_question || 0
+          );
+        
+       const savedAnswers =
             localStorage.getItem(
                 "rsc_mock_answers_" +
                 savedAttemptId
@@ -10859,7 +11089,8 @@ async function mockConfirmSubmit(
 
         }
 
-
+             window.lastSubmittedMockAttemptId =
+                   attemptId;
         /* Hide Practice-only focus/review */
 
         const focusCard =
@@ -10918,6 +11149,709 @@ async function mockConfirmSubmit(
         );
 
     }
+
+}
+async function viewMockResultAnalysis(
+    attemptId = null
+){
+
+    if(
+        !attemptId
+    ){
+
+        attemptId =
+            window.lastSubmittedMockAttemptId ||
+            window.currentMockAttemptId;
+
+    }
+
+    if(!attemptId){
+
+        alert(
+            "Mock result is not available."
+        );
+
+        return;
+
+    }
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/mock/result-analysis?" +
+                new URLSearchParams({
+                    attempt_id:
+                        attemptId
+                }).toString(),
+                {
+                    cache:"no-store"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            alert(
+                data.error ||
+                "Unable to load result analysis."
+            );
+
+            return;
+
+        }
+
+        window.lastSubmittedMockAttemptId =
+            Number(attemptId);
+
+        /* -----------------------------
+           HIDE EXAM
+        ----------------------------- */
+
+        const examShell =
+            document.getElementById(
+                "examShell"
+            );
+
+        if(examShell){
+            examShell.style.display =
+                "none";
+        }
+
+        /* -----------------------------
+           SHOW RESULT
+        ----------------------------- */
+
+        const resultShell =
+            document.getElementById(
+                "resultShell"
+            );
+
+        if(resultShell){
+
+            resultShell.style.display =
+                "block";
+
+        }
+
+        /* -----------------------------
+           TITLE
+        ----------------------------- */
+
+        const resultTitle =
+            document.querySelector(
+                "#resultShell .result-banner h2"
+            );
+
+        if(resultTitle){
+
+            resultTitle.textContent =
+                "🏆 Mock Test Result Analysis";
+
+        }
+         await viewMockResultAnalysis(
+             attemptId
+         );
+        /* -----------------------------
+           SCORE
+        ----------------------------- */
+
+        document.getElementById(
+            "resultScore"
+        ).textContent =
+            `${data.score || 0} / ${data.total_marks || 0} Marks`;
+
+        document.getElementById(
+            "resultPercentage"
+        ).textContent =
+            `${Number(
+                data.percentage || 0
+            ).toFixed(1)}%`;
+
+        document.getElementById(
+            "correctCount"
+        ).textContent =
+            data.correct_answers || 0;
+
+        document.getElementById(
+            "wrongCount"
+        ).textContent =
+            data.incorrect_answers || 0;
+
+        document.getElementById(
+            "unansweredCount"
+        ).textContent =
+            data.unanswered || 0;
+
+        const percentage =
+            Number(
+                data.percentage || 0
+            );
+
+        document.getElementById(
+            "statusText"
+        ).textContent =
+            percentage >= 80
+                ? "Excellent"
+                : percentage >= 50
+                    ? "Good"
+                    : "Needs Practice";
+
+        document.getElementById(
+            "resultMessage"
+        ).textContent =
+            "📊 Your complete Mock Test performance analysis is shown below.";
+
+        /* -----------------------------
+           SHOW PRACTICE-STYLE ANALYSIS
+        ----------------------------- */
+
+        const focusCard =
+            document.getElementById(
+                "practiceFocusCard"
+            );
+
+        if(focusCard){
+
+            focusCard.style.display =
+                "block";
+
+        }
+
+        const reviewHead =
+            document.querySelector(
+                "#resultShell .review-head"
+            );
+
+        if(reviewHead){
+
+            reviewHead.style.display =
+                "flex";
+
+        }
+
+        const reviewContainer =
+            document.getElementById(
+                "reviewContainer"
+            );
+
+        if(reviewContainer){
+
+            reviewContainer.style.display =
+                "block";
+
+        }
+
+        renderReview(
+            data.review || []
+        );
+
+        /* -----------------------------
+           FOCUS AREAS
+        ----------------------------- */
+
+        renderMockFocusAreas(
+            data.review || []
+        );
+
+        /* -----------------------------
+           LEADERBOARD
+        ----------------------------- */
+
+        await loadMockLeaderboard(
+            data.mock_test_id
+        );
+
+        /* -----------------------------
+           ACTION BUTTONS
+        ----------------------------- */
+
+        const mockActions =
+            document.getElementById(
+                "mockResultActions"
+            );
+
+        if(mockActions){
+
+            mockActions.style.display =
+                "flex";
+
+        }
+
+        resultShell.scrollIntoView({
+            behavior:"smooth",
+            block:"start"
+        });
+
+    }
+    catch(error){
+
+        console.error(
+            "MOCK RESULT ANALYSIS ERROR:",
+            error
+        );
+
+        alert(
+            "Unable to load Mock Result Analysis."
+        );
+
+    }
+
+}
+function renderMockFocusAreas(review){
+
+    const content =
+        document.getElementById(
+            "practiceFocusContent"
+        );
+
+    if(!content){
+        return;
+    }
+
+    const incorrect =
+        review.filter(
+            item =>
+                item.result === "incorrect"
+        );
+
+    if(!incorrect.length){
+
+        content.innerHTML = `
+            <div style="
+                grid-column:1/-1;
+                padding:16px;
+                border-radius:12px;
+                background:#ecfdf5;
+                border:1px solid #bbf7d0;
+                color:#166534;
+                font-weight:700;
+                text-align:center;
+            ">
+                ✓ Excellent! No specific topic requires
+                additional focus from this attempt.
+            </div>
+        `;
+
+        return;
+    }
+
+    const groups = {};
+
+    incorrect.forEach(
+        item => {
+
+            const topic =
+                item.topic ||
+                "General Topic";
+
+            const subtopic =
+                item.subtopic ||
+                "General";
+
+            const key =
+                `${topic}|||${subtopic}`;
+
+            if(!groups[key]){
+
+                groups[key] = {
+                    topic:
+                        topic,
+
+                    subtopic:
+                        subtopic,
+
+                    count:
+                        0
+                };
+
+            }
+
+            groups[key].count++;
+
+        }
+    );
+
+    content.innerHTML =
+        Object.values(groups)
+            .sort(
+                (a,b) =>
+                    b.count - a.count
+            )
+            .map(
+                item => `
+
+                    <div style="
+                        padding:15px;
+                        border-radius:13px;
+                        background:#fff;
+                        border:1px solid #e2e8f0;
+                    ">
+
+                        <div style="
+                            font-size:11px;
+                            font-weight:800;
+                            color:#64748b;
+                        ">
+                            Chapter / Topic
+                        </div>
+
+                        <div style="
+                            margin-top:4px;
+                            font-size:15px;
+                            font-weight:800;
+                            color:#172554;
+                        ">
+                            ${escapeHtml(
+                                item.topic
+                            )}
+                        </div>
+
+                        <div style="
+                            margin-top:7px;
+                            font-size:12px;
+                            color:#475569;
+                        ">
+                            Subtopic:
+                            <strong>
+                                ${escapeHtml(
+                                    item.subtopic
+                                )}
+                            </strong>
+                        </div>
+
+                        <div style="
+                            margin-top:10px;
+                            display:inline-block;
+                            padding:5px 9px;
+                            border-radius:999px;
+                            background:#fee2e2;
+                            color:#b91c1c;
+                            font-size:11px;
+                            font-weight:800;
+                        ">
+                            ${item.count}
+                            Incorrect
+                        </div>
+
+                    </div>
+
+                `
+            )
+            .join("");
+}
+async function loadMockLeaderboard(
+    mockTestId
+){
+
+    const card =
+        document.getElementById(
+            "mockLeaderboardCard"
+        );
+
+    const content =
+        document.getElementById(
+            "mockLeaderboardContent"
+        );
+
+    if(!card || !content){
+        return;
+    }
+
+    try{
+
+        const response =
+            await fetch(
+                "/api/mock/leaderboard?" +
+                new URLSearchParams({
+                    mock_test_id:
+                        mockTestId
+                }).toString(),
+                {
+                    cache:"no-store"
+                }
+            );
+
+        const data =
+            await response.json();
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            content.innerHTML = `
+                <div style="
+                    padding:15px;
+                    color:#64748b;
+                    text-align:center;
+                ">
+                    Leaderboard is not available.
+                </div>
+            `;
+
+            card.style.display =
+                "block";
+
+            return;
+
+        }
+
+        const leaderboard =
+            data.leaderboard || [];
+
+        if(!leaderboard.length){
+
+            content.innerHTML = `
+                <div style="
+                    padding:18px;
+                    text-align:center;
+                    color:#64748b;
+                ">
+                    No leaderboard entries yet.
+                </div>
+            `;
+
+            card.style.display =
+                "block";
+
+            return;
+
+        }
+
+        content.innerHTML = `
+
+            <div style="
+                overflow-x:auto;
+            ">
+
+                <table style="
+                    width:100%;
+                    border-collapse:collapse;
+                    min-width:650px;
+                ">
+
+                    <thead>
+
+                        <tr>
+
+                            <th style="
+                                padding:11px;
+                                background:#eef2ff;
+                            ">
+                                Rank
+                            </th>
+
+                            <th style="
+                                padding:11px;
+                                background:#eef2ff;
+                            ">
+                                Student
+                            </th>
+
+                            <th style="
+                                padding:11px;
+                                background:#eef2ff;
+                            ">
+                                State
+                            </th>
+
+                            <th style="
+                                padding:11px;
+                                background:#eef2ff;
+                            ">
+                                Score
+                            </th>
+
+                            <th style="
+                                padding:11px;
+                                background:#eef2ff;
+                            ">
+                                %
+                            </th>
+
+                            <th style="
+                                padding:11px;
+                                background:#eef2ff;
+                            ">
+                                Correct
+                            </th>
+
+                        </tr>
+
+                    </thead>
+
+                    <tbody>
+
+                        ${
+                            leaderboard.map(
+                                row => `
+
+                                    <tr>
+
+                                        <td style="
+                                            padding:11px;
+                                            text-align:center;
+                                            font-weight:800;
+                                        ">
+                                            ${row.rank}
+                                        </td>
+
+                                        <td style="
+                                            padding:11px;
+                                            font-weight:700;
+                                        ">
+                                            ${escapeHtml(
+                                                row.name ||
+                                                "Student"
+                                            )}
+                                        </td>
+
+                                        <td style="
+                                            padding:11px;
+                                            color:#64748b;
+                                        ">
+                                            ${escapeHtml(
+                                                row.state ||
+                                                ""
+                                            )}
+                                        </td>
+
+                                        <td style="
+                                            padding:11px;
+                                            font-weight:800;
+                                            color:#312e81;
+                                        ">
+                                            ${row.score}
+                                        </td>
+
+                                        <td style="
+                                            padding:11px;
+                                            font-weight:800;
+                                        ">
+                                            ${Number(
+                                                row.percentage || 0
+                                            ).toFixed(1)}%
+                                        </td>
+
+                                        <td style="
+                                            padding:11px;
+                                            color:#15803d;
+                                            font-weight:800;
+                                        ">
+                                            ${row.correct_answers}
+                                        </td>
+
+                                    </tr>
+
+                                `
+                            ).join("")
+                        }
+
+                    </tbody>
+
+                </table>
+
+            </div>
+        `;
+
+        card.style.display =
+            "block";
+
+    }
+    catch(error){
+
+        console.error(
+            "LEADERBOARD ERROR:",
+            error
+        );
+
+    }
+
+}
+function backToMockChapter(){
+
+    /* Stop any active timer */
+    if(
+        window.mockTimerInterval
+    ){
+
+        clearInterval(
+            window.mockTimerInterval
+        );
+
+        window.mockTimerInterval =
+            null;
+
+    }
+
+    const resultShell =
+        document.getElementById(
+            "resultShell"
+        );
+
+    if(resultShell){
+
+        resultShell.style.display =
+            "none";
+
+    }
+
+    const examShell =
+        document.getElementById(
+            "examShell"
+        );
+
+    if(examShell){
+
+        examShell.style.display =
+            "none";
+
+    }
+
+    document.body.classList.remove(
+        "mock-exam-active"
+    );
+
+    document.body.classList.remove(
+        "exam-running"
+    );
+
+    const mockShell =
+        document.getElementById(
+            "mockShell"
+        );
+
+    if(mockShell){
+
+        mockShell.style.display =
+            "block";
+
+    }
+
+    document.getElementById(
+        "mockHomeView"
+    ).style.display = "none";
+
+    document.getElementById(
+        "fourChapterView"
+    ).style.display = "none";
+
+    document.getElementById(
+        "finalView"
+    ).style.display = "none";
+
+    document.getElementById(
+        "chapterView"
+    ).style.display = "block";
+
+    /* Refresh status */
+    openChapterMock();
 
 }
    
