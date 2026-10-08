@@ -9314,17 +9314,94 @@ async function startChapterMock(chapter){
 
             return;
         }
-       if(questionData.answers){
-
-          window.currentMockAnswers =
-              questionData.answers || {};
+       /*
+       * -------------------------------------------------
+       * RESTORE SERVER ANSWERS
+       * -------------------------------------------------
+       */
       
-       }
+      window.currentMockAnswers =
+          questionData.answers || {};
       
-       window.currentMockQuestionIndex =
+      
+      /*
+       * -------------------------------------------------
+       * RESTORE LOCAL ANSWERS
+       *
+       * LocalStorage is important because the student
+       * may refresh before the server save finishes.
+       * -------------------------------------------------
+       */
+      
+      const savedAnswers =
+          localStorage.getItem(
+              "rsc_mock_answers_" +
+              window.currentMockAttemptId
+          );
+      
+      
+      if(savedAnswers){
+      
+          try{
+      
+              const localAnswers =
+                  JSON.parse(
+                      savedAnswers
+                  );
+      
+      
+              /*
+               * Local answers take priority.
+               * Server answers are still preserved.
+               */
+      
+              window.currentMockAnswers =
+                  Object.assign(
+                      {},
+                      window.currentMockAnswers,
+                      localAnswers
+                  );
+      
+      
+          }catch(error){
+      
+              console.error(
+                  "MOCK LOCAL ANSWER RESTORE ERROR:",
+                  error
+              );
+      
+          }
+      
+      }
+      
+      
+      /*
+       * -------------------------------------------------
+       * RESTORE CURRENT QUESTION
+       * -------------------------------------------------
+       */
+      
+      window.currentMockQuestionIndex =
           Number(
               questionData.current_question || 0
           );
+      
+      
+      const savedQuestionIndex =
+          localStorage.getItem(
+              "rsc_mock_current_question_" +
+              window.currentMockAttemptId
+          );
+      
+      
+      if(savedQuestionIndex !== null){
+      
+          window.currentMockQuestionIndex =
+              Number(
+                  savedQuestionIndex
+              );
+      
+      }
 
         /* =========================================
            STEP 3 — NORMALIZE QUESTIONS
@@ -9534,15 +9611,52 @@ async function startChapterMock(chapter){
         renderMockQuestion();
 
 
-        /* =========================================
-           START MOCK TIMER
-        ========================================= */
-
-        startMockTimer(
-            data.duration_minutes,
-            data.started_at
-        );
-
+        /*
+       * -------------------------------------------------
+       * RESTORE PAUSED TIMER IF THIS IS A CONTINUED TEST
+       * -------------------------------------------------
+       */
+      
+      const savedRemaining =
+          localStorage.getItem(
+              "rsc_mock_remaining_" +
+              window.currentMockAttemptId
+          );
+      
+      
+      const remainingOverride =
+          savedRemaining !== null
+              ? Number(savedRemaining)
+              : null;
+      
+      
+      /*
+       * Start / resume timer
+       */
+      
+      startMockTimer(
+          data.duration_minutes,
+          data.started_at,
+          remainingOverride
+      );
+      
+      
+      /*
+       * Once Continue Test has actually opened
+       * the exam, remove the paused snapshot.
+       *
+       * The running timer now becomes the
+       * source of truth.
+       */
+      
+      if(savedRemaining !== null){
+      
+          localStorage.removeItem(
+              "rsc_mock_remaining_" +
+              window.currentMockAttemptId
+          );
+      
+      }
 
         /* =========================================
            SCROLL TO EXAM
@@ -9866,100 +9980,147 @@ async function mockSelectAnswer(
     answerIndex
 ){
 
+    /*
+     * -------------------------------------------------
+     * UPDATE UI IMMEDIATELY
+     * -------------------------------------------------
+     */
+
     window.currentMockAnswers[
         String(questionId)
     ] = answerIndex;
 
 
-    /* Save answers for refresh */
+    /*
+     * Save locally immediately.
+     */
+
     if(window.currentMockAttemptId){
 
         localStorage.setItem(
+
             "rsc_mock_answers_" +
             window.currentMockAttemptId,
 
             JSON.stringify(
                 window.currentMockAnswers
             )
+
         );
 
 
-        /* Save current question also */
         localStorage.setItem(
+
             "rsc_mock_current_question_" +
             window.currentMockAttemptId,
 
             String(
                 window.currentMockQuestionIndex
             )
+
         );
 
     }
+
+
+    /*
+     * Render immediately.
+     *
+     * Student should NOT wait for server.
+     */
+
+    renderMockQuestion();
+
+
+    /*
+     * -------------------------------------------------
+     * SAVE TO SERVER IN BACKGROUND
+     * -------------------------------------------------
+     */
 
     try{
 
-    const response =
-        await fetch(
-            "/api/mock/save-answer",
-            {
-                method:"POST",
+        const response =
+            await fetch(
+                "/api/mock/save-answer",
+                {
+                    method:"POST",
 
-                headers:{
-                    "Content-Type":
-                        "application/json"
-                },
+                    headers:{
+                        "Content-Type":
+                            "application/json"
+                    },
 
-                body:JSON.stringify({
+                    body:JSON.stringify({
 
-                    attempt_id:
-                        window.currentMockAttemptId,
+                        attempt_id:
+                            window.currentMockAttemptId,
 
-                    question_id:
-                        questionId,
+                        question_id:
+                            questionId,
 
-                    answer:
-                        answerIndex,
+                        answer:
+                            answerIndex,
 
-                    current_question:
-                        window.currentMockQuestionIndex
+                        current_question:
+                            window.currentMockQuestionIndex
 
-                })
-            }
-        );
+                    })
+                }
+            );
 
-    const data =
-        await response.json();
 
-    if(
-        !response.ok ||
-        !data.success
-    ){
+        const data =
+            await response.json();
+
+
+        if(
+            !response.ok ||
+            !data.success
+        ){
+
+            console.error(
+                "MOCK ANSWER SAVE ERROR:",
+                data
+            );
+
+            return;
+
+        }
+
+
+        /*
+         * Server response should NOT
+         * overwrite a newer local answer.
+         */
+
+        if(data.answers){
+
+            window.currentMockAnswers =
+                Object.assign(
+                    {},
+                    window.currentMockAnswers,
+                    data.answers
+                );
+
+        }
+
+
+    }catch(error){
+
+        /*
+         * Even if internet temporarily fails,
+         * localStorage already contains the answer.
+         */
 
         console.error(
-            "MOCK ANSWER SAVE ERROR:",
-            data
+            "MOCK ANSWER BACKGROUND SAVE ERROR:",
+            error
         );
-
-    }else{
-
-        window.currentMockAnswers =
-            data.answers ||
-            window.currentMockAnswers;
 
     }
 
-}catch(error){
-
-    console.error(
-        "MOCK ANSWER SAVE ERROR:",
-        error
-    );
-
 }
-    renderMockQuestion();
-
-}
-
 /* =====================================================
    MOCK — PREVIOUS
 ===================================================== */
@@ -10205,17 +10366,17 @@ function renderMockPalette(){
 
 function startMockTimer(
     durationMinutes,
-    startedAt
+    startedAt,
+    remainingOverrideMs = null
 ){
 
-    if(
-        window.mockTimerInterval
-    ){
+    if(window.mockTimerInterval){
 
         clearInterval(
             window.mockTimerInterval
         );
 
+        window.mockTimerInterval = null;
     }
 
 
@@ -10224,28 +10385,62 @@ function startMockTimer(
             "practiceTimer"
         );
 
-
     if(!timerElement){
         return;
     }
 
 
     const duration =
-        Number(durationMinutes || 60) *
+        Number(
+            durationMinutes || 60
+        ) *
         60 *
         1000;
 
 
-    let startTime;
+    let remainingBase;
+
+    let timerResumeTime =
+        Date.now();
 
 
-    if(startedAt){
+    /*
+     * -------------------------------------------------
+     * RESUME FROM SAVED REMAINING TIME
+     * -------------------------------------------------
+     */
+
+    if(
+        remainingOverrideMs !== null &&
+        Number.isFinite(
+            Number(remainingOverrideMs)
+        )
+    ){
+
+        remainingBase =
+            Math.max(
+                0,
+                Number(
+                    remainingOverrideMs
+                )
+            );
+
+    }else{
+
+        /*
+         * -------------------------------------------------
+         * FIRST START
+         * -------------------------------------------------
+         */
 
         let startString =
-            String(startedAt).trim();
+            String(
+                startedAt || ""
+            ).trim();
 
 
         if(
+            startString &&
             !startString.endsWith("Z")
         ){
 
@@ -10257,30 +10452,66 @@ function startMockTimer(
         }
 
 
-        startTime =
-            new Date(
-                startString
-            ).getTime();
+        const startTime =
+            startString
+                ? new Date(
+                    startString
+                  ).getTime()
+                : Date.now();
 
-    }else{
 
-        startTime =
-            Date.now();
+        remainingBase =
+            Math.max(
+                0,
+                duration -
+                (
+                    Date.now() -
+                    startTime
+                )
+            );
 
     }
 
 
-    async function tick(){
-        const elapsed =
-            Date.now() -
-            startTime;
+    /*
+     * -------------------------------------------------
+     * GET CURRENT REMAINING TIME
+     * -------------------------------------------------
+     */
 
+    function getRemaining(){
+
+        return Math.max(
+            0,
+            remainingBase -
+            (
+                Date.now() -
+                timerResumeTime
+            )
+        );
+
+    }
+
+
+    /*
+     * Make remaining time available globally.
+     * pagehide will use this value.
+     */
+
+    window.getCurrentMockRemainingMs =
+        getRemaining;
+
+
+    /*
+     * -------------------------------------------------
+     * TIMER TICK
+     * -------------------------------------------------
+     */
+
+    async function tick(){
 
         const remaining =
-            Math.max(
-                0,
-                duration - elapsed
-            );
+            getRemaining();
 
 
         const totalSeconds =
@@ -10303,77 +10534,31 @@ function startMockTimer(
             `${String(minutes).padStart(2,"0")}:` +
             `${String(seconds).padStart(2,"0")}`;
 
-         if(remaining <= 0){
-         
-             clearInterval(
-                 window.mockTimerInterval
-             );
-         
-             window.mockTimerInterval =
-                 null;
-         
-         
-             if(remaining <= 0){
 
-                clearInterval(
-                    window.mockTimerInterval
-                );
-            
-                window.mockTimerInterval = null;
-            
-                console.log(
-                    "MOCK TIMER EXPIRED — AUTO SUBMIT"
-                );
-            
-                /*
-                 * IMPORTANT:
-                 * Do NOT clear localStorage here.
-                 *
-                 * mockConfirmSubmit() will remove
-                 * the active session only after
-                 * successful submission.
-                 */
-            
-                await mockConfirmSubmit(true);
-            
-            }
-                     
-         
-             /* Leave exam screen */
-         
-             exitExamLock();
-         
-         
-             document.getElementById(
-                 "examShell"
-             ).style.display = "none";
-         
-         
-             document.getElementById(
-                 "chapterView"
-             ).style.display = "block";
-         
-         
-             window.currentMockAttemptId =
-                 null;
-         
-         
-             window.currentMockTestId =
-                 null;
-         
-         
-             window.currentMockQuestions =
-                 [];
-         
-         
-             window.currentMockAnswers =
-                 {};
-         
-         
-             window.currentMockQuestionIndex =
-                 0;
-         
-         }
+        /*
+         * -------------------------------------------------
+         * AUTO SUBMIT
+         * -------------------------------------------------
+         */
+
+        if(remaining <= 0){
+
+            clearInterval(
+                window.mockTimerInterval
+            );
+
+            window.mockTimerInterval =
+                null;
+
+
+            console.log(
+                "MOCK TIMER EXPIRED — AUTO SUBMIT"
+            );
+
+
+            await mockConfirmSubmit(true);
+
+        }
 
     }
 
@@ -10388,7 +10573,81 @@ function startMockTimer(
         );
 
 }
+/* =====================================================
+   MOCK — PAUSE TIMER BEFORE PAGE LEAVE / REFRESH
+===================================================== */
 
+window.addEventListener(
+    "pagehide",
+    function(){
+
+        const attemptId =
+            window.currentMockAttemptId;
+
+
+        if(!attemptId){
+            return;
+        }
+
+
+        /*
+         * Timer is currently running.
+         * Save exactly where it stopped.
+         */
+
+        if(
+            typeof window.getCurrentMockRemainingMs ===
+            "function"
+        ){
+
+            const remaining =
+                window.getCurrentMockRemainingMs();
+
+
+            localStorage.setItem(
+
+                "rsc_mock_remaining_" +
+                attemptId,
+
+                String(
+                    Math.max(
+                        0,
+                        Math.floor(
+                            remaining
+                        )
+                    )
+                )
+
+            );
+
+        }
+
+
+        /*
+         * Stop local timer immediately.
+         */
+
+        if(
+            window.mockTimerInterval
+        ){
+
+            clearInterval(
+                window.mockTimerInterval
+            );
+
+            window.mockTimerInterval =
+                null;
+
+        }
+
+
+        console.log(
+            "MOCK TIMER PAUSED:",
+            attemptId
+        );
+
+    }
+);
 /* =====================================================
    MOCK — RESUME ACTIVE ATTEMPT AFTER REFRESH
 ===================================================== */
