@@ -322,12 +322,20 @@ a{text-decoration:none}
     font-size:15px;color:#334155;transition:.2s;
 }
 .exam-option:hover{border-color:#818cf8;background:#fafaff}
-.exam-option.selected{border-color:#6366f1;background:#eef2ff;color:#312e81;font-weight:700}
+.exam-option.selected{
+    border-color:#22c55e;
+    background:#dcfce7;
+    color:#166534;
+    font-weight:700;
+}
 .exam-option .letter{
     display:inline-flex;width:30px;height:30px;align-items:center;justify-content:center;
     border-radius:9px;background:#f1f5f9;margin-right:10px;font-weight:900;color:#475569;
 }
-.exam-option.selected .letter{background:#6366f1;color:#fff}
+.exam-option.selected .letter{
+    background:#22c55e;
+    color:#fff;
+}
 .exam-nav{
     position:sticky;
     bottom:10px;
@@ -8947,13 +8955,15 @@ async function openChapterMock(){
            <button
                type="button"
                class="premium-start-btn"
-               onclick="startChapterMock('${chapter}')">
+               onclick="startChapterMock('${chapter}', ${testStatus.attempt_id})">
    
                Continue Test →
    
            </button>
    
        `;
+   
+   }
    
    }else{
    
@@ -9115,7 +9125,10 @@ function openFourChapterMock(){
     });
 
 }
-async function startChapterMock(chapter){
+async function startChapterMock(
+    chapter,
+    resumeAttemptId = null
+){
 
     console.log("START CHAPTER MOCK:", chapter);
 
@@ -9138,41 +9151,143 @@ async function startChapterMock(chapter){
     try{
 
         /* =========================================
-           STEP 1 — START MOCK ATTEMPT
-        ========================================= */
+   STEP 1 — START / CONTINUE MOCK ATTEMPT
+========================================= */
 
-        const response = await fetch(
-            "/api/mock/start",
+let data;
+
+/* -----------------------------------------
+   CONTINUE EXISTING ATTEMPT
+----------------------------------------- */
+
+if(resumeAttemptId){
+
+    console.log(
+        "CONTINUE EXISTING MOCK ATTEMPT:",
+        resumeAttemptId
+    );
+
+    const response =
+        await fetch(
+            "/api/mock/questions?" +
+            new URLSearchParams({
+                attempt_id:
+                    resumeAttemptId
+            }).toString(),
             {
-                method: "POST",
-
-                headers: {
-                    "Content-Type": "application/json"
-                },
-
-                body: JSON.stringify({
-
-                    board: selectedMockBoard,
-
-                    class_name:
-                        selectedMockClass,
-
-                    subject:
-                        selectedMockSubject,
-
-                    mock_type:
-                        "chapter",
-
-                    chapter_scope:
-                        chapter
-
-                })
+                cache:"no-store"
             }
         );
 
-        const data =
-            await response.json();
+    const questionData =
+        await response.json();
 
+    console.log(
+        "CONTINUE MOCK RESPONSE:",
+        questionData
+    );
+
+    if(
+        !response.ok ||
+        !questionData.success
+    ){
+
+        alert(
+            questionData.error ||
+            "Unable to continue mock test."
+        );
+
+        return;
+    }
+
+    data = {
+
+        success:true,
+
+        resumed:true,
+
+        attempt_id:
+            questionData.attempt_id,
+
+        mock_test_id:
+            questionData.mock_test_id,
+
+        board:
+            selectedMockBoard,
+
+        class_name:
+            selectedMockClass,
+
+        subject:
+            selectedMockSubject,
+
+        test_name:
+            `${selectedMockSubject} • ${chapter}`,
+
+        mock_type:
+            "chapter",
+
+        chapter_scope:
+            chapter,
+
+        total_questions:
+            questionData.total_questions,
+
+        total_marks:
+            questionData.total_marks,
+
+        duration_minutes:
+            questionData.duration_minutes || 60,
+
+        started_at:
+            questionData.started_at,
+
+        questionData:
+            questionData
+
+    };
+
+}else{
+
+    /* -----------------------------------------
+       FRESH START
+    ----------------------------------------- */
+
+    const response = await fetch(
+        "/api/mock/start",
+        {
+            method:"POST",
+
+            headers:{
+                "Content-Type":
+                    "application/json"
+            },
+
+            body:JSON.stringify({
+
+                board:
+                    selectedMockBoard,
+
+                class_name:
+                    selectedMockClass,
+
+                subject:
+                    selectedMockSubject,
+
+                mock_type:
+                    "chapter",
+
+                chapter_scope:
+                    chapter
+
+            })
+        }
+    );
+
+    data =
+        await response.json();
+
+}
         console.log(
             "MOCK START RESPONSE:",
             data
@@ -9198,10 +9313,9 @@ async function startChapterMock(chapter){
          
              return;
          }
-        if(
-            !response.ok ||
-            !data.success
-        ){
+         if(
+             !data.success
+         ){
 
             alert(
                 data.error ||
@@ -9222,7 +9336,30 @@ async function startChapterMock(chapter){
         window.currentMockTestId =
             data.mock_test_id;
 
-        /* Save active Mock attempt for refresh/resume */
+        /* =========================================
+            FRESH START MUST NEVER RESTORE OLD DATA
+         ========================================= */
+         
+         if(!resumeAttemptId){
+         
+             localStorage.removeItem(
+                 "rsc_mock_answers_" +
+                 data.attempt_id
+             );
+         
+             localStorage.removeItem(
+                 "rsc_mock_current_question_" +
+                 data.attempt_id
+             );
+         
+             localStorage.removeItem(
+                 "rsc_mock_remaining_" +
+                 data.attempt_id
+             );
+         
+         }
+         
+         /* Save active Mock attempt for refresh/resume */
          localStorage.setItem(
              "rsc_active_mock_attempt_id",
              String(data.attempt_id)
@@ -9314,20 +9451,74 @@ async function startChapterMock(chapter){
 
             return;
         }
-      /* =================================================
-      RESTORE MOCK ANSWERS
-      SERVER IS THE SOURCE OF TRUTH
-   ================================================= */
-   
-   window.currentMockAnswers =
-       questionData.answers || {};
+     /* =========================================
+         RESTORE MOCK ANSWERS
+      ========================================= */
+      
+      window.currentMockAnswers = {};
       
       
-      /*
-       * -------------------------------------------------
-       * RESTORE CURRENT QUESTION
-       * -------------------------------------------------
-       */
+      /* -----------------------------------------
+         SERVER ANSWERS
+      ----------------------------------------- */
+      
+      if(
+          questionData &&
+          questionData.answers
+      ){
+      
+          window.currentMockAnswers =
+              Object.assign(
+                  {},
+                  questionData.answers
+              );
+      
+      }
+      
+      
+      /* -----------------------------------------
+         CONTINUE TEST:
+         RESTORE LOCAL ANSWERS ALSO
+      ----------------------------------------- */
+      
+      if(resumeAttemptId){
+      
+          const savedAnswers =
+              localStorage.getItem(
+                  "rsc_mock_answers_" +
+                  window.currentMockAttemptId
+              );
+      
+          if(savedAnswers){
+      
+              try{
+      
+                  window.currentMockAnswers =
+                      Object.assign(
+                          {},
+                          window.currentMockAnswers,
+                          JSON.parse(
+                              savedAnswers
+                          )
+                      );
+      
+              }catch(error){
+      
+                  console.error(
+                      "LOCAL MOCK ANSWER RESTORE ERROR:",
+                      error
+                  );
+      
+              }
+      
+          }
+      
+      }
+      
+      
+      /* =========================================
+         RESTORE CURRENT QUESTION
+      ========================================= */
       
       window.currentMockQuestionIndex =
           Number(
@@ -9335,19 +9526,22 @@ async function startChapterMock(chapter){
           );
       
       
-      const savedQuestionIndex =
-          localStorage.getItem(
-              "rsc_mock_current_question_" +
-              window.currentMockAttemptId
-          );
+      if(resumeAttemptId){
       
-      
-      if(savedQuestionIndex !== null){
-      
-          window.currentMockQuestionIndex =
-              Number(
-                  savedQuestionIndex
+          const savedQuestionIndex =
+              localStorage.getItem(
+                  "rsc_mock_current_question_" +
+                  window.currentMockAttemptId
               );
+      
+          if(savedQuestionIndex !== null){
+      
+              window.currentMockQuestionIndex =
+                  Number(
+                      savedQuestionIndex
+                  );
+      
+          }
       
       }
 
