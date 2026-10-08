@@ -8444,7 +8444,9 @@ document.addEventListener(
 
         await loadPackageBoards();
 
-         await restorePurchasedPackageStatuses();
+        await restorePurchasedPackageStatuses();
+
+        await resumeActiveMockAttempt();
          
         }
 );
@@ -9394,14 +9396,7 @@ async function startChapterMock(chapter){
            STEP 5 — START MOCK EXAM UI
         ========================================= */
 
-         window.currentMockQuestionIndex =
-                Number(data.current_question || 0);
-
-         window.currentMockAnswers =
-                data.answers || {};
-
-
-        /* Hide Mock Test selection screens */
+         * Hide Mock Test selection screens */
 
         const mockHome =
             document.getElementById(
