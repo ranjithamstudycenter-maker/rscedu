@@ -9413,166 +9413,155 @@ def mock_submit():
     score = 0
     review = []
 
+    # Create quick lookup by question ID
+    row_map = {
+        str(row["id"]): row
+        for row in question_rows
+    }
+
     for question_id in question_ids:
 
         qid = str(question_id)
 
+        row = row_map.get(qid)
+
         user_answer = answers.get(qid, "")
+
+        # -------------------------------------------------
+        # NORMALIZE STUDENT ANSWER
+        # -------------------------------------------------
 
         if user_answer is None or user_answer == "":
             user_answer = ""
-        
+
         else:
-        
+
             try:
-        
+
                 answer_index = int(user_answer)
-        
+
                 if 0 <= answer_index <= 3:
-        
                     user_answer = "ABCD"[answer_index]
-        
                 else:
-        
                     user_answer = ""
-        
+
             except (ValueError, TypeError):
-        
+
                 user_answer = str(
                     user_answer
                 ).strip().upper()
-        
-        
+
+        # -------------------------------------------------
+        # CORRECT ANSWER
+        # -------------------------------------------------
+
         correct_answer = correct_map.get(
             qid,
             ""
         )
+
         marks = marks_map.get(
             qid,
             1
         )
 
-        # -----------------------------
-        # UNANSWERED
-        # -----------------------------
+        # -------------------------------------------------
+        # SCORE
+        # -------------------------------------------------
 
         if not user_answer:
 
             unanswered += 1
-
-        # -----------------------------
-        # CORRECT
-        # -----------------------------
+            result_status = "unanswered"
 
         elif user_answer == correct_answer:
 
             correct_answers += 1
-
             score += marks
-
-        # -----------------------------
-        # WRONG
-        # -----------------------------
+            result_status = "correct"
 
         else:
 
             incorrect_answers += 1
-     correct_letter = (
-    str(
-        row["correct_answer"] or ""
-    )
-    .strip()
-    .upper()
-)
+            result_status = "incorrect"
 
-letter_to_index = {
-    "A": 0,
-    "B": 1,
-    "C": 2,
-    "D": 3
-}
+        # -------------------------------------------------
+        # REVIEW DATA
+        # -------------------------------------------------
 
-correct_index =
-    letter_to_index.get(
-        correct_letter
-    )
-
-student_answer =
-    answers.get(
-        qid,
-        None
-    )
-
-if student_answer is not None:
-
-    try:
-        student_answer = int(
-            student_answer
+        correct_letter = (
+            correct_answer
+            .strip()
+            .upper()
         )
-    except:
+
+        letter_to_index = {
+            "A": 0,
+            "B": 1,
+            "C": 2,
+            "D": 3
+        }
+
+        correct_index = letter_to_index.get(
+            correct_letter
+        )
+
         student_answer = None
 
-if student_answer is None:
+        if user_answer:
 
-    result_status = "unanswered"
+            student_answer = letter_to_index.get(
+                user_answer
+            )
 
-elif student_answer == correct_index:
+        if row:
 
-    result_status = "correct"
+            review.append({
 
-else:
+                "id":
+                    row["id"],
 
-    result_status = "incorrect"
+                "question":
+                    row["question"],
 
+                "options": [
+                    row["option_a"],
+                    row["option_b"],
+                    row["option_c"],
+                    row["option_d"]
+                ],
 
-review.append({
+                "student_answer":
+                    student_answer,
 
-    "id":
-        row["id"],
+                "correct_answer":
+                    correct_index,
 
-    "question":
-        row["question"],
+                "correct_letter":
+                    correct_letter,
 
-    "options": [
+                "result":
+                    result_status,
 
-        row["option_a"],
-        row["option_b"],
-        row["option_c"],
-        row["option_d"]
+                "explanation":
+                    row["explanation"] or "",
 
-    ],
+                "hint":
+                    row["hint"] or "",
 
-    "student_answer":
-        student_answer,
+                "topic":
+                    row["topic"] or "",
 
-    "correct_answer":
-        correct_index,
+                "subtopic":
+                    row["subtopic"] or "",
 
-    "correct_letter":
-        correct_letter,
+                "difficulty":
+                    row["difficulty"] or "",
 
-    "result":
-        result_status,
+                "marks":
+                    row["marks"] or 2
 
-    "explanation":
-        row["explanation"] or "",
-
-    "hint":
-        row["hint"] or "",
-
-    "topic":
-        row["topic"] or "",
-
-    "subtopic":
-        row["subtopic"] or "",
-
-    "difficulty":
-        row["difficulty"] or "",
-
-    "marks":
-        row["marks"] or 2
-
-})
+            })
     # -------------------------------------------------
     # PERCENTAGE
     # -------------------------------------------------
