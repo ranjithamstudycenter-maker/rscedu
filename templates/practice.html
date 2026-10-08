@@ -10325,44 +10325,30 @@ function startMockTimer(
                  null;
          
          
-             const expiredAttemptId =
-                 window.currentMockAttemptId;
-         
-         
-             /* Clear active browser session */
-         
-             localStorage.removeItem(
-                 "rsc_active_mock_attempt_id"
-             );
-         
-         
-             localStorage.removeItem(
-                 "rsc_mock_answers_" +
-                 expiredAttemptId
-             );
-         
-         
              if(remaining <= 0){
 
-                   clearInterval(
-                       window.mockTimerInterval
-                   );
-               
-                   window.mockTimerInterval = null;
-               
-                   console.log(
-                       "MOCK TIMER EXPIRED — AUTO SUBMIT"
-                   );
-               
-                   /*
-                    * DO NOT clear localStorage here.
-                    * mockConfirmSubmit() will clear it
-                    * only after successful submission.
-                    */
-               
-                   await mockConfirmSubmit(true);
-               
-               }
+                clearInterval(
+                    window.mockTimerInterval
+                );
+            
+                window.mockTimerInterval = null;
+            
+                console.log(
+                    "MOCK TIMER EXPIRED — AUTO SUBMIT"
+                );
+            
+                /*
+                 * IMPORTANT:
+                 * Do NOT clear localStorage here.
+                 *
+                 * mockConfirmSubmit() will remove
+                 * the active session only after
+                 * successful submission.
+                 */
+            
+                await mockConfirmSubmit(true);
+            
+            }
                      
          
              /* Leave exam screen */
