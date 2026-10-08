@@ -11595,21 +11595,58 @@ async function viewMockResultAnalysis(
                 "none";
         }
 
-        /* -----------------------------
-           SHOW RESULT
-        ----------------------------- */
-
-        const resultShell =
-            document.getElementById(
-                "resultShell"
-            );
-
-        if(resultShell){
-
-            resultShell.style.display =
-                "block";
-
-        }
+       /* -----------------------------
+         SHOW MOCK RESULT
+      ----------------------------- */
+      
+      const mockShell =
+          document.getElementById(
+              "mockShell"
+          );
+      
+      const resultShell =
+          document.getElementById(
+              "resultShell"
+          );
+      
+      
+      /*
+         IMPORTANT:
+      
+         resultShell is originally inside
+         practiceShell.
+      
+         Move it into mockShell so that
+         Mock Result Analysis is visible
+         after Mock Test submission.
+      */
+      
+      if(mockShell){
+      
+          mockShell.style.display =
+              "block";
+      
+      }
+      
+      
+      if(resultShell){
+      
+          if(
+              mockShell &&
+              resultShell.parentElement !== mockShell
+          ){
+      
+              mockShell.appendChild(
+                  resultShell
+              );
+      
+          }
+      
+      
+          resultShell.style.display =
+              "block";
+      
+      }
 
         /* -----------------------------
            TITLE
