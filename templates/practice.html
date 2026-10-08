@@ -9314,65 +9314,13 @@ async function startChapterMock(chapter){
 
             return;
         }
-       /*
-       * -------------------------------------------------
-       * RESTORE SERVER ANSWERS
-       * -------------------------------------------------
-       */
-      
-      window.currentMockAnswers =
-          questionData.answers || {};
-      
-      
-      /*
-       * -------------------------------------------------
-       * RESTORE LOCAL ANSWERS
-       *
-       * LocalStorage is important because the student
-       * may refresh before the server save finishes.
-       * -------------------------------------------------
-       */
-      
-      const savedAnswers =
-          localStorage.getItem(
-              "rsc_mock_answers_" +
-              window.currentMockAttemptId
-          );
-      
-      
-      if(savedAnswers){
-      
-          try{
-      
-              const localAnswers =
-                  JSON.parse(
-                      savedAnswers
-                  );
-      
-      
-              /*
-               * Local answers take priority.
-               * Server answers are still preserved.
-               */
-      
-              window.currentMockAnswers =
-                  Object.assign(
-                      {},
-                      window.currentMockAnswers,
-                      localAnswers
-                  );
-      
-      
-          }catch(error){
-      
-              console.error(
-                  "MOCK LOCAL ANSWER RESTORE ERROR:",
-                  error
-              );
-      
-          }
-      
-      }
+      /* =================================================
+      RESTORE MOCK ANSWERS
+      SERVER IS THE SOURCE OF TRUTH
+   ================================================= */
+   
+   window.currentMockAnswers =
+       questionData.answers || {};
       
       
       /*
