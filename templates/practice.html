@@ -9958,8 +9958,13 @@ if(resumeAttemptId){
         }
 
 
-        examShell.style.display = "block";
-        document.body.classList.add("mock-exam-active");
+         examShell.style.display = "block";
+
+         /* Remove Mock screen visibility lock */
+         document.body.classList.remove("mock-exam-active");
+         
+         /* Show the actual exam screen */
+         document.body.classList.add("exam-running");
 
 
         /* =========================================
