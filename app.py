@@ -841,6 +841,19 @@ def init_db():
         )
     )
     """)
+    
+    # Save name/state collected before package payment
+    for column_name, column_type in [
+        ("student_name", "TEXT DEFAULT ''"),
+        ("student_state", "TEXT DEFAULT ''")
+    ]:
+        try:
+            c.execute(
+                f"ALTER TABLE mock_purchases ADD COLUMN {column_name} {column_type}"
+            )
+        except sqlite3.OperationalError:
+            pass
+
     conn.commit()
     conn.close()
     
@@ -1703,6 +1716,20 @@ def mock_create_order():
         data.get("class_name", "")
     ).strip()
 
+    student_name = str(
+        data.get("name", "")
+    ).strip()[:80]
+
+    student_state = str(
+        data.get("state", "")
+    ).strip()[:80]
+
+    if not student_name or not student_state:
+        return jsonify({
+            "success": False,
+            "error": "Student name and state are required."
+        }), 400
+
     # -------------------------------------------------
     # VALIDATION
     # -------------------------------------------------
@@ -1883,13 +1910,15 @@ def mock_create_order():
                 subject,
                 board,
                 class_name,
+                student_name,
+                student_state,
                 amount,
                 razorpay_order_id,
                 razorpay_payment_id,
                 payment_status,
                 purchased_at
             )
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
 
             practice_id,
@@ -9309,6 +9338,32 @@ def mock_submit():
     attempt = c.fetchone()
 
     if not attempt:
+        
+    # Prefer the name/state entered before package payment.
+    c.execute("""
+        SELECT student_name, student_state
+        FROM mock_purchases
+        WHERE practice_id=?
+          AND board=?
+          AND class_name=?
+          AND payment_status='paid'
+        ORDER BY purchased_at DESC, id DESC
+        LIMIT 1
+    """, (
+        practice_id,
+        attempt["board"],
+        attempt["class_name"]
+    ))
+
+    package_student = c.fetchone()
+
+    if package_student:
+        if package_student["student_name"]:
+            student_name = package_student["student_name"]
+
+        if package_student["student_state"]:
+            student_state = package_student["student_state"]
+
         conn.close()
 
         return jsonify({
