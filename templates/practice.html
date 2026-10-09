@@ -2795,7 +2795,29 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
         border-radius: 16px;
     }
 }
+/* Mock result section navigation */
+.mock-result-nav {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 12px;
+    flex-wrap: wrap;
+    margin: 20px 0 26px;
+    padding: 14px 0;
+    border-top: 1px solid #e2e8f0;
+}
 
+.mock-result-nav button {
+    min-height: 44px;
+}
+
+@media (max-width: 600px) {
+    .mock-result-nav button {
+        flex: 1;
+        padding: 11px 12px;
+        font-size: 12px;
+    }
+}
 }
 </style>
 
@@ -3465,7 +3487,18 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                          </div>
                      </div>
                  </div>
-           
+            <div class="mock-result-nav">
+                <button type="button" class="mock-back-btn"
+                        onclick="backToMockChapter()">
+                    ← Back to Test List
+                </button>
+            
+                <button type="button" class="mock-next-btn"
+                        onclick="goToMockResultSection('review')">
+                    Continue to Review →
+                </button>
+            </div>
+            
             <!-- SECTION 2: QUESTION REVIEW -->
             <div class="mock-question-review-section">
             
@@ -3475,7 +3508,17 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
             
                 <!-- Required by renderReview() -->
                 <div id="reviewContainer"></div>
-            
+                  <div class="mock-result-nav">
+                      <button type="button" class="mock-back-btn"
+                              onclick="goToMockResultSection('analysis')">
+                          ← Back to Result
+                      </button>
+                  
+                      <button type="button" class="mock-next-btn"
+                              onclick="goToMockResultSection('leaderboard')">
+                          Continue to Leaderboard →
+                      </button>
+                  </div>
             </div>
 
            <!-- SECTION 3: LEADERBOARD -->
@@ -3521,7 +3564,12 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                 </div>
             
                 <div id="mockLeaderboardContent"></div>
-            
+                  <div class="mock-result-nav">
+                      <button type="button" class="mock-back-btn"
+                              onclick="goToMockResultSection('review')">
+                          ← Back to Review
+                      </button>                   
+                  </div>
             </div>
                    
                <!-- MOCK RESULT: ONLY BACK BUTTON -->
@@ -12567,95 +12615,105 @@ async function loadMockLeaderboard(
     }
 
 }
+function goToMockResultSection(section) {
+    const targets = {
+        analysis: ".mock-result-analysis-section",
+        review: ".mock-question-review-section",
+        leaderboard: "#mockLeaderboardCard"
+    };
+
+    const target = document.querySelector(
+        `#resultShell ${targets[section] || ""}`
+    );
+
+    if (!target) {
+        console.warn("Mock result section not found:", section);
+        return;
+    }
+
+    target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
+function finishMockResultNavigation() {
+    const resultActions = document.getElementById("mockResultActions");
+
+    if (resultActions) {
+        resultActions.scrollIntoView({
+            behavior: "smooth",
+            block: "center"
+        });
+    }
+}
+
 function backToMockChapter(){
 
-    /* Stop any active timer */
-    if(
-        window.mockTimerInterval
-    ){
-
-        clearInterval(
-            window.mockTimerInterval
-        );
-
-        window.mockTimerInterval =
-            null;
-
+    // Stop any active mock timer
+    if(window.mockTimerInterval){
+        clearInterval(window.mockTimerInterval);
+        window.mockTimerInterval = null;
     }
 
-    const resultShell =
-        document.getElementById(
-            "resultShell"
-        );
+    const resultShell = document.getElementById("resultShell");
+    const examShell = document.getElementById("examShell");
+    const mockShell = document.getElementById("mockShell");
 
     if(resultShell){
-
-        resultShell.style.display =
-            "none";
-
+        resultShell.style.display = "none";
+        resultShell.classList.remove("mock-result-mode");
     }
-
-    const examShell =
-        document.getElementById(
-            "examShell"
-        );
 
     if(examShell){
-
-        examShell.style.display =
-            "none";
-
+        examShell.style.display = "none";
     }
 
-    document.body.classList.remove(
-        "mock-exam-active"
-    );
-
-    document.body.classList.remove(
-        "exam-running"
-    );
-
-    const mockShell =
-        document.getElementById(
-            "mockShell"
-        );
+    document.body.classList.remove("mock-exam-active");
+    document.body.classList.remove("exam-running");
 
     if(mockShell){
-
-        mockShell.style.display =
-            "block";
-
+        mockShell.style.display = "block";
     }
 
-    document.getElementById(
-        "mockHomeView"
-    ).style.display = "none";
+    const mockInfo = window.currentMockTestInfo || {};
+    const mockType = String(mockInfo.mock_type || "").toLowerCase();
 
-    document.getElementById(
-        "fourChapterView"
-    ).style.display = "none";
+    const chapterView = document.getElementById("chapterView");
+    const fourChapterView = document.getElementById("fourChapterView");
+    const finalView = document.getElementById("finalView");
+    const mockHomeView = document.getElementById("mockHomeView");
 
-    document.getElementById(
-        "finalView"
-    ).style.display = "none";
+    // Hide all mock lists first
+    if(chapterView) chapterView.style.display = "none";
+    if(fourChapterView) fourChapterView.style.display = "none";
+    if(finalView) finalView.style.display = "none";
+    if(mockHomeView) mockHomeView.style.display = "none";
 
-   const resultScreen = document.getElementById("resultShell");
-
-   if (resultScreen) {
-       resultScreen.classList.remove("mock-result-mode");
-       resultScreen.style.display = "none";
-   }
-   
-   document.body.classList.remove("mock-exam-active");
-   
-    document.getElementById(
-        "chapterView"
-    ).style.display = "block";
-
-    /* Refresh status */
-    openChapterMock();
-
+    // Return to the matching test list
+    if(mockType.includes("final")){
+        if(finalView) finalView.style.display = "block";
+        if(finalView) finalView.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+    else if(
+        mockType.includes("four") ||
+        mockType.includes("combined")
+    ){
+        if(fourChapterView) fourChapterView.style.display = "block";
+        if(fourChapterView) fourChapterView.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+    else{
+        if(chapterView) chapterView.style.display = "block";
+        openChapterMock();
+    }
 }
+
    
 function continueSelectedChapter(){
 
