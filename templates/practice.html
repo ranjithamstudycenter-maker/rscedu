@@ -2795,6 +2795,17 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
         border-radius: 16px;
     }
 }
+
+/* Show only the selected Mock Result page */
+#resultShell .mock-result-analysis-section {
+    display: block;
+}
+
+#resultShell .mock-question-review-section,
+#resultShell #mockLeaderboardCard {
+    display: none;
+}
+
 /* Mock result section navigation */
 .mock-result-nav {
     display: flex;
@@ -12186,7 +12197,7 @@ async function viewMockResultAnalysis(
         await loadMockLeaderboard(
             data.mock_test_id
         );
-
+        goToMockResultSection("analysis");
         /* -----------------------------
            ACTION BUTTONS
         ----------------------------- */
@@ -12615,23 +12626,38 @@ async function loadMockLeaderboard(
     }
 
 }
+
 function goToMockResultSection(section) {
-    const targets = {
-        analysis: ".mock-result-analysis-section",
-        review: ".mock-question-review-section",
-        leaderboard: "#mockLeaderboardCard"
+
+    const sections = {
+        analysis: document.querySelector(
+            "#resultShell .mock-result-analysis-section"
+        ),
+        review: document.querySelector(
+            "#resultShell .mock-question-review-section"
+        ),
+        leaderboard: document.getElementById(
+            "mockLeaderboardCard"
+        )
     };
 
-    const target = document.querySelector(
-        `#resultShell ${targets[section] || ""}`
-    );
-
-    if (!target) {
-        console.warn("Mock result section not found:", section);
+    if (!sections[section]) {
+        console.warn("Mock result page not found:", section);
         return;
     }
 
-    target.scrollIntoView({
+    // Hide every result page
+    Object.values(sections).forEach(function(page) {
+        if (page) {
+            page.style.display = "none";
+        }
+    });
+
+    // Show only the selected page
+    sections[section].style.display = "block";
+
+    // Scroll to the selected page
+    sections[section].scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
