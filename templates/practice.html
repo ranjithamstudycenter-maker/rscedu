@@ -2703,6 +2703,12 @@ body.mock-exam-active #resultShell.mock-result-mode {
 body.mock-exam-active #mockShell > .mock-payment-actions {
     display: none !important;
 }
+
+/* Hide the empty bar whenever mock result analysis is displayed */
+#mockShell:has(#resultShell.mock-result-mode) > .mock-payment-actions {
+    display: none !important;
+}
+   
 /* FOCUS AREA CARD DESIGN */
 #resultShell #practiceFocusCard {
     background: linear-gradient(135deg, #f8faff, #eef2ff) !important;
