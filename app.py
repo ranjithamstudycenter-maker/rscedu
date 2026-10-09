@@ -9339,37 +9339,37 @@ def mock_submit():
 
     if not attempt:
         
-    # Prefer the name/state entered before package payment.
-    c.execute("""
-        SELECT student_name, student_state
-        FROM mock_purchases
-        WHERE practice_id=?
-          AND board=?
-          AND class_name=?
-          AND payment_status='paid'
-        ORDER BY purchased_at DESC, id DESC
-        LIMIT 1
-    """, (
-        practice_id,
-        attempt["board"],
-        attempt["class_name"]
-    ))
-
-    package_student = c.fetchone()
-
-    if package_student:
-        if package_student["student_name"]:
-            student_name = package_student["student_name"]
-
-        if package_student["student_state"]:
-            student_state = package_student["student_state"]
-
-        conn.close()
-
-        return jsonify({
-            "success": False,
-            "error": "Mock attempt not found."
-        }), 404
+            # Prefer the name/state entered before package payment.
+            c.execute("""
+                SELECT student_name, student_state
+                FROM mock_purchases
+                WHERE practice_id=?
+                  AND board=?
+                  AND class_name=?
+                  AND payment_status='paid'
+                ORDER BY purchased_at DESC, id DESC
+                LIMIT 1
+            """, (
+                practice_id,
+                attempt["board"],
+                attempt["class_name"]
+            ))
+        
+            package_student = c.fetchone()
+        
+            if package_student:
+                if package_student["student_name"]:
+                    student_name = package_student["student_name"]
+        
+                if package_student["student_state"]:
+                    student_state = package_student["student_state"]
+        
+                conn.close()
+        
+                return jsonify({
+                    "success": False,
+                    "error": "Mock attempt not found."
+                }), 404
 
     # -------------------------------------------------
     # PREVENT DOUBLE SUBMISSION
