@@ -11434,22 +11434,51 @@ async function mockConfirmSubmit(
            SHOW RESULT
         ----------------------------- */
 
-        const resultShell =
-            document.getElementById(
-                "resultShell"
-            );
-
-        if(resultShell){
-
-             resultShell.style.display =
-                 "block";
+        
+         /* ---------------------------------
+            SHOW ONLY MOCK RESULT ANALYSIS
+         ---------------------------------- */
          
-             resultShell.scrollIntoView({
-                 behavior: "smooth",
-                 block: "start"
-             });
+         const mockShell =
+             document.getElementById("mockShell");
          
+         const resultShell =
+             document.getElementById("resultShell");
+         
+         const examShell =
+             document.getElementById("examShell");
+         
+         const chapterView =
+             document.getElementById("mockChapterView");
+         
+         if (examShell) {
+             examShell.style.display = "none";
          }
+         
+         if (chapterView) {
+             chapterView.style.display = "none";
+         }
+         
+         if (mockShell) {
+             mockShell.style.display = "block";
+         }
+         
+         if (resultShell) {
+             if (mockShell && resultShell.parentElement !== mockShell) {
+                 mockShell.appendChild(resultShell);
+             }
+         
+             resultShell.style.display = "block";
+             resultShell.classList.add("mock-result-mode");
+         }
+         
+         document.body.classList.remove("exam-running");
+         
+         resultShell?.scrollIntoView({
+             behavior: "smooth",
+             block: "start"
+         });
+
 
 
         /* -----------------------------
