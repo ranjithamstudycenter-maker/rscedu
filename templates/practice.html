@@ -2829,6 +2829,52 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
         font-size: 12px;
     }
 }
+/* Mock Result - Bottom Back to Test List */
+#mockResultActions {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center;
+    width: 100%;
+    margin: 24px auto 10px !important;
+    padding: 20px;
+    border: 1px solid #dbeafe;
+    border-radius: 18px;
+    background: linear-gradient(135deg, #ffffff, #eef2ff);
+    box-shadow: 0 8px 24px rgba(79, 70, 229, 0.10);
+}
+
+#mockResultActions button {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-height: 48px;
+    padding: 13px 28px !important;
+    border: none !important;
+    border-radius: 14px !important;
+    background: linear-gradient(135deg, #2563eb, #7c3aed) !important;
+    color: #ffffff !important;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 8px 20px rgba(79, 70, 229, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+#mockResultActions button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 26px rgba(79, 70, 229, 0.32);
+}
+
+@media (max-width: 600px) {
+    #mockResultActions {
+        padding: 14px;
+    }
+
+    #mockResultActions button {
+        width: 100%;
+        padding: 12px 16px !important;
+    }
+}
 }
 </style>
 
@@ -3498,17 +3544,6 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                          </div>
                      </div>
                  </div>
-            <div class="mock-result-nav">
-                <button type="button" class="mock-back-btn"
-                        onclick="backToMockChapter()">
-                    ← Back to Test List
-                </button>
-            
-                <button type="button" class="mock-next-btn"
-                        onclick="goToMockResultSection('review')">
-                    Continue to Review →
-                </button>
-            </div>
             
             <!-- SECTION 2: QUESTION REVIEW -->
             <div class="mock-question-review-section">
