@@ -11992,9 +11992,10 @@ async function viewMockResultAnalysis(
       /* -----------------------------------------
          SHOW RESULT ANALYSIS SCREEN ONLY
       ------------------------------------------ */
-      
-      
-      
+      if (mockShell) {
+          mockShell.style.display = "block";
+      }
+            
       if (resultShell) {
       
           if (
