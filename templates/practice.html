@@ -2519,7 +2519,19 @@ body.mock-exam-active #practiceHero,
 body.mock-exam-active .mode-switch{
     display:none !important;
 }
+/* MOCK RESULT: HIDE UNUSED PRACTICE SECTIONS */
 
+body.mock-exam-active .practice-page > :not(#mockShell) {
+    display: none !important;
+}
+
+body.mock-exam-active #mockShell {
+    display: block !important;
+}
+
+body.mock-exam-active #resultShell.mock-result-mode {
+    display: block !important;
+}
 /* ==========================================
    PROFESSIONAL MOCK RESULT + LEADERBOARD
 ========================================== */
@@ -2687,7 +2699,52 @@ body.mock-exam-active .mode-switch{
         grid-template-columns: minmax(0, 1fr);
     }
 }
+/* PROFESSIONAL FOCUS AREAS */
 
+#resultShell #practiceFocusCard {
+    position: relative;
+    overflow: hidden;
+    padding: 24px !important;
+    border: 1px solid #c7d2fe !important;
+    border-radius: 20px !important;
+    background:
+        radial-gradient(circle at top right, rgba(129,140,248,.14), transparent 38%),
+        linear-gradient(135deg, #ffffff 0%, #f5f7ff 55%, #eef2ff 100%) !important;
+    box-shadow: 0 10px 28px rgba(79,70,229,.08);
+}
+
+#resultShell #practiceFocusCard h3 {
+    font-size: 20px !important;
+    font-weight: 800 !important;
+    letter-spacing: -.3px;
+}
+
+#resultShell #practiceFocusContent {
+    display: grid !important;
+    grid-template-columns: repeat(2, minmax(0, 1fr)) !important;
+    gap: 14px !important;
+}
+
+#resultShell #practiceFocusContent > * {
+    min-width: 0;
+    padding: 18px !important;
+    border: 1px solid #dbe3f0;
+    border-radius: 16px;
+    background: #ffffff;
+    box-shadow: 0 5px 16px rgba(15,23,42,.05);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+#resultShell #practiceFocusContent > *:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 24px rgba(79,70,229,.10);
+}
+
+@media (max-width: 700px) {
+    #resultShell #practiceFocusContent {
+        grid-template-columns: 1fr !important;
+    }
+}
 }
 </style>
 
@@ -12511,6 +12568,15 @@ function backToMockChapter(){
         "finalView"
     ).style.display = "none";
 
+   const resultScreen = document.getElementById("resultShell");
+
+   if (resultScreen) {
+       resultScreen.classList.remove("mock-result-mode");
+       resultScreen.style.display = "none";
+   }
+   
+   document.body.classList.remove("mock-exam-active");
+   
     document.getElementById(
         "chapterView"
     ).style.display = "block";
