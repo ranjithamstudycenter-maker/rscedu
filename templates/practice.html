@@ -2699,6 +2699,10 @@ body.mock-exam-active #resultShell.mock-result-mode {
         grid-template-columns: minmax(0, 1fr);
     }
 }
+/* HIDE EMPTY MOCK NAVIGATION BAR ON RESULT PAGE */
+body.mock-exam-active #mockShell > .mock-payment-actions {
+    display: none !important;
+}
 /* FOCUS AREA CARD DESIGN */
 #resultShell #practiceFocusCard {
     background: linear-gradient(135deg, #f8faff, #eef2ff) !important;
