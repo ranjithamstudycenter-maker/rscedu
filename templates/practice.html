@@ -5780,7 +5780,66 @@ function selectSubject(subject, card){
     }
 
 }
-async function startCombinedPackagePayment(subject, button){
+
+let pendingPackageSubject = "";
+let pendingPackageButton = null;
+
+function startCombinedPackagePayment(subject, button) {
+    if (!packageSelectedBoard || !packageSelectedClass || !subject) {
+        alert("Please select Subject, Board and Class first.");
+        return;
+    }
+
+    pendingPackageSubject = subject;
+    pendingPackageButton = button;
+
+    document.getElementById("packageStudentModal").style.display = "flex";
+    document.getElementById("packageStudentName").focus();
+}
+
+function closePackageStudentModal() {
+    document.getElementById("packageStudentModal").style.display = "none";
+}
+
+function confirmPackageStudentDetails() {
+    const name = document.getElementById("packageStudentName").value.trim();
+    const state = document.getElementById("packageStudentState").value;
+    const payBtn = document.getElementById("packageStudentPayBtn");
+
+    if (!name) {
+        alert("Please enter your name.");
+        document.getElementById("packageStudentName").focus();
+        return;
+    }
+
+    if (!state) {
+        alert("Please select your state.");
+        document.getElementById("packageStudentState").focus();
+        return;
+    }
+
+    payBtn.disabled = true;
+    payBtn.textContent = "Opening payment...";
+
+    closePackageStudentModal();
+
+    processCombinedPackagePayment(
+        pendingPackageSubject,
+        pendingPackageButton,
+        name,
+        state
+    ).finally(() => {
+        payBtn.disabled = false;
+        payBtn.textContent = "Pay Now →";
+    });
+}
+
+async function processCombinedPackagePayment(
+    subject,
+    button,
+    studentName,
+    studentState
+){
 
     const payBtn = button;
 
@@ -5840,14 +5899,12 @@ async function startCombinedPackagePayment(subject, button){
                 },
 
                 body: JSON.stringify({
-
-                      subject: packageSelectedSubject,
-                  
-                      board: packageSelectedBoard,
-                  
-                      class_name: packageSelectedClass
-
-                })
+                   subject: packageSelectedSubject,
+                   board: packageSelectedBoard,
+                   class_name: packageSelectedClass,
+                   name: studentName,
+                   state: studentState
+               })
 
             }
         );
@@ -12681,6 +12738,117 @@ function openFinalMock(){
 
 });  
 </script>
+
+<!-- STUDENT DETAILS BEFORE PACKAGE PAYMENT -->
+<div id="packageStudentModal" class="package-student-overlay" style="display:none;">
+    <div class="package-student-modal">
+        <button type="button" class="package-modal-close"
+                onclick="closePackageStudentModal()" aria-label="Close">×</button>
+
+        <div class="package-modal-icon">🎓</div>
+        <h2>Before You Continue</h2>
+        <p>Enter your details to appear on your class leaderboard.</p>
+
+        <label for="packageStudentName">Student Name</label>
+        <input id="packageStudentName" type="text"
+               maxlength="80" placeholder="Enter your full name"
+               autocomplete="name" required>
+
+        <label for="packageStudentState">State</label>
+        <select id="packageStudentState" required>
+            <option value="">Select your state</option>
+            <option>Andhra Pradesh</option>
+            <option>Arunachal Pradesh</option>
+            <option>Assam</option>
+            <option>Bihar</option>
+            <option>Chhattisgarh</option>
+            <option>Goa</option>
+            <option>Gujarat</option>
+            <option>Haryana</option>
+            <option>Himachal Pradesh</option>
+            <option>Jharkhand</option>
+            <option>Karnataka</option>
+            <option>Kerala</option>
+            <option>Madhya Pradesh</option>
+            <option>Maharashtra</option>
+            <option>Manipur</option>
+            <option>Meghalaya</option>
+            <option>Mizoram</option>
+            <option>Nagaland</option>
+            <option>Odisha</option>
+            <option>Punjab</option>
+            <option>Rajasthan</option>
+            <option>Sikkim</option>
+            <option>Tamil Nadu</option>
+            <option>Telangana</option>
+            <option>Tripura</option>
+            <option>Uttar Pradesh</option>
+            <option>Uttarakhand</option>
+            <option>West Bengal</option>
+            <option>Other</option>
+        </select>
+
+        <button type="button" id="packageStudentPayBtn"
+                class="package-student-pay"
+                onclick="confirmPackageStudentDetails()">
+            Pay Now →
+        </button>
+
+        <p class="package-modal-note">
+            Your details will be used to display your mock-test leaderboard results.
+        </p>
+    </div>
+</div>
+
+<style>
+.package-student-overlay {
+    position:fixed; inset:0; z-index:99999;
+    display:flex; align-items:center; justify-content:center;
+    padding:18px; background:rgba(15,23,42,.68);
+    backdrop-filter:blur(6px);
+}
+.package-student-modal {
+    position:relative; width:100%; max-width:440px;
+    padding:30px; border-radius:24px; background:#fff;
+    box-shadow:0 25px 80px rgba(0,0,0,.25);
+}
+.package-modal-close {
+    position:absolute; top:12px; right:16px;
+    border:0; background:transparent; font-size:28px;
+    cursor:pointer; color:#64748b;
+}
+.package-modal-icon { font-size:36px; text-align:center; }
+.package-student-modal h2 {
+    text-align:center; color:#172554; margin:8px 0;
+}
+.package-student-modal p {
+    text-align:center; color:#64748b; font-size:13px;
+    line-height:1.6; margin-bottom:20px;
+}
+.package-student-modal label {
+    display:block; margin:14px 0 6px;
+    font-size:13px; font-weight:700; color:#334155;
+}
+.package-student-modal input,
+.package-student-modal select {
+    width:100%; padding:13px; border:1px solid #cbd5e1;
+    border-radius:11px; background:#fff; font-size:14px;
+}
+.package-student-modal input:focus,
+.package-student-modal select:focus {
+    outline:none; border-color:#6366f1;
+    box-shadow:0 0 0 3px rgba(99,102,241,.12);
+}
+.package-student-modal .package-student-pay {
+    width:100%; margin-top:22px; padding:14px;
+    border:0; border-radius:12px; cursor:pointer;
+    color:#fff; font-weight:800; font-size:15px;
+    background:linear-gradient(135deg,#4f46e5,#7c3aed);
+}
+.package-student-modal .package-modal-note {
+    margin:12px 0 0; font-size:11px;
+}
+</style>
 
 </body>
 </html>
