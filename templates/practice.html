@@ -2628,7 +2628,59 @@ body.mock-exam-active .mode-switch{
         position: static;
     }
 }
+.mock-result-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+    gap: 20px;
+    align-items: start;
+}
 
+.mock-result-left,
+.mock-result-right {
+    min-width: 0;
+}
+
+.mock-result-right #mockLeaderboardCard {
+    width: 100%;
+    margin-top: 0;
+}
+
+@media (max-width: 900px) {
+    .mock-result-layout {
+        grid-template-columns: 1fr;
+    }
+}
+/* MOCK RESULT: LEFT ANALYSIS + RIGHT LEADERBOARD */
+
+#resultShell.mock-result-mode .mock-result-layout {
+    display: grid;
+    grid-template-columns: minmax(0, 1.35fr) minmax(360px, 1fr);
+    gap: 22px;
+    align-items: start;
+    width: 100%;
+}
+
+#resultShell.mock-result-mode .mock-result-left,
+#resultShell.mock-result-mode .mock-result-right {
+    min-width: 0;
+}
+
+#resultShell.mock-result-mode .mock-result-right #mockLeaderboardCard {
+    display: block;
+    width: 100%;
+    margin-top: 0 !important;
+    padding: 18px !important;
+}
+
+#resultShell.mock-result-mode #mockLeaderboardContent {
+    overflow-x: auto;
+}
+
+@media (max-width: 900px) {
+    #resultShell.mock-result-mode .mock-result-layout {
+        grid-template-columns: minmax(0, 1fr);
+    }
+}
 }
 </style>
 
@@ -3233,7 +3285,11 @@ body.mock-exam-active .mode-switch{
                 <div class="result-sub" id="resultPercentage">0%</div>
                 <p id="resultMessage" style="margin:10px 0 0;color:#475569;font-weight:600;"></p>
             </div>
-
+            <!-- MOCK RESULT TWO-COLUMN LAYOUT -->
+            <div class="mock-result-layout">
+         
+             <!-- LEFT SIDE: RESULT ANALYSIS -->
+             <div class="mock-result-left">
             <div class="result-stats">
                 <div class="result-stat"><strong id="correctCount">0</strong><span>Correct</span></div>
                 <div class="result-stat"><strong id="wrongCount">0</strong><span>Incorrect</span></div>
@@ -3303,6 +3359,11 @@ body.mock-exam-active .mode-switch{
             </div>
 
             <div id="reviewContainer"></div>
+    </div>
+    <!-- END LEFT SIDE -->
+
+    <!-- RIGHT SIDE: LEADERBOARD -->
+    <div class="mock-result-right">
             <!-- MOCK LEADERBOARD -->
             <div
                 id="mockLeaderboardCard"
@@ -3348,7 +3409,11 @@ body.mock-exam-active .mode-switch{
                 <div id="mockLeaderboardContent"></div>
             
             </div>
-                       
+                    </div>
+             <!-- END RIGHT SIDE: LEADERBOARD -->
+         
+         </div>
+         <!-- END MOCK RESULT TWO-COLUMN LAYOUT -->                
                <!-- MOCK RESULT: ONLY BACK BUTTON -->
                
                <div
@@ -12253,6 +12318,13 @@ async function loadMockLeaderboard(
                                 Correct
                             </th>
 
+                            <th style="
+                               padding:11px;
+                               background:#eef2ff;
+                           ">
+                               Award
+                           </th>
+
                         </tr>
 
                     </thead>
@@ -12266,21 +12338,13 @@ async function loadMockLeaderboard(
                                     <tr>
 
                                         
-                                       <td style="
-                                           padding:11px 7px;
+                                      <td style="
+                                           padding:12px 8px;
                                            text-align:center;
                                            font-weight:900;
-                                           white-space:nowrap;
+                                           color:#312e81;
                                        ">
-                                           ${
-                                               Number(row.rank) === 1
-                                                   ? '<span title="Gold Medal" style="font-size:22px;">🥇</span>'
-                                                   : Number(row.rank) === 2
-                                                       ? '<span title="Silver Medal" style="font-size:22px;">🥈</span>'
-                                                       : Number(row.rank) === 3
-                                                           ? '<span title="Bronze Medal" style="font-size:22px;">🥉</span>'
-                                                           : `<span style="color:#475569;">#${Number(row.rank)}</span>`
-                                           }
+                                           ${Number(row.rank || 0)}
                                        </td>
 
 
@@ -12322,6 +12386,23 @@ async function loadMockLeaderboard(
                                         ">
                                             ${row.correct_answers}
                                         </td>
+
+                                        <td style="
+                                           padding:12px 8px;
+                                           text-align:center;
+                                           font-weight:800;
+                                           white-space:nowrap;
+                                       ">
+                                           ${
+                                               Number(row.rank) === 1
+                                                   ? '<span style="display:inline-block;padding:6px 12px;border-radius:20px;background:#fef3c7;color:#92400e;">🥇 Gold</span>'
+                                                   : Number(row.rank) === 2
+                                                       ? '<span style="display:inline-block;padding:6px 12px;border-radius:20px;background:#e2e8f0;color:#334155;">🥈 Silver</span>'
+                                                       : Number(row.rank) === 3
+                                                           ? '<span style="display:inline-block;padding:6px 12px;border-radius:20px;background:#fed7aa;color:#9a3412;">🥉 Bronze</span>'
+                                                           : '<span style="display:inline-block;padding:6px 12px;border-radius:20px;background:#f1f5f9;color:#475569;">🏅 Participant</span>'
+                                           }
+                                       </td>
 
                                     </tr>
 
