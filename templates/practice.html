@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Ranjitham Study Center | Practice</title>
+<title>Ranjitham Study Center </title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <meta name="description" content="Ranjitham Study Center Mathematics Practice - chapter-wise MCQs, timed practice tests and performance review.">
 <link rel="icon" type="image/png" href="{{ url_for('static', filename='images/logo.jpg') }}">
@@ -3387,93 +3387,85 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
 
         <!-- RESULT -->
         <div class="result-shell" id="resultShell">
-            <div class="result-banner">
-                <div class="result-icon">🏆</div>
-                <h2>Mock Test Completed</h2>
-                <div class="result-score" id="resultScore">0 / 50</div>
-                <div class="result-sub" id="resultPercentage">0%</div>
-                <p id="resultMessage" style="margin:10px 0 0;color:#475569;font-weight:600;"></p>
-            </div>
-            <!-- MOCK RESULT TWO-COLUMN LAYOUT -->
-            <div class="mock-result-layout">
-         
-             <!-- LEFT SIDE: RESULT ANALYSIS -->
-             <div class="mock-result-left">
-            <div class="result-stats">
-                <div class="result-stat"><strong id="correctCount">0</strong><span>Correct</span></div>
-                <div class="result-stat"><strong id="wrongCount">0</strong><span>Incorrect</span></div>
-                <div class="result-stat"><strong id="unansweredCount">0</strong><span>Unanswered</span></div>
-                <div class="result-stat"><strong id="statusText">—</strong><span>Performance</span></div>
-            </div>
-            <!-- PRACTICE FOCUS AREAS -->
-            <div
-                id="practiceFocusCard"
-                style="
-                    margin:20px 0;
-                    padding:20px 22px;
-                    border:1px solid #dbeafe;
-                    border-radius:16px;
-                    background:linear-gradient(135deg,#f8fbff,#f5f3ff);
-                "
-            >
-                <div
-                    style="
-                        display:flex;
-                        align-items:center;
-                        gap:10px;
-                        margin-bottom:14px;
-                    "
-                >
-                    <span style="font-size:22px;">🎯</span>
-            
-                    <div>
-                        <h3
-                            style="
-                                margin:0;
-                                color:#172554;
-                                font-size:18px;
-                                font-weight:800;
-                            "
-                        >
-                            Your Focus Areas
-                        </h3>
-            
-                        <p
-                            style="
-                                margin:3px 0 0;
-                                color:#64748b;
-                                font-size:12px;
-                            "
-                        >
-                            Topics that need more attention based on this attempt
-                        </p>
-                    </div>
-                </div>
-            
-                <div
-                    id="practiceFocusContent"
-                    style="
-                        display:grid;
-                        grid-template-columns:repeat(3,1fr);
-                        gap:12px;
-                    "
-                >
-                    <!-- Dynamic content will appear here -->
-                </div>
-            </div>
-                   
+           <!-- SECTION 1: RESULT ANALYSIS + FOCUS AREAS -->
+                <div class="mock-result-analysis-section">
+                     <div class="result-banner">
+                         <div class="result-icon">🏆</div>
+                         <h2>Mock Test Completed</h2>
+                         <div class="result-score" id="resultScore">0 / 50</div>
+                         <div class="result-sub" id="resultPercentage">0%</div>
+                         <p id="resultMessage" style="margin:10px 0 0;color:#475569;font-weight:600;"></p>
+                     </div>
+                     <div class="result-stats">
+                         <div class="result-stat"><strong id="correctCount">0</strong><span>Correct</span></div>
+                         <div class="result-stat"><strong id="wrongCount">0</strong><span>Incorrect</span></div>
+                         <div class="result-stat"><strong id="unansweredCount">0</strong><span>Unanswered</span></div>
+                         <div class="result-stat"><strong id="statusText">—</strong><span>Performance</span></div>
+                     </div>
+                     <!-- PRACTICE FOCUS AREAS -->
+                     <div
+                         id="practiceFocusCard"
+                         style="
+                             margin:20px 0;
+                             padding:20px 22px;
+                             border:1px solid #dbeafe;
+                             border-radius:16px;
+                             background:linear-gradient(135deg,#f8fbff,#f5f3ff);
+                         "
+                     >
+                         <div
+                             style="
+                                 display:flex;
+                                 align-items:center;
+                                 gap:10px;
+                                 margin-bottom:14px;
+                             "
+                         >
+                             <span style="font-size:22px;">🎯</span>
+                     
+                             <div>
+                                 <h3
+                                     style="
+                                         margin:0;
+                                         color:#172554;
+                                         font-size:18px;
+                                         font-weight:800;
+                                     "
+                                 >
+                                     Your Focus Areas
+                                 </h3>
+                     
+                                 <p
+                                     style="
+                                         margin:3px 0 0;
+                                         color:#64748b;
+                                         font-size:12px;
+                                     "
+                                 >
+                                     Topics that need more attention based on this attempt
+                                 </p>
+                             </div>
+                         </div>
+                     
+                         <div
+                             id="practiceFocusContent"
+                             style="
+                                 display:grid;
+                                 grid-template-columns:repeat(3,1fr);
+                                 gap:12px;
+                             "
+                         >
+                             <!-- Dynamic content will appear here -->
+                         </div>
+                     </div>
+                 </div>
+           <!-- SECTION 2: QUESTION REVIEW -->
+          <div class="mock-question-review-section">
             <div class="review-head">
-                <h3>🔍 Review All 50 Questions</h3>
-                <span class="step-pill">AFTER TEST</span>
+                <h3> Review All 50 Questions</h3>
             </div>
-
-            <div id="reviewContainer"></div>
-    </div>
-    <!-- END LEFT SIDE -->
-
-    <!-- RIGHT SIDE: LEADERBOARD -->
-    <div class="mock-result-right">
-            <!-- MOCK LEADERBOARD -->
+         </div>
+           <!-- SECTION 3: LEADERBOARD -->
             <div
                 id="mockLeaderboardCard"
                 style="
@@ -3518,11 +3510,7 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                 <div id="mockLeaderboardContent"></div>
             
             </div>
-                    </div>
-             <!-- END RIGHT SIDE: LEADERBOARD -->
-         
-         </div>
-         <!-- END MOCK RESULT TWO-COLUMN LAYOUT -->                
+                   
                <!-- MOCK RESULT: ONLY BACK BUTTON -->
                
                <div
@@ -3551,11 +3539,10 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                        ← Back to Mock Test List
                    </button>
                </div>
-
-            <div class="result-actions">
-                <button class="action-primary" onclick="startNewAttempt()">🔄 Start New Attempt</button>
-                <button class="action-secondary" onclick="backToSetup()">← Back to Selection</button>
-            </div>
+                  <div class="result-actions">
+                      <button class="action-primary" onclick="startNewAttempt()">🔄 Start New Attempt</button>
+                      <button class="action-secondary" onclick="backToSetup()">← Back to Selection</button>
+                  </div>
         </div>
     </section>
 <!-- =========================
