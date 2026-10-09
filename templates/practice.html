@@ -2650,41 +2650,44 @@ body.mock-exam-active .mode-switch{
         grid-template-columns: 1fr;
     }
 }
-/* MOCK RESULT: LEFT ANALYSIS + RIGHT LEADERBOARD */
+/* MOCK RESULT: FULL-WIDTH VERTICAL LAYOUT */
+
+#resultShell.mock-result-mode {
+    display: block !important;
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+}
 
 #resultShell.mock-result-mode .mock-result-layout {
-    display: grid;
-    grid-template-columns: minmax(0, 1fr);
-    gap: 22px;
-    align-items: start;
+    display: flex !important;
+    flex-direction: column !important;
     width: 100%;
+    gap: 18px;
 }
 
 #resultShell.mock-result-mode .mock-result-left,
 #resultShell.mock-result-mode .mock-result-right {
+    display: block;
+    width: 100%;
     min-width: 0;
 }
 
 #resultShell.mock-result-mode .mock-result-right #mockLeaderboardCard {
-    display: block;
     width: 100%;
     margin-top: 0 !important;
-    padding: 18px !important;
 }
 
 #resultShell.mock-result-mode #mockLeaderboardContent {
+    width: 100%;
     overflow-x: auto;
 }
-
 @media (max-width: 900px) {
     #resultShell.mock-result-mode .mock-result-layout {
         grid-template-columns: minmax(0, 1fr);
     }
 }
-/* Hide empty navbar during mock test result */
-body.mock-exam-active .navbar {
-    display: none !important;
-}
+
 }
 </style>
 
@@ -11810,6 +11813,7 @@ async function viewMockResultAnalysis(
       
       if (resultShell) {
           resultShell.classList.add("mock-result-mode");
+         document.body.classList.add("mock-exam-active");
       }
       /*
          IMPORTANT:
