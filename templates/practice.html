@@ -11753,32 +11753,64 @@ async function viewMockResultAnalysis(
          after Mock Test submission.
       */
       
-      if(mockShell){
+
+      /* -----------------------------------------
+         HIDE ALL MOCK LIST SCREENS
+      ------------------------------------------ */
       
-          mockShell.style.display =
-              "block";
+      const mockHomeView =
+          document.getElementById("mockHomeView");
       
+      const chapterView =
+          document.getElementById("chapterView");
+      
+      const fourChapterView =
+          document.getElementById("fourChapterView");
+      
+      const finalView =
+          document.getElementById("finalView");
+      
+      if (mockHomeView) {
+          mockHomeView.style.display = "none";
       }
       
+      if (chapterView) {
+          chapterView.style.display = "none";
+      }
       
-      if(resultShell){
+      if (fourChapterView) {
+          fourChapterView.style.display = "none";
+      }
       
-          if(
+      if (finalView) {
+          finalView.style.display = "none";
+      }
+      
+      /* -----------------------------------------
+         SHOW RESULT ANALYSIS SCREEN ONLY
+      ------------------------------------------ */
+      
+      if (mockShell) {
+          mockShell.style.display = "block";
+      }
+      
+      if (resultShell) {
+      
+          if (
               mockShell &&
               resultShell.parentElement !== mockShell
-          ){
-      
-              mockShell.appendChild(
-                  resultShell
-              );
-      
+          ) {
+              mockShell.appendChild(resultShell);
           }
       
+          resultShell.style.display = "block";
       
-          resultShell.style.display =
-              "block";
-      
+          resultShell.scrollIntoView({
+              behavior: "smooth",
+              block: "start"
+          });
       }
+
 
         /* -----------------------------
            TITLE
