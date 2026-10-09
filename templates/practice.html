@@ -11771,46 +11771,10 @@ async function mockConfirmSubmit(
 
              window.lastSubmittedMockAttemptId =
                    attemptId;
-        /* Hide Practice-only focus/review */
 
-        const focusCard =
-            document.getElementById(
-                "practiceFocusCard"
-            );
+        /* LOAD COMPLETE MOCK RESULT ANALYSIS */
 
-        if(focusCard){
-
-            focusCard.style.display =
-                "none";
-
-        }
-
-
-        const reviewHead =
-            document.querySelector(
-                "#resultShell .review-head"
-            );
-
-        if(reviewHead){
-
-            reviewHead.style.display =
-                "none";
-
-        }
-
-
-        const reviewContainer =
-            document.getElementById(
-                "reviewContainer"
-            );
-
-        if(reviewContainer){
-
-            reviewContainer.style.display =
-                "none";
-
-        }
-
+         await viewMockResultAnalysis(attemptId);
 
         console.log(
             "MOCK TEST SUBMITTED SUCCESSFULLY"
