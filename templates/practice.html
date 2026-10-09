@@ -2545,7 +2545,18 @@ body.mock-exam-active .practice-page > :not(#mockShell) {
 body.mock-exam-active #mockShell {
     display: block !important;
 }
+/* Remove empty space above Mock Test Result Analysis */
+body.mock-exam-active #mockShell {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
 
+body.mock-exam-active #mockShell > .mock-payment-actions {
+    display: none !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    height: 0 !important;
+}
 body.mock-exam-active #resultShell.mock-result-mode {
     display: block !important;
 }
