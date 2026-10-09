@@ -2732,6 +2732,64 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
         grid-template-columns: 1fr !important;
     }
 }
+
+/* MOCK RESULT: SEPARATE CLEAN SECTIONS */
+
+#resultShell.mock-result-mode {
+    width: 100%;
+    max-width: 1180px;
+    margin: 0 auto;
+    padding: 0;
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+#resultShell .mock-result-analysis-section,
+#resultShell .mock-question-review-section,
+#resultShell .mock-result-right #mockLeaderboardCard {
+    width: 100%;
+    padding: 26px;
+    margin: 0 0 22px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    box-shadow: 0 8px 24px rgba(15, 23, 42, 0.06);
+}
+
+#resultShell .mock-result-analysis-section .result-banner {
+    margin-bottom: 20px;
+}
+
+#resultShell .mock-result-analysis-section .result-stats {
+    margin: 20px 0;
+}
+
+#resultShell .mock-result-analysis-section #practiceFocusCard {
+    margin: 20px 0 0 !important;
+}
+
+#resultShell .mock-question-review-section .review-head {
+    margin: 0 0 18px;
+}
+
+#resultShell .mock-question-review-section #reviewContainer {
+    width: 100%;
+}
+
+#resultShell #mockLeaderboardCard {
+    margin-top: 0 !important;
+}
+
+@media (max-width: 700px) {
+    #resultShell .mock-result-analysis-section,
+    #resultShell .mock-question-review-section,
+    #resultShell .mock-result-right #mockLeaderboardCard {
+        padding: 16px;
+        border-radius: 16px;
+    }
+}
+
 }
 </style>
 
@@ -3328,7 +3386,7 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
         </div>
 
         <!-- RESULT -->
-        <div class="p-card result-shell" id="resultShell">
+        <div class="result-shell" id="resultShell">
             <div class="result-banner">
                 <div class="result-icon">🏆</div>
                 <h2>Mock Test Completed</h2>
@@ -9801,11 +9859,13 @@ if(resumeAttemptId){
          RESTORE CURRENT QUESTION
       ========================================= */
       
-      window.currentMockQuestionIndex =
-          Number(
-              questionData.current_question || 0
-          );
-      
+      /* Fresh test starts at Question 1.
+         Continue Test restores the saved question. */
+
+      window.currentMockQuestionIndex = resumeAttemptId
+          ? Number(questionData.current_question || 0)
+          : 0;
+            
       
       if(resumeAttemptId){
       
