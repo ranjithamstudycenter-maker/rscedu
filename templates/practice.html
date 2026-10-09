@@ -11993,9 +11993,7 @@ async function viewMockResultAnalysis(
          SHOW RESULT ANALYSIS SCREEN ONLY
       ------------------------------------------ */
       
-      if (mockShell) {
-          mockShell.style.display = "block";
-      }
+      
       
       if (resultShell) {
       
@@ -12006,7 +12004,7 @@ async function viewMockResultAnalysis(
               mockShell.appendChild(resultShell);
           }
                
-      
+          resultShell.style.display = "block";
           resultShell.scrollIntoView({
               behavior: "smooth",
               block: "start"
