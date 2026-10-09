@@ -2654,7 +2654,7 @@ body.mock-exam-active .mode-switch{
 
 #resultShell.mock-result-mode .mock-result-layout {
     display: grid;
-    grid-template-columns: minmax(0, 1.35fr) minmax(360px, 1fr);
+    grid-template-columns: minmax(0, 1fr);
     gap: 22px;
     align-items: start;
     width: 100%;
@@ -2680,6 +2680,10 @@ body.mock-exam-active .mode-switch{
     #resultShell.mock-result-mode .mock-result-layout {
         grid-template-columns: minmax(0, 1fr);
     }
+}
+/* Hide empty navbar during mock test result */
+body.mock-exam-active .navbar {
+    display: none !important;
 }
 }
 </style>
