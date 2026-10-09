@@ -2519,6 +2519,23 @@ body.mock-exam-active #practiceHero,
 body.mock-exam-active .mode-switch{
     display:none !important;
 }
+/* Remove empty hero and top gap on Mock Test result */
+body.mock-exam-active .practice-page > #practiceHero,
+body.mock-exam-active .practice-hero {
+    display: none !important;
+    height: 0 !important;
+    min-height: 0 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+    border: 0 !important;
+}
+
+/* Reduce top spacing in mock result mode */
+body.mock-exam-active .practice-page {
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+}
+   
 /* MOCK RESULT: HIDE UNUSED PRACTICE SECTIONS */
 
 body.mock-exam-active .practice-page > :not(#mockShell) {
