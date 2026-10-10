@@ -2874,7 +2874,15 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
     background: linear-gradient(135deg, #ffffff, #eef2ff);
     box-shadow: 0 8px 24px rgba(79, 70, 229, 0.10);
 }
+/* Show Back to Mock Test List only on Mock Test results */
+#resultShell:not(.mock-result-mode) #mockResultActions {
+    display: none !important;
+}
 
+/* Keep the button available in Mock Test results */
+#resultShell.mock-result-mode #mockResultActions {
+    display: flex !important;
+}
 #mockResultActions button {
     display: inline-flex;
     align-items: center;
