@@ -5332,72 +5332,62 @@ def admin_practice_questions():
         # =================================================
 
         where_conditions = []
-
         params = []
 
-
+        # BOARD FILTER
         if board:
-
             where_conditions.append(
-                "board=?"
+                "LOWER(TRIM(board)) = ?"
             )
+            params.append(board.strip().lower())
 
-            params.append(board)
-
-
-       if class_name:
-
+        # CLASS FILTER
+        if class_name:
             where_conditions.append("""
-                LOWER(
+                TRIM(
                     REPLACE(
-                        TRIM(class_name),
-                        'class ',
+                        LOWER(TRIM(class_name)),
+                        'class',
                         ''
                     )
                 ) = ?
             """)
-        
+
             normalized_class = (
                 class_name.lower()
-                .replace("class ", "")
+                .replace("class", "")
                 .strip()
             )
-        
+
             params.append(normalized_class)
+
+        # SUBJECT FILTER
         if subject:
-
             where_conditions.append(
-                "subject=?"
+                "LOWER(TRIM(subject)) = ?"
             )
+            params.append(subject.strip().lower())
 
-            params.append(subject)
-
-
+        # TOPIC FILTER
         if topic:
-
             where_conditions.append(
-                "topic=?"
+                "LOWER(TRIM(topic)) = ?"
             )
+            params.append(topic.strip().lower())
 
-            params.append(topic)
-
-
+        # SUBTOPIC FILTER
         if subtopic:
-
             where_conditions.append(
-                "subtopic=?"
+                "LOWER(TRIM(subtopic)) = ?"
             )
+            params.append(subtopic.strip().lower())
 
-            params.append(subtopic)
-
-
+        # DIFFICULTY FILTER
         if difficulty:
-
             where_conditions.append(
-                "LOWER(TRIM(difficulty))=?"
+                "LOWER(TRIM(difficulty)) = ?"
             )
-            
-            params.append(difficulty)
+            params.append(difficulty.strip().lower())
 
         # =================================================
         # WHERE SQL
