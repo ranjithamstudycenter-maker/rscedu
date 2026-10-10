@@ -8323,6 +8323,38 @@ function showResult(data, autoSubmit){
     document.getElementById("resultMessage").textContent = message;
 
     renderReview(data.review || []);
+    // PRACTICE RESULT: Show question review section
+   const practiceReviewSection = document.querySelector(
+       "#resultShell .mock-question-review-section"
+   );
+   
+   if (practiceReviewSection) {
+       practiceReviewSection.style.display = "block";
+   }
+   
+   // Keep mock-only navigation hidden in Practice
+   document.querySelectorAll(
+       "#resultShell .mock-result-nav"
+   ).forEach(function (element) {
+       element.style.display = "none";
+   });
+   
+   // Never show Mock leaderboard/actions in Practice
+   const mockLeaderboard = document.getElementById(
+       "mockLeaderboardCard"
+   );
+   
+   const mockResultActions = document.getElementById(
+       "mockResultActions"
+   );
+   
+   if (mockLeaderboard) {
+       mockLeaderboard.style.display = "none";
+   }
+   
+   if (mockResultActions) {
+       mockResultActions.style.display = "none";
+   }
     const reviewData = data.review || [];
 
    /* ---------- FOCUS AREAS ---------- */
