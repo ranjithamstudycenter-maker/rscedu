@@ -3503,12 +3503,13 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
         </div>
 
         <!-- RESULT -->
+       <div id="resultShellHome"></div>
         <div class="result-shell" id="resultShell">
            <!-- SECTION 1: RESULT ANALYSIS + FOCUS AREAS -->
                 <div class="mock-result-analysis-section">
                      <div class="result-banner">
                          <div class="result-icon">🏆</div>
-                         <h2>Mock Test Completed</h2>
+                         <h2 id="resultTitle">Practice Test Completed</h2>
                          <div class="result-score" id="resultScore">0 / 50</div>
                          <div class="result-sub" id="resultPercentage">0%</div>
                          <p id="resultMessage" style="margin:10px 0 0;color:#475569;font-weight:600;"></p>
@@ -8225,10 +8226,71 @@ function disableExamInputs(){
 
 /* ---------- RESULT + REVIEW ---------- */
 function showResult(data, autoSubmit){
-    exitExamLock();
-    document.getElementById("examShell").style.display = "none";
-    document.getElementById("resultShell").style.display = "block";
 
+    exitExamLock();
+
+    const resultShell =
+        document.getElementById("resultShell");
+
+    const resultHome =
+        document.getElementById("resultShellHome");
+
+    // Restore result section to its original Practice location
+    if(resultShell && resultHome){
+
+        resultHome.parentElement.insertBefore(
+            resultShell,
+            resultHome.nextSibling
+        );
+    }
+
+    // Reset Mock Test-only layout
+    if(resultShell){
+        resultShell.classList.remove("mock-result-mode");
+        resultShell.style.display = "block";
+    }
+
+    // Practice result must not show Mock leaderboard
+    const leaderboard =
+        document.getElementById("mockLeaderboardCard");
+
+    const mockActions =
+        document.getElementById("mockResultActions");
+
+    if(leaderboard){
+        leaderboard.style.display = "none";
+    }
+
+    if(mockActions){
+        mockActions.style.display = "none";
+    }
+
+    // Hide Mock-only navigation buttons
+    document.querySelectorAll(
+        "#resultShell .mock-result-nav"
+    ).forEach(function(element){
+        element.style.display = "none";
+    });
+
+    // Restore normal Practice result buttons
+    const practiceActions =
+        document.querySelector("#resultShell .result-actions");
+
+    if(practiceActions){
+        practiceActions.style.display = "flex";
+    }
+
+    // Set correct Practice result title
+    const resultTitle =
+        document.getElementById("resultTitle");
+
+    if(resultTitle){
+        resultTitle.textContent = "Practice Test Completed";
+    }
+
+    document.getElementById("examShell").style.display = "none";
+
+    // Continue with the existing showResult() code below
     const score = Number(data.score || 0);
     const percentage = Number(data.percentage || 0);
     const correct = Number(data.correct_answers || 0);
