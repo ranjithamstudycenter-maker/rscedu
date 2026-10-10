@@ -3618,14 +3618,23 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                 <div id="reviewContainer"></div>
                
                   <!-- PRACTICE: QUESTION REVIEW NAVIGATION -->
-                  <div class="mock-result-nav practice-result-nav">
+               
+                  <div class="mock-result-nav">
                       <button
                           type="button"
                           class="mock-back-btn"
                           onclick="goToMockResultSection('analysis')">
                           ← Back to Result
                       </button>
+                  
+                      <button
+                          type="button"
+                          class="mock-next-btn"
+                          onclick="goToMockResultSection('leaderboard')">
+                          Continue to Leaderboard →
+                      </button>
                   </div>
+
             </div>
 
            <!-- SECTION 3: LEADERBOARD -->
@@ -8355,11 +8364,19 @@ function showResult(data, autoSubmit){
    }
    
    // Keep mock-only navigation hidden in Practice
+
    document.querySelectorAll(
-       "#resultShell .mock-result-nav"
+       "#resultShell .mock-result-nav:not(.practice-result-nav)"
    ).forEach(function (element) {
        element.style.display = "none";
    });
+   
+   document.querySelectorAll(
+       "#resultShell .practice-result-nav"
+   ).forEach(function (element) {
+       element.style.display = "flex";
+   });
+ 
    
    // Never show Mock leaderboard/actions in Practice
    const mockLeaderboard = document.getElementById(
