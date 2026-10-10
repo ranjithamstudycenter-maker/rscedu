@@ -5345,11 +5345,17 @@ def admin_practice_questions():
             params.append(board)
 
 
-        if class_name:
+       if class_name:
 
-            where_conditions.append(
-                "LOWER(REPLACE(TRIM(class_name), 'class ', ''))=?"
-            )
+            where_conditions.append("""
+                LOWER(
+                    REPLACE(
+                        TRIM(class_name),
+                        'class ',
+                        ''
+                    )
+                ) = ?
+            """)
         
             normalized_class = (
                 class_name.lower()
@@ -5358,7 +5364,6 @@ def admin_practice_questions():
             )
         
             params.append(normalized_class)
-
         if subject:
 
             where_conditions.append(
