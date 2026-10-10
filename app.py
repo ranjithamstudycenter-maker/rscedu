@@ -5348,11 +5348,16 @@ def admin_practice_questions():
         if class_name:
 
             where_conditions.append(
-                "class_name=?"
+                "LOWER(REPLACE(TRIM(class_name), 'class ', ''))=?"
             )
-
-            params.append(class_name)
-
+        
+            normalized_class = (
+                class_name.lower()
+                .replace("class ", "")
+                .strip()
+            )
+        
+            params.append(normalized_class)
 
         if subject:
 
