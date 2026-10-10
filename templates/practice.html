@@ -8274,6 +8274,36 @@ function showResult(data, autoSubmit){
         resultShell.classList.remove("mock-result-mode");
         resultShell.style.display = "block";
     }
+    
+    // RESET PRACTICE RESULT PAGES FOR EVERY NEW ATTEMPT
+    const practiceAnalysisSection = document.querySelector(
+        "#resultShell .mock-result-analysis-section"
+    );
+
+    const practiceReviewSection = document.querySelector(
+        "#resultShell .mock-question-review-section"
+    );
+
+    if (practiceAnalysisSection) {
+        practiceAnalysisSection.style.display = "block";
+    }
+
+    if (practiceReviewSection) {
+        practiceReviewSection.style.display = "none";
+    }
+
+    // Show Practice navigation; hide Mock-only navigation
+    document.querySelectorAll(
+        "#resultShell .practice-result-nav"
+    ).forEach(function (element) {
+        element.style.display = "flex";
+    });
+
+    document.querySelectorAll(
+        "#resultShell .mock-result-nav:not(.practice-result-nav)"
+    ).forEach(function (element) {
+        element.style.display = "none";
+    });
 
     // Practice result must not show Mock leaderboard
     const leaderboard =
