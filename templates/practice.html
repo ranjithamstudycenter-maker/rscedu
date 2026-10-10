@@ -3586,8 +3586,16 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                      
                      </div>
 
-                     <!-- BOTTOM NAVIGATION: RESULT ANALYSIS -->
-                     <div class="mock-result-nav">
+                    
+                     <!-- PRACTICE: RESULT ANALYSIS NAVIGATION -->
+                     <div class="mock-result-nav practice-result-nav">
+                         <button
+                             type="button"
+                             class="mock-back-btn"
+                             onclick="backToSetup()">
+                             ← Back to Selection
+                         </button>
+                     
                          <button
                              type="button"
                              class="mock-next-btn"
@@ -3595,6 +3603,7 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                              Continue to Review →
                          </button>
                      </div>
+                 
                  </div>
 
             <!-- SECTION 2: QUESTION REVIEW -->
@@ -3607,15 +3616,14 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
             
                 <!-- Required by renderReview() -->
                 <div id="reviewContainer"></div>
-                  <div class="mock-result-nav">
-                      <button type="button" class="mock-back-btn"
-                              onclick="goToMockResultSection('analysis')">
+               
+                  <!-- PRACTICE: QUESTION REVIEW NAVIGATION -->
+                  <div class="mock-result-nav practice-result-nav">
+                      <button
+                          type="button"
+                          class="mock-back-btn"
+                          onclick="goToMockResultSection('analysis')">
                           ← Back to Result
-                      </button>
-                  
-                      <button type="button" class="mock-next-btn"
-                              onclick="goToMockResultSection('leaderboard')">
-                          Continue to Leaderboard →
                       </button>
                   </div>
             </div>
@@ -8274,11 +8282,17 @@ function showResult(data, autoSubmit){
     }
 
     // Hide Mock-only navigation buttons
-    document.querySelectorAll(
-        "#resultShell .mock-result-nav"
-    ).forEach(function(element){
-        element.style.display = "none";
-    });
+   document.querySelectorAll(
+       "#resultShell .mock-result-nav:not(.practice-result-nav)"
+   ).forEach(function (element) {
+       element.style.display = "none";
+   });
+   
+   document.querySelectorAll(
+       "#resultShell .practice-result-nav"
+   ).forEach(function (element) {
+       element.style.display = "flex";
+   });
 
     // Restore normal Practice result buttons
     const practiceActions =
