@@ -5384,11 +5384,10 @@ def admin_practice_questions():
         if difficulty:
 
             where_conditions.append(
-                "difficulty=?"
+                "LOWER(TRIM(difficulty))=?"
             )
-
+            
             params.append(difficulty)
-
 
         # =================================================
         # WHERE SQL
