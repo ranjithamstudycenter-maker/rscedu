@@ -9602,9 +9602,114 @@ function openFourChapterMock(){
     });
 
 }
+async function getConfiguredMockTests(mockType) {
+
+    if (
+        !selectedMockBoard ||
+        !selectedMockClass ||
+        !selectedMockSubject
+    ) {
+        alert("Please select Board, Class and Subject first.");
+        return [];
+    }
+
+    try {
+
+        const response = await fetch(
+            "/api/mock/status?" +
+            new URLSearchParams({
+                board: selectedMockBoard,
+                class_name: selectedMockClass,
+                subject: selectedMockSubject
+            }).toString(),
+            {
+                cache: "no-store"
+            }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            alert(data.error || "Unable to load mock tests.");
+            return [];
+        }
+
+        return (data.tests || [])
+            .filter(test => test.mock_type === mockType)
+            .sort(
+                (a, b) =>
+                    Number(a.mock_test_id) -
+                    Number(b.mock_test_id)
+            );
+
+    } catch (error) {
+
+        console.error("MOCK TEST CONFIG ERROR:", error);
+        alert("Unable to load mock tests.");
+        return [];
+
+    }
+}
+
+
+async function startFourChapterMock(testNumber) {
+
+    const tests = await getConfiguredMockTests("four_chapter");
+    const test = tests[testNumber - 1];
+
+    if (!test) {
+        alert(
+            "This 4-Chapter Mock Test is not configured or active in Admin."
+        );
+        return;
+    }
+
+    if (test.status === "submitted" && test.attempt_id) {
+        await viewMockResultAnalysis(test.attempt_id);
+        return;
+    }
+
+    await startChapterMock(
+        test.chapter_scope,
+        test.status === "started" ? test.attempt_id : null,
+        "four_chapter",
+        test.mock_test_id,
+        test.test_name
+    );
+}
+
+
+async function startFinalMock() {
+
+    const tests = await getConfiguredMockTests("full_syllabus");
+    const test = tests[0];
+
+    if (!test) {
+        alert(
+            "Final Test is not configured or active in Admin."
+        );
+        return;
+    }
+
+    if (test.status === "submitted" && test.attempt_id) {
+        await viewMockResultAnalysis(test.attempt_id);
+        return;
+    }
+
+    await startChapterMock(
+        test.chapter_scope,
+        test.status === "started" ? test.attempt_id : null,
+        "full_syllabus",
+        test.mock_test_id,
+        test.test_name
+    );
+}
 async function startChapterMock(
     chapter,
-    resumeAttemptId = null
+    resumeAttemptId = null,
+    mockType = "chapter",
+    mockTestId = null,
+    testNameOverride = ""
 ){
 
     console.log("START CHAPTER MOCK:", chapter);
@@ -9699,13 +9804,14 @@ if(resumeAttemptId){
             selectedMockSubject,
 
         test_name:
-            `${selectedMockSubject} • ${chapter}`,
-
-        mock_type:
-            "chapter",
-
-        chapter_scope:
-            chapter,
+             testNameOverride ||
+             `${selectedMockSubject} • ${chapter}`,
+         
+         mock_type:
+             mockType,
+         
+         chapter_scope:
+             chapter,
 
         total_questions:
             questionData.total_questions,
@@ -9751,9 +9857,12 @@ if(resumeAttemptId){
                 subject:
                     selectedMockSubject,
 
+                mock_test_id:
+                    mockTestId || undefined,
+               
                 mock_type:
-                    "chapter",
-
+                    mockType,
+               
                 chapter_scope:
                     chapter
 
@@ -12796,8 +12905,11 @@ function backToMockChapter(){
     if(mockHomeView) mockHomeView.style.display = "none";
 
     // Return to the matching test list
-    if(mockType.includes("final")){
-        if(finalView) finalView.style.display = "block";
+    if(
+        mockType.includes("final") ||
+        mockType.includes("full_syllabus")
+    ){
+           if(finalView) finalView.style.display = "block";
         if(finalView) finalView.scrollIntoView({
             behavior: "smooth",
             block: "start"
