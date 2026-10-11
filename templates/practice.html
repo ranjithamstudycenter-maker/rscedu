@@ -3625,8 +3625,7 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                          </div>
                      
                      </div>
-
-                    
+                 
                      <!-- PRACTICE: RESULT ANALYSIS NAVIGATION -->
                      <div class="mock-result-nav practice-result-nav">
                          <button
@@ -3643,6 +3642,24 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                              Continue to Review →
                          </button>
                      </div>
+                     
+                     <!-- MOCK: RESULT ANALYSIS NAVIGATION -->
+                     <div class="mock-result-nav mock-only-result-nav" style="display:none;">
+                         <button
+                             type="button"
+                             class="mock-back-btn"
+                             onclick="backToMockChapter()">
+                             ← Back to Mock Test List
+                         </button>
+                     
+                         <button
+                             type="button"
+                             class="mock-next-btn"
+                             onclick="goToMockResultSection('review')">
+                             Continue to Review →
+                         </button>
+                     </div>
+
                  
                  </div>
 
@@ -3655,25 +3672,34 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                 </div>
             
                 <!-- Required by renderReview() -->
-                <div id="reviewContainer"></div>
-               
+               <div id="reviewContainer"></div>
                  
-                     <!-- PRACTICE: QUESTION REVIEW NAVIGATION -->
-                     <div class="mock-result-nav practice-result-nav">
-                         <button
-                             type="button"
-                             class="mock-back-btn"
-                             onclick="goToPracticeResultSection('analysis')">
-                             ← Back to Result
-                         </button>
-                                     
-                      <button
-                          type="button"
-                          class="mock-next-btn"
-                          onclick="goToMockResultSection('leaderboard')">
-                          Continue to Leaderboard →
-                      </button>
-                  </div>
+               <!-- PRACTICE: QUESTION REVIEW NAVIGATION -->
+               <div class="mock-result-nav practice-result-nav">
+                   <button
+                       type="button"
+                       class="mock-back-btn"
+                       onclick="goToPracticeResultSection('analysis')">
+                       ← Back to Result
+                   </button>
+               </div>
+               
+               <!-- MOCK: QUESTION REVIEW NAVIGATION -->
+               <div class="mock-result-nav mock-only-result-nav" style="display:none;">
+                   <button
+                       type="button"
+                       class="mock-back-btn"
+                       onclick="goToMockResultSection('analysis')">
+                       ← Back to Result
+                   </button>
+               
+                   <button
+                       type="button"
+                       class="mock-next-btn"
+                       onclick="goToMockResultSection('leaderboard')">
+                       Continue to Leaderboard →
+                   </button>
+               </div>
 
             </div>
 
@@ -13018,45 +13044,8 @@ async function loadMockLeaderboard(
     }
 
 }
+
 function goToPracticeResultSection(section) {
-
-    const analysis = document.querySelector(
-        "#resultShell .mock-result-analysis-section"
-    );
-
-    const review = document.querySelector(
-        "#resultShell .mock-question-review-section"
-    );
-
-    const leaderboard = document.getElementById(
-        "mockLeaderboardCard"
-    );
-
-    if (analysis) analysis.style.display = "none";
-    if (review) review.style.display = "none";
-
-    // Practice mode must never show the Mock leaderboard
-    if (leaderboard) leaderboard.style.display = "none";
-
-    if (section === "analysis" && analysis) {
-        analysis.style.display = "block";
-        analysis.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }
-
-    if (section === "review" && review) {
-        review.style.display = "block";
-        review.scrollIntoView({
-            behavior: "smooth",
-            block: "start"
-        });
-    }
-}
-
-function goToMockResultSection(section) {
-
     const resultShell = document.getElementById("resultShell");
 
     const analysis = resultShell?.querySelector(
@@ -13067,44 +13056,105 @@ function goToMockResultSection(section) {
         ".mock-question-review-section"
     );
 
-    const leaderboard = document.getElementById(
-        "mockLeaderboardCard"
-    );
+    const leaderboard = document.getElementById("mockLeaderboardCard");
 
-    if (!analysis || !review || !leaderboard) {
-        console.warn("Mock result sections are missing.");
-        return;
-    }
+    if (!analysis || !review) return;
 
-    // Hide every result page first
+    // Practice navigation only
+    resultShell.classList.remove("mock-result-mode");
+
+    resultShell.querySelectorAll(".practice-result-nav").forEach(function (nav) {
+        nav.style.display = "flex";
+    });
+
+    resultShell.querySelectorAll(".mock-only-result-nav").forEach(function (nav) {
+        nav.style.display = "none";
+    });
+
+    // Hide all other result pages
     analysis.style.display = "none";
     review.style.display = "none";
-    leaderboard.style.display = "none";
 
-    // Show only the selected page
-    if (section === "analysis") {
-        analysis.style.display = "block";
-    } else if (section === "review") {
-        review.style.display = "block";
-    } else if (section === "leaderboard") {
-        leaderboard.style.display = "block";
-    } else {
-        return;
+    if (leaderboard) {
+        leaderboard.style.display = "none";
     }
 
-    // Keep the Mock Test layout separate from Practice
-    resultShell.style.display = "block";
+    // Show only the requested Practice page
+    let target = null;
 
-    const target =
-        section === "analysis" ? analysis :
-        section === "review" ? review :
-        leaderboard;
+    if (section === "analysis") {
+        target = analysis;
+    } else if (section === "review") {
+        target = review;
+    }
+
+    if (!target) return;
+
+    target.style.display = "block";
 
     target.scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
 }
+
+
+function goToMockResultSection(section) {
+    const resultShell = document.getElementById("resultShell");
+
+    const analysis = resultShell?.querySelector(
+        ".mock-result-analysis-section"
+    );
+
+    const review = resultShell?.querySelector(
+        ".mock-question-review-section"
+    );
+
+    const leaderboard = document.getElementById("mockLeaderboardCard");
+
+    if (!resultShell || !analysis || !review || !leaderboard) {
+        console.warn("Mock result sections are missing.");
+        return;
+    }
+
+    // Mock navigation only
+    resultShell.classList.add("mock-result-mode");
+
+    resultShell.querySelectorAll(".practice-result-nav").forEach(function (nav) {
+        nav.style.display = "none";
+    });
+
+    resultShell.querySelectorAll(".mock-only-result-nav").forEach(function (nav) {
+        nav.style.display = "flex";
+    });
+
+    // Hide all pages first
+    analysis.style.display = "none";
+    review.style.display = "none";
+    leaderboard.style.display = "none";
+
+    // Display only the selected Mock page
+    let target = null;
+
+    if (section === "analysis") {
+        target = analysis;
+    } else if (section === "review") {
+        target = review;
+    } else if (section === "leaderboard") {
+        target = leaderboard;
+    }
+
+    if (!target) return;
+
+    target.style.display = "block";
+    resultShell.style.display = "block";
+
+    target.scrollIntoView({
+        behavior: "smooth",
+        block: "start"
+    });
+}
+
 
 function finishMockResultNavigation() {
     const resultActions = document.getElementById("mockResultActions");
