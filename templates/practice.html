@@ -2915,7 +2915,47 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
         padding: 12px 16px !important;
     }
 }
+/* Stable, separate Mock Test result pages */
+#resultShell.mock-result-mode {
+    display: block !important;
 }
+
+#resultShell.mock-result-mode .mock-result-analysis-section,
+#resultShell.mock-result-mode .mock-question-review-section,
+#resultShell.mock-result-mode #mockLeaderboardCard {
+    width: 100%;
+    min-width: 0;
+    margin-top: 20px;
+    position: static;
+}
+
+#resultShell.mock-result-mode #mockLeaderboardCard {
+    grid-column: auto !important;
+    grid-row: auto !important;
+}
+
+/* Mock Test: hide Practice-only bottom actions */
+#resultShell.mock-result-mode > .result-actions {
+    display: none !important;
+}
+
+/* Keep the Mock Test list button text visible */
+#resultShell.mock-result-mode #mockResultActions,
+#resultShell.mock-result-mode #mockResultActions button {
+    color: #ffffff !important;
+}
+
+#resultShell.mock-result-mode #mockResultActions button {
+    display: inline-flex !important;
+    align-items: center;
+    justify-content: center;
+    min-height: 48px;
+    padding: 13px 28px;
+    white-space: normal;
+}   
+}
+   
+   
 </style>
 
 
@@ -3599,7 +3639,7 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                          <button
                              type="button"
                              class="mock-next-btn"
-                             onclick="goToPracticeResultSection('review')"
+                             onclick="goToPracticeResultSection('review')">
                              Continue to Review →
                          </button>
                      </div>
@@ -3623,7 +3663,7 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                       <button
                           type="button"
                           class="mock-back-btn"
-                          onclick="goToPracticeResultSection('analysis')"
+                          onclick="goToPracticeResultSection('analysis')">
                           ← Back to Result
                       </button>
                   
@@ -13017,12 +13057,14 @@ function goToPracticeResultSection(section) {
 
 function goToMockResultSection(section) {
 
-    const analysis = document.querySelector(
-        "#resultShell .mock-result-analysis-section"
+    const resultShell = document.getElementById("resultShell");
+
+    const analysis = resultShell?.querySelector(
+        ".mock-result-analysis-section"
     );
 
-    const review = document.querySelector(
-        "#resultShell .mock-question-review-section"
+    const review = resultShell?.querySelector(
+        ".mock-question-review-section"
     );
 
     const leaderboard = document.getElementById(
@@ -13034,35 +13076,29 @@ function goToMockResultSection(section) {
         return;
     }
 
-    // Hide all sections first
+    // Hide every result page first
     analysis.style.display = "none";
     review.style.display = "none";
     leaderboard.style.display = "none";
 
-    // Mock Analysis: show analysis + leaderboard together
+    // Show only the selected page
     if (section === "analysis") {
         analysis.style.display = "block";
-        leaderboard.style.display = "block";
-    }
-
-    // Mock Review: show review + leaderboard together
-    else if (section === "review") {
+    } else if (section === "review") {
         review.style.display = "block";
-        leaderboard.style.display = "block";
-    }
-
-    // Leaderboard-only view, if requested
-    else if (section === "leaderboard") {
+    } else if (section === "leaderboard") {
         leaderboard.style.display = "block";
     } else {
-        console.warn("Unknown Mock result section:", section);
         return;
     }
 
+    // Keep the Mock Test layout separate from Practice
+    resultShell.style.display = "block";
+
     const target =
+        section === "analysis" ? analysis :
         section === "review" ? review :
-        section === "leaderboard" ? leaderboard :
-        analysis;
+        leaderboard;
 
     target.scrollIntoView({
         behavior: "smooth",
