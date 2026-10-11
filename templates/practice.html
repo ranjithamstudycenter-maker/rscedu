@@ -3599,7 +3599,7 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                          <button
                              type="button"
                              class="mock-next-btn"
-                             onclick="goToMockResultSection('review')">
+                             onclick="goToPracticeResultSection('review')"
                              Continue to Review →
                          </button>
                      </div>
@@ -3623,7 +3623,7 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                       <button
                           type="button"
                           class="mock-back-btn"
-                          onclick="goToMockResultSection('analysis')">
+                          onclick="goToPracticeResultSection('analysis')"
                           ← Back to Result
                       </button>
                   
@@ -8384,10 +8384,14 @@ function showResult(data, autoSubmit){
     document.getElementById("resultMessage").textContent = message;
 
     renderReview(data.review || []);
-    // PRACTICE RESULT: Show question review section
-     
+
+   // PRACTICE RESULT: Show only Result Analysis initially
+   if (practiceAnalysisSection) {
+       practiceAnalysisSection.style.display = "block";
+   }
+   
    if (practiceReviewSection) {
-       practiceReviewSection.style.display = "block";
+       practiceReviewSection.style.display = "none";
    }
    
    // Keep mock-only navigation hidden in Practice
@@ -12974,38 +12978,93 @@ async function loadMockLeaderboard(
     }
 
 }
+function goToPracticeResultSection(section) {
+
+    const analysis = document.querySelector(
+        "#resultShell .mock-result-analysis-section"
+    );
+
+    const review = document.querySelector(
+        "#resultShell .mock-question-review-section"
+    );
+
+    const leaderboard = document.getElementById(
+        "mockLeaderboardCard"
+    );
+
+    if (analysis) analysis.style.display = "none";
+    if (review) review.style.display = "none";
+
+    // Practice mode must never show the Mock leaderboard
+    if (leaderboard) leaderboard.style.display = "none";
+
+    if (section === "analysis" && analysis) {
+        analysis.style.display = "block";
+        analysis.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+
+    if (section === "review" && review) {
+        review.style.display = "block";
+        review.scrollIntoView({
+            behavior: "smooth",
+            block: "start"
+        });
+    }
+}
 
 function goToMockResultSection(section) {
 
-    const sections = {
-        analysis: document.querySelector(
-            "#resultShell .mock-result-analysis-section"
-        ),
-        review: document.querySelector(
-            "#resultShell .mock-question-review-section"
-        ),
-        leaderboard: document.getElementById(
-            "mockLeaderboardCard"
-        )
-    };
+    const analysis = document.querySelector(
+        "#resultShell .mock-result-analysis-section"
+    );
 
-    if (!sections[section]) {
-        console.warn("Mock result page not found:", section);
+    const review = document.querySelector(
+        "#resultShell .mock-question-review-section"
+    );
+
+    const leaderboard = document.getElementById(
+        "mockLeaderboardCard"
+    );
+
+    if (!analysis || !review || !leaderboard) {
+        console.warn("Mock result sections are missing.");
         return;
     }
 
-    // Hide every result page
-    Object.values(sections).forEach(function(page) {
-        if (page) {
-            page.style.display = "none";
-        }
-    });
+    // Hide all sections first
+    analysis.style.display = "none";
+    review.style.display = "none";
+    leaderboard.style.display = "none";
 
-    // Show only the selected page
-    sections[section].style.display = "block";
+    // Mock Analysis: show analysis + leaderboard together
+    if (section === "analysis") {
+        analysis.style.display = "block";
+        leaderboard.style.display = "block";
+    }
 
-    // Scroll to the selected page
-    sections[section].scrollIntoView({
+    // Mock Review: show review + leaderboard together
+    else if (section === "review") {
+        review.style.display = "block";
+        leaderboard.style.display = "block";
+    }
+
+    // Leaderboard-only view, if requested
+    else if (section === "leaderboard") {
+        leaderboard.style.display = "block";
+    } else {
+        console.warn("Unknown Mock result section:", section);
+        return;
+    }
+
+    const target =
+        section === "review" ? review :
+        section === "leaderboard" ? leaderboard :
+        analysis;
+
+    target.scrollIntoView({
         behavior: "smooth",
         block: "start"
     });
