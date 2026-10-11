@@ -3628,13 +3628,7 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                  
                      <!-- PRACTICE: RESULT ANALYSIS NAVIGATION -->
                      <div class="mock-result-nav practice-result-nav">
-                         <button
-                             type="button"
-                             class="mock-back-btn"
-                             onclick="backToSetup()">
-                             ← Back to Selection
-                         </button>
-                     
+                                        
                          <button
                              type="button"
                              class="mock-next-btn"
@@ -3645,13 +3639,7 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                      
                      <!-- MOCK: RESULT ANALYSIS NAVIGATION -->
                      <div class="mock-result-nav mock-only-result-nav" style="display:none;">
-                         <button
-                             type="button"
-                             class="mock-back-btn"
-                             onclick="backToMockChapter()">
-                             ← Back to Mock Test List
-                         </button>
-                     
+                                          
                          <button
                              type="button"
                              class="mock-next-btn"
@@ -3741,17 +3729,20 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                         ">
                             Top performers in this Mock Test
                         </p>
+                       <div class="mock-result-nav">
+                         <button
+                             type="button"
+                             class="mock-back-btn"
+                             onclick="goToMockResultSection('review')">
+                             ← Back to Review
+                         </button>
+                     </div>
                     </div>
             
                 </div>
             
                 <div id="mockLeaderboardContent"></div>
-                  <div class="mock-result-nav">
-                      <button type="button" class="mock-back-btn"
-                              onclick="goToMockResultSection('review')">
-                          ← Back to Review
-                      </button>                   
-                  </div>
+                  
             </div>
                    
                <!-- MOCK RESULT: ONLY BACK BUTTON -->
@@ -13174,7 +13165,8 @@ function backToMockChapter(){
         clearInterval(window.mockTimerInterval);
         window.mockTimerInterval = null;
     }
-
+    // Mock result has been exited; release the navigation lock
+    examLockActive = false;
     const resultShell = document.getElementById("resultShell");
     const examShell = document.getElementById("examShell");
     const mockShell = document.getElementById("mockShell");
