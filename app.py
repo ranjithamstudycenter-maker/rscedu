@@ -6075,7 +6075,69 @@ def admin_practice_question_library():
             "success": False,
             "error": str(e)
         }), 500
-        
+
+# =====================================================
+# ADMIN - DELETE ONE PRACTICE QUESTION BANK
+# =====================================================
+
+@app.route("/admin/practice-questions/delete-bank", methods=["POST"])
+def delete_practice_question_bank():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    conn = None
+
+    try:
+        data = request.get_json() or {}
+
+        board = str(data.get("board", "")).strip()
+        class_name = str(data.get("class_name", "")).strip()
+        subject = str(data.get("subject", "")).strip()
+
+        if not board or not class_name or not subject:
+            return jsonify({
+                "success": False,
+                "error": "Board, class and subject are required."
+            }), 400
+
+        conn = sqlite3.connect(DB_PATH)
+        c = conn.cursor()
+
+        c.execute("""
+            DELETE FROM practice_questions
+            WHERE LOWER(TRIM(board)) = LOWER(TRIM(?))
+              AND LOWER(TRIM(class_name)) = LOWER(TRIM(?))
+              AND LOWER(TRIM(subject)) = LOWER(TRIM(?))
+        """, (board, class_name, subject))
+
+        deleted_count = c.rowcount
+        conn.commit()
+
+        return jsonify({
+            "success": True,
+            "deleted": deleted_count,
+            "message": "Practice question bank deleted successfully."
+        })
+
+    except Exception as e:
+        if conn:
+            conn.rollback()
+
+        print("DELETE PRACTICE QUESTION BANK ERROR:", e)
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+    finally:
+        if conn:
+            conn.close()
+
 # =====================================================
 # ADMIN - ADD PRACTICE QUESTION
 # =====================================================
