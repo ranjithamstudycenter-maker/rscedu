@@ -6502,9 +6502,9 @@ def practice_create_session():
                         datetime.now() - started_dt
                     ).total_seconds()
 
-                    # Session is active only for 30 minutes
+                    # Session is active only for 60 minutes
                     session_is_active = (
-                        0 <= elapsed_seconds < (30 * 60)
+                        0 <= elapsed_seconds < (60 * 60)
                     )
 
             except Exception as session_time_error:
