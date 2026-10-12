@@ -6476,6 +6476,17 @@ def practice_create_session():
         ))
         
         existing = c.fetchone()
+        # Fresh Practice start: expire only the matching old session
+        if data.get("new_attempt") and existing:
+            c.execute("""
+                UPDATE practice_sessions
+                SET status='expired'
+                WHERE id=?
+                AND status='in_progress'
+            """, (existing["id"],))
+
+            conn.commit()
+            existing = None
         
         # -------------------------------------------------
         # 6. CHECK SESSION TIME AND RESUME / EXPIRE
