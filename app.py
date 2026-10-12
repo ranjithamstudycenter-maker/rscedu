@@ -368,6 +368,34 @@ def init_db():
 
     )
     """)
+    
+    # -----------------------------------------------------
+    # PRACTICE EXCEL UPLOAD HISTORY
+    # -----------------------------------------------------
+
+    c.execute("""
+    CREATE TABLE IF NOT EXISTS practice_question_uploads (
+
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+        filename TEXT NOT NULL,
+
+        board TEXT DEFAULT '',
+        class_name TEXT DEFAULT '',
+        subject TEXT DEFAULT '',
+
+        total_rows INTEGER DEFAULT 0,
+        imported INTEGER DEFAULT 0,
+        skipped INTEGER DEFAULT 0,
+
+        easy_count INTEGER DEFAULT 0,
+        medium_count INTEGER DEFAULT 0,
+        hard_count INTEGER DEFAULT 0,
+
+        uploaded_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+    )
+    """)
 
     # =====================================================
     # PRACTICE QUESTION BANK PERFORMANCE INDEXES
