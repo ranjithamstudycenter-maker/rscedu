@@ -1021,7 +1021,9 @@ td:nth-child(9){
         width: 100%;
     }
 }
-
+.message {
+    white-space: pre-line;
+}
 </style>
 </head>
 
@@ -1823,16 +1825,27 @@ async function importPracticeExcelForClass(classNumber){
 
         const data = await response.json();
 
-        if(!response.ok || !data.success){
-
+       
+        if (!response.ok || !data.success) {
+        
+            let errorMessage =
+                "❌ " + (data.error || "Excel import failed.");
+        
+            if (Array.isArray(data.errors) && data.errors.length > 0) {
+                errorMessage += "\n\n" + data.errors.join("\n");
+            }
+        
             setMessage(
                 messageId,
-                "❌ " + (data.error || "Excel import failed."),
+                errorMessage,
                 false
             );
-
+        
+            console.error("Excel validation details:", data.errors || []);
+        
             return;
         }
+
 
         let msg =
             `✅ Class ${classNumber}: ` +
