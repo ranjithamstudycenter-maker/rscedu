@@ -8234,6 +8234,28 @@ function stopPracticeTimer(){
     }
 }
 
+/* Save Practice timer before refresh or page leave */
+window.addEventListener("pagehide", function(){
+
+    if(!practiceSessionId || practiceSubmitted){
+        return;
+    }
+
+    if(typeof window.getCurrentPracticeRemainingMs === "function"){
+
+        const remaining = window.getCurrentPracticeRemainingMs();
+
+        localStorage.setItem(
+            "rsc_practice_remaining_" + practiceSessionId,
+            String(Math.max(0, Math.floor(remaining)))
+        );
+    }
+
+    stopPracticeTimer();
+
+    console.log("PRACTICE TIMER PAUSED:", practiceSessionId);
+});
+
 /* ---------- SUBMIT ---------- */
 function confirmSubmit(){
     if(practiceSubmitted) return;
@@ -9179,6 +9201,8 @@ document.addEventListener(
         await loadPackageBoards();
 
         await restorePurchasedPackageStatuses();
+
+        await resumePracticeAfterRefresh();
 
         // await resumeActiveMockAttempt();
          
