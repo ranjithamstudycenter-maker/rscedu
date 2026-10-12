@@ -7857,6 +7857,13 @@ async function loadPracticeQuestions(sessionData){
     document.getElementById("difficultyCard").style.display = "none";
     document.getElementById("resultShell").style.display = "none";
     document.getElementById("examShell").style.display = "block";
+    
+   const practiceSubmitButton =
+       document.querySelector("#examShell .submit-btn");
+   
+   if(practiceSubmitButton){
+       practiceSubmitButton.onclick = confirmSubmit;
+   }
 
     enterExamLock();
 
