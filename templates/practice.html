@@ -7846,13 +7846,34 @@ async function loadPracticeQuestions(sessionData){
         `${label} Practice • 50 Questions • 100 Marks • 60 Minutes`;
 
     renderQuestion();
-    startPracticeTimer(
-       data.started_at ||
-       sessionData.started_at
-    );
-
-    document.getElementById("examShell").scrollIntoView({behavior:"smooth",block:"start"});
-}
+    
+   const remainingKey =
+       "rsc_practice_remaining_" + practiceSessionId;
+   
+   let savedRemainingMs = null;
+   
+   if(sessionData.resumed){
+       const saved = localStorage.getItem(remainingKey);
+   
+       if(
+           saved !== null &&
+           Number.isFinite(Number(saved))
+       ){
+           savedRemainingMs = Number(saved);
+       }
+   }else{
+       localStorage.removeItem(remainingKey);
+   }
+   
+   startPracticeTimer(
+       data.started_at || sessionData.started_at,
+       savedRemainingMs,
+       sessionData.resumed !== true
+   );
+   
+   
+       document.getElementById("examShell").scrollIntoView({behavior:"smooth",block:"start"});
+   }
 
 /* ---------- QUESTION RENDER ---------- */
 function renderQuestion(){
