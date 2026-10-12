@@ -936,6 +936,92 @@ td:nth-child(9){
     }
 }
 
+/* =========================================
+   PRACTICE TEST LIBRARY - PREMIUM UI
+========================================= */
+
+#practiceTestLibrary {
+    border: 1px solid #e0e7ff;
+    border-radius: 22px;
+    background: linear-gradient(145deg, #ffffff, #fafaff);
+    box-shadow: 0 12px 32px rgba(79, 70, 229, 0.09);
+}
+
+#practiceTestLibrary .question-bank-header {
+    padding: 18px 20px;
+    border-radius: 16px;
+    background: linear-gradient(135deg, #eef2ff, #f5f3ff);
+    border: 1px solid #e0e7ff;
+}
+
+#practiceTestLibrary .question-bank-header h2 {
+    color: #312e81;
+    font-size: 23px;
+    font-weight: 900;
+}
+
+#practiceTestLibrary h3 {
+    margin: 24px 0 14px;
+    padding-left: 12px;
+    border-left: 4px solid #6366f1;
+    color: #1e293b;
+    font-size: 17px;
+    font-weight: 800;
+}
+
+#practiceTestLibrary .table-wrap {
+    border: 1px solid #e2e8f0;
+    border-radius: 13px;
+    background: #fff;
+    box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+}
+
+#practiceTestLibrary .professional-question-table {
+    min-width: 1050px;
+}
+
+#practiceTestLibrary .professional-question-table thead th {
+    background: linear-gradient(135deg, #4338ca, #6d28d9);
+    color: #fff;
+    border-bottom: none;
+    padding: 14px 12px;
+}
+
+#practiceTestLibrary .professional-question-table tbody td {
+    padding: 13px 12px;
+    border-bottom: 1px solid #eef2f7;
+    font-size: 13px;
+}
+
+#practiceTestLibrary .professional-question-table tbody tr:nth-child(even) {
+    background: #fafbff;
+}
+
+#practiceTestLibrary .professional-question-table tbody tr:hover {
+    background: #eef2ff;
+    box-shadow: inset 3px 0 0 #6366f1;
+}
+
+#practiceTestLibrary button.primary {
+    box-shadow: 0 5px 12px rgba(79, 70, 229, 0.20);
+    transition: transform .2s ease, box-shadow .2s ease;
+}
+
+#practiceTestLibrary button.primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 18px rgba(79, 70, 229, 0.25);
+}
+
+@media (max-width: 700px) {
+    #practiceTestLibrary .question-bank-header {
+        padding: 15px;
+    }
+
+    #practiceTestLibrary .question-bank-header button {
+        width: 100%;
+    }
+}
+
 </style>
 </head>
 
@@ -1048,6 +1134,86 @@ td:nth-child(9){
 
         </div>
     </div>
+
+<!-- PRACTICE TEST LIBRARY -->
+<div class="card question-bank-card" id="practiceTestLibrary">
+
+    <div class="question-bank-header">
+        <div>
+            <h2>📚 Practice Test Library</h2>
+            <p>
+                View uploaded Excel files and current question-bank details.
+            </p>
+        </div>
+
+        <button type="button" class="primary"
+                onclick="loadPracticeLibrary()">
+            🔄 Refresh Library
+        </button>
+    </div>
+
+    <h3>📥 Uploaded Excel Files</h3>
+
+    <div class="table-wrap">
+        <table class="professional-question-table">
+            <thead>
+                <tr>
+                    <th>Filename</th>
+                    <th>Board</th>
+                    <th>Class</th>
+                    <th>Subject</th>
+                    <th>Total Rows</th>
+                    <th>Imported</th>
+                    <th>Skipped</th>
+                    <th>Easy</th>
+                    <th>Medium</th>
+                    <th>Hard</th>
+                    <th>Upload Date</th>
+                </tr>
+            </thead>
+
+            <tbody id="practiceUploadHistory">
+                <tr>
+                    <td colspan="11" class="empty">
+                        Loading uploaded files...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <h3 style="margin-top:28px;">
+        📊 Current Question Banks
+    </h3>
+
+    <div class="table-wrap">
+        <table class="professional-question-table">
+            <thead>
+                <tr>
+                    <th>Board</th>
+                    <th>Class</th>
+                    <th>Subject</th>
+                    <th>Total Questions</th>
+                    <th>Easy</th>
+                    <th>Medium</th>
+                    <th>Hard</th>
+                    <th>Active Questions</th>
+                </tr>
+            </thead>
+
+            <tbody id="practiceCurrentBanks">
+                <tr>
+                    <td colspan="8" class="empty">
+                        Loading question banks...
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+
+    <div id="practiceLibraryMessage" class="message"></div>
+
+</div>
 
 <!-- =========================================================
      EXISTING PRACTICE QUESTIONS
@@ -1422,29 +1588,115 @@ function setMessage(id, message, success){
     box.className = "message " + (success ? "success" : "error");
 }
 
-async function loadPracticeQuestionCount(){
-    try{
-        const response = await fetch("/admin/practice-question-count");
+
+async function loadPracticeLibrary(){
+
+    const uploadsBody =
+        document.getElementById("practiceUploadHistory");
+
+    const banksBody =
+        document.getElementById("practiceCurrentBanks");
+
+    const message =
+        document.getElementById("practiceLibraryMessage");
+
+    if(!uploadsBody || !banksBody) return;
+
+    uploadsBody.innerHTML = `
+        <tr><td colspan="11" class="empty">Loading upload history...</td></tr>
+    `;
+
+    banksBody.innerHTML = `
+        <tr><td colspan="8" class="empty">Loading question banks...</td></tr>
+    `;
+
+    try {
+        const response = await fetch(
+            "/admin/practice-questions/library",
+            { cache: "no-store" }
+        );
+
         const data = await response.json();
 
-        if(!data.success) return;
+        if(!response.ok || !data.success){
+            throw new Error(data.error || "Unable to load Practice Library.");
+        }
 
-        document.getElementById("easyCount").textContent =
-            data.counts.easy || 0;
+        const uploads = data.uploads || [];
+        const banks = data.question_banks || [];
 
-        document.getElementById("mediumCount").textContent =
-            data.counts.medium || 0;
+        if(uploads.length === 0){
+            uploadsBody.innerHTML = `
+                <tr>
+                    <td colspan="11" class="empty">
+                        No upload history recorded yet.
+                    </td>
+                </tr>
+            `;
+        } else {
+            uploadsBody.innerHTML = uploads.map(item => `
+                <tr>
+                    <td>${escapeHTML(item.filename || "")}</td>
+                    <td>${escapeHTML(item.board || "")}</td>
+                    <td>${escapeHTML(item.class_name || "")}</td>
+                    <td>${escapeHTML(item.subject || "")}</td>
+                    <td>${Number(item.total_rows || 0).toLocaleString()}</td>
+                    <td>${Number(item.imported || 0).toLocaleString()}</td>
+                    <td>${Number(item.skipped || 0).toLocaleString()}</td>
+                    <td>${Number(item.easy_count || 0).toLocaleString()}</td>
+                    <td>${Number(item.medium_count || 0).toLocaleString()}</td>
+                    <td>${Number(item.hard_count || 0).toLocaleString()}</td>
+                    <td>${escapeHTML(item.uploaded_at || "")}</td>
+                </tr>
+            `).join("");
+        }
 
-        document.getElementById("hardCount").textContent =
-            data.counts.hard || 0;
+        if(banks.length === 0){
+            banksBody.innerHTML = `
+                <tr>
+                    <td colspan="8" class="empty">
+                        No questions found in the database.
+                    </td>
+                </tr>
+            `;
+        } else {
+            banksBody.innerHTML = banks.map(item => `
+                <tr>
+                    <td>${escapeHTML(item.board || "")}</td>
+                    <td>Class ${escapeHTML(item.class_name || "")}</td>
+                    <td>${escapeHTML(item.subject || "")}</td>
+                    <td>${Number(item.total_questions || 0).toLocaleString()}</td>
+                    <td>${Number(item.easy_count || 0).toLocaleString()}</td>
+                    <td>${Number(item.medium_count || 0).toLocaleString()}</td>
+                    <td>${Number(item.hard_count || 0).toLocaleString()}</td>
+                    <td>${Number(item.active_questions || 0).toLocaleString()}</td>
+                </tr>
+            `).join("");
+        }
 
-        document.getElementById("totalCount").textContent =
-            data.counts.total || 0;
+        if(message){
+            message.className = "message success";
+            message.textContent = "Practice Test Library updated successfully.";
+        }
 
-    }catch(error){
-        console.error("Question count error:", error);
+    } catch(error) {
+        console.error("Practice Library error:", error);
+
+        uploadsBody.innerHTML = `
+            <tr><td colspan="11" class="empty">Unable to load upload history.</td></tr>
+        `;
+
+        banksBody.innerHTML = `
+            <tr><td colspan="8" class="empty">Unable to load question banks.</td></tr>
+        `;
+
+        if(message){
+            message.className = "message error";
+            message.textContent = error.message;
+        }
     }
 }
+
 
 async function importPracticeExcel(){
 
@@ -1590,6 +1842,7 @@ async function importPracticeExcelForClass(classNumber){
         // Refresh summary and question list
         loadPracticeQuestionCount();
         loadPracticeQuestions();
+        loadPracticeLibrary();
 
     }catch(error){
 
@@ -1726,6 +1979,7 @@ async function addPracticeQuestion(){
 
         loadPracticeQuestionCount();
         loadPracticeQuestions();
+        loadPracticeLibrary();
 
     }catch(error){
 
@@ -2513,6 +2767,7 @@ document.addEventListener(
     "DOMContentLoaded",
     function(){
         loadPracticeQuestionCount();
+        loadPracticeLibrary();
         loadPracticeQuestions();
     }
 );
