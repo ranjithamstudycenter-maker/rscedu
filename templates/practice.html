@@ -7754,6 +7754,25 @@ async function beginPracticeSession(level){
         alert("Selected chapter is not available.");
         return;
     }
+    
+   let resumeExistingPractice = false;
+   
+   try {
+       const savedPractice = JSON.parse(
+           localStorage.getItem("rsc_active_practice") || "null"
+       );
+   
+       resumeExistingPractice = !!savedPractice &&
+           savedPractice.board === board &&
+           String(savedPractice.class_name) === String(className) &&
+           savedPractice.subject === subject &&
+           savedPractice.topic === topic &&
+           savedPractice.subtopic === subtopic &&
+           savedPractice.difficulty === level;
+   
+   } catch (error) {
+       resumeExistingPractice = false;
+   }
 
     currentDifficulty = level;
 
@@ -7770,7 +7789,7 @@ async function beginPracticeSession(level){
                 topic: topic,
                 subtopic: subtopic,
                 difficulty: level,
-                new_attempt: true
+                new_attempt: !resumeExistingPractice
             })
         });
 
@@ -9202,7 +9221,7 @@ document.addEventListener(
 
         await restorePurchasedPackageStatuses();
 
-        await resumePracticeAfterRefresh();
+        //await resumePracticeAfterRefresh();
 
         // await resumeActiveMockAttempt();
          
