@@ -5725,13 +5725,100 @@ def import_practice_questions_excel():
         # 4. DATABASE
         # -------------------------------------------------
 
+        
         conn = sqlite3.connect("/var/data/students.db")
         c = conn.cursor()
 
+        # -------------------------------------------------
+        # CHECK: ONE BOARD + CLASS + SUBJECT PER FILE
+        # -------------------------------------------------
+
+        def get_single_value(column):
+            values = (
+                df[column]
+                .dropna()
+                .astype(str)
+                .str.strip()
+            )
+            values = values[values != ""].unique().tolist()
+
+            return values[0] if len(values) == 1 else None
+
+        upload_board = get_single_value("Board")
+        upload_class = get_single_value("Class")
+        upload_subject = get_single_value("Subject")
+
+        if not all([upload_board, upload_class, upload_subject]):
+            conn.close()
+            return jsonify({
+                "success": False,
+                "error": "Excel must contain one Board, one Class and one Subject."
+            }), 400
+
+        # -------------------------------------------------
+        # PRE-VALIDATE ALL ROWS BEFORE REPLACING OLD BANK
+        # -------------------------------------------------
+
+        validation_errors = []
+
+        for excel_row, row in df.iterrows():
+            row_number = excel_row + 2
+
+            difficulty = str(row["Difficulty"]).strip().lower()
+            answer = str(row["Answer"]).strip().upper()
+
+            required_values = [
+                row["Board"], row["Class"], row["Subject"],
+                row["Topic"], row["Subtopic"], row["Question"],
+                row["A"], row["B"], row["C"], row["D"]
+            ]
+
+            if difficulty not in ["easy", "medium", "hard"]:
+                validation_errors.append(
+                    f"Row {row_number}: Invalid difficulty."
+                )
+            elif answer not in ["A", "B", "C", "D"]:
+                validation_errors.append(
+                    f"Row {row_number}: Invalid answer."
+                )
+            elif any(pd.isna(v) or not str(v).strip()
+                     for v in required_values):
+                validation_errors.append(
+                    f"Row {row_number}: Required field is empty."
+                )
+
+        if validation_errors:
+            conn.close()
+            return jsonify({
+                "success": False,
+                "error": "Excel validation failed. Existing questions were not deleted.",
+                "error_count": len(validation_errors),
+                "errors": validation_errors[:50]
+            }), 400
+
+        # -------------------------------------------------
+        # REPLACE OLD QUESTIONS FOR THIS CLASS/SUBJECT
+        # -------------------------------------------------
+
+        c.execute("""
+            DELETE FROM practice_questions
+            WHERE board = ?
+              AND class_name = ?
+              AND subject = ?
+        """, (upload_board, upload_class, upload_subject))
+
+        # Remove previous upload summaries for this same bank
+        c.execute("""
+            DELETE FROM practice_question_uploads
+            WHERE board = ?
+              AND class_name = ?
+              AND subject = ?
+        """, (upload_board, upload_class, upload_subject))
 
         imported = 0
         skipped = 0
         errors = []
+
 
 
         # -------------------------------------------------
@@ -5818,38 +5905,7 @@ def import_practice_questions_excel():
                     continue
 
 
-                # -------------------------------------------------
-                # 7. DUPLICATE CHECK
-                # -------------------------------------------------
-
-                c.execute("""
-                    SELECT id
-                    FROM practice_questions
-                    WHERE board=?
-                    AND class_name=?
-                    AND subject=?
-                    AND topic=?
-                    AND subtopic=?
-                    AND difficulty=?
-                    AND question=?
-                    LIMIT 1
-                """, (
-                    board,
-                    class_name,
-                    subject,
-                    topic,
-                    subtopic,
-                    difficulty,
-                    question
-                ))
-
-                existing = c.fetchone()
-
-
-                if existing:
-
-                    skipped += 1
-                    continue
+                
 
 
                 # -------------------------------------------------
@@ -5965,13 +6021,13 @@ def import_practice_questions_excel():
             hard_count
         ))
 
+       
         # -------------------------------------------------
-        # 9. SAVE
+        # 9. SAVE + SAFE ERROR HANDLING
         # -------------------------------------------------
 
         conn.commit()
         conn.close()
-
 
         # -------------------------------------------------
         # 10. RESPONSE
@@ -5980,18 +6036,25 @@ def import_practice_questions_excel():
         return jsonify({
             "success": True,
             "message": "Excel import completed.",
+            "board": upload_board,
+            "class_name": upload_class,
+            "subject": upload_subject,
+            "total_rows": len(df),
             "imported": imported,
             "skipped": skipped,
             "errors": errors
         })
 
-
     except Exception as e:
 
-        print(
-            "IMPORT PRACTICE EXCEL ERROR:",
-            e
-        )
+        # Roll back uncommitted database changes when possible
+        try:
+            conn.rollback()
+            conn.close()
+        except Exception:
+            pass
+
+        print("IMPORT PRACTICE EXCEL ERROR:", e)
 
         return jsonify({
             "success": False,
@@ -6107,6 +6170,10 @@ def delete_practice_question_bank():
         conn = sqlite3.connect(DB_PATH)
         c = conn.cursor()
 
+        # Begin one transaction for both deletions
+        c.execute("BEGIN")
+
+        # 1. Delete questions only for the selected bank
         c.execute("""
             DELETE FROM practice_questions
             WHERE LOWER(TRIM(board)) = LOWER(TRIM(?))
@@ -6114,13 +6181,30 @@ def delete_practice_question_bank():
               AND LOWER(TRIM(subject)) = LOWER(TRIM(?))
         """, (board, class_name, subject))
 
-        deleted_count = c.rowcount
+        deleted_questions = c.rowcount
+
+        # 2. Delete matching Excel upload history
+        c.execute("""
+            DELETE FROM practice_question_uploads
+            WHERE LOWER(TRIM(board)) = LOWER(TRIM(?))
+              AND LOWER(TRIM(class_name)) = LOWER(TRIM(?))
+              AND LOWER(TRIM(subject)) = LOWER(TRIM(?))
+        """, (board, class_name, subject))
+
+        deleted_uploads = c.rowcount
+
+        # Commit only after both operations succeed
         conn.commit()
 
         return jsonify({
             "success": True,
-            "deleted": deleted_count,
-            "message": "Practice question bank deleted successfully."
+            "deleted": deleted_questions,
+            "deleted_questions": deleted_questions,
+            "deleted_uploads": deleted_uploads,
+            "board": board,
+            "class_name": class_name,
+            "subject": subject,
+            "message": "Practice question bank and matching upload history deleted successfully."
         })
 
     except Exception as e:
@@ -6668,9 +6752,10 @@ def practice_create_session():
         # -------------------------------------------------
 
         conn = sqlite3.connect("/var/data/students.db")
+        conn.execute("PRAGMA foreign_keys = ON")
 
         conn.row_factory = sqlite3.Row
-
+        
         c = conn.cursor()
 
         # -------------------------------------------------
