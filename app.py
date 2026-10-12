@@ -5907,6 +5907,63 @@ def import_practice_questions_excel():
 
                 skipped += 1
 
+        
+        # -------------------------------------------------
+        # SAVE PRACTICE EXCEL UPLOAD HISTORY
+        # -------------------------------------------------
+
+        def single_value(column):
+            values = (
+                df[column]
+                .dropna()
+                .astype(str)
+                .str.strip()
+                .unique()
+                .tolist()
+            )
+            return values[0] if len(values) == 1 else (
+                "Multiple" if values else ""
+            )
+
+        difficulty_values = (
+            df["Difficulty"]
+            .fillna("")
+            .astype(str)
+            .str.strip()
+            .str.lower()
+        )
+
+        easy_count = int((difficulty_values == "easy").sum())
+        medium_count = int((difficulty_values == "medium").sum())
+        hard_count = int((difficulty_values == "hard").sum())
+
+        c.execute("""
+            INSERT INTO practice_question_uploads
+            (
+                filename,
+                board,
+                class_name,
+                subject,
+                total_rows,
+                imported,
+                skipped,
+                easy_count,
+                medium_count,
+                hard_count
+            )
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+        """, (
+            file.filename,
+            single_value("Board"),
+            single_value("Class"),
+            single_value("Subject"),
+            len(df),
+            imported,
+            skipped,
+            easy_count,
+            medium_count,
+            hard_count
+        ))
 
         # -------------------------------------------------
         # 9. SAVE
@@ -5935,6 +5992,84 @@ def import_practice_questions_excel():
             "IMPORT PRACTICE EXCEL ERROR:",
             e
         )
+
+        return jsonify({
+            "success": False,
+            "error": str(e)
+        }), 500
+
+# =====================================================
+# ADMIN - PRACTICE TEST LIBRARY
+# =====================================================
+
+@app.route("/admin/practice-questions/library", methods=["GET"])
+def admin_practice_question_library():
+
+    if not session.get("admin"):
+        return jsonify({
+            "success": False,
+            "error": "Unauthorized"
+        }), 403
+
+    try:
+        conn = sqlite3.connect("/var/data/students.db")
+        conn.row_factory = sqlite3.Row
+        c = conn.cursor()
+
+        c.execute("""
+            SELECT
+                id,
+                filename,
+                board,
+                class_name,
+                subject,
+                total_rows,
+                imported,
+                skipped,
+                easy_count,
+                medium_count,
+                hard_count,
+                uploaded_at
+            FROM practice_question_uploads
+            ORDER BY id DESC
+        """)
+
+        uploads = [dict(row) for row in c.fetchall()]
+
+        # Current question totals for each Board/Class/Subject
+        c.execute("""
+            SELECT
+                board,
+                class_name,
+                subject,
+                COUNT(*) AS total_questions,
+                SUM(CASE WHEN LOWER(difficulty) = 'easy'
+                    THEN 1 ELSE 0 END) AS easy_count,
+                SUM(CASE WHEN LOWER(difficulty) = 'medium'
+                    THEN 1 ELSE 0 END) AS medium_count,
+                SUM(CASE WHEN LOWER(difficulty) = 'hard'
+                    THEN 1 ELSE 0 END) AS hard_count,
+                SUM(CASE WHEN active = 1
+                    THEN 1 ELSE 0 END) AS active_questions
+            FROM practice_questions
+            GROUP BY board, class_name, subject
+            ORDER BY board, class_name, subject
+        """)
+
+        question_banks = [
+            dict(row) for row in c.fetchall()
+        ]
+
+        conn.close()
+
+        return jsonify({
+            "success": True,
+            "uploads": uploads,
+            "question_banks": question_banks
+        })
+
+    except Exception as e:
+        print("PRACTICE LIBRARY ERROR:", e)
 
         return jsonify({
             "success": False,
