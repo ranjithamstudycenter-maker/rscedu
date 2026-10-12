@@ -1619,13 +1619,14 @@ async function loadPracticeLibrary() {
         } else {
             banksBody.innerHTML = banks.map(item => {
                 const board = String(item.board || "");
-                const className = String(item.class_name || "")
-                    .replace(/^class\s*/i, "").trim();
+                const className = String(item.class_name || "").trim();
                 const subject = String(item.subject || "");
 
                 return `<tr>
                     <td>${escapeHTML(board)}</td>
-                    <td>Class ${escapeHTML(className)}</td>
+                    <td>${/^class\s/i.test(className)
+                        ? escapeHTML(className)
+                        : `Class ${escapeHTML(className)}`}</td>
                     <td>${escapeHTML(subject)}</td>
                     <td>${Number(item.total_questions || 0).toLocaleString()}</td>
                     <td>${Number(item.easy_count || 0).toLocaleString()}</td>
