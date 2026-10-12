@@ -1164,12 +1164,13 @@ td:nth-child(9){
                     <th>Medium</th>
                     <th>Hard</th>
                     <th>Active Questions</th>
+                    <th>Action</th>
                 </tr>
             </thead>
 
             <tbody id="practiceCurrentBanks">
                 <tr>
-                    <td colspan="8" class="empty">
+                    <td colspan="9" class="empty">
                         Loading question banks...
                     </td>
                 </tr>
@@ -1555,113 +1556,123 @@ function setMessage(id, message, success){
 }
 
 
-async function loadPracticeLibrary(){
 
-    const uploadsBody =
-        document.getElementById("practiceUploadHistory");
+async function loadPracticeLibrary() {
+    const banksBody = document.getElementById("practiceCurrentBanks");
+    const message = document.getElementById("practiceLibraryMessage");
 
-    const banksBody =
-        document.getElementById("practiceCurrentBanks");
+    if (!banksBody) return;
 
-    const message =
-        document.getElementById("practiceLibraryMessage");
-
-    if(!uploadsBody || !banksBody) return;
-
-    uploadsBody.innerHTML = `
-        <tr><td colspan="11" class="empty">Loading upload history...</td></tr>
-    `;
-
-    banksBody.innerHTML = `
-        <tr><td colspan="8" class="empty">Loading question banks...</td></tr>
-    `;
+    banksBody.innerHTML =
+        `<tr><td colspan="9" class="empty">Loading question banks...</td></tr>`;
 
     try {
-        const response = await fetch(
-            "/admin/practice-questions/library",
-            { cache: "no-store" }
-        );
+        const response = await fetch("/admin/practice-questions/library", {
+            cache: "no-store"
+        });
 
         const data = await response.json();
 
-        if(!response.ok || !data.success){
-            throw new Error(data.error || "Unable to load Practice Library.");
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Unable to load question banks.");
         }
 
-        const uploads = data.uploads || [];
         const banks = data.question_banks || [];
 
-        if(uploads.length === 0){
-            uploadsBody.innerHTML = `
-                <tr>
-                    <td colspan="11" class="empty">
-                        No upload history recorded yet.
-                    </td>
-                </tr>
-            `;
+        if (!banks.length) {
+            banksBody.innerHTML =
+                `<tr><td colspan="9" class="empty">No questions found in the database.</td></tr>`;
         } else {
-            uploadsBody.innerHTML = uploads.map(item => `
-                <tr>
-                    <td>${escapeHTML(item.filename || "")}</td>
-                    <td>${escapeHTML(item.board || "")}</td>
-                    <td>${escapeHTML(item.class_name || "")}</td>
-                    <td>${escapeHTML(item.subject || "")}</td>
-                    <td>${Number(item.total_rows || 0).toLocaleString()}</td>
-                    <td>${Number(item.imported || 0).toLocaleString()}</td>
-                    <td>${Number(item.skipped || 0).toLocaleString()}</td>
-                    <td>${Number(item.easy_count || 0).toLocaleString()}</td>
-                    <td>${Number(item.medium_count || 0).toLocaleString()}</td>
-                    <td>${Number(item.hard_count || 0).toLocaleString()}</td>
-                    <td>${escapeHTML(item.uploaded_at || "")}</td>
-                </tr>
-            `).join("");
-        }
+            banksBody.innerHTML = banks.map(item => {
+                const board = String(item.board || "");
+                const className = String(item.class_name || "")
+                    .replace(/^class\s*/i, "").trim();
+                const subject = String(item.subject || "");
 
-        if(banks.length === 0){
-            banksBody.innerHTML = `
-                <tr>
-                    <td colspan="8" class="empty">
-                        No questions found in the database.
-                    </td>
-                </tr>
-            `;
-        } else {
-            banksBody.innerHTML = banks.map(item => `
-                <tr>
-                    <td>${escapeHTML(item.board || "")}</td>
-                    <td>Class ${escapeHTML(item.class_name || "")}</td>
-                    <td>${escapeHTML(item.subject || "")}</td>
+                return `<tr>
+                    <td>${escapeHTML(board)}</td>
+                    <td>Class ${escapeHTML(className)}</td>
+                    <td>${escapeHTML(subject)}</td>
                     <td>${Number(item.total_questions || 0).toLocaleString()}</td>
                     <td>${Number(item.easy_count || 0).toLocaleString()}</td>
                     <td>${Number(item.medium_count || 0).toLocaleString()}</td>
                     <td>${Number(item.hard_count || 0).toLocaleString()}</td>
                     <td>${Number(item.active_questions || 0).toLocaleString()}</td>
-                </tr>
-            `).join("");
+                    <td>
+                        <button type="button" class="danger"
+                            onclick="deletePracticeBank(this)"
+                            data-board="${escapeHTML(board)}"
+                            data-class="${escapeHTML(className)}"
+                            data-subject="${escapeHTML(subject)}">
+                            🗑️ Delete
+                        </button>
+                    </td>
+                </tr>`;
+            }).join("");
         }
 
-        if(message){
+        if (message) {
             message.className = "message success";
-            message.textContent = "Practice Test Library updated successfully.";
+            message.textContent = "Question banks loaded successfully.";
         }
-
-    } catch(error) {
+    } catch (error) {
         console.error("Practice Library error:", error);
+        banksBody.innerHTML =
+            `<tr><td colspan="9" class="empty">Unable to load question banks.</td></tr>`;
 
-        uploadsBody.innerHTML = `
-            <tr><td colspan="11" class="empty">Unable to load upload history.</td></tr>
-        `;
-
-        banksBody.innerHTML = `
-            <tr><td colspan="8" class="empty">Unable to load question banks.</td></tr>
-        `;
-
-        if(message){
+        if (message) {
             message.className = "message error";
             message.textContent = error.message;
         }
     }
 }
+
+async function deletePracticeBank(button) {
+    const board = button.dataset.board;
+    const className = button.dataset.class;
+    const subject = button.dataset.subject;
+
+    if (!confirm(
+        `Delete all Practice questions for ${board}, Class ${className}, ${subject}?\n\nThis cannot be undone.`
+    )) return;
+
+    button.disabled = true;
+    button.textContent = "Deleting...";
+
+    try {
+        const response = await fetch("/admin/practice-questions/delete-bank", {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+                board: board,
+                class_name: className,
+                subject: subject
+            })
+        });
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(data.error || "Unable to delete question bank.");
+        }
+
+        await loadPracticeLibrary();
+        await loadPracticeQuestionCount();
+        await loadPracticeQuestions();
+
+        if (document.getElementById("practiceLibraryMessage")) {
+            const message = document.getElementById("practiceLibraryMessage");
+            message.className = "message success";
+            message.textContent =
+                `${Number(data.deleted || 0).toLocaleString()} questions deleted successfully.`;
+        }
+    } catch (error) {
+        alert(error.message);
+        button.disabled = false;
+        button.textContent = "🗑️ Delete";
+    }
+}
+
 
 
 async function importPracticeExcel(){
