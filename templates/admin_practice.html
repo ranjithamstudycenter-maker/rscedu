@@ -1557,6 +1557,40 @@ function setMessage(id, message, success){
 
 
 
+async function loadPracticeQuestionCount() {
+    try {
+        const response = await fetch(
+            "/admin/practice-question-count",
+            { cache: "no-store" }
+        );
+
+        const data = await response.json();
+
+        if (!response.ok || !data.success) {
+            throw new Error(
+                data.error || "Unable to load question counts."
+            );
+        }
+
+        const counts = data.counts || {};
+
+        document.getElementById("easyCount").textContent =
+            Number(counts.easy || 0).toLocaleString();
+
+        document.getElementById("mediumCount").textContent =
+            Number(counts.medium || 0).toLocaleString();
+
+        document.getElementById("hardCount").textContent =
+            Number(counts.hard || 0).toLocaleString();
+
+        document.getElementById("totalCount").textContent =
+            Number(counts.total || 0).toLocaleString();
+
+    } catch (error) {
+        console.error("Practice question count error:", error);
+    }
+}
+
 async function loadPracticeLibrary() {
     const banksBody = document.getElementById("practiceCurrentBanks");
     const message = document.getElementById("practiceLibraryMessage");
