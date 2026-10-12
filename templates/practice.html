@@ -8102,97 +8102,103 @@ function renderPalette(){
 }
 
 /* ---------- TIMER ---------- */
-function startPracticeTimer(startedAt){
+
+function startPracticeTimer(startedAt, remainingOverrideMs = null, isFreshStart = false){
 
     stopPracticeTimer();
 
-    if(!startedAt){
-        console.error("Practice timer error: started_at is missing.");
-        return;
-    }
+    const timer = document.getElementById("practiceTimer");
+    if(!timer) return;
 
-    /*
-     * Render server stores datetime in UTC.
-     * Add "Z" so browser correctly interprets startedAt as UTC.
-     */
-    let startString = String(startedAt).trim();
-
-    if(!startString.endsWith("Z")){
-        startString = startString.replace(" ","T") + "Z";
-    }
-
-    const start = new Date(startString).getTime();
-
-    console.log("TIMER DEBUG:", {
-       startedAt: startedAt,
-       startTime: new Date(start).toISOString(),
-       now: new Date().toISOString(),
-       elapsedSeconds: Math.floor((Date.now() - start) / 1000)
-    });
     const duration = 60 * 60 * 1000;
 
-    if(isNaN(start)){
-        console.error(
-            "Practice timer error: Invalid started_at:",
-            startedAt
-        );
-        return;
+    let remainingBase;
+
+    // Fresh practice test starts at exactly 60 minutes
+    if(isFreshStart){
+        remainingBase = duration;
     }
+    // Resume using the remaining time saved before refresh
+    else if(
+        remainingOverrideMs !== null &&
+        Number.isFinite(Number(remainingOverrideMs))
+    ){
+        remainingBase = Math.max(0, Number(remainingOverrideMs));
+    }
+    // Fallback: calculate from the server start time
+    else {
+        if(!startedAt){
+            console.error("Practice timer error: started_at is missing.");
+            return;
+        }
+
+        let startString = String(startedAt).trim();
+
+        if(!startString.endsWith("Z")){
+            startString = startString.replace(" ", "T") + "Z";
+        }
+
+        const start = new Date(startString).getTime();
+
+        if(isNaN(start)){
+            console.error("Invalid practice started_at:", startedAt);
+            return;
+        }
+
+        remainingBase = Math.max(
+            0,
+            duration - (Date.now() - start)
+        );
+    }
+
+    const timerResumeTime = Date.now();
+
+    function getRemaining(){
+        return Math.max(
+            0,
+            remainingBase - (Date.now() - timerResumeTime)
+        );
+    }
+
+    // Used to save the timer value before refresh
+    window.getCurrentPracticeRemainingMs = getRemaining;
 
     function tick(){
 
-        const elapsed = Date.now() - start;
+        const remaining = getRemaining();
+        const totalSeconds = Math.floor(remaining / 1000);
 
-        let remaining = Math.max(
-            0,
-            duration - elapsed
-        );
-
-        const minutes = Math.floor(
-            remaining / 60000
-        );
-
-        const seconds = Math.floor(
-            (remaining % 60000) / 1000
-        );
-
-        const timer =
-            document.getElementById("practiceTimer");
-
-        if(!timer) return;
+        const minutes = Math.floor(totalSeconds / 60);
+        const seconds = totalSeconds % 60;
 
         timer.textContent =
-            String(minutes).padStart(2,"0") +
-            ":" +
-            String(seconds).padStart(2,"0");
+            String(minutes).padStart(2, "0") + ":" +
+            String(seconds).padStart(2, "0");
 
-        /* Warning during last 5 minutes */
         if(remaining <= 5 * 60 * 1000){
             timer.classList.add("warning");
         }else{
             timer.classList.remove("warning");
         }
 
-        /* Time finished */
         if(remaining <= 0){
-
             stopPracticeTimer();
-
             timer.textContent = "00:00";
 
-            submitPractice(true);
+            localStorage.removeItem(
+                "rsc_practice_remaining_" + practiceSessionId
+            );
 
+            submitPractice(true);
             disableExamInputs();
         }
     }
 
-    /* Run immediately */
     tick();
 
-    /* Continue every second */
-    practiceTimerInterval =
-        setInterval(tick, 1000);
+    practiceTimerInterval = setInterval(tick, 1000);
 }
+
 
 
 function stopPracticeTimer(){
