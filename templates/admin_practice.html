@@ -1024,24 +1024,24 @@ td:nth-child(9){
 .message {
     white-space: pre-line;
 }
-```css
+
 /* RSC PROFESSIONAL CLASS UPLOAD CARDS */
 .rsc-upload-grid {
     display: grid;
     grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 22px;
+    align-items: stretch;
+    gap: 18px;
     margin-top: 24px;
+    width: 100%;
 }
 
 .rsc-upload-card {
     min-width: 0;
-    padding: 24px;
+    padding: 20px;
     border: 1px solid #e2e8f0;
-    border-radius: 20px;
+    border-radius: 18px;
     background: linear-gradient(145deg, #ffffff, #f8faff);
     box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05);
-    transition: border-color .2s ease, box-shadow .2s ease,
-                transform .2s ease;
 }
 
 .rsc-upload-card:hover {
@@ -1238,12 +1238,11 @@ td:nth-child(9){
         grid-template-columns: 1fr;
         gap: 15px;
     }
-
     .rsc-upload-card {
         padding: 18px;
     }
 }
-```
+
 </style>
 </head>
 
@@ -1296,9 +1295,7 @@ td:nth-child(9){
             Existing duplicate questions will be skipped by the server.
         </p>
 
-        <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
-
-
+        
         <!-- PROFESSIONAL BULK UPLOAD CARDS -->
         <div class="rsc-upload-grid">
         
@@ -1469,9 +1466,7 @@ td:nth-child(9){
         
         </div>
 
-
-        </div>
-    </div>
+   </div>
 
 <!-- PRACTICE TEST LIBRARY -->
 <div class="card question-bank-card" id="practiceTestLibrary">
