@@ -1088,6 +1088,13 @@ td:nth-child(9){
                             onclick="importPracticeExcelForClass(9)">
                         📥 Import Class 9
                     </button>
+                    <label for="diagram_zip">Optional: Diagram Images ZIP</label>
+                    <input
+                        type="file"
+                        id="diagram_zip"
+                        name="diagram_zip"
+                        accept=".zip"
+                    >
                 </div>
                 <div id="excelImportMessage9" class="message"></div>
             </div>
@@ -1728,6 +1735,12 @@ async function importPracticeExcel(){
 
     const formData = new FormData();
     formData.append("excel_file", fileInput.files[0]);
+
+    const diagramZip = document.getElementById("diagram_zip");
+
+    if (diagramZip && diagramZip.files.length > 0) {
+        formData.append("diagram_zip", diagramZip.files[0]);
+    }
 
     setMessage(
         "excelImportMessage",
