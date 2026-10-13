@@ -1024,6 +1024,226 @@ td:nth-child(9){
 .message {
     white-space: pre-line;
 }
+```css
+/* RSC PROFESSIONAL CLASS UPLOAD CARDS */
+.rsc-upload-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 22px;
+    margin-top: 24px;
+}
+
+.rsc-upload-card {
+    min-width: 0;
+    padding: 24px;
+    border: 1px solid #e2e8f0;
+    border-radius: 20px;
+    background: linear-gradient(145deg, #ffffff, #f8faff);
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.05);
+    transition: border-color .2s ease, box-shadow .2s ease,
+                transform .2s ease;
+}
+
+.rsc-upload-card:hover {
+    border-color: #a5b4fc;
+    box-shadow: 0 10px 28px rgba(79, 70, 229, 0.09);
+    transform: translateY(-2px);
+}
+
+.rsc-class-heading {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin-bottom: 24px;
+}
+
+.rsc-class-heading h3 {
+    margin: 0 0 5px;
+    color: #172554;
+    font-size: 21px;
+    font-weight: 800;
+}
+
+.rsc-class-heading p {
+    margin: 0;
+    color: #64748b;
+    font-size: 13px;
+}
+
+.rsc-class-icon {
+    display: flex;
+    width: 54px;
+    height: 54px;
+    flex-shrink: 0;
+    align-items: center;
+    justify-content: center;
+    border-radius: 16px;
+    font-size: 18px;
+    font-weight: 900;
+}
+
+.class-9  { background: #dbeafe; color: #1d4ed8; }
+.class-10 { background: #dcfce7; color: #15803d; }
+.class-11 { background: #ffedd5; color: #c2410c; }
+.class-12 { background: #fee2e2; color: #b91c1c; }
+
+.rsc-field-label {
+    display: block;
+    margin-bottom: 9px;
+    color: #334155;
+    font-size: 13px;
+    font-weight: 800;
+}
+
+.rsc-file-input {
+    display: block;
+    width: 100%;
+    min-width: 0;
+    padding: 10px;
+    border: 1px solid #dbe2ee;
+    border-radius: 12px;
+    background: #fff;
+    color: #475569;
+    font-size: 13px;
+}
+
+.rsc-file-input::file-selector-button {
+    margin-right: 10px;
+    padding: 8px 12px;
+    border: 0;
+    border-radius: 8px;
+    background: #eef2ff;
+    color: #4338ca;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rsc-diagram-panel {
+    margin-top: 18px;
+    padding: 16px;
+    border: 1px dashed #c7d2fe;
+    border-radius: 15px;
+    background: #f8faff;
+}
+
+.rsc-diagram-heading {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.rsc-zip-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 42px;
+    height: 42px;
+    flex-shrink: 0;
+    border-radius: 12px;
+    background: #e0e7ff;
+    color: #4338ca;
+    font-size: 11px;
+    font-weight: 900;
+}
+
+.rsc-diagram-heading strong,
+.rsc-diagram-heading small {
+    display: block;
+}
+
+.rsc-diagram-heading strong {
+    color: #1e293b;
+    font-size: 13px;
+}
+
+.rsc-diagram-heading small {
+    margin-top: 4px;
+    color: #64748b;
+    font-size: 11px;
+}
+
+.rsc-optional {
+    margin-left: auto;
+    padding: 5px 7px;
+    border-radius: 6px;
+    background: #e2e8f0;
+    color: #475569;
+    font-size: 9px;
+    font-weight: 900;
+    white-space: nowrap;
+}
+
+.rsc-hidden-file {
+    display: none !important;
+}
+
+.rsc-zip-picker {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    min-width: 0;
+    padding: 12px;
+    border: 1px solid #dbe2ee;
+    border-radius: 10px;
+    background: #fff;
+    color: #4338ca;
+    font-size: 12px;
+    font-weight: 700;
+    cursor: pointer;
+}
+
+.rsc-zip-picker:hover {
+    border-color: #818cf8;
+    background: #eef2ff;
+}
+
+.rsc-zip-picker span:last-child {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.rsc-import-btn {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 9px;
+    width: 100%;
+    margin-top: 18px;
+    padding: 13px 16px;
+    border-radius: 12px;
+    background: linear-gradient(135deg, #16a34a, #15803d);
+    color: #fff;
+    font-size: 14px;
+    font-weight: 800;
+    box-shadow: 0 5px 12px rgba(22, 163, 74, .16);
+    transition: filter .2s ease, transform .2s ease;
+}
+
+.rsc-import-btn:hover {
+    filter: brightness(.96);
+    transform: translateY(-1px);
+}
+
+.rsc-import-btn:disabled {
+    opacity: .65;
+    cursor: wait;
+    transform: none;
+}
+
+@media (max-width: 700px) {
+    .rsc-upload-grid {
+        grid-template-columns: 1fr;
+        gap: 15px;
+    }
+
+    .rsc-upload-card {
+        padding: 18px;
+    }
+}
+```
 </style>
 </head>
 
@@ -1078,68 +1298,177 @@ td:nth-child(9){
 
         <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:16px;">
 
+
+        <!-- PROFESSIONAL BULK UPLOAD CARDS -->
+        <div class="rsc-upload-grid">
+        
             <!-- CLASS 9 -->
-            <div class="excel-box">
-                <h3>📘 Class 9</h3>
-                <p style="color:#6b7280;">Upload only the CBSE Class 9 Practice Excel file.</p>
-                <input type="file" id="practiceExcelFile9" accept=".xlsx,.xls">
-                <div style="margin-top:14px;">
-                    <button type="button" class="excel-btn"
-                            onclick="importPracticeExcelForClass(9)">
-                        📥 Import Class 9
-                    </button>
-                    <label for="diagram_zip">Optional: Diagram Images ZIP</label>
-                    <input
-                        type="file"
-                        id="diagram_zip"
-                        name="diagram_zip"
-                        accept=".zip"
-                    >
+            <div class="rsc-upload-card">
+                <div class="rsc-class-heading">
+                    <span class="rsc-class-icon class-9">09</span>
+                    <div>
+                        <h3>Class 9</h3>
+                        <p>CBSE Practice Question Bank</p>
+                    </div>
                 </div>
+        
+                <label class="rsc-field-label" for="practiceExcelFile9">
+                    1. Excel Question File
+                </label>
+                <input class="rsc-file-input" type="file"
+                       id="practiceExcelFile9" accept=".xlsx,.xls">
+        
+                <div class="rsc-diagram-panel">
+                    <div class="rsc-diagram-heading">
+                        <span class="rsc-zip-icon">ZIP</span>
+                        <div>
+                            <strong>Diagram Images</strong>
+                            <small>Optional · PNG, JPG, WEBP</small>
+                        </div>
+                        <span class="rsc-optional">OPTIONAL</span>
+                    </div>
+        
+                    <label class="rsc-zip-picker" for="diagramZip9">
+                        <span>📁</span>
+                        <span id="diagramZip9Name">Choose diagram ZIP file</span>
+                    </label>
+                    <input class="rsc-hidden-file" type="file"
+                           id="diagramZip9" accept=".zip"
+                           onchange="showDiagramZipName(9)">
+                </div>
+        
+                <button class="rsc-import-btn" type="button"
+                        onclick="importPracticeExcelForClass(9)">
+                    <span>↑</span> Import Class 9
+                </button>
                 <div id="excelImportMessage9" class="message"></div>
             </div>
-
+        
             <!-- CLASS 10 -->
-            <div class="excel-box">
-                <h3>📗 Class 10</h3>
-                <p style="color:#6b7280;">Upload only the CBSE Class 10 Practice Excel file.</p>
-                <input type="file" id="practiceExcelFile10" accept=".xlsx,.xls">
-                <div style="margin-top:14px;">
-                    <button type="button" class="excel-btn"
-                            onclick="importPracticeExcelForClass(10)">
-                        📥 Import Class 10
-                    </button>
+            <div class="rsc-upload-card">
+                <div class="rsc-class-heading">
+                    <span class="rsc-class-icon class-10">10</span>
+                    <div>
+                        <h3>Class 10</h3>
+                        <p>CBSE Practice Question Bank</p>
+                    </div>
                 </div>
+        
+                <label class="rsc-field-label" for="practiceExcelFile10">
+                    1. Excel Question File
+                </label>
+                <input class="rsc-file-input" type="file"
+                       id="practiceExcelFile10" accept=".xlsx,.xls">
+        
+                <div class="rsc-diagram-panel">
+                    <div class="rsc-diagram-heading">
+                        <span class="rsc-zip-icon">ZIP</span>
+                        <div>
+                            <strong>Diagram Images</strong>
+                            <small>Optional · PNG, JPG, WEBP</small>
+                        </div>
+                        <span class="rsc-optional">OPTIONAL</span>
+                    </div>
+                    <label class="rsc-zip-picker" for="diagramZip10">
+                        <span>📁</span>
+                        <span id="diagramZip10Name">Choose diagram ZIP file</span>
+                    </label>
+                    <input class="rsc-hidden-file" type="file"
+                           id="diagramZip10" accept=".zip"
+                           onchange="showDiagramZipName(10)">
+                </div>
+        
+                <button class="rsc-import-btn" type="button"
+                        onclick="importPracticeExcelForClass(10)">
+                    <span>↑</span> Import Class 10
+                </button>
                 <div id="excelImportMessage10" class="message"></div>
             </div>
-
+        
             <!-- CLASS 11 -->
-            <div class="excel-box">
-                <h3>📙 Class 11</h3>
-                <p style="color:#6b7280;">Upload only the CBSE Class 11 Practice Excel file.</p>
-                <input type="file" id="practiceExcelFile11" accept=".xlsx,.xls">
-                <div style="margin-top:14px;">
-                    <button type="button" class="excel-btn"
-                            onclick="importPracticeExcelForClass(11)">
-                        📥 Import Class 11
-                    </button>
+            <div class="rsc-upload-card">
+                <div class="rsc-class-heading">
+                    <span class="rsc-class-icon class-11">11</span>
+                    <div>
+                        <h3>Class 11</h3>
+                        <p>CBSE Practice Question Bank</p>
+                    </div>
                 </div>
+        
+                <label class="rsc-field-label" for="practiceExcelFile11">
+                    1. Excel Question File
+                </label>
+                <input class="rsc-file-input" type="file"
+                       id="practiceExcelFile11" accept=".xlsx,.xls">
+        
+                <div class="rsc-diagram-panel">
+                    <div class="rsc-diagram-heading">
+                        <span class="rsc-zip-icon">ZIP</span>
+                        <div>
+                            <strong>Diagram Images</strong>
+                            <small>Optional · PNG, JPG, WEBP</small>
+                        </div>
+                        <span class="rsc-optional">OPTIONAL</span>
+                    </div>
+                    <label class="rsc-zip-picker" for="diagramZip11">
+                        <span>📁</span>
+                        <span id="diagramZip11Name">Choose diagram ZIP file</span>
+                    </label>
+                    <input class="rsc-hidden-file" type="file"
+                           id="diagramZip11" accept=".zip"
+                           onchange="showDiagramZipName(11)">
+                </div>
+        
+                <button class="rsc-import-btn" type="button"
+                        onclick="importPracticeExcelForClass(11)">
+                    <span>↑</span> Import Class 11
+                </button>
                 <div id="excelImportMessage11" class="message"></div>
             </div>
-
+        
             <!-- CLASS 12 -->
-            <div class="excel-box">
-                <h3>📕 Class 12</h3>
-                <p style="color:#6b7280;">Upload only the CBSE Class 12 Practice Excel file.</p>
-                <input type="file" id="practiceExcelFile12" accept=".xlsx,.xls">
-                <div style="margin-top:14px;">
-                    <button type="button" class="excel-btn"
-                            onclick="importPracticeExcelForClass(12)">
-                        📥 Import Class 12
-                    </button>
+            <div class="rsc-upload-card">
+                <div class="rsc-class-heading">
+                    <span class="rsc-class-icon class-12">12</span>
+                    <div>
+                        <h3>Class 12</h3>
+                        <p>CBSE Practice Question Bank</p>
+                    </div>
                 </div>
+        
+                <label class="rsc-field-label" for="practiceExcelFile12">
+                    1. Excel Question File
+                </label>
+                <input class="rsc-file-input" type="file"
+                       id="practiceExcelFile12" accept=".xlsx,.xls">
+        
+                <div class="rsc-diagram-panel">
+                    <div class="rsc-diagram-heading">
+                        <span class="rsc-zip-icon">ZIP</span>
+                        <div>
+                            <strong>Diagram Images</strong>
+                            <small>Optional · PNG, JPG, WEBP</small>
+                        </div>
+                        <span class="rsc-optional">OPTIONAL</span>
+                    </div>
+                    <label class="rsc-zip-picker" for="diagramZip12">
+                        <span>📁</span>
+                        <span id="diagramZip12Name">Choose diagram ZIP file</span>
+                    </label>
+                    <input class="rsc-hidden-file" type="file"
+                           id="diagramZip12" accept=".zip"
+                           onchange="showDiagramZipName(12)">
+                </div>
+        
+                <button class="rsc-import-btn" type="button"
+                        onclick="importPracticeExcelForClass(12)">
+                    <span>↑</span> Import Class 12
+                </button>
                 <div id="excelImportMessage12" class="message"></div>
             </div>
+        
+        </div>
+
 
         </div>
     </div>
@@ -1820,6 +2149,14 @@ async function importPracticeExcelForClass(classNumber){
     const formData = new FormData();
     formData.append("excel_file", file);
 
+    const diagramZipInput = document.getElementById(
+        `diagramZip${classNumber}`
+    );
+    
+    if (diagramZipInput && diagramZipInput.files.length > 0) {
+        formData.append("diagram_zip", diagramZipInput.files[0]);
+    }
+
     setMessage(
         messageId,
         `⏳ Importing Class ${classNumber} questions...`,
@@ -1895,6 +2232,17 @@ async function importPracticeExcelForClass(classNumber){
             false
         );
     }
+}
+function showDiagramZipName(classNumber) {
+    const input = document.getElementById(`diagramZip${classNumber}`);
+    const nameLabel = document.getElementById(`diagramZip${classNumber}Name`);
+
+    if (!input || !nameLabel) return;
+
+    nameLabel.textContent =
+        input.files && input.files.length
+            ? input.files[0].name
+            : "Choose diagram ZIP file";
 }
 
 // Keep the old function name available if any existing code calls it.
