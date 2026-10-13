@@ -6060,7 +6060,7 @@ def import_practice_questions_excel():
                     explanation,
                     hint,
                     2,
-                    1
+                    1,
                     diagram_map.get(
                         str(row.get("Diagram_ID", "")).strip()
                     )
