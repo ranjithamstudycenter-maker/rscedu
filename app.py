@@ -2,6 +2,7 @@ from flask import Flask, render_template, request, redirect, session, send_from_
 import uuid
 import os
 import razorpay
+import zipfile
 import hmac
 import hashlib
 import json
@@ -5727,7 +5728,16 @@ def import_practice_questions_excel():
         # -------------------------------------------------
 
         df = pd.read_excel(file)
-
+        # Optional diagram ID column
+        if "Diagram_ID" not in df.columns:
+            df["Diagram_ID"] = ""
+        
+        df["Diagram_ID"] = (
+            df["Diagram_ID"]
+            .fillna("")
+            .astype(str)
+            .str.strip()
+        )
         # Remove completely empty rows
         df = df.dropna(how="all")
 
@@ -5765,7 +5775,62 @@ def import_practice_questions_excel():
                     + ", ".join(missing_columns)
             }), 400
 
-
+         # -------------------------------------------------
+        # OPTIONAL DIAGRAM ZIP UPLOAD
+        # -------------------------------------------------
+        
+        diagram_map = {}
+        
+        diagram_zip = request.files.get("diagram_zip")
+        
+        if diagram_zip and diagram_zip.filename:
+            if not diagram_zip.filename.lower().endswith(".zip"):
+                return jsonify({
+                    "success": False,
+                    "error": "Diagram images must be uploaded as a ZIP file."
+                }), 400
+        
+            try:
+                with zipfile.ZipFile(diagram_zip) as archive:
+                    for member in archive.infolist():
+        
+                        if member.is_dir():
+                            continue
+        
+                        # Ignore files inside subfolders
+                        original_name = os.path.basename(member.filename)
+                        diagram_id = os.path.splitext(original_name)[0]
+        
+                        if not diagram_id:
+                            continue
+        
+                        safe_id = secure_filename(diagram_id)
+                        extension = os.path.splitext(original_name)[1].lower()
+        
+                        if extension not in [".png", ".jpg", ".jpeg", ".gif", ".webp"]:
+                            continue
+        
+                        if not safe_id:
+                            continue
+        
+                        # Unique filename avoids accidental overwrites
+                        saved_name = f"{safe_id}_{uuid.uuid4().hex[:8]}{extension}"
+                        save_path = os.path.join(
+                            PRACTICE_DIAGRAM_FOLDER,
+                            saved_name
+                        )
+        
+                        with archive.open(member) as source:
+                            with open(save_path, "wb") as destination:
+                                destination.write(source.read())
+        
+                        diagram_map[diagram_id] = saved_name
+        
+            except zipfile.BadZipFile:
+                return jsonify({
+                    "success": False,
+                    "error": "The diagram ZIP file is invalid."
+                }), 400
         # -------------------------------------------------
         # 4. DATABASE
         # -------------------------------------------------
@@ -5975,9 +6040,10 @@ def import_practice_questions_excel():
                         explanation,
                         hint,
                         marks,
-                        active
+                        active,
+                        diagram_path
                     )
-                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
                 """, (
                     board,
                     class_name,
@@ -5995,6 +6061,9 @@ def import_practice_questions_excel():
                     hint,
                     2,
                     1
+                    diagram_map.get(
+                        str(row.get("Diagram_ID", "")).strip()
+                    )
                 ))
 
                 imported += 1
