@@ -16,6 +16,9 @@ import smtplib
 from openai import OpenAI
 from email.mime.text import MIMEText
 from datetime import datetime, timedelta
+from werkzeug.utils import secure_filename
+from openpyxl import load_workbook
+
 
 from email.message import EmailMessage
 from PyPDF2 import PdfReader
@@ -369,6 +372,19 @@ def init_db():
     )
     """)
     
+    # =====================================================
+    # PRACTICE QUESTION DIAGRAM SUPPORT
+    # =====================================================
+    
+    try:
+        c.execute("""
+            ALTER TABLE practice_questions
+            ADD COLUMN diagram_path TEXT DEFAULT NULL
+        """)
+    except sqlite3.OperationalError:
+        # Column already exists; continue normally.
+        pass
+
     # -----------------------------------------------------
     # PRACTICE EXCEL UPLOAD HISTORY
     # -----------------------------------------------------
@@ -1009,6 +1025,18 @@ ensure_mock_test_columns()
 
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
+
+# =====================================================
+# PRACTICE QUESTION DIAGRAM STORAGE
+# =====================================================
+
+PRACTICE_DIAGRAM_FOLDER = "/var/data/practice_diagrams"
+
+os.makedirs(
+    PRACTICE_DIAGRAM_FOLDER,
+    exist_ok=True
+)
+
 app.secret_key = os.environ.get("SECRET_KEY")
 client = OpenAI(api_key=os.environ.get("OPENAI_API_KEY"))
 
@@ -2316,6 +2344,23 @@ def mock_payment_success():
             "Payment successful. Mock Test package unlocked."
     })
 
+
+# =====================================================
+# SERVE PRACTICE QUESTION DIAGRAMS
+# =====================================================
+
+@app.route("/practice-diagrams/<filename>")
+def serve_practice_diagram(filename):
+
+    filename = secure_filename(filename)
+
+    if not filename:
+        return "Invalid image filename", 400
+
+    return send_from_directory(
+        PRACTICE_DIAGRAM_FOLDER,
+        filename
+    )
 
 # =====================================================
 # RSC MOCK TEST - CHECK PURCHASE
