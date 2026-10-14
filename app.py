@@ -1959,6 +1959,7 @@ def mock_create_order():
 
     try:
 
+        
         c.execute("""
             INSERT OR REPLACE INTO mock_purchases
             (
@@ -1977,27 +1978,18 @@ def mock_create_order():
             )
             VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         """, (
-
             practice_id,
-
             None,
-
             subject_name,
-
             board,
-
             class_name,
-
+            student_name,
+            student_state,
             package_price,
-
             order["id"],
-
             None,
-
             "pending",
-
             None
-
         ))
 
         conn.commit()
