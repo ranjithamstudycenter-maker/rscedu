@@ -7405,7 +7405,8 @@ def practice_session_questions():
                     option_b,
                     option_c,
                     option_d,
-                    marks
+                    marks,
+                    diagram_path
                 FROM practice_questions
                 WHERE id=?
                 AND active=1
@@ -7469,6 +7470,7 @@ def practice_session_questions():
                     saved_answers.get(
                         str(row["id"])
                     )
+                "diagram_path": row["diagram_path"],
 
             })
 
