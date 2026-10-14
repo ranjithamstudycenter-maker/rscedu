@@ -2953,6 +2953,19 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
     padding: 13px 28px;
     white-space: normal;
 }   
+.question-diagram {
+    margin: 0 auto 22px;
+    text-align: center;
+}
+
+.question-diagram img {
+    display: block;
+    max-width: 100%;
+    max-height: 420px;
+    height: auto;
+    margin: 0 auto;
+    object-fit: contain;
+}
 }
    
    
@@ -3525,6 +3538,9 @@ body.mock-exam-active #mockShell > .mock-payment-actions {
                     </div>
 
                     <div class="question-text" id="questionText"></div>
+                   <div id="questionDiagram" class="question-diagram" hidden>
+                      <img id="questionDiagramImage" alt="Question diagram">
+                  </div>
                     <div class="options" id="options"></div>
 
                     <div class="exam-nav">
@@ -7926,6 +7942,18 @@ function renderQuestion(){
 
     document.getElementById("questionText").textContent =
         q.question || "";
+
+   const diagramBox = document.getElementById("questionDiagram");
+   const diagramImage = document.getElementById("questionDiagramImage");
+   
+   if (q.diagram_path) {
+       diagramImage.src = "/practice-diagrams/" +
+           encodeURIComponent(q.diagram_path);
+       diagramBox.hidden = false;
+   } else {
+       diagramImage.removeAttribute("src");
+       diagramBox.hidden = true;
+   }
 
     const options = document.getElementById("options");
     options.innerHTML = "";
