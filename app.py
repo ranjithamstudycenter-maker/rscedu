@@ -7469,7 +7469,7 @@ def practice_session_questions():
                 "saved_answer":
                     saved_answers.get(
                         str(row["id"])
-                    )
+                    ),
                 "diagram_path": row["diagram_path"],
 
             })
