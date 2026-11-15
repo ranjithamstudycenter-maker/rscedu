@@ -1024,6 +1024,254 @@ def ensure_mock_test_columns():
 init_db()
 ensure_mock_test_columns()
 
+# =====================================================
+# RSC FACULTY SALARY DATABASE
+# NEW MODULE - DOES NOT MODIFY EXISTING RAZORPAY TABLES
+# =====================================================
+
+def init_faculty_salary_db():
+
+    os.makedirs(DATA_DIR, exist_ok=True)
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    try:
+
+        # -------------------------------------------------
+        # 1. CLASS / BATCH MASTER
+        # -------------------------------------------------
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS class_batches (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            class_name TEXT NOT NULL,
+
+            course TEXT NOT NULL,
+
+            subject TEXT DEFAULT '',
+
+            faculty_username TEXT NOT NULL,
+
+            schedule TEXT DEFAULT '',
+
+            active_status INTEGER DEFAULT 1,
+
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+        )
+        """)
+
+        # -------------------------------------------------
+        # 2. CLASS-WISE TUITION PAYMENT RECORDS
+        # Only tuition payments will be stored here.
+        # Notes / PDF / Mock Test payments are excluded.
+        # -------------------------------------------------
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS class_fee_payments (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            class_id INTEGER NOT NULL,
+
+            student_phone TEXT NOT NULL,
+
+            student_name TEXT DEFAULT '',
+
+            razorpay_order_id TEXT,
+
+            razorpay_payment_id TEXT NOT NULL UNIQUE,
+
+            amount_paise INTEGER NOT NULL,
+
+            refund_amount_paise INTEGER DEFAULT 0,
+
+            payment_status TEXT DEFAULT 'captured',
+
+            payment_date TEXT,
+
+            month_key TEXT NOT NULL,
+
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP
+
+        )
+        """)
+
+        # -------------------------------------------------
+        # 3. MONTHLY CLASS COLLECTION
+        # -------------------------------------------------
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS class_monthly_collection (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            class_id INTEGER NOT NULL,
+
+            month_key TEXT NOT NULL,
+
+            gross_collection_paise INTEGER DEFAULT 0,
+
+            refund_amount_paise INTEGER DEFAULT 0,
+
+            net_collection_paise INTEGER DEFAULT 0,
+
+            rsc_share_paise INTEGER DEFAULT 0,
+
+            faculty_share_paise INTEGER DEFAULT 0,
+
+            generated_at TEXT,
+
+            UNIQUE(class_id, month_key)
+
+        )
+        """)
+
+        # -------------------------------------------------
+        # 4. CLASS-WISE FACULTY SALARY
+        # One faculty can have multiple class salary records.
+        # -------------------------------------------------
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS class_salary (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            class_id INTEGER NOT NULL,
+
+            faculty_username TEXT NOT NULL,
+
+            month_key TEXT NOT NULL,
+
+            total_collection_paise INTEGER DEFAULT 0,
+
+            rsc_percentage REAL DEFAULT 40,
+
+            faculty_percentage REAL DEFAULT 60,
+
+            salary_amount_paise INTEGER DEFAULT 0,
+
+            paid_amount_paise INTEGER DEFAULT 0,
+
+            pending_amount_paise INTEGER DEFAULT 0,
+
+            salary_status TEXT DEFAULT 'pending',
+
+            approved_by TEXT DEFAULT '',
+
+            approved_at TEXT,
+
+            generated_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+            UNIQUE(class_id, month_key)
+
+        )
+        """)
+
+        # -------------------------------------------------
+        # 5. FACULTY BANK / RAZORPAYX BENEFICIARY MAPPING
+        # Do not store raw bank account numbers here.
+        # -------------------------------------------------
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS faculty_bank_accounts (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            faculty_username TEXT NOT NULL UNIQUE,
+
+            razorpay_contact_id TEXT DEFAULT '',
+
+            razorpay_fund_account_id TEXT DEFAULT '',
+
+            account_last4 TEXT DEFAULT '',
+
+            ifsc_code TEXT DEFAULT '',
+
+            beneficiary_name TEXT DEFAULT '',
+
+            verification_status TEXT DEFAULT 'pending',
+
+            created_at TEXT DEFAULT CURRENT_TIMESTAMP,
+
+            updated_at TEXT
+
+        )
+        """)
+
+        # -------------------------------------------------
+        # 6. FACULTY SALARY PAYOUT HISTORY
+        # -------------------------------------------------
+
+        c.execute("""
+        CREATE TABLE IF NOT EXISTS salary_payouts (
+
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+
+            salary_id INTEGER NOT NULL,
+
+            faculty_username TEXT NOT NULL,
+
+            amount_paise INTEGER NOT NULL,
+
+            razorpayx_payout_id TEXT DEFAULT '',
+
+            idempotency_key TEXT NOT NULL UNIQUE,
+
+            payout_status TEXT DEFAULT 'pending',
+
+            initiated_at TEXT,
+
+            completed_at TEXT,
+
+            failure_reason TEXT DEFAULT ''
+
+        )
+        """)
+
+        # -------------------------------------------------
+        # 7. INDEXES FOR FASTER SEARCH
+        # -------------------------------------------------
+
+        c.execute("""
+        CREATE INDEX IF NOT EXISTS idx_class_fee_month
+        ON class_fee_payments(class_id, month_key)
+        """)
+
+        c.execute("""
+        CREATE INDEX IF NOT EXISTS idx_salary_month
+        ON class_salary(month_key)
+        """)
+
+        c.execute("""
+        CREATE INDEX IF NOT EXISTS idx_payout_salary
+        ON salary_payouts(salary_id)
+        """)
+
+        conn.commit()
+
+        print("RSC FACULTY SALARY DATABASE INITIALIZED")
+
+    except Exception as e:
+
+        conn.rollback()
+
+        print("FACULTY SALARY DATABASE ERROR:", str(e))
+
+        raise
+
+    finally:
+
+        conn.close()
+
+
+# Initialize the new salary database tables
+init_faculty_salary_db()
+
+
 # -------------------- APP INIT --------------------
 app = Flask(__name__)
 
