@@ -3273,7 +3273,7 @@ def teacher_dashboard():
     teacher = teachers.get(username)
     course = teacher.get("course", "")
 
-      summary = get_faculty_feedback_summary(username)
+    summary = get_faculty_feedback_summary(username)
 
     avg_rating = summary["average_rating"]
     total_feedbacks = summary["total_feedbacks"]
