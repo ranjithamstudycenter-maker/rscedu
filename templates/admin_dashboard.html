@@ -792,7 +792,7 @@ iframe{
     <div style="
         display:grid;
         grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
-        gap:20px;
+        gap:18px;
         margin-bottom:35px;
     ">
 
@@ -834,59 +834,83 @@ iframe{
 
             </div>
 
+            
             <div style="display:grid;gap:13px;color:#334155;font-size:14px;">
-
-                <div>
-                    <b>Assigned Course</b>
-                    <div style="margin-top:4px;">{{ data.course }}</div>
+            
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="color:#64748b;">Assigned Course</span>
+                    <b>{{ data.course }}</b>
                 </div>
-
-                <div>
-                    <b>Enrolled Students</b>
-                    <div style="margin-top:4px;">{{ data.students }}</div>
+            
+                <div style="display:flex;justify-content:space-between;align-items:center;">
+                    <span style="color:#64748b;">Enrolled Students</span>
+                    <b>{{ data.students }}</b>
                 </div>
-
-                <div>
-                    <b>Feedback Received</b>
-                    <div style="margin-top:4px;">{{ data.feedback_count }}</div>
-                </div>
-
-                <div>
-                    <b>Average Rating</b>
-                    <div style="margin-top:4px;color:#d97706;font-weight:700;">
-                        {% if data.feedback_count > 0 %}
-                            ★ {{ data.average_rating }} / 5
-                        {% else %}
-                            No ratings yet
-                        {% endif %}
+            
+                <div style="
+                    display:grid;
+                    grid-template-columns:repeat(3,minmax(0,1fr));
+                    gap:9px;
+                    margin-top:5px;
+                ">
+            
+                    <div style="background:#eff6ff;padding:12px 7px;border-radius:12px;text-align:center;">
+                        <div style="font-size:11px;color:#64748b;">Feedback</div>
+                        <div style="font-size:21px;font-weight:800;color:#1e40af;margin-top:5px;">
+                            {{ data.feedback_count }}
+                        </div>
                     </div>
+            
+                    <div style="background:#fffbeb;padding:12px 7px;border-radius:12px;text-align:center;">
+                        <div style="font-size:11px;color:#92400e;">Rating</div>
+                        <div style="font-size:19px;font-weight:800;color:#d97706;margin-top:5px;">
+                            {% if data.feedback_count > 0 %}
+                                ★ {{ data.average_rating }}
+                            {% else %}
+                                —
+                            {% endif %}
+                        </div>
+                        <div style="font-size:10px;color:#92400e;">/ 5</div>
+                    </div>
+            
+                    <div style="background:#fff1f2;padding:12px 7px;border-radius:12px;text-align:center;">
+                        <div style="font-size:11px;color:#9f1239;">Low Ratings</div>
+                        <div style="font-size:21px;font-weight:800;color:#e11d48;margin-top:5px;">
+                            {{ data.low_count }}
+                        </div>
+                    </div>
+            
                 </div>
-
-                <div>
-                    <b>Low Ratings (Below 3)</b>
-                    <div style="margin-top:4px;">{{ data.low_count }}</div>
-                </div>
-
+            
                 {% if data.warning_msg %}
                     <div style="
-                        background:#fff7ed;color:#c2410c;
-                        padding:10px;border-radius:9px;font-size:13px;
+                        background:#fff7ed;
+                        color:#c2410c;
+                        padding:11px;
+                        border-radius:10px;
+                        font-size:12px;
                     ">
-                        {{ data.warning_msg }}
+                        ⚠️ {{ data.warning_msg }}
                     </div>
                 {% endif %}
-
-                {% if data.status_reason %}
+            
+                {% if not data.active and data.status_reason %}
                     <div style="
-                        background:#f8fafc;padding:10px;
-                        border-radius:9px;font-size:13px;
+                        background:#f8fafc;
+                        border:1px solid #e2e8f0;
+                        padding:11px;
+                        border-radius:10px;
+                        font-size:12px;
                     ">
-                        <b>Status Note:</b><br>
-                        {{ data.status_reason }}
+                        <b>Status Note</b>
+                        <div style="margin-top:5px;color:#64748b;">
+                            {{ data.status_reason }}
+                        </div>
                     </div>
                 {% endif %}
-
+            
             </div>
+
 
             {% if not data.active %}
                 <form
