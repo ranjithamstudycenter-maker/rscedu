@@ -3531,7 +3531,7 @@ def submit_feedback():
         feedback_db[teacher_name] = []
     feedback_db[teacher_name].append(entry)
 
-        _save_feedback()
+    _save_feedback()
 
     summary = get_faculty_feedback_summary(teacher_name)
 
