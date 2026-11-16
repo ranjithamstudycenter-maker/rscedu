@@ -2739,11 +2739,12 @@ async function payNow() {
         const sRes  = await fetch("/api/payment-success", {
           method:  "POST",
           headers: {"Content-Type":"application/json"},
-          body:    JSON.stringify({
-            course:     selectedCourse,
-            order_id:   response.razorpay_order_id,
-            payment_id: response.razorpay_payment_id
-          })
+          body: JSON.stringify({
+            course: selectedCourse,
+            order_id: response.razorpay_order_id,
+            payment_id: response.razorpay_payment_id,
+            signature: response.razorpay_signature
+        })
         });
         const sData = await sRes.json();
         if (sData.status === "success") {
