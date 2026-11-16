@@ -1894,9 +1894,12 @@ def create_order():
         print("Razorpay error:", e)
         return jsonify({"error": "Payment init failed"}), 500
 
-    # Save name
+    # Save pending enrollment details
     user["name"] = name
+    
     session["pending_course"] = course
+    session["pending_order_id"] = order["id"]
+    session["pending_amount"] = amount
 
     return jsonify({
         "order_id": order["id"],
@@ -1917,12 +1920,49 @@ def payment_success_api():
     if not phone:
         return jsonify({"error": "Unauthorized"}), 401
 
-    data = request.json
-    course = data.get("course") or session.get("pending_course")
+    data = request.get_json() or {}
 
-    if not course:
-        return jsonify({"error": "No course"}), 400
-
+    course = session.get("pending_course")
+    order_id = data.get("order_id")
+    payment_id = data.get("payment_id")
+    signature = data.get("signature")
+    
+    # Validate pending order
+    if not course or course not in price_per_hour:
+        return jsonify({"error": "Invalid pending course"}), 400
+    
+    if (
+        not order_id
+        or not payment_id
+        or not signature
+        or order_id != session.get("pending_order_id")
+    ):
+        return jsonify({"error": "Invalid payment details"}), 400
+    
+    amount = session.get("pending_amount")
+    
+    if amount is None:
+        return jsonify({"error": "Payment amount not found"}), 400
+    
+    # Verify Razorpay payment signature
+    try:
+        with open("admin.json") as f:
+            keys = json.load(f)
+    
+        client = razorpay.Client(
+            auth=(keys["razorpay_key"], keys["razorpay_secret"])
+        )
+    
+        client.utility.verify_payment_signature({
+            "razorpay_order_id": order_id,
+            "razorpay_payment_id": payment_id,
+            "razorpay_signature": signature
+        })
+    
+    except Exception as e:
+        print("RAZORPAY SIGNATURE VERIFICATION ERROR:", str(e))
+        return jsonify({"error": "Payment verification failed"}), 400
+    
     user = get_user(phone)
   
     # Mark enrolled + set hours
@@ -1972,7 +2012,7 @@ def payment_success_api():
                 phone,
                 user.get("name", ""),
                 course,
-                price_per_hour.get(course, 0) * classes_per_month
+                amount
             ])
     except Exception as e:
         print("CSV error:", e)
@@ -1982,9 +2022,9 @@ def payment_success_api():
     # =========================================
 
     teacher = COURSE_TEACHERS.get(course, "Unknown")
-    amount = price_per_hour.get(course, 0) * classes_per_month
+    # Calculate salary split using actual amount paid
     faculty_share = round(amount * 0.60, 2)
-    admin_share   = round(amount * 0.40, 2)
+    admin_share = round(amount * 0.40, 2)
 
     salary_db.append({
 
