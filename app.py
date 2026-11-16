@@ -9147,6 +9147,103 @@ def admin_students():
 }
     })
 
+
+@app.route("/admin/classes", methods=["GET", "POST"])
+def admin_classes():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    if request.method == "POST":
+
+        class_name = request.form.get("class_name", "").strip()
+        course = request.form.get("course", "").strip()
+        subject = request.form.get("subject", "").strip()
+        faculty_username = request.form.get("faculty_username", "").strip()
+        schedule = request.form.get("schedule", "").strip()
+
+        # Validate required fields
+        if not all([class_name, course, subject, faculty_username]):
+            conn.close()
+            return "Please fill all required fields", 400
+
+        # Faculty must exist and be active
+        faculty = teachers.get(faculty_username)
+
+        if not faculty or not faculty.get("active", False):
+            conn.close()
+            return "Selected faculty is not active", 400
+
+        c.execute("""
+            INSERT INTO class_batches
+            (class_name, course, subject, faculty_username,
+             schedule, active_status)
+            VALUES (?, ?, ?, ?, ?, 1)
+        """, (
+            class_name,
+            course,
+            subject,
+            faculty_username,
+            schedule
+        ))
+
+        conn.commit()
+        conn.close()
+
+        return redirect("/admin/classes")
+
+    # Get all batches
+    c.execute("""
+        SELECT *
+        FROM class_batches
+        ORDER BY id DESC
+    """)
+    batches = c.fetchall()
+
+    conn.close()
+
+    # Only active faculty can be assigned to new batches
+    active_faculty = {
+        username: data
+        for username, data in teachers.items()
+        if data.get("active", False)
+    }
+
+    return render_template(
+        "classes.html",
+        batches=batches,
+        active_faculty=active_faculty
+    )
+
+
+@app.route("/admin/classes/toggle/<int:class_id>", methods=["POST"])
+def toggle_class_status(class_id):
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    c.execute("""
+        UPDATE class_batches
+        SET active_status =
+            CASE
+                WHEN active_status = 1 THEN 0
+                ELSE 1
+            END
+        WHERE id = ?
+    """, (class_id,))
+
+    conn.commit()
+    conn.close()
+
+    return redirect("/admin/classes")
+
 @app.route("/admin/students-view")
 def students_view():
     if not session.get("admin"):
