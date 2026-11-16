@@ -3694,6 +3694,32 @@ def admin():
             error = "Wrong Password"
     return render_template("admin_login.html", error=error)
 
+# =====================================================
+# ADMIN - REACTIVATE FACULTY
+# =====================================================
+
+@app.route("/admin/faculty/<username>/reactivate", methods=["POST"])
+def reactivate_faculty(username):
+
+    # Admin authentication
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    # Check faculty account
+    if username not in teachers:
+        return "Faculty not found", 404
+
+    # Restore the same faculty account
+    set_faculty_status(
+        username,
+        True,
+        "Reactivated by Admin"
+    )
+
+    print("FACULTY REACTIVATED:", username)
+
+    return redirect("/admin-dashboard")
+
 @app.route("/admin-dashboard")
 def admin_dashboard():
 
