@@ -4324,6 +4324,144 @@ def admin_dashboard():
 
         pending_salary_total_paise = c.fetchone()[0] or 0
 
+                # ==========================================
+        # CLASS-WISE SALARY TAB DATA
+        # ==========================================
+
+        salary_month_key = (
+            request.args.get("salary_month")
+            or datetime.now().strftime("%Y-%m")
+        )
+
+        class_salary_rows = []
+
+        # Available payment / salary months
+        c.execute("""
+            SELECT month_key FROM class_fee_payments
+            UNION
+            SELECT month_key FROM class_salary
+            ORDER BY month_key DESC
+        """)
+
+        salary_month_options = [
+            row[0] for row in c.fetchall()
+            if row[0]
+        ]
+
+        if salary_month_key not in salary_month_options:
+            salary_month_options.insert(0, salary_month_key)
+                salary_month_options_display = [
+            {
+                "value": m,
+                "label": datetime.strptime(
+                    m, "%Y-%m"
+                ).strftime("%B %Y")
+            }
+            for m in salary_month_options
+        ]
+
+        salary_month_label = datetime.strptime(
+            salary_month_key, "%Y-%m"
+        ).strftime("%B %Y")
+
+        # One row per salary class
+        c.execute("""
+            SELECT
+                cb.id,
+                cb.class_name,
+                cb.course,
+                cb.faculty_username,
+
+                (
+                    SELECT COUNT(*)
+                    FROM students s
+                    WHERE s.course = cb.course
+                      AND s.enrolled = 1
+                ) AS enrolled_students,
+
+                COALESCE((
+                    SELECT SUM(
+                        CASE
+                            WHEN p.amount_paise >
+                                 COALESCE(p.refund_amount_paise, 0)
+                            THEN p.amount_paise -
+                                 COALESCE(p.refund_amount_paise, 0)
+                            ELSE 0
+                        END
+                    )
+                    FROM class_fee_payments p
+                    WHERE p.class_id = cb.id
+                      AND p.month_key = ?
+                      AND p.payment_status = 'captured'
+                ), 0) AS net_collection,
+
+                cs.id,
+                COALESCE(cs.salary_amount_paise, 0),
+                COALESCE(cs.paid_amount_paise, 0),
+                COALESCE(cs.pending_amount_paise, 0),
+                COALESCE(cs.salary_status, 'not_generated')
+
+            FROM class_batches cb
+
+            LEFT JOIN class_salary cs
+                ON cs.class_id = cb.id
+               AND cs.month_key = ?
+
+            WHERE cb.course IN ('cbse9', 'cbse10', 'cbse12')
+
+            ORDER BY cb.course
+        """, (salary_month_key, salary_month_key))
+
+        for row in c.fetchall():
+
+            (
+                class_id,
+                class_name,
+                course,
+                faculty_username,
+                enrolled_students,
+                net_collection_paise,
+                salary_id,
+                salary_amount_paise,
+                paid_amount_paise,
+                pending_amount_paise,
+                salary_status
+            ) = row
+
+            net_collection_paise = int(net_collection_paise or 0)
+
+            # Use generated salary record when available.
+            # Otherwise show the estimated 60% share until generated.
+            if salary_id:
+                faculty_share_paise = int(salary_amount_paise or 0)
+                paid_paise = int(paid_amount_paise or 0)
+                pending_paise = int(pending_amount_paise or 0)
+            else:
+                faculty_share_paise = round(
+                    net_collection_paise * 0.60
+                )
+                paid_paise = 0
+                pending_paise = 0
+
+            rsc_share_paise = (
+                net_collection_paise - faculty_share_paise
+            )
+
+            class_salary_rows.append({
+                "class_id": class_id,
+                "class_name": class_name,
+                "course": course,
+                "faculty": faculty_username,
+                "enrolled": enrolled_students or 0,
+                "collection": net_collection_paise / 100,
+                "rsc_share": rsc_share_paise / 100,
+                "faculty_share": faculty_share_paise / 100,
+                "paid": paid_paise / 100,
+                "pending": pending_paise / 100,
+                "status": salary_status,
+                "generated": bool(salary_id)
+            })
+
         # ==========================================
         # HR MANAGEMENT DATA
         # ==========================================
@@ -4456,7 +4594,12 @@ def admin_dashboard():
         faculty_salary_total=faculty_salary_total,
         pending_salary_total=pending_salary_total,
         hr_faculty=hr_faculty,
-        class_monitoring=class_monitoring
+        class_monitoring=class_monitoring,
+        salary_month_key=salary_month_key,
+        salary_month_options=salary_month_options,
+        class_salary_rows=class_salary_rows,
+        salary_month_options_display=salary_month_options_display,
+        salary_month_label=salary_month_label
     )
 
 @app.route("/admin/practice")
