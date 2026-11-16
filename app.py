@@ -4656,6 +4656,32 @@ def admin_dashboard():
             rsc_share_paise = (
                 net_collection_paise - faculty_share_paise
             )
+                        # Fetch completed manual salary payment history
+            salary_payments = []
+
+            if salary_id:
+                c.execute("""
+                    SELECT
+                        amount_paise,
+                        payment_date,
+                        payment_reference,
+                        payment_notes,
+                        recorded_by
+                    FROM salary_payouts
+                    WHERE salary_id=?
+                      AND payout_status='completed'
+                    ORDER BY payment_date DESC, id DESC
+                """, (salary_id,))
+
+                for payment in c.fetchall():
+                    salary_payments.append({
+                        "amount": int(payment[0] or 0) / 100,
+                        "date": payment[1] or "",
+                        "reference": payment[2] or "",
+                        "notes": payment[3] or "",
+                        "recorded_by": payment[4] or "Admin"
+                    })
+                    
 
             class_salary_rows.append({
                 "class_id": class_id,
@@ -4670,6 +4696,8 @@ def admin_dashboard():
                 "pending": pending_paise / 100,
                 "status": salary_status,
                 "generated": bool(salary_id)
+                "salary_id": salary_id,
+                "payments": salary_payments
             })
 
         # ==========================================
