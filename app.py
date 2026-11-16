@@ -3273,48 +3273,26 @@ def teacher_dashboard():
     teacher = teachers.get(username)
     course = teacher.get("course", "")
 
-    # 🔥 FIX: handle list properly
-    if isinstance(feedback_db, list):
-        feedbacks = [f for f in feedback_db if f.get("teacher") == username]
-    else:
-        feedbacks = feedback_db.get(username, [])
+      summary = get_faculty_feedback_summary(username)
 
-    # ⭐ avg rating calculation safe
-    if feedbacks:
-        avg_rating = round(
-            sum(f.get("rating", 0) for f in feedbacks) / len(feedbacks), 2
-        )
-    else:
-        avg_rating = 0
-   
-    total_feedbacks = len(feedbacks)
+    avg_rating = summary["average_rating"]
+    total_feedbacks = summary["total_feedbacks"]
+    low_count = summary["low_count"]
+    warning_msg = summary["warning_msg"]
 
-    low_ratings = [
-        f for f in feedbacks
-        if f.get("rating", 0) < 3
-    ]
+    if summary["deactivate"]:
 
-    low_count = len(low_ratings)
-
-    warning_msg = ""
-
-    # ⚠️ WARNING AFTER 6 LOW FEEDBACKS
-    if low_count >= 6 and total_feedbacks < 10:
-
-        warning_msg = (
-            "⚠️ Warning: Multiple low ratings detected. "
-            "Improve teaching quality immediately."
+        set_faculty_status(
+            username,
+            False,
+            "Automatic deactivation due to low feedback rating"
         )
 
-    # ❌ DEACTIVATE AFTER 10+ LOW FEEDBACKS
-    if total_feedbacks >= 10 and avg_rating < 3:
+        session.pop("teacher", None)
+        session.pop("course", None)
 
-        teachers[username]["active"] = False
-
-        warning_msg = (
-            "❌ Account temporarily deactivated due to "
-            "continuous poor student feedback."
-        )
+        return redirect("/teacher-login")
+        
 
         # =====================================
     # 🔥 FACULTY EARNINGS
@@ -3553,9 +3531,25 @@ def submit_feedback():
         feedback_db[teacher_name] = []
     feedback_db[teacher_name].append(entry)
 
-    # Persist to JSON
-    _save_feedback()
-    return jsonify({"status": "success"})
+        _save_feedback()
+
+    summary = get_faculty_feedback_summary(teacher_name)
+
+    if summary["deactivate"]:
+
+        set_faculty_status(
+            teacher_name,
+            False,
+            "Automatic deactivation due to low feedback rating"
+        )
+
+    return jsonify({
+        "status": "success",
+        "average_rating": summary["average_rating"],
+        "total_feedbacks": summary["total_feedbacks"],
+        "warning": summary["warning_msg"],
+        "deactivated": summary["deactivate"]
+    })
 
 
 @app.route("/get_feedback")
