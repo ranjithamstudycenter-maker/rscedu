@@ -1334,7 +1334,7 @@ teachers = {
         "password": "",
         "course": "cbse12",
         "meet_link": "",
-        "enabled": False,
+        "active": False,
         "class_live": False,
         "gpay": ""
     },
@@ -1360,15 +1360,35 @@ teachers = {
             "gpay": ""
     }
 }
-def get_faculty_feedback_summary(username):
 
+def get_faculty_feedback_list(username):
     if isinstance(feedback_db, list):
-        feedbacks = [
+        return [
             f for f in feedback_db
             if f.get("teacher") == username
         ]
-    else:
-        feedbacks = feedback_db.get(username, [])
+
+    return feedback_db.get(username, [])
+    
+def get_faculty_feedback_summary(username):
+
+       feedbacks = get_faculty_feedback_list(username)
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT feedback_review_after
+        FROM faculty_status
+        WHERE username=?
+    """, (username,))
+
+    row = c.fetchone()
+    conn.close()
+
+    review_after = row[0] if row and row[0] is not None else 0
+
+    feedbacks = feedbacks[review_after:]
 
     ratings = []
 
@@ -1420,10 +1440,20 @@ def init_faculty_status_table():
             username TEXT PRIMARY KEY,
             active_status INTEGER DEFAULT 1,
             status_reason TEXT DEFAULT '',
-            updated_at TEXT
+            updated_at TEXT,
+            feedback_review_after INTEGER DEFAULT 0
         )
     """)
+        # Existing database upgrade
+    c.execute("PRAGMA table_info(faculty_status)")
+    columns = [row[1] for row in c.fetchall()]
 
+    if "feedback_review_after" not in columns:
+        c.execute("""
+            ALTER TABLE faculty_status
+            ADD COLUMN feedback_review_after INTEGER DEFAULT 0
+        """)
+        
     for username, details in teachers.items():
 
         active = 1 if details.get("active", True) else 0
@@ -1460,20 +1490,30 @@ def set_faculty_status(username, active, reason=""):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
+        feedback_count = len(get_faculty_feedback_list(username))
+
     c.execute("""
         INSERT INTO faculty_status
-        (username, active_status, status_reason, updated_at)
-        VALUES (?, ?, ?, ?)
+        (username, active_status, status_reason, updated_at,
+         feedback_review_after)
+        VALUES (?, ?, ?, ?, ?)
         ON CONFLICT(username)
         DO UPDATE SET
             active_status = excluded.active_status,
             status_reason = excluded.status_reason,
-            updated_at = excluded.updated_at
+            updated_at = excluded.updated_at,
+            feedback_review_after =
+                CASE
+                    WHEN excluded.active_status = 1
+                    THEN excluded.feedback_review_after
+                    ELSE faculty_status.feedback_review_after
+                END
     """, (
         username,
         1 if active else 0,
         reason,
-        datetime.now().isoformat()
+        datetime.now().isoformat(),
+        feedback_count
     ))
 
     conn.commit()
@@ -3636,7 +3676,7 @@ def _save_feedback():
 def _load_feedback():
     global feedback_db
     try:
-        with open("feedback.json", "r") as f:
+        with open("/var/data/feedback.json", "r") as f:
             feedback_db = json.load(f)
     except:
         feedback_db = {}
