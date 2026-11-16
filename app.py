@@ -1372,7 +1372,7 @@ def get_faculty_feedback_list(username):
     
 def get_faculty_feedback_summary(username):
 
-       feedbacks = get_faculty_feedback_list(username)
+    feedbacks = get_faculty_feedback_list(username)
 
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
@@ -1490,7 +1490,7 @@ def set_faculty_status(username, active, reason=""):
     conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
 
-        feedback_count = len(get_faculty_feedback_list(username))
+    feedback_count = len(get_faculty_feedback_list(username))
 
     c.execute("""
         INSERT INTO faculty_status
