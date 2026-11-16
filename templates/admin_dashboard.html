@@ -1001,270 +1001,231 @@ iframe{
 </div>
 
 
+
 <div id="salary" class="tab-content">
 
-<div class="card">
-<div style="
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    margin-bottom:25px;
-    flex-wrap:wrap;
-    gap:15px;
-">
+    <div class="card">
 
-    <!-- LEFT EMPTY -->
-    <div></div>
+        <div style="
+            display:flex;
+            justify-content:space-between;
+            align-items:center;
+            flex-wrap:wrap;
+            gap:15px;
+            margin-bottom:25px;
+        ">
 
-    <!-- CENTER TITLE -->
-    <h2 style="
-        margin:0;
-        color:#1e3a8a;
-        font-size:15px;
-        font-weight:700;
-    ">
-        💰 Faculty Salary Management
-    </h2>
+            <h2 style="color:#1e3a8a;font-size:20px;margin:0;">
+                💰 Faculty Salary Management
+            </h2>
 
-    <!-- RIGHT CONTROLS -->
-    <div style="
-        display:flex;
-        gap:10px;
-        align-items:center;
-    ">
+            <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
 
-        <!-- MONTH DROPDOWN -->
-        <form method="GET" action="/admin-dashboard">
+                <!-- MONTH FILTER -->
+                <form method="GET" action="/admin-dashboard">
 
-            <select
-                    name="month"
-                    onchange="this.form.submit()"
-                    style="
-                        padding:10px 14px;
+                    <input type="hidden" name="tab" value="salary">
+
+                    <select
+                        name="salary_month"
+                        onchange="this.form.submit()"
+                        style="
+                            padding:10px 14px;
+                            border-radius:10px;
+                            border:1px solid #ccc;
+                            font-size:14px;
+                            background:white;
+                        "
+                    >
+                        {% for m in salary_month_options_display %}
+                        <option
+                            value="{{ m.value }}"
+                            {% if salary_month_key == m.value %}selected{% endif %}
+                        >
+                            {{ m.label }}
+                        </option>
+                        {% endfor %}
+                    </select>
+
+                </form>
+
+                <!-- GENERATE SALARY -->
+                <form method="POST" action="/admin/generate-class-salary">
+
+                    <input
+                        type="hidden"
+                        name="month_key"
+                        value="{{ salary_month_key }}"
+                    >
+
+                    <button type="submit" style="
+                        background:#2563eb;
+                        color:white;
+                        border:none;
+                        padding:11px 16px;
                         border-radius:10px;
-                        border:1px solid #ccc;
-                        font-size:15px;
+                        font-weight:600;
                         cursor:pointer;
-                        min-width:160px;
-                        background:white;
+                    ">
+                        ⚙️ Generate Salary
+                    </button>
+
+                </form>
+
+                <!-- PDF -->
+                <a
+                    href="/download-salary-pdf?month={{ salary_month_key }}"
+                    style="
+                        background:#dc2626;
+                        color:white;
+                        padding:11px 16px;
+                        border-radius:10px;
+                        font-weight:600;
+                        text-decoration:none;
                     "
                 >
-                
-                    {% if months %}
-                
-                        {% for m in months %}
-                
-                        <option
-                            value="{{ m }}"
-                            {% if selected_month == m %}selected{% endif %}
-                        >
-                
-                            {{ m }}
-                
-                        </option>
-                
-                        {% endfor %}
-                
+                    📄 Download PDF
+                </a>
+
+            </div>
+        </div>
+
+        <h3 style="
+            color:#475569;
+            font-size:15px;
+            margin-bottom:15px;
+        ">
+            Salary Overview – {{ salary_month_label }}
+        </h3>
+
+        <div style="overflow-x:auto;">
+
+            <table class="salary-table" style="min-width:1050px;">
+
+                <thead>
+                    <tr>
+                        <th>Faculty</th>
+                        <th>Class</th>
+                        <th>Enrolled</th>
+                        <th>Amount Received</th>
+                        <th>RSC Share (40%)</th>
+                        <th>Faculty Share (60%)</th>
+                        <th>Paid Salary</th>
+                        <th>Pending Salary</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for data in class_salary_rows %}
+
+                    <tr>
+
+                        <td><b>{{ data.faculty }}</b></td>
+
+                        <td>
+                            {{ data.class_name }}
+                            <br>
+                            <small style="color:#64748b;">
+                                {{ data.course }}
+                            </small>
+                        </td>
+
+                        <td>{{ data.enrolled }}</td>
+
+                        <td style="color:#2563eb;font-weight:700;">
+                            ₹{{ "{:,.2f}".format(data.collection) }}
+                        </td>
+
+                        <td style="color:#2563eb;font-weight:700;">
+                            ₹{{ "{:,.2f}".format(data.rsc_share) }}
+                        </td>
+
+                        <td style="color:#15803d;font-weight:700;">
+                            ₹{{ "{:,.2f}".format(data.faculty_share) }}
+                        </td>
+
+                        <td style="color:#15803d;font-weight:700;">
+                            ₹{{ "{:,.2f}".format(data.paid) }}
+                        </td>
+
+                        <td style="color:#ea580c;font-weight:700;">
+                            ₹{{ "{:,.2f}".format(data.pending) }}
+                        </td>
+
+                        <td>
+
+                            {% if not data.generated %}
+
+                                <span style="
+                                    background:#fef3c7;
+                                    color:#92400e;
+                                    padding:6px 10px;
+                                    border-radius:8px;
+                                    font-size:12px;
+                                    font-weight:700;
+                                ">
+                                    Not Generated
+                                </span>
+
+                            {% elif data.status == "paid" %}
+
+                                <span style="color:#15803d;font-weight:700;">
+                                    ✓ Paid
+                                </span>
+
+                            {% elif data.status == "partial" %}
+
+                                <span style="color:#d97706;font-weight:700;">
+                                    Partial
+                                </span>
+
+                            {% else %}
+
+                                <span style="color:#dc2626;font-weight:700;">
+                                    Pending
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                    </tr>
+
                     {% else %}
-                
-                        <option selected>
-                
-                            May 2026
-                
-                        </option>
-                
-                    {% endif %}
-                
-                </select>
-        </form>
 
-        <!-- PDF BUTTON -->
-        <a href="/download-salary-pdf?month={{ selected_month }}">
+                    <tr>
+                        <td colspan="9" style="
+                            padding:35px;
+                            text-align:center;
+                            color:#64748b;
+                        ">
+                            No class records found for {{ salary_month_label }}.
+                            <br>
+                            Student tuition payments will appear here after they
+                            are recorded.
+                        </td>
+                    </tr>
 
-            <button style="
-                background:#dc2626;
-                color:white;
-                border:none;
-                padding:10px 16px;
-                border-radius:10px;
-                font-weight:600;
-                cursor:pointer;
-            ">
+                    {% endfor %}
 
-                📄 Download PDF
+                </tbody>
 
-            </button>
+            </table>
 
-        </a>
+        </div>
+
+        <p style="
+            color:#64748b;
+            font-size:12px;
+            margin-top:18px;
+        ">
+            * Faculty salary is calculated from net tuition collection.
+            RSC receives 40% and Faculty receives 60%.
+        </p>
 
     </div>
-
-</div>
-
-<table class="salary-table">
-
-<tr>
-
-    <th>Teacher</th>
-    <th>Class</th>
-    <th>Strength</th>
-    <th>Enrolled</th>
-    <th>Class count</th>
-    <th>Month </th>
-    <th>Amount Recieved </th>
-    <th>Paid Salary</th>
-    <th>Pending Salary</th>
-    <th>Salary Credited</th>
-    <th>Action</th>
-   
-</tr>
-
-{% for teacher, data in summary.items() %}
-
-<tr>
-
-    <td>{{ teacher }}</td>
-
-    <td>{{ data.course }}</td>
-
-    <td>{{ data.strength }}</td>
-
-    <td>{{ data.students }}</td>
-
-    <td>{{ data.class_count if data.class_count else 0 }}</td>
-
-    <td>{{ data.month }} {{ data.year }}</td>
-
-    <!-- Salary credited -->
-    <td style="color:#2563eb;font-weight:bold;">
-        ₹{{ data.paid + data.pending }}
-    </td>
-
-    <!-- Paid Salary -->
-<td style="
-    font-weight:bold;
-">
-
-    {% if (data.paid + data.pending) == 0 %}
-
-        <span style="color:red;">
-
-            NO
-
-        </span>
-
-    {% elif data.pending > 0 %}
-
-        <span style="color:red;">
-
-            NO
-
-        </span>
-
-    {% else %}
-
-        <span style="color:green;">
-
-            YES
-
-        </span>
-
-    {% endif %}
-
-</td>
-    
-    <!-- Pending Salary -->
-    <td style="
-        color:orange;
-        font-weight:bold;
-    ">
-    
-        ₹{{ data.pending }}
-    
-    </td>
-
-    <!-- Salary Credited Status -->
-        <td style="
-            font-weight:bold;
-        ">
-        
-            {% if (data.paid + data.pending) == 0 %}
-        
-                No Salary
-        
-            {% elif data.pending > 0 %}
-        
-                <span style="color:orange;">
-        
-                    Yet to Pay
-        
-                </span>
-        
-            {% else %}
-        
-                <span style="color:green;">
-        
-                    Done
-        
-                </span>
-        
-            {% endif %}
-        
-        </td>
-
-<td>
-
-{% if (data.paid + data.pending) == 0 %}
-
-    <button style="
-        background:#6b7280;
-        color:white;
-        border:none;
-        padding:8px 14px;
-        border-radius:8px;
-        font-weight:bold;
-    ">
-
-        No Pay
-
-    </button>
-
-{% elif data.pending > 0 %}
-
-    <a href="/mark-paid/{{ teacher }}">
-
-        <button class="pay-btn">
-
-            yet to pay
-
-        </button>
-
-    </a>
-
-{% else %}
-
-    <button style="
-        background:#10b981;
-        color:white;
-        border:none;
-        padding:8px 14px;
-        border-radius:8px;
-        font-weight:bold;
-    ">
-
-        Completed
-
-    </button>
-
-{% endif %}
-
-</td>
-</tr>
-
-{% endfor %}
-
-
-</div>
 
 </div>
 
