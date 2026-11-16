@@ -4113,7 +4113,7 @@ def admin_generate_class_salary():
         )
 
         return redirect(
-            "/admin-dashboard?month=" + month_key
+            "/admin-dashboard?salary_month=" + month_key
         )
 
     except Exception as e:
@@ -4246,6 +4246,20 @@ def admin_dashboard():
     paid_salary_total_paise = 0
     pending_salary_total_paise = 0
 
+    # Salary tab default values
+    salary_month_key = datetime.now().strftime("%Y-%m")
+    salary_month_options = [salary_month_key]
+    salary_month_options_display = [{
+        "value": salary_month_key,
+        "label": datetime.now().strftime("%B %Y")
+    }]
+    salary_month_label = datetime.now().strftime("%B %Y")
+    class_salary_rows = []
+
+    # HR default values
+    hr_faculty = []
+    class_monitoring = []
+
     # ==========================================
     # DATABASE CONNECTION
     # ==========================================
@@ -4324,7 +4338,7 @@ def admin_dashboard():
 
         pending_salary_total_paise = c.fetchone()[0] or 0
 
-                # ==========================================
+        # ==========================================
         # CLASS-WISE SALARY TAB DATA
         # ==========================================
 
@@ -4350,14 +4364,14 @@ def admin_dashboard():
 
         if salary_month_key not in salary_month_options:
             salary_month_options.insert(0, salary_month_key)
-                salary_month_options_display = [
-            {
-                "value": m,
-                "label": datetime.strptime(
-                    m, "%Y-%m"
-                ).strftime("%B %Y")
-            }
-            for m in salary_month_options
+        salary_month_options_display = [
+        {
+            "value": m,
+            "label": datetime.strptime(
+                m, "%Y-%m"
+            ).strftime("%B %Y")
+        }
+        for m in salary_month_options
         ]
 
         salary_month_label = datetime.strptime(
