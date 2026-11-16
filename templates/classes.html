@@ -1,0 +1,871 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Class Management | Ranjitham Study Center</title>
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+
+<style>
+:root {
+    --primary: #2563eb;
+    --primary-dark: #1d4ed8;
+    --navy: #172554;
+    --text: #334155;
+    --muted: #64748b;
+    --border: #e2e8f0;
+    --bg: #f4f7fc;
+    --white: #ffffff;
+    --green: #16a34a;
+    --red: #dc2626;
+}
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background: var(--bg);
+    color: var(--text);
+    padding: 28px;
+}
+
+.container {
+    max-width: 1450px;
+    margin: auto;
+}
+
+/* HEADER */
+
+.page-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 15px;
+    margin-bottom: 28px;
+}
+
+.header-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.header-icon {
+    width: 55px;
+    height: 55px;
+    border-radius: 16px;
+    background: #e8efff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 27px;
+}
+
+.page-header h2 {
+    color: var(--navy);
+    font-size: 25px;
+    font-weight: 800;
+    margin-bottom: 5px;
+}
+
+.page-header p {
+    color: var(--muted);
+    font-size: 13px;
+}
+
+.header-tag {
+    background: #e8efff;
+    color: var(--primary);
+    padding: 10px 16px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+/* SUMMARY */
+
+.summary-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 18px;
+    margin-bottom: 25px;
+}
+
+.summary-card {
+    background: var(--white);
+    border: 1px solid #edf0f5;
+    border-radius: 16px;
+    padding: 21px;
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    box-shadow: 0 5px 18px rgba(15, 23, 42, 0.04);
+}
+
+.summary-icon {
+    width: 48px;
+    height: 48px;
+    border-radius: 14px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 23px;
+}
+
+.summary-icon.blue {
+    background: #eff6ff;
+}
+
+.summary-icon.green {
+    background: #ecfdf5;
+}
+
+.summary-card p {
+    color: var(--muted);
+    font-size: 12px;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+
+.summary-card h3 {
+    color: var(--navy);
+    font-size: 23px;
+    font-weight: 800;
+}
+
+/* PANELS */
+
+.panel {
+    background: var(--white);
+    border: 1px solid #edf0f5;
+    border-radius: 18px;
+    padding: 27px;
+    margin-bottom: 25px;
+    box-shadow: 0 5px 22px rgba(15, 23, 42, 0.045);
+}
+
+.panel-heading {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 24px;
+}
+
+.panel-heading .heading-icon {
+    width: 42px;
+    height: 42px;
+    border-radius: 12px;
+    background: #eff6ff;
+    color: var(--primary);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+}
+
+.panel-heading h3 {
+    color: var(--navy);
+    font-size: 17px;
+    font-weight: 800;
+}
+
+.panel-heading p {
+    color: var(--muted);
+    font-size: 12px;
+    margin-top: 4px;
+}
+
+/* FORM */
+
+.form-grid {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 21px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+}
+
+.form-group.full-width {
+    grid-column: 1 / -1;
+}
+
+label {
+    color: #334155;
+    font-size: 13px;
+    font-weight: 700;
+    margin-bottom: 9px;
+}
+
+.required {
+    color: var(--red);
+}
+
+input,
+select {
+    width: 100%;
+    height: 47px;
+    padding: 0 14px;
+    border: 1px solid #dbe2ec;
+    border-radius: 10px;
+    background: #ffffff;
+    color: #334155;
+    font-family: inherit;
+    font-size: 13px;
+    outline: none;
+    transition: 0.2s;
+}
+
+input::placeholder {
+    color: #a0aabc;
+}
+
+input:focus,
+select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.10);
+}
+
+.form-hint {
+    font-size: 11px;
+    color: #94a3b8;
+    margin-top: 7px;
+}
+
+/* BUTTON */
+
+.form-actions {
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.create-btn {
+    background: linear-gradient(135deg, #2563eb, #1d4ed8);
+    color: white;
+    border: none;
+    padding: 13px 23px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    box-shadow: 0 5px 12px rgba(37, 99, 235, 0.18);
+}
+
+.create-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 17px rgba(37, 99, 235, 0.25);
+}
+
+.create-btn span {
+    font-size: 17px;
+    margin-right: 5px;
+}
+
+/* TABLE */
+
+.table-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.batch-count {
+    background: #eff6ff;
+    color: var(--primary);
+    padding: 8px 13px;
+    border-radius: 30px;
+    font-size: 12px;
+    font-weight: 700;
+}
+
+.table-wrap {
+    overflow-x: auto;
+    border: 1px solid var(--border);
+    border-radius: 12px;
+}
+
+table {
+    width: 100%;
+    min-width: 900px;
+    border-collapse: collapse;
+    background: white;
+}
+
+thead {
+    background: #f1f5fb;
+}
+
+th {
+    color: #475569;
+    font-size: 11px;
+    font-weight: 800;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    padding: 16px 14px;
+    text-align: left;
+    white-space: nowrap;
+}
+
+td {
+    padding: 16px 14px;
+    border-top: 1px solid #edf0f5;
+    color: #475569;
+    font-size: 12px;
+    vertical-align: middle;
+}
+
+tbody tr {
+    transition: background 0.2s;
+}
+
+tbody tr:hover {
+    background: #f8faff;
+}
+
+.class-name {
+    color: var(--navy);
+    font-weight: 700;
+}
+
+.course-tag {
+    display: inline-block;
+    background: #eff6ff;
+    color: #2563eb;
+    padding: 6px 10px;
+    border-radius: 7px;
+    font-size: 11px;
+    font-weight: 700;
+}
+
+.faculty-name {
+    color: #334155;
+    font-weight: 600;
+}
+
+/* STATUS */
+
+.status {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    padding: 7px 11px;
+    border-radius: 30px;
+    font-size: 11px;
+    font-weight: 700;
+    white-space: nowrap;
+}
+
+.status::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+}
+
+.status-active {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.status-active::before {
+    background: #16a34a;
+}
+
+.status-inactive {
+    background: #fee2e2;
+    color: #dc2626;
+}
+
+.status-inactive::before {
+    background: #dc2626;
+}
+
+/* ACTION */
+
+.action-form {
+    margin: 0;
+}
+
+.toggle-btn {
+    padding: 8px 12px;
+    border: none;
+    border-radius: 8px;
+    background: #eff6ff;
+    color: #2563eb;
+    font-family: inherit;
+    font-size: 11px;
+    font-weight: 700;
+    cursor: pointer;
+    transition: 0.2s;
+    white-space: nowrap;
+}
+
+.toggle-btn:hover {
+    background: #dbeafe;
+}
+
+.toggle-btn.activate {
+    background: #dcfce7;
+    color: #15803d;
+}
+
+.toggle-btn.activate:hover {
+    background: #bbf7d0;
+}
+
+/* EMPTY STATE */
+
+.empty-state {
+    text-align: center;
+    padding: 45px 15px;
+}
+
+.empty-icon {
+    font-size: 36px;
+    margin-bottom: 12px;
+}
+
+.empty-state h4 {
+    color: var(--navy);
+    font-size: 15px;
+    margin-bottom: 7px;
+}
+
+.empty-state p {
+    color: var(--muted);
+    font-size: 12px;
+}
+
+/* FOOTER */
+
+.page-footer {
+    text-align: center;
+    color: #94a3b8;
+    font-size: 11px;
+    padding: 5px 0 15px;
+}
+
+/* RESPONSIVE */
+
+@media(max-width: 800px) {
+    body {
+        padding: 18px;
+    }
+
+    .panel {
+        padding: 20px;
+    }
+}
+
+@media(max-width: 600px) {
+    body {
+        padding: 12px;
+    }
+
+    .page-header h2 {
+        font-size: 20px;
+    }
+
+    .summary-grid {
+        grid-template-columns: 1fr;
+        gap: 12px;
+    }
+
+    .form-grid {
+        grid-template-columns: 1fr;
+        gap: 17px;
+    }
+
+    .form-group.full-width {
+        grid-column: auto;
+    }
+
+    .panel {
+        padding: 17px;
+        border-radius: 14px;
+    }
+
+    .panel-heading h3 {
+        font-size: 15px;
+    }
+
+    .form-actions {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .create-btn {
+        width: 100%;
+    }
+
+    .header-tag {
+        display: none;
+    }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- PAGE HEADER -->
+
+    <div class="page-header">
+
+        <div class="header-left">
+
+            <div class="header-icon">📚</div>
+
+            <div>
+                <h2>Class / Batch Management</h2>
+                <p>Create classes, assign faculty and manage batches</p>
+            </div>
+
+        </div>
+
+        <div class="header-tag">
+            RSC ADMIN PANEL
+        </div>
+
+    </div>
+
+
+    <!-- SUMMARY CARDS -->
+
+    <div class="summary-grid">
+
+        <div class="summary-card">
+
+            <div class="summary-icon blue">📚</div>
+
+            <div>
+                <p>Total Batches</p>
+                <h3>{{ batches|length }}</h3>
+            </div>
+
+        </div>
+
+        <div class="summary-card">
+
+            <div class="summary-icon green">👨‍🏫</div>
+
+            <div>
+                <p>Available Faculty</p>
+                <h3>{{ active_faculty|length }}</h3>
+            </div>
+
+        </div>
+
+    </div>
+
+
+    <!-- CREATE BATCH -->
+
+    <div class="panel">
+
+        <div class="panel-heading">
+
+            <div class="heading-icon">＋</div>
+
+            <div>
+                <h3>Create New Class / Batch</h3>
+                <p>Enter the class details and assign a faculty member</p>
+            </div>
+
+        </div>
+
+
+        <form method="POST" action="/admin/classes">
+
+            <div class="form-grid">
+
+                <div class="form-group">
+
+                    <label>
+                        Class / Batch Name <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="class_name"
+                        placeholder="e.g. CBSE Class 9 - Mathematics"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Course <span class="required">*</span>
+                    </label>
+
+                    <select name="course" required>
+
+                        <option value="">Select Course</option>
+
+                        <option value="cbse9">CBSE Class 9</option>
+                        <option value="cbse10">CBSE Class 10</option>
+                        <option value="cbse11">CBSE Class 11</option>
+                        <option value="cbse12">CBSE Class 12</option>
+
+                        <option value="matric10">Matric Class 10</option>
+                        <option value="matric11">Matric Class 11</option>
+                        <option value="matric12">Matric Class 12</option>
+
+                    </select>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Subject <span class="required">*</span>
+                    </label>
+
+                    <input
+                        type="text"
+                        name="subject"
+                        placeholder="e.g. Mathematics"
+                        required>
+
+                </div>
+
+
+                <div class="form-group">
+
+                    <label>
+                        Assign Faculty <span class="required">*</span>
+                    </label>
+
+                    <select name="faculty_username" required>
+
+                        <option value="">Select Faculty</option>
+
+                        {% for username, data in active_faculty.items() %}
+
+                        <option value="{{ username }}">
+                            {{ username }}
+                        </option>
+
+                        {% endfor %}
+
+                    </select>
+
+                    <span class="form-hint">
+                        Only active faculty accounts are available.
+                    </span>
+
+                </div>
+
+
+                <div class="form-group full-width">
+
+                    <label>Class Schedule</label>
+
+                    <input
+                        type="text"
+                        name="schedule"
+                        placeholder="e.g. Monday, Wednesday, Friday - 6:00 PM">
+
+                    <span class="form-hint">
+                        Enter the days and timing of the class.
+                    </span>
+
+                </div>
+
+            </div>
+
+
+            <div class="form-actions">
+
+                <button type="submit" class="create-btn">
+                    <span>＋</span> Create Class / Batch
+                </button>
+
+            </div>
+
+        </form>
+
+    </div>
+
+
+    <!-- EXISTING BATCHES -->
+
+    <div class="panel">
+
+        <div class="table-heading">
+
+            <div class="panel-heading" style="margin-bottom:0;">
+
+                <div class="heading-icon">📋</div>
+
+                <div>
+                    <h3>Existing Classes / Batches</h3>
+                    <p>View and manage all created batches</p>
+                </div>
+
+            </div>
+
+            <div class="batch-count">
+                {{ batches|length }} Batches
+            </div>
+
+        </div>
+
+
+        <div class="table-wrap">
+
+            <table>
+
+                <thead>
+
+                    <tr>
+                        <th>ID</th>
+                        <th>Class / Batch</th>
+                        <th>Course</th>
+                        <th>Subject</th>
+                        <th>Assigned Faculty</th>
+                        <th>Schedule</th>
+                        <th>Status</th>
+                        <th>Action</th>
+                    </tr>
+
+                </thead>
+
+
+                <tbody>
+
+                    {% for batch in batches %}
+
+                    <tr>
+
+                        <td>#{{ batch.id }}</td>
+
+                        <td class="class-name">
+                            {{ batch.class_name }}
+                        </td>
+
+                        <td>
+                            <span class="course-tag">
+                                {{ batch.course }}
+                            </span>
+                        </td>
+
+                        <td>
+                            {{ batch.subject }}
+                        </td>
+
+                        <td class="faculty-name">
+                            {{ batch.faculty_username }}
+                        </td>
+
+                        <td>
+                            {{ batch.schedule or "Not specified" }}
+                        </td>
+
+                        <td>
+
+                            {% if batch.active_status == 1 %}
+
+                                <span class="status status-active">
+                                    Active
+                                </span>
+
+                            {% else %}
+
+                                <span class="status status-inactive">
+                                    Inactive
+                                </span>
+
+                            {% endif %}
+
+                        </td>
+
+                        <td>
+
+                            <form
+                                class="action-form"
+                                method="POST"
+                                action="/admin/classes/toggle/{{ batch.id }}">
+
+                                <button
+                                    type="submit"
+                                    class="toggle-btn {% if batch.active_status != 1 %}activate{% endif %}">
+
+                                    {% if batch.active_status == 1 %}
+                                        Deactivate
+                                    {% else %}
+                                        Activate
+                                    {% endif %}
+
+                                </button>
+
+                            </form>
+
+                        </td>
+
+                    </tr>
+
+                    {% else %}
+
+                    <tr>
+
+                        <td colspan="8">
+
+                            <div class="empty-state">
+
+                                <div class="empty-icon">📚</div>
+
+                                <h4>No Classes Created Yet</h4>
+
+                                <p>
+                                    Create your first class or batch using the form above.
+                                </p>
+
+                            </div>
+
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+
+    <div class="page-footer">
+        Ranjitham Study Center · Admin Management System
+    </div>
+
+</div>
+
+</body>
+</html>
