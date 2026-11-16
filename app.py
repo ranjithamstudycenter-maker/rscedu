@@ -1232,6 +1232,28 @@ def init_faculty_salary_db():
         )
         """)
 
+                # -------------------------------------------------
+        # 6A. MANUAL BANK PAYMENT DETAILS
+        # -------------------------------------------------
+
+        payout_columns = [
+            ("payment_method", "TEXT DEFAULT 'Bank Transfer'"),
+            ("payment_date", "TEXT"),
+            ("payment_reference", "TEXT DEFAULT ''"),
+            ("payment_notes", "TEXT DEFAULT ''"),
+            ("recorded_by", "TEXT DEFAULT 'Admin'")
+        ]
+
+        for column_name, column_type in payout_columns:
+            try:
+                c.execute(
+                    f"""
+                    ALTER TABLE salary_payouts
+                    ADD COLUMN {column_name} {column_type}
+                    """
+                )
+            except sqlite3.OperationalError:
+                pass
         # -------------------------------------------------
         # 7. INDEXES FOR FASTER SEARCH
         # -------------------------------------------------
@@ -4120,7 +4142,181 @@ def admin_generate_class_salary():
         print("MONTHLY SALARY GENERATION ERROR:", str(e))
         return "Salary generation failed. Check server logs.", 500
 
+# =====================================================
+# ADMIN - RECORD MANUAL FACULTY SALARY PAYMENT
+# =====================================================
 
+@app.route("/admin/record-salary-payment", methods=["POST"])
+def admin_record_salary_payment():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    salary_id = request.form.get("salary_id", type=int)
+    amount_input = request.form.get("amount", "").strip()
+    payment_date = request.form.get("payment_date", "").strip()
+    payment_reference = request.form.get(
+        "payment_reference", ""
+    ).strip()
+    payment_notes = request.form.get(
+        "payment_notes", ""
+    ).strip()
+
+    month_key = request.form.get(
+        "month_key",
+        datetime.now().strftime("%Y-%m")
+    )
+
+    # Validate required fields
+    if not salary_id or not amount_input or not payment_date:
+        return "Salary ID, amount and payment date are required.", 400
+
+    try:
+        amount_paise = round(float(amount_input) * 100)
+
+        if amount_paise <= 0:
+            return "Payment amount must be greater than zero.", 400
+
+        datetime.strptime(payment_date, "%Y-%m-%d")
+        datetime.strptime(month_key, "%Y-%m")
+
+    except ValueError:
+        return "Invalid amount or date format.", 400
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    try:
+
+        # Lock transaction to prevent concurrent overpayment
+        c.execute("BEGIN IMMEDIATE")
+
+        c.execute("""
+            SELECT
+                id,
+                faculty_username,
+                month_key,
+                salary_amount_paise,
+                paid_amount_paise
+            FROM class_salary
+            WHERE id=?
+        """, (salary_id,))
+
+        salary = c.fetchone()
+
+        if not salary:
+            conn.rollback()
+            return "Salary record not found.", 404
+
+        (
+            salary_id,
+            faculty_username,
+            salary_month,
+            salary_amount,
+            paid_amount
+        ) = salary
+
+        salary_amount = int(salary_amount or 0)
+        paid_amount = int(paid_amount or 0)
+
+        pending_amount = max(
+            salary_amount - paid_amount, 0
+        )
+
+        # Prevent overpayment
+        if amount_paise > pending_amount:
+            conn.rollback()
+            return (
+                f"Payment exceeds pending salary. "
+                f"Pending amount: ₹{pending_amount / 100:.2f}",
+                400
+            )
+
+        new_paid_amount = paid_amount + amount_paise
+
+        new_pending_amount = max(
+            salary_amount - new_paid_amount, 0
+        )
+
+        if new_pending_amount == 0:
+            salary_status = "paid"
+        elif new_paid_amount > 0:
+            salary_status = "partial"
+        else:
+            salary_status = "pending"
+
+        # Save individual payment history
+        c.execute("""
+            INSERT INTO salary_payouts
+            (
+                salary_id,
+                faculty_username,
+                amount_paise,
+                razorpayx_payout_id,
+                idempotency_key,
+                payout_status,
+                initiated_at,
+                completed_at,
+                failure_reason,
+                payment_method,
+                payment_date,
+                payment_reference,
+                payment_notes,
+                recorded_by
+            )
+            VALUES (?, ?, ?, '', ?, 'completed',
+                    CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, '',
+                    'Bank Transfer', ?, ?, ?, 'Admin')
+        """, (
+            salary_id,
+            faculty_username,
+            amount_paise,
+            uuid.uuid4().hex,
+            payment_date,
+            payment_reference,
+            payment_notes
+        ))
+
+        # Update salary totals
+        c.execute("""
+            UPDATE class_salary
+            SET
+                paid_amount_paise=?,
+                pending_amount_paise=?,
+                salary_status=?
+            WHERE id=?
+        """, (
+            new_paid_amount,
+            new_pending_amount,
+            salary_status,
+            salary_id
+        ))
+
+        conn.commit()
+
+        print(
+            "MANUAL SALARY PAYMENT RECORDED:",
+            faculty_username,
+            salary_month,
+            amount_paise / 100
+        )
+
+        return redirect(url_for(
+            "admin_dashboard",
+            tab="salary",
+            salary_month=salary_month
+        ))
+
+    except Exception as e:
+
+        conn.rollback()
+
+        print("MANUAL SALARY PAYMENT ERROR:", str(e))
+
+        return "Salary payment recording failed. Check server logs.", 500
+
+    finally:
+        conn.close()
 # =====================================================
 # ADMIN - REACTIVATE FACULTY
 # =====================================================
