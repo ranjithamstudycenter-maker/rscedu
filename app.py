@@ -1311,53 +1311,53 @@ teachers = {
         "course": "cbse9",
         "meet_link": "",
         "active": True,
-        "class_live": False,
-        "gpay": "7702616245"
+        "class_live": False
+        
     },
     "Balakumar10": {
         "password": "M10@2026",
         "course": "cbse10",
         "meet_link": "",
         "active": True,
-        "class_live": False,
-        "gpay": "7702616245"
+        "class_live": False
+       
     },
     "Balakumar12": {
         "password": "M12@2026",
         "course": "cbse12",
         "meet_link": "",
         "active": True,
-        "class_live": False,
-        "gpay": "7702616245"
+        "class_live": False
+        
     },
     "faculty1": {
         "password": "",
         "course": "cbse12",
         "meet_link": "",
         "active": False,
-        "class_live": False,
-        "gpay": ""
+        "class_live": False
+        
     },
     "faculty2": {
             "password": "",
             "course": "cbse12",
             "meet_link": "",
-            "active": False,
-            "gpay": ""
+            "active": False
+            
     },
     "faculty3": {
             "password": "",
             "course": "cbse12",
             "meet_link": "",
-            "active": False,
-            "gpay": ""
+            "active": False
+            
     },
     "faculty4": {
             "password": "",
             "course": "cbse12",
             "meet_link": "",
-            "active": False,
-            "gpay": ""
+            "active": False
+            
     }
 }
 
@@ -3530,7 +3530,6 @@ def teacher_dashboard():
                 "paid": 0,
                 "class_count": 0,
                 "strength": seat_data.get(s["course"], {}).get("total", 30),
-                "gpay": teachers[teacher].get("gpay", "Not Added"),
                 "month": datetime.now().strftime("%B"),
                 "year": datetime.now().strftime("%Y"),
 
