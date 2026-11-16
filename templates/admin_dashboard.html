@@ -842,7 +842,26 @@ iframe{
                         Inactive
                     
                     </span>
-                    
+                    <form
+                        method="POST"
+                        action="{{ url_for('reactivate_faculty', username=teacher) }}"
+                        style="margin-top:10px;"
+                    >
+                        <button
+                            type="submit"
+                            style="
+                                background:#16a34a;
+                                color:white;
+                                border:none;
+                                padding:8px 16px;
+                                border-radius:8px;
+                                cursor:pointer;
+                                font-weight:600;
+                            "
+                        >
+                            Reactivate Faculty
+                        </button>
+                    </form>
                     {% endif %}
 
             </div>
