@@ -1253,11 +1253,43 @@ function showTab(tabId){
    event.target.classList.add("active-tab");
 }
 
-// default
 document.addEventListener("DOMContentLoaded", () => {
 
-   document.getElementById("dashboard")
-   .style.display = "block";
+    const params = new URLSearchParams(window.location.search);
+    const selectedTab = params.get("tab") || "dashboard";
+
+    const validTabs = [
+        "dashboard",
+        "uploads",
+        "syllabus",
+        "practice",
+        "mock-test",
+        "students",
+        "classes",
+        "feedback",
+        "faculty",
+        "salary"
+    ];
+
+    const tabToShow = validTabs.includes(selectedTab)
+        ? selectedTab
+        : "dashboard";
+
+    document.querySelectorAll(".tab-content").forEach(tab => {
+        tab.style.display = "none";
+    });
+
+    document.querySelectorAll(".tabs button").forEach(btn => {
+        btn.classList.remove("active-tab");
+    });
+
+    document.getElementById(tabToShow).style.display = "block";
+
+    document.querySelectorAll(".tabs button").forEach(btn => {
+        if (btn.getAttribute("onclick") === `showTab('${tabToShow}')`) {
+            btn.classList.add("active-tab");
+        }
+    });
 
 });
 
