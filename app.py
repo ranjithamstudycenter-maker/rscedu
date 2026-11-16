@@ -1555,20 +1555,101 @@ init_faculty_status_table()
 
 COURSE_TEACHERS = {
 
-   "cbse9"  : "Balakumar",
-   "cbse10" : "Balakumar",
-   "cbse11" : "Balakumar",
-   "cbse12" : "Balakumar",
+    "cbse9": "Balakumar9",
+    "cbse10": "Balakumar10",
+    "cbse11": "Balakumar",
+    "cbse12": "Balakumar12",
 
-   "engg1"  : "Balakumar",
-   "engg2"  : "Balakumar",
-   "engg3"  : "Balakumar",
+    "engg1": "Balakumar",
+    "engg2": "Balakumar",
+    "engg3": "Balakumar",
 
-   "control" : "Balakumar",
-   "AGS"     : "Balakumar",
-   "Maths"   : "Balakumar"
+    "control": "Balakumar",
+    "AGS": "Balakumar",
+    "Maths": "Balakumar"
 
 }
+
+# ==========================================
+# GET OR CREATE CLASS BATCH FOR SALARY
+# ==========================================
+
+def get_or_create_salary_class(course):
+
+    faculty_username = COURSE_TEACHERS.get(course)
+
+    if not faculty_username:
+        raise ValueError(
+            f"No faculty assigned for course: {course}"
+        )
+
+    if faculty_username not in teachers:
+        raise ValueError(
+            f"Faculty account not found: {faculty_username}"
+        )
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    try:
+
+        c.execute("""
+            SELECT id
+            FROM class_batches
+            WHERE course=?
+            ORDER BY id
+            LIMIT 1
+        """, (course,))
+
+        row = c.fetchone()
+
+        if row:
+
+            class_id = row[0]
+
+            c.execute("""
+                UPDATE class_batches
+                SET faculty_username=?
+                WHERE id=?
+            """, (faculty_username, class_id))
+
+        else:
+
+            class_name = {
+                "cbse9": "CBSE Class 9",
+                "cbse10": "CBSE Class 10",
+                "cbse12": "CBSE Class 12"
+            }.get(course, course)
+
+            c.execute("""
+                INSERT INTO class_batches
+                (
+                    class_name,
+                    course,
+                    subject,
+                    faculty_username,
+                    schedule,
+                    active_status
+                )
+                VALUES (?, ?, '', ?, '', 1)
+            """, (
+                class_name,
+                course,
+                faculty_username
+            ))
+
+            class_id = c.lastrowid
+
+        conn.commit()
+
+        return class_id
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        conn.close()
 
 # Seat tracking — shared across server (in production use DB/Redis)
 seat_data = {
@@ -2061,6 +2142,91 @@ def payment_success_api():
         
     conn.commit()
     conn.close()
+
+    
+    # ==========================================
+    # CLASS-WISE TUITION PAYMENT RECORD
+    # Only confirmed CBSE tuition courses
+    # ==========================================
+
+    salary_tracked_courses = (
+        "cbse9",
+        "cbse10",
+        "cbse12"
+    )
+
+    if course in salary_tracked_courses:
+
+        try:
+
+            # Get the assigned faculty class ID
+            class_id = get_or_create_salary_class(course)
+
+            amount_paise = int(round(float(amount) * 100))
+
+            payment_date = datetime.now().strftime(
+                "%Y-%m-%d %H:%M:%S"
+            )
+
+            month_key = datetime.now().strftime("%Y-%m")
+
+            salary_conn = sqlite3.connect(
+                DB_PATH,
+                timeout=30
+            )
+
+            salary_c = salary_conn.cursor()
+
+            # INSERT OR IGNORE prevents duplicate payment IDs
+            salary_c.execute("""
+                INSERT OR IGNORE INTO class_fee_payments
+                (
+                    class_id,
+                    student_phone,
+                    student_name,
+                    razorpay_order_id,
+                    razorpay_payment_id,
+                    amount_paise,
+                    refund_amount_paise,
+                    payment_status,
+                    payment_date,
+                    month_key
+                )
+                VALUES (?, ?, ?, ?, ?, ?, 0, 'captured', ?, ?)
+            """, (
+                class_id,
+                phone,
+                user.get("name", ""),
+                order_id,
+                payment_id,
+                amount_paise,
+                payment_date,
+                month_key
+            ))
+
+            salary_conn.commit()
+
+            if salary_c.rowcount == 1:
+                print(
+                    "CLASS-WISE PAYMENT RECORDED:",
+                    course,
+                    payment_id,
+                    amount_paise
+                )
+            else:
+                print(
+                    "PAYMENT ALREADY RECORDED:",
+                    payment_id
+                )
+
+            salary_conn.close()
+
+        except Exception as e:
+
+            print(
+                "CLASS-WISE SALARY PAYMENT RECORD ERROR:",
+                str(e)
+            )
 
     # Increment seat count
     if course in seat_data:
