@@ -266,31 +266,192 @@ body{
     border-radius:10px;
 }
 
-/* DASHBOARD */
+/* ==========================
+   MODERN ADMIN DASHBOARD
+========================== */
 
-.dashboard-grid{
-    display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(250px,1fr));
-    gap:25px;
+.dashboard-content {
+    padding: 30px;
+    background: #f4f7fb;
 }
 
-.stat-card{
-    background:white;
-    padding:30px;
-    border-radius:20px;
-    box-shadow:0 10px 25px rgba(0,0,0,0.08);
+.dashboard-heading {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 12px;
+    margin-bottom: 25px;
 }
 
-.stat-card h3{
-    color:#666;
-    margin-bottom:10px;
+.dashboard-heading h2 {
+    color: #172554;
+    font-size: 25px;
+    font-weight: 700;
 }
 
-.stat-card h1{
-    color:#2563eb;
-    font-size:38px;
+.dashboard-heading p {
+    color: #64748b;
+    font-size: 13px;
+    margin-top: 5px;
 }
 
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 20px;
+}
+
+.metric-card {
+    background: #ffffff;
+    padding: 23px;
+    border-radius: 18px;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
+    border: 1px solid #edf0f5;
+    display: flex;
+    align-items: center;
+    gap: 17px;
+    min-height: 125px;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.metric-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 10px 25px rgba(15, 23, 42, 0.09);
+}
+
+.metric-icon {
+    width: 54px;
+    height: 54px;
+    min-width: 54px;
+    border-radius: 15px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 25px;
+}
+
+.metric-info h3 {
+    color: #64748b;
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 8px;
+}
+
+.metric-info h1 {
+    color: #172554;
+    font-size: 27px;
+    font-weight: 700;
+    line-height: 1.2;
+    overflow-wrap: anywhere;
+}
+
+.metric-info p {
+    color: #94a3b8;
+    font-size: 11px;
+    margin-top: 6px;
+}
+
+.metric-blue .metric-icon {
+    background: #eff6ff;
+}
+
+.metric-green .metric-icon {
+    background: #ecfdf5;
+}
+
+.metric-purple .metric-icon {
+    background: #f5f3ff;
+}
+
+.metric-cyan .metric-icon {
+    background: #ecfeff;
+}
+
+.metric-orange .metric-icon {
+    background: #fff7ed;
+}
+
+.metric-red .metric-icon {
+    background: #fef2f2;
+}
+
+.salary-distribution {
+    margin-top: 25px;
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 18px;
+    border: 1px solid #edf0f5;
+    box-shadow: 0 5px 20px rgba(15, 23, 42, 0.05);
+}
+
+.salary-distribution h3 {
+    color: #172554;
+    font-size: 17px;
+    margin-bottom: 20px;
+}
+
+.share-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin: 15px 0 8px;
+    font-size: 13px;
+    font-weight: 600;
+}
+
+.share-track {
+    width: 100%;
+    height: 10px;
+    background: #eef2f7;
+    border-radius: 20px;
+    overflow: hidden;
+}
+
+.share-fill {
+    height: 100%;
+    border-radius: 20px;
+}
+
+.rsc-fill {
+    width: 40%;
+    background: #3b82f6;
+}
+
+.faculty-fill {
+    width: 60%;
+    background: #16a34a;
+}
+
+@media (max-width: 900px) {
+    .dashboard-grid {
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+}
+
+@media (max-width: 600px) {
+    .dashboard-content {
+        padding: 18px 12px;
+    }
+
+    .dashboard-grid {
+        grid-template-columns: 1fr;
+        gap: 13px;
+    }
+
+    .metric-card {
+        padding: 18px;
+        min-height: 105px;
+    }
+
+    .dashboard-heading h2 {
+        font-size: 21px;
+    }
+
+    .salary-distribution {
+        padding: 18px;
+    }
+}
 /* IFRAME */
 
 iframe{
@@ -430,44 +591,103 @@ iframe{
 
     <div id="dashboard" class="tab-content">
 
-   <div class="dashboard-grid">
+    <div class="dashboard-content">
 
-    <div class="stat-card">
-        <h3>Total Courses</h3>
-        <h1>{{ total_courses }}</h1>
+        <div class="dashboard-heading">
+            <div>
+                <h2>Dashboard Overview</h2>
+                <p>Ranjitham Study Center – Management Summary</p>
+            </div>
+
+            <div style="color:#64748b;font-size:13px;">
+                📅 {{ dashboard_month }}
+            </div>
+        </div>
+
+        <div class="dashboard-grid">
+
+            <div class="metric-card metric-blue">
+                <div class="metric-icon">🎓</div>
+                <div class="metric-info">
+                    <h3>Total Students</h3>
+                    <h1>{{ total_students }}</h1>
+                    <p>Currently enrolled students</p>
+                </div>
+            </div>
+
+            <div class="metric-card metric-green">
+                <div class="metric-icon">📚</div>
+                <div class="metric-info">
+                    <h3>Active Classes</h3>
+                    <h1>{{ active_class_count }}</h1>
+                    <p>Currently active batches</p>
+                </div>
+            </div>
+
+            <div class="metric-card metric-purple">
+                <div class="metric-icon">👨‍🏫</div>
+                <div class="metric-info">
+                    <h3>Active Faculty</h3>
+                    <h1>{{ total_faculties }}</h1>
+                    <p>Active faculty accounts</p>
+                </div>
+            </div>
+
+            <div class="metric-card metric-cyan">
+                <div class="metric-icon">💰</div>
+                <div class="metric-info">
+                    <h3>Monthly Net Collection</h3>
+                    <h1>₹{{ "{:,.2f}".format(monthly_collection) }}</h1>
+                    <p>After refunds</p>
+                </div>
+            </div>
+
+            <div class="metric-card metric-green">
+                <div class="metric-icon">💵</div>
+                <div class="metric-info">
+                    <h3>Faculty Salary – 60%</h3>
+                    <h1>₹{{ "{:,.2f}".format(faculty_salary_total) }}</h1>
+                    <p>Monthly faculty share</p>
+                </div>
+            </div>
+
+            <div class="metric-card metric-orange">
+                <div class="metric-icon">⏳</div>
+                <div class="metric-info">
+                    <h3>Pending Salary</h3>
+                    <h1>₹{{ "{:,.2f}".format(pending_salary_total) }}</h1>
+                    <p>Salary yet to be paid</p>
+                </div>
+            </div>
+
+        </div>
+
+        <div class="salary-distribution">
+
+            <h3>Monthly Collection Distribution</h3>
+
+            <div class="share-row">
+                <span style="color:#2563eb;">RSC Share</span>
+                <span>40%</span>
+            </div>
+
+            <div class="share-track">
+                <div class="share-fill rsc-fill"></div>
+            </div>
+
+            <div class="share-row">
+                <span style="color:#16a34a;">Faculty Share</span>
+                <span>60%</span>
+            </div>
+
+            <div class="share-track">
+                <div class="share-fill faculty-fill"></div>
+            </div>
+
+        </div>
+
     </div>
 
-    <div class="stat-card">
-        <h3>Active Classes</h3>
-        <h1>{{ active_classes }}</h1>
-    </div>
-
-    <div class="stat-card">
-        <h3>Total Faculties</h3>
-        <h1>{{ total_faculties }}</h1>
-    </div>
-
-    <div class="stat-card">
-        <h3>Total Students</h3>
-        <h1>{{ total_students }}</h1>
-    </div>
-
-    <div class="stat-card">
-        <h3>Monthly Revenue</h3>
-        <h1>₹{{ monthly_revenue }}</h1>
-    </div>
-
-    <div class="stat-card">
-        <h3>Salary Credited to teachers</h3>
-        <h1>₹{{ salary_credited }}</h1>
-    </div>
-
-    <div class="stat-card">
-        <h3>Pending Salary to teachers</h3>
-        <h1>₹{{ pending_salary }}</h1>
-    </div>
-
-</div>
 </div>
 
 <div id="uploads" class="tab-content">
