@@ -1520,6 +1520,36 @@ def set_faculty_status(username, active, reason=""):
     conn.close()
 
     teachers[username]["active"] = bool(active)
+        # Stop the course live class only when no other
+    # active faculty is assigned to the same course.
+    if not active:
+
+        course = teachers[username].get("course")
+
+        other_active = any(
+            name != username
+            and details.get("course") == course
+            and details.get("active", True)
+            for name, details in teachers.items()
+        )
+
+        if not other_active and course:
+
+            conn = sqlite3.connect(DB_PATH)
+            c = conn.cursor()
+
+            c.execute("""
+                UPDATE live_classes
+                SET live=0,
+                    meet_link=''
+                WHERE course=?
+            """, (course,))
+
+            conn.commit()
+            conn.close()
+
+            teachers[username]["class_live"] = False
+            teachers[username]["meet_link"] = ""
 
 init_faculty_status_table()
 
@@ -2891,6 +2921,18 @@ def join_class_api():
     if not course:
         return jsonify({"error": "Course missing"}), 400
 
+    # Check whether this course has an active faculty
+    active_faculty = any(
+        details.get("course") == course
+        and details.get("active", True)
+        for details in teachers.values()
+    )
+
+    if not active_faculty:
+        return jsonify({
+            "error": "Class is unavailable. Faculty is inactive."
+        }), 403
+
     user = get_user(phone)
 
     # =================================
@@ -3115,6 +3157,14 @@ def start_class():
     if not username or username not in teachers:
         return jsonify({"error": "Unauthorized"}), 403
 
+    if not teachers[username].get("active", True):
+        session.pop("teacher", None)
+        session.pop("course", None)
+
+        return jsonify({
+            "error": "Your account is inactive. Contact Admin."
+        }), 403
+
     meet_link = request.json.get("meetLink")
 
     if not meet_link:
@@ -3336,10 +3386,15 @@ def end_class():
         }), 500
 @app.route("/get-teacher")
 def get_teacher():
+
     course = request.args.get("course")
 
     for name, t in teachers.items():
-        if t["course"] == course:
+
+        if (
+            t.get("course") == course
+            and t.get("active", True)
+        ):
             return jsonify({"teacher": name})
 
     return jsonify({"teacher": None})
@@ -3351,6 +3406,14 @@ def teacher_dashboard():
 
     username = session["teacher"]
     teacher = teachers.get(username)
+
+    if not teacher or not teacher.get("active", True):
+
+        session.pop("teacher", None)
+        session.pop("course", None)
+
+        return redirect("/teacher-login")
+
     course = teacher.get("course", "")
 
     summary = get_faculty_feedback_summary(username)
