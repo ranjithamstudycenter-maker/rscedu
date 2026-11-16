@@ -1113,6 +1113,7 @@ iframe{
                         <th>Paid Salary</th>
                         <th>Pending Salary</th>
                         <th>Status</th>
+                        <th>Payment / History</th>
                     </tr>
                 </thead>
 
@@ -1190,13 +1191,121 @@ iframe{
                             {% endif %}
 
                         </td>
+                    <td style="min-width:240px;">
 
+    {% if data.generated and data.pending > 0 %}
+
+        <form method="POST"
+              action="/admin/record-salary-payment"
+              style="display:grid;gap:8px;">
+
+            <input type="hidden"
+                   name="salary_id"
+                   value="{{ data.salary_id }}">
+
+            <input type="hidden"
+                   name="month_key"
+                   value="{{ salary_month_key }}">
+
+            <input type="number"
+                   name="amount"
+                   placeholder="Payment amount (₹)"
+                   min="0.01"
+                   max="{{ '%.2f'|format(data.pending) }}"
+                   step="0.01"
+                   required
+                   style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:7px;">
+
+            <input type="date"
+                   name="payment_date"
+                   required
+                   style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:7px;">
+
+            <input type="text"
+                   name="payment_reference"
+                   placeholder="Bank UTR / Reference"
+                   style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:7px;">
+
+            <input type="text"
+                   name="payment_notes"
+                   placeholder="Payment notes (optional)"
+                   style="width:100%;padding:9px;border:1px solid #cbd5e1;border-radius:7px;">
+
+            <button type="submit"
+                    class="pay-btn"
+                    onclick="return confirm('Confirm this salary payment record?');">
+                Record Payment
+            </button>
+
+        </form>
+
+    {% elif not data.generated %}
+
+        <span style="color:#92400e;font-size:12px;">
+            Generate salary first
+        </span>
+
+    {% else %}
+
+        <span style="color:#15803d;font-weight:700;">
+            ✓ Fully Paid
+        </span>
+
+    {% endif %}
+
+    {% if data.payments %}
+
+        <details style="margin-top:12px;text-align:left;">
+
+            <summary style="cursor:pointer;color:#2563eb;font-weight:600;">
+                View Payment History ({{ data.payments|length }})
+            </summary>
+
+            <div style="margin-top:10px;font-size:12px;">
+
+                {% for payment in data.payments %}
+
+                    <div style="
+                        padding:10px;
+                        margin-bottom:8px;
+                        background:#f8fafc;
+                        border:1px solid #e2e8f0;
+                        border-radius:8px;
+                    ">
+
+                        <b style="color:#15803d;">
+                            ₹{{ "{:,.2f}".format(payment.amount) }}
+                        </b>
+
+                        <div>Date: {{ payment.date }}</div>
+
+                        {% if payment.reference %}
+                            <div>UTR: {{ payment.reference }}</div>
+                        {% endif %}
+
+                        {% if payment.notes %}
+                            <div>Notes: {{ payment.notes }}</div>
+                        {% endif %}
+
+                        <div>Recorded by: {{ payment.recorded_by }}</div>
+
+                    </div>
+
+                {% endfor %}
+
+            </div>
+
+        </details>
+
+    {% endif %}
+
+</td>
                     </tr>
 
                     {% else %}
 
                     <tr>
-                        <td colspan="9" style="
+                        <td colspan="10" style="
                             padding:35px;
                             text-align:center;
                             color:#64748b;
@@ -1233,24 +1342,31 @@ iframe{
 
 function showTab(tabId){
 
-   // hide all
-   document.querySelectorAll(".tab-content")
-   .forEach(tab => {
-      tab.style.display = "none";
-   });
+    // Hide all tabs
+    document.querySelectorAll(".tab-content").forEach(tab => {
+        tab.style.display = "none";
+    });
 
-   // remove active
-   document.querySelectorAll(".tabs button")
-   .forEach(btn => {
-      btn.classList.remove("active-tab");
-   });
+    // Remove active class
+    document.querySelectorAll(".tabs button").forEach(btn => {
+        btn.classList.remove("active-tab");
+    });
 
-   // show selected
-   document.getElementById(tabId)
-   .style.display = "block";
+    // Show selected tab
+    const selectedTab = document.getElementById(tabId);
 
-   // activate button
-   event.target.classList.add("active-tab");
+    if (!selectedTab) {
+        return;
+    }
+
+    selectedTab.style.display = "block";
+
+    // Activate corresponding button
+    document.querySelectorAll(".tabs button").forEach(btn => {
+        if (btn.getAttribute("onclick") === `showTab('${tabId}')`) {
+            btn.classList.add("active-tab");
+        }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", () => {
