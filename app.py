@@ -3710,16 +3710,115 @@ def admin_dashboard():
 
             active_classes += 1
 
+    # ==========================================
+    # NEW ADMIN DASHBOARD KPI DATA
+    # ==========================================
+
+    dashboard_month = datetime.now().strftime("%B %Y")
+    month_key = datetime.now().strftime("%Y-%m")
+
+    total_students = 0
+    active_class_count = 0
+
+    total_faculties = sum(
+        1 for t in teachers.values()
+        if t.get("active", False)
+    )
+
+    monthly_collection_paise = 0
+    faculty_salary_total_paise = 0
+    paid_salary_total_paise = 0
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    try:
+
+        # Total enrolled students
+        c.execute("""
+            SELECT COUNT(*)
+            FROM students
+            WHERE enrolled = 1
+        """)
+
+        total_students = c.fetchone()[0] or 0
+
+        # Active class batches
+        c.execute("""
+            SELECT COUNT(*)
+            FROM class_batches
+            WHERE active_status = 1
+        """)
+
+        active_class_count = c.fetchone()[0] or 0
+
+        # Monthly net tuition collection
+        c.execute("""
+            SELECT COALESCE(
+                SUM(
+                    CASE
+                        WHEN amount_paise > COALESCE(refund_amount_paise, 0)
+                        THEN amount_paise - COALESCE(refund_amount_paise, 0)
+                        ELSE 0
+                    END
+                ), 0
+            )
+            FROM class_fee_payments
+            WHERE month_key = ?
+            AND payment_status = 'captured'
+        """, (month_key,))
+
+        monthly_collection_paise = c.fetchone()[0] or 0
+
+        # Faculty 60% share
+        faculty_salary_total_paise = round(
+            monthly_collection_paise * 0.60
+        )
+
+        # Already paid salary
+        c.execute("""
+            SELECT COALESCE(SUM(paid_amount_paise), 0)
+            FROM class_salary
+            WHERE month_key = ?
+        """, (month_key,))
+
+        paid_salary_total_paise = c.fetchone()[0] or 0
+
+    except Exception as e:
+
+        print("ADMIN DASHBOARD KPI ERROR:", str(e))
+
+    finally:
+
+        conn.close()
+
+    monthly_collection = monthly_collection_paise / 100
+
+    faculty_salary_total = (
+        faculty_salary_total_paise / 100
+    )
+
+    pending_salary_total = max(
+        0,
+        faculty_salary_total_paise - paid_salary_total_paise
+    ) / 100
+    
     return render_template(
 
         "admin_dashboard.html",
-
         summary=summary,
         teachers=teachers,
         active_classes=active_classes,
         salary_db=salary_db,
         months=months,
-        selected_month=selected_month
+        selected_month=selected_month,
+        dashboard_month=dashboard_month,
+        total_students=total_students,
+        active_class_count=active_class_count,
+        total_faculties=total_faculties,
+        monthly_collection=monthly_collection,
+        faculty_salary_total=faculty_salary_total,
+        pending_salary_total=pending_salary_total
 
     )
 
