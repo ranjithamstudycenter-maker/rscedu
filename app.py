@@ -4656,7 +4656,7 @@ def admin_dashboard():
             rsc_share_paise = (
                 net_collection_paise - faculty_share_paise
             )
-                        # Fetch completed manual salary payment history
+            # Fetch completed manual salary payment history
             salary_payments = []
 
             if salary_id:
@@ -4695,7 +4695,7 @@ def admin_dashboard():
                 "paid": paid_paise / 100,
                 "pending": pending_paise / 100,
                 "status": salary_status,
-                "generated": bool(salary_id)
+                "generated": bool(salary_id),
                 "salary_id": salary_id,
                 "payments": salary_payments
             })
