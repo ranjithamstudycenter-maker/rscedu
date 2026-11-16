@@ -3783,6 +3783,7 @@ def reactivate_faculty(username):
 
     return redirect("/admin-dashboard")
 
+
 @app.route("/admin-dashboard")
 def admin_dashboard():
 
@@ -3790,25 +3791,28 @@ def admin_dashboard():
         return redirect("/admin")
 
     selected_month = request.args.get("month", "")
-    
+
     summary = {}
     months = []
-        
+
+    # ==========================================
+    # OLD SALARY SUMMARY
+    # ==========================================
+
     for s in salary_db:
-    
+
         m = f"{s.get('month')} {s.get('year')}"
-    
+
         if m not in months:
-    
             months.append(m)
 
     if not selected_month and months:
-
         selected_month = months[-1]
-        
+
     for s in salary_db:
+
         record_month = f"{s.get('month')} {s.get('year')}"
-    
+
         if selected_month and record_month != selected_month:
             continue
 
@@ -3817,22 +3821,14 @@ def admin_dashboard():
         if teacher not in summary:
 
             summary[teacher] = {
-
                 "pending": 0,
                 "paid": 0,
                 "students": 0,
                 "course": s["course"],
                 "class_count": s.get("class_count", 0),
-
                 "strength": seat_data.get(
                     s["course"], {}
                 ).get("total", 30),
-
-                "gpay": teachers[teacher].get(
-                    "gpay",
-                    "Not Added"
-                ),
-
                 "month": datetime.now().strftime("%B"),
                 "year": datetime.now().strftime("%Y")
             }
@@ -3840,47 +3836,35 @@ def admin_dashboard():
         summary[teacher]["students"] += 1
 
         if s["paid_to_faculty"]:
-
             summary[teacher]["paid"] += s["faculty_share"]
-
         else:
-
             summary[teacher]["pending"] += s["faculty_share"]
 
-    # 🔥 if no salary data yet
+    # If no old salary data, show all faculties
     if not summary:
 
         for teacher, t in teachers.items():
 
             summary[teacher] = {
-
                 "pending": 0,
                 "paid": 0,
                 "students": 0,
                 "course": t.get("course", "Not Assigned"),
                 "class_count": 0,
-
                 "strength": seat_data.get(
-                    t.get("course", ""),
-                    {}
+                    t.get("course", ""), {}
                 ).get("total", 30),
-
-                "gpay": t.get("gpay", "Not Added"),
-
                 "month": datetime.now().strftime("%B"),
                 "year": datetime.now().strftime("%Y")
             }
 
-    active_classes = 0
-
-    for t in teachers.values():
-
-        if t.get("active"):
-
-            active_classes += 1
+    active_classes = sum(
+        1 for t in teachers.values()
+        if t.get("active", False)
+    )
 
     # ==========================================
-    # NEW ADMIN DASHBOARD KPI DATA
+    # DASHBOARD KPI DATA
     # ==========================================
 
     dashboard_month = datetime.now().strftime("%B %Y")
@@ -3888,7 +3872,6 @@ def admin_dashboard():
 
     total_students = 0
     active_class_count = 0
-
     total_faculties = sum(
         1 for t in teachers.values()
         if t.get("active", False)
@@ -3897,11 +3880,26 @@ def admin_dashboard():
     monthly_collection_paise = 0
     faculty_salary_total_paise = 0
     paid_salary_total_paise = 0
+    pending_salary_total_paise = 0
+
+    # ==========================================
+    # DATABASE CONNECTION
+    # ==========================================
 
     conn = sqlite3.connect(DB_PATH)
+    conn.row_factory = sqlite3.Row
     c = conn.cursor()
 
     try:
+
+        # Ensure live_classes table exists BEFORE querying it
+        c.execute("""
+            CREATE TABLE IF NOT EXISTS live_classes (
+                course TEXT PRIMARY KEY,
+                meet_link TEXT,
+                live INTEGER DEFAULT 0
+            )
+        """)
 
         # Total enrolled students
         c.execute("""
@@ -3939,36 +3937,130 @@ def admin_dashboard():
 
         monthly_collection_paise = c.fetchone()[0] or 0
 
-        # Faculty 60% share – calculated from monthly net collection
+        # Faculty 60% share (KPI estimate)
         faculty_salary_total_paise = round(
             monthly_collection_paise * 0.60
         )
-        
+
         # Actual salary already paid
         c.execute("""
             SELECT COALESCE(SUM(paid_amount_paise), 0)
             FROM class_salary
             WHERE month_key = ?
         """, (month_key,))
-        
+
         paid_salary_total_paise = c.fetchone()[0] or 0
-        
-        # Actual pending salary from class-wise salary records
+
+        # Actual pending salary
         c.execute("""
             SELECT COALESCE(SUM(pending_amount_paise), 0)
             FROM class_salary
             WHERE month_key = ?
         """, (month_key,))
-        
+
         pending_salary_total_paise = c.fetchone()[0] or 0
+
+        # ==========================================
+        # HR MANAGEMENT DATA
+        # ==========================================
+
+        hr_faculty = []
+
+        for username, details in teachers.items():
+
+            course = details.get("course", "Not Assigned")
+
+            feedback = get_faculty_feedback_summary(username)
+
+            c.execute("""
+                SELECT status_reason
+                FROM faculty_status
+                WHERE username=?
+            """, (username,))
+
+            status_row = c.fetchone()
+
+            c.execute("""
+                SELECT COUNT(DISTINCT phone)
+                FROM students
+                WHERE course=? AND enrolled=1
+            """, (course,))
+
+            student_row = c.fetchone()
+
+            hr_faculty.append({
+                "username": username,
+                "course": course,
+                "active": details.get("active", False),
+                "students": student_row[0] if student_row else 0,
+                "feedback_count": feedback["total_feedbacks"],
+                "average_rating": feedback["average_rating"],
+                "low_count": feedback["low_count"],
+                "warning_msg": feedback["warning_msg"],
+                "status_reason": (
+                    status_row["status_reason"]
+                    if status_row else ""
+                )
+            })
+
+        # ==========================================
+        # CLASS-WISE MONITORING
+        # ==========================================
+
+        class_monitoring = []
+
+        courses = sorted(set(
+            t.get("course", "Not Assigned")
+            for t in teachers.values()
+        ))
+
+        for course in courses:
+
+            assigned = [
+                name for name, details in teachers.items()
+                if details.get("course") == course
+            ]
+
+            active_assigned = [
+                name for name in assigned
+                if teachers[name].get("active", False)
+            ]
+
+            c.execute("""
+                SELECT live
+                FROM live_classes
+                WHERE course=?
+            """, (course,))
+
+            live_row = c.fetchone()
+            is_live = bool(live_row and live_row["live"])
+
+            class_monitoring.append({
+                "course": course,
+                "faculty": ", ".join(assigned),
+                "faculty_status": (
+                    "Active" if active_assigned else "Inactive"
+                ),
+                "class_status": (
+                    "Live" if is_live else "Not Live"
+                )
+            })
+
+        conn.commit()
 
     except Exception as e:
 
-        print("ADMIN DASHBOARD KPI ERROR:", str(e))
+        print("ADMIN DASHBOARD ERROR:", str(e))
+
+        hr_faculty = []
+        class_monitoring = []
 
     finally:
-
         conn.close()
+
+    # ==========================================
+    # CONVERT AMOUNTS TO RUPEES
+    # ==========================================
 
     monthly_collection = monthly_collection_paise / 100
 
@@ -3977,11 +4069,14 @@ def admin_dashboard():
     )
 
     pending_salary_total = (
-    pending_salary_total_paise / 100
+        pending_salary_total_paise / 100
     )
-    
-    return render_template(
 
+    # ==========================================
+    # RENDER ADMIN DASHBOARD
+    # ==========================================
+
+    return render_template(
         "admin_dashboard.html",
         summary=summary,
         teachers=teachers,
@@ -3995,8 +4090,9 @@ def admin_dashboard():
         total_faculties=total_faculties,
         monthly_collection=monthly_collection,
         faculty_salary_total=faculty_salary_total,
-        pending_salary_total=pending_salary_total
-
+        pending_salary_total=pending_salary_total,
+        hr_faculty=hr_faculty,
+        class_monitoring=class_monitoring
     )
 
 @app.route("/admin/practice")
