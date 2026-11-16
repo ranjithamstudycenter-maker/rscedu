@@ -1360,6 +1360,128 @@ teachers = {
             "gpay": ""
     }
 }
+def get_faculty_feedback_summary(username):
+
+    if isinstance(feedback_db, list):
+        feedbacks = [
+            f for f in feedback_db
+            if f.get("teacher") == username
+        ]
+    else:
+        feedbacks = feedback_db.get(username, [])
+
+    ratings = []
+
+    for f in feedbacks:
+        try:
+            rating = int(f.get("rating", 0))
+            if 1 <= rating <= 5:
+                ratings.append(rating)
+        except (TypeError, ValueError):
+            continue
+
+    total_feedbacks = len(ratings)
+
+    low_count = sum(1 for r in ratings if r < 3)
+
+    avg_rating = (
+        round(sum(ratings) / total_feedbacks, 2)
+        if total_feedbacks else 0
+    )
+
+    warning_msg = ""
+
+    if low_count >= 6 and total_feedbacks < 10:
+        warning_msg = (
+            "Warning: Multiple low ratings detected. "
+            "Improve teaching quality immediately."
+        )
+
+    deactivate = (
+        total_feedbacks >= 10
+        and avg_rating < 3
+    )
+
+    return {
+        "total_feedbacks": total_feedbacks,
+        "low_count": low_count,
+        "average_rating": avg_rating,
+        "warning_msg": warning_msg,
+        "deactivate": deactivate
+    }
+
+def init_faculty_status_table():
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS faculty_status (
+            username TEXT PRIMARY KEY,
+            active_status INTEGER DEFAULT 1,
+            status_reason TEXT DEFAULT '',
+            updated_at TEXT
+        )
+    """)
+
+    for username, details in teachers.items():
+
+        active = 1 if details.get("active", True) else 0
+
+        c.execute("""
+            INSERT OR IGNORE INTO faculty_status
+            (username, active_status, status_reason, updated_at)
+            VALUES (?, ?, '', ?)
+        """, (
+            username,
+            active,
+            datetime.now().isoformat()
+        ))
+
+    conn.commit()
+
+    c.execute("""
+        SELECT username, active_status
+        FROM faculty_status
+    """)
+
+    for username, active in c.fetchall():
+        if username in teachers:
+            teachers[username]["active"] = bool(active)
+
+    conn.close()
+
+
+def set_faculty_status(username, active, reason=""):
+
+    if username not in teachers:
+        return
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("""
+        INSERT INTO faculty_status
+        (username, active_status, status_reason, updated_at)
+        VALUES (?, ?, ?, ?)
+        ON CONFLICT(username)
+        DO UPDATE SET
+            active_status = excluded.active_status,
+            status_reason = excluded.status_reason,
+            updated_at = excluded.updated_at
+    """, (
+        username,
+        1 if active else 0,
+        reason,
+        datetime.now().isoformat()
+    ))
+
+    conn.commit()
+    conn.close()
+
+    teachers[username]["active"] = bool(active)
+
+init_faculty_status_table()
 
 COURSE_TEACHERS = {
 
