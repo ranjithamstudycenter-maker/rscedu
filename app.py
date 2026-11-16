@@ -3770,19 +3770,28 @@ def admin_dashboard():
 
         monthly_collection_paise = c.fetchone()[0] or 0
 
-        # Faculty 60% share
+        # Faculty 60% share – calculated from monthly net collection
         faculty_salary_total_paise = round(
             monthly_collection_paise * 0.60
         )
-
-        # Already paid salary
+        
+        # Actual salary already paid
         c.execute("""
             SELECT COALESCE(SUM(paid_amount_paise), 0)
             FROM class_salary
             WHERE month_key = ?
         """, (month_key,))
-
+        
         paid_salary_total_paise = c.fetchone()[0] or 0
+        
+        # Actual pending salary from class-wise salary records
+        c.execute("""
+            SELECT COALESCE(SUM(pending_amount_paise), 0)
+            FROM class_salary
+            WHERE month_key = ?
+        """, (month_key,))
+        
+        pending_salary_total_paise = c.fetchone()[0] or 0
 
     except Exception as e:
 
@@ -3798,10 +3807,9 @@ def admin_dashboard():
         faculty_salary_total_paise / 100
     )
 
-    pending_salary_total = max(
-        0,
-        faculty_salary_total_paise - paid_salary_total_paise
-    ) / 100
+    pending_salary_total = (
+    pending_salary_total_paise / 100
+    )
     
     return render_template(
 
