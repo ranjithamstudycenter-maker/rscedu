@@ -1651,6 +1651,174 @@ def get_or_create_salary_class(course):
     finally:
         conn.close()
 
+def generate_monthly_class_salary(month_key=None):
+
+    if not month_key:
+        month_key = datetime.now().strftime("%Y-%m")
+
+    # Validate month format
+    try:
+        datetime.strptime(month_key, "%Y-%m")
+    except ValueError:
+        raise ValueError("Invalid month format. Use YYYY-MM")
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    generated_count = 0
+
+    try:
+        # Get classes having captured payments in selected month
+        c.execute("""
+            SELECT
+                p.class_id,
+                SUM(p.amount_paise),
+                SUM(p.refund_amount_paise)
+            FROM class_fee_payments p
+            WHERE p.month_key = ?
+              AND p.payment_status = 'captured'
+            GROUP BY p.class_id
+        """, (month_key,))
+
+        collection_rows = c.fetchall()
+
+        for class_id, gross_amount, refund_amount in collection_rows:
+
+            gross_amount = int(gross_amount or 0)
+            refund_amount = int(refund_amount or 0)
+
+            net_collection = max(
+                gross_amount - refund_amount, 0
+            )
+
+            # 60% Faculty share; remaining 40% goes to RSC
+            faculty_share = round(net_collection * 0.60)
+            rsc_share = net_collection - faculty_share
+
+            # Get assigned faculty
+            c.execute("""
+                SELECT faculty_username
+                FROM class_batches
+                WHERE id = ?
+            """, (class_id,))
+
+            faculty_row = c.fetchone()
+
+            if not faculty_row:
+                print("SALARY SKIPPED: Class not found", class_id)
+                continue
+
+            faculty_username = faculty_row[0]
+
+            if not faculty_username:
+                print("SALARY SKIPPED: Faculty not assigned", class_id)
+                continue
+
+            # Update monthly collection
+            c.execute("""
+                INSERT INTO class_monthly_collection (
+                    class_id,
+                    month_key,
+                    gross_collection_paise,
+                    refund_amount_paise,
+                    net_collection_paise,
+                    rsc_share_paise,
+                    faculty_share_paise,
+                    generated_at
+                )
+                VALUES (?, ?, ?, ?, ?, ?, ?, CURRENT_TIMESTAMP)
+
+                ON CONFLICT(class_id, month_key)
+                DO UPDATE SET
+                    gross_collection_paise = excluded.gross_collection_paise,
+                    refund_amount_paise = excluded.refund_amount_paise,
+                    net_collection_paise = excluded.net_collection_paise,
+                    rsc_share_paise = excluded.rsc_share_paise,
+                    faculty_share_paise = excluded.faculty_share_paise,
+                    generated_at = CURRENT_TIMESTAMP
+            """, (
+                class_id,
+                month_key,
+                gross_amount,
+                refund_amount,
+                net_collection,
+                rsc_share,
+                faculty_share
+            ))
+
+            # Create or update faculty salary.
+            # IMPORTANT: Existing paid amount is preserved.
+            c.execute("""
+                INSERT INTO class_salary (
+                    class_id,
+                    faculty_username,
+                    month_key,
+                    total_collection_paise,
+                    rsc_percentage,
+                    faculty_percentage,
+                    salary_amount_paise,
+                    paid_amount_paise,
+                    pending_amount_paise,
+                    salary_status,
+                    generated_at
+                )
+                VALUES (?, ?, ?, ?, 40, 60, ?, 0, ?, 'pending',
+                        CURRENT_TIMESTAMP)
+
+                ON CONFLICT(class_id, month_key)
+                DO UPDATE SET
+                    faculty_username = excluded.faculty_username,
+                    total_collection_paise = excluded.total_collection_paise,
+                    rsc_percentage = 40,
+                    faculty_percentage = 60,
+                    salary_amount_paise = excluded.salary_amount_paise,
+
+                    pending_amount_paise = MAX(
+                        0,
+                        excluded.salary_amount_paise
+                        - class_salary.paid_amount_paise
+                    ),
+
+                    salary_status = CASE
+                        WHEN class_salary.paid_amount_paise
+                             >= excluded.salary_amount_paise
+                            THEN 'paid'
+                        WHEN class_salary.paid_amount_paise > 0
+                            THEN 'partial'
+                        ELSE 'pending'
+                    END,
+
+                    generated_at = CURRENT_TIMESTAMP
+            """, (
+                class_id,
+                faculty_username,
+                month_key,
+                net_collection,
+                faculty_share,
+                faculty_share
+            ))
+
+            generated_count += 1
+
+        conn.commit()
+
+        print(
+            "MONTHLY SALARY GENERATED:",
+            month_key,
+            "Classes:",
+            generated_count
+        )
+
+        return generated_count
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        conn.close()
+
+
 # Seat tracking — shared across server (in production use DB/Redis)
 seat_data = {
     "cbse10": {"total": 30, "booked": 0},
@@ -3921,6 +4089,37 @@ def admin():
         else:
             error = "Wrong Password"
     return render_template("admin_login.html", error=error)
+
+
+@app.route("/admin/generate-class-salary", methods=["POST"])
+def admin_generate_class_salary():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    month_key = (
+        request.form.get("month_key")
+        or datetime.now().strftime("%Y-%m")
+    )
+
+    try:
+        count = generate_monthly_class_salary(month_key)
+
+        print(
+            "ADMIN GENERATED CLASS SALARY:",
+            month_key,
+            "Classes:",
+            count
+        )
+
+        return redirect(
+            "/admin-dashboard?month=" + month_key
+        )
+
+    except Exception as e:
+        print("MONTHLY SALARY GENERATION ERROR:", str(e))
+        return "Salary generation failed. Check server logs.", 500
+
 
 # =====================================================
 # ADMIN - REACTIVATE FACULTY
