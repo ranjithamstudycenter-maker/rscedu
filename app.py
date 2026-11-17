@@ -4128,7 +4128,12 @@ def teacher_dashboard():
         pending_salary=pending_salary,
         paid_salary=paid_salary,
         summary=summary,
-        avg_rating=avg_rating
+        avg_rating=avg_rating,
+        class_salary_records=class_salary_records,
+        class_salary_total=class_salary_total / 100,
+        class_salary_paid=class_salary_paid / 100,
+        class_salary_pending=class_salary_pending / 100,
+        class_salary_approved=class_salary_approved / 100
        
     )
 
