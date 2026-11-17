@@ -5289,7 +5289,7 @@ def admin_dashboard():
 
         for username, details in teachers.items():
 
-                        course = details.get("course", "Not Assigned")
+            course = details.get("course", "Not Assigned")
 
             # Faculty class assignment summary
             c.execute("""
