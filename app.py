@@ -10788,20 +10788,34 @@ def admin_students():
 
         })
 
+    
+    # Count only successfully enrolled students
+    c.execute("""
+        SELECT course, COUNT(*)
+        FROM students
+        WHERE enrolled = 1
+        GROUP BY course
+    """)
+
+    enrolled_counts = dict(c.fetchall())
+
     conn.close()
 
-    # ✅ RETURN RESPONSE
+    # Return database-based seat information
     return jsonify({
         "students": students_list,
         "seats": {
-         course: {
-        "total": d["total"],
-        "available": available_seats(course),
-        "booked": d["total"] - available_seats(course)
-    }
-    for course, d in seat_data.items()
-}
+            course: {
+                "total": d["total"],
+                "booked": enrolled_counts.get(course, 0),
+                "available": max(
+                    d["total"] - enrolled_counts.get(course, 0), 0
+                )
+            }
+            for course, d in seat_data.items()
+        }
     })
+
 
 
 @app.route("/admin/classes", methods=["GET", "POST"])
