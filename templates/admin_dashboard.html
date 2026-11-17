@@ -846,7 +846,251 @@ iframe{
                     <span style="color:#64748b;">Enrolled Students</span>
                     <b>{{ data.students }}</b>
                 </div>
-            
+                
+<!-- ==========================================
+     FACULTY MONTHLY SALARY SUMMARY
+========================================== -->
+
+<div style="
+    margin-top:18px;
+    padding:16px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:14px;
+">
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        align-items:center;
+        flex-wrap:wrap;
+        gap:8px;
+        margin-bottom:14px;
+    ">
+        <h4 style="margin:0;color:#1e3a8a;font-size:15px;">
+            💰 Monthly Salary
+        </h4>
+
+        <span style="
+            font-size:11px;
+            color:#64748b;
+            background:#e2e8f0;
+            padding:5px 9px;
+            border-radius:20px;
+            font-weight:600;
+        ">
+            {{ data.salary_month }}
+        </span>
+    </div>
+
+    <div style="
+        display:grid;
+        grid-template-columns:repeat(2,minmax(0,1fr));
+        gap:9px;
+    ">
+
+        <div style="
+            background:white;
+            padding:11px;
+            border-radius:10px;
+            border:1px solid #e2e8f0;
+        ">
+            <div style="font-size:11px;color:#64748b;">
+                Total Collection
+            </div>
+            <div style="font-size:17px;font-weight:800;color:#1e3a8a;margin-top:5px;">
+                ₹{{ "{:,.2f}".format(data.salary_collection) }}
+            </div>
+        </div>
+
+        <div style="
+            background:white;
+            padding:11px;
+            border-radius:10px;
+            border:1px solid #e2e8f0;
+        ">
+            <div style="font-size:11px;color:#64748b;">
+                Faculty Share (60%)
+            </div>
+            <div style="font-size:17px;font-weight:800;color:#15803d;margin-top:5px;">
+                ₹{{ "{:,.2f}".format(data.salary_share) }}
+            </div>
+        </div>
+
+        <div style="
+            background:white;
+            padding:11px;
+            border-radius:10px;
+            border:1px solid #e2e8f0;
+        ">
+            <div style="font-size:11px;color:#64748b;">
+                Paid Amount
+            </div>
+            <div style="font-size:17px;font-weight:800;color:#059669;margin-top:5px;">
+                ₹{{ "{:,.2f}".format(data.salary_paid) }}
+            </div>
+        </div>
+
+        <div style="
+            background:white;
+            padding:11px;
+            border-radius:10px;
+            border:1px solid #e2e8f0;
+        ">
+            <div style="font-size:11px;color:#64748b;">
+                Pending Amount
+            </div>
+            <div style="font-size:17px;font-weight:800;color:#dc2626;margin-top:5px;">
+                ₹{{ "{:,.2f}".format(data.salary_pending) }}
+            </div>
+        </div>
+
+    </div>
+
+    <div style="
+        display:flex;
+        justify-content:space-between;
+        gap:8px;
+        flex-wrap:wrap;
+        margin-top:13px;
+        font-size:12px;
+    ">
+        <span style="color:#15803d;font-weight:600;">
+            Generated: ₹{{ "{:,.2f}".format(data.salary_generated) }}
+        </span>
+
+        <span style="color:#b45309;font-weight:600;">
+            Not Generated: ₹{{ "{:,.2f}".format(data.salary_not_generated) }}
+        </span>
+    </div>
+
+    <!-- CLASS-WISE SALARY DETAILS -->
+
+    <details style="
+        margin-top:15px;
+        border-top:1px solid #e2e8f0;
+        padding-top:12px;
+    ">
+
+        <summary style="
+            cursor:pointer;
+            color:#1e40af;
+            font-size:13px;
+            font-weight:700;
+        ">
+            View Class-wise Salary Details
+            ({{ data.salary_classes|length }} Classes)
+        </summary>
+
+        <div style="
+            margin-top:12px;
+            display:grid;
+            gap:10px;
+        ">
+
+            {% for salary_class in data.salary_classes %}
+
+            <div style="
+                background:white;
+                padding:12px;
+                border:1px solid #e2e8f0;
+                border-radius:10px;
+            ">
+
+                <div style="
+                    display:flex;
+                    justify-content:space-between;
+                    gap:8px;
+                    flex-wrap:wrap;
+                    margin-bottom:9px;
+                ">
+                    <b style="color:#1e3a8a;font-size:13px;">
+                        {{ salary_class.class_name }}
+                    </b>
+
+                    {% if salary_class.generated %}
+                        <span style="
+                            color:#15803d;
+                            background:#dcfce7;
+                            padding:3px 8px;
+                            border-radius:20px;
+                            font-size:10px;
+                            font-weight:700;
+                        ">
+                            GENERATED
+                        </span>
+                    {% else %}
+                        <span style="
+                            color:#b45309;
+                            background:#fef3c7;
+                            padding:3px 8px;
+                            border-radius:20px;
+                            font-size:10px;
+                            font-weight:700;
+                        ">
+                            NOT GENERATED
+                        </span>
+                    {% endif %}
+                </div>
+
+                <div style="
+                    display:grid;
+                    grid-template-columns:1fr 1fr;
+                    gap:8px;
+                    font-size:12px;
+                ">
+
+                    <div>
+                        <span style="color:#64748b;">Collection</span>
+                        <div style="font-weight:700;">
+                            ₹{{ "{:,.2f}".format(salary_class.collection) }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <span style="color:#64748b;">Faculty Share</span>
+                        <div style="font-weight:700;color:#15803d;">
+                            ₹{{ "{:,.2f}".format(salary_class.faculty_share) }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <span style="color:#64748b;">Paid</span>
+                        <div style="font-weight:700;color:#059669;">
+                            ₹{{ "{:,.2f}".format(salary_class.paid) }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <span style="color:#64748b;">Pending</span>
+                        <div style="font-weight:700;color:#dc2626;">
+                            ₹{{ "{:,.2f}".format(salary_class.pending) }}
+                        </div>
+                    </div>
+
+                </div>
+
+            </div>
+
+            {% else %}
+
+            <div style="
+                padding:12px;
+                text-align:center;
+                color:#64748b;
+                font-size:12px;
+            ">
+                No salary classes assigned for this month.
+            </div>
+
+            {% endfor %}
+
+        </div>
+
+    </details>
+
+</div>
+
                 <div style="
                     display:grid;
                     grid-template-columns:repeat(3,minmax(0,1fr));
