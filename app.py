@@ -20,7 +20,17 @@ from datetime import datetime, timedelta
 from werkzeug.utils import secure_filename
 from openpyxl import load_workbook
 
-
+from io import BytesIO
+from reportlab.lib import colors
+from reportlab.lib.pagesizes import A4
+from reportlab.lib.styles import getSampleStyleSheet
+from reportlab.platypus import (
+    SimpleDocTemplate,
+    Paragraph,
+    Spacer,
+    Table,
+    TableStyle
+)
 from email.message import EmailMessage
 from PyPDF2 import PdfReader
 
@@ -3773,6 +3783,310 @@ def get_teacher():
             return jsonify({"teacher": name})
 
     return jsonify({"teacher": None})
+
+# =====================================================
+# FACULTY - DOWNLOAD MONTHLY SALARY STATEMENT PDF
+# =====================================================
+
+@app.route("/faculty/salary-statement/<int:salary_id>")
+def faculty_salary_statement(salary_id):
+
+    # Faculty authentication
+    username = session.get("teacher")
+
+    if not username:
+        return redirect("/teacher-login")
+
+    teacher = teachers.get(username)
+
+    if not teacher or not teacher.get("active", True):
+        session.pop("teacher", None)
+        return redirect("/teacher-login")
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    try:
+
+        # Fetch only the logged-in faculty's salary
+        c.execute("""
+            SELECT
+                cs.id,
+                cs.faculty_username,
+                cs.month_key,
+                cs.total_collection_paise,
+                cs.rsc_percentage,
+                cs.faculty_percentage,
+                cs.salary_amount_paise,
+                cs.paid_amount_paise,
+                cs.pending_amount_paise,
+                cs.salary_status,
+                COALESCE(
+                    cs.approval_status,
+                    'pending_review'
+                ) AS approval_status,
+                cs.approved_by,
+                cs.approved_at,
+                cb.class_name,
+                cb.course
+
+            FROM class_salary cs
+
+            INNER JOIN class_batches cb
+                ON cb.id = cs.class_id
+
+            WHERE cs.id=?
+              AND cs.faculty_username=?
+
+        """, (salary_id, username))
+
+        salary = c.fetchone()
+
+        if not salary:
+            return "Salary statement not found.", 404
+
+        # Fetch completed payout history
+        c.execute("""
+            SELECT
+                amount_paise,
+                payment_method,
+                payment_date,
+                payment_reference,
+                payment_notes
+
+            FROM salary_payouts
+
+            WHERE salary_id=?
+              AND faculty_username=?
+              AND payout_status='completed'
+
+            ORDER BY payment_date ASC, id ASC
+
+        """, (salary_id, username))
+
+        payments = c.fetchall()
+
+        # Prepare PDF in memory
+        buffer = BytesIO()
+
+        pdf = SimpleDocTemplate(
+            buffer,
+            pagesize=A4,
+            rightMargin=40,
+            leftMargin=40,
+            topMargin=40,
+            bottomMargin=40
+        )
+
+        styles = getSampleStyleSheet()
+        story = []
+
+        story.append(
+            Paragraph(
+                "<b>RANJITHAM STUDY CENTER</b>",
+                styles["Title"]
+            )
+        )
+
+        story.append(
+            Paragraph(
+                "Faculty Monthly Salary Statement",
+                styles["Heading2"]
+            )
+        )
+
+        story.append(Spacer(1, 18))
+
+        def rupees(value):
+            return "Rs. {:,.2f}".format(
+                int(value or 0) / 100
+            )
+
+        # Faculty and class details
+        details = [
+            ["Faculty Name", salary["faculty_username"]],
+            ["Class / Batch", salary["class_name"]],
+            ["Course", salary["course"]],
+            ["Salary Month", salary["month_key"]],
+            ["Statement ID", str(salary["id"])]
+        ]
+
+        details_table = Table(
+            details,
+            colWidths=[150, 320]
+        )
+
+        details_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (0, -1), colors.whitesmoke),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("PADDING", (0, 0), (-1, -1), 8),
+            ("VALIGN", (0, 0), (-1, -1), "MIDDLE")
+        ]))
+
+        story.append(details_table)
+        story.append(Spacer(1, 20))
+
+        # Salary calculation
+        salary_details = [
+            ["Description", "Amount"],
+
+            [
+                "Total Net Collection",
+                rupees(salary["total_collection_paise"])
+            ],
+
+            [
+                "RSC Share ({:.0f}%)".format(
+                    salary["rsc_percentage"]
+                ),
+                rupees(
+                    int(salary["total_collection_paise"] or 0)
+                    * float(salary["rsc_percentage"] or 0) / 100
+                )
+            ],
+
+            [
+                "Faculty Share ({:.0f}%)".format(
+                    salary["faculty_percentage"]
+                ),
+                rupees(salary["salary_amount_paise"])
+            ],
+
+            [
+                "Amount Paid",
+                rupees(salary["paid_amount_paise"])
+            ],
+
+            [
+                "Pending Amount",
+                rupees(salary["pending_amount_paise"])
+            ]
+        ]
+
+        salary_table = Table(
+            salary_details,
+            colWidths=[300, 170]
+        )
+
+        salary_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e3a8a")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("PADDING", (0, 0), (-1, -1), 9),
+            ("ALIGN", (1, 1), (1, -1), "RIGHT"),
+            ("FONTNAME", (0, 0), (-1, 0), "Helvetica-Bold")
+        ]))
+
+        story.append(salary_table)
+        story.append(Spacer(1, 20))
+
+        # Approval information
+        story.append(
+            Paragraph(
+                "<b>Approval Information</b>",
+                styles["Heading3"]
+            )
+        )
+
+        approval_details = [
+            ["Approval Status", salary["approval_status"]],
+            ["Approved By", salary["approved_by"] or "-"],
+            ["Approved Date", salary["approved_at"] or "-"]
+        ]
+
+        approval_table = Table(
+            approval_details,
+            colWidths=[150, 320]
+        )
+
+        approval_table.setStyle(TableStyle([
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("PADDING", (0, 0), (-1, -1), 8)
+        ]))
+
+        story.append(approval_table)
+        story.append(Spacer(1, 20))
+
+        # Payment history
+        story.append(
+            Paragraph(
+                "<b>Payment History</b>",
+                styles["Heading3"]
+            )
+        )
+
+        payment_data = [[
+            "Date",
+            "Method",
+            "Amount",
+            "Reference"
+        ]]
+
+        for payment in payments:
+
+            payment_data.append([
+                payment["payment_date"] or "-",
+                payment["payment_method"] or "-",
+                rupees(payment["amount_paise"]),
+                payment["payment_reference"] or "-"
+            ])
+
+        if not payments:
+            payment_data.append([
+                "-",
+                "No payment recorded",
+                "Rs. 0.00",
+                "-"
+            ])
+
+        payment_table = Table(
+            payment_data,
+            colWidths=[90, 110, 100, 170]
+        )
+
+        payment_table.setStyle(TableStyle([
+            ("BACKGROUND", (0, 0), (-1, 0), colors.HexColor("#1e3a8a")),
+            ("TEXTCOLOR", (0, 0), (-1, 0), colors.white),
+            ("GRID", (0, 0), (-1, -1), 0.5, colors.grey),
+            ("PADDING", (0, 0), (-1, -1), 7),
+            ("FONTSIZE", (0, 0), (-1, -1), 8)
+        ]))
+
+        story.append(payment_table)
+        story.append(Spacer(1, 25))
+
+        story.append(
+            Paragraph(
+                "This is a computer-generated salary statement.",
+                styles["Italic"]
+            )
+        )
+
+        pdf.build(story)
+
+        buffer.seek(0)
+
+        filename = (
+            f"Salary_Statement_{username}_"
+            f"{salary['month_key']}.pdf"
+        )
+
+        return send_file(
+            buffer,
+            as_attachment=True,
+            download_name=filename,
+            mimetype="application/pdf"
+        )
+
+    except Exception as e:
+
+        print("FACULTY SALARY PDF ERROR:", str(e))
+
+        return "Unable to generate salary statement.", 500
+
+    finally:
+        conn.close()
     
 @app.route("/teacher-dashboard")
 def teacher_dashboard():
