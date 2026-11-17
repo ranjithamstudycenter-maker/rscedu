@@ -5259,7 +5259,36 @@ def admin_dashboard():
 
         for username, details in teachers.items():
 
-            course = details.get("course", "Not Assigned")
+                        course = details.get("course", "Not Assigned")
+
+            # Faculty class assignment summary
+            c.execute("""
+                SELECT
+                    COUNT(*) AS assigned_count,
+                    SUM(
+                        CASE WHEN active_status = 1
+                        THEN 1 ELSE 0 END
+                    ) AS active_class_count,
+                    GROUP_CONCAT(class_name, ', ')
+                        AS assigned_class_names
+                FROM class_batches
+                WHERE faculty_username = ?
+                  AND TRIM(faculty_username) != ''
+            """, (username,))
+
+            assignment_row = c.fetchone()
+
+            assigned_class_count = (
+                assignment_row["assigned_count"] or 0
+            )
+
+            active_assigned_class_count = (
+                assignment_row["active_class_count"] or 0
+            )
+
+            assigned_class_names = (
+                assignment_row["assigned_class_names"] or ""
+            )
 
             feedback = get_faculty_feedback_summary(username)
 
@@ -5335,7 +5364,17 @@ def admin_dashboard():
                 "username": username,
                 "course": course,
                 "active": details.get("active", False),
-                "live": faculty_is_live,
+                "assigned": assigned_class_count > 0,
+                "assigned_class_count": assigned_class_count,
+                "active_assigned_class_count": active_assigned_class_count,
+                "assigned_class_names": assigned_class_names,
+
+                "live": (
+                    faculty_is_live
+                    and details.get("active", False)
+                    and assigned_class_count > 0
+                ),
+
                 "students": student_row[0] if student_row else 0,
             
                 "feedback_count": feedback["total_feedbacks"],
