@@ -1811,7 +1811,9 @@ def generate_monthly_class_salary(month_key=None):
                     rsc_percentage = 40,
                     faculty_percentage = 60,
                     salary_amount_paise = excluded.salary_amount_paise,
-
+                    approval_status = 'pending_review',
+                    approved_by = '',
+                    approved_at = NULL,
                     pending_amount_paise = MAX(
                         0,
                         excluded.salary_amount_paise
@@ -3974,7 +3976,139 @@ def teacher_dashboard():
     students = c.fetchall()
     
     conn.close()
-    
+        # ==========================================
+    # NEW CLASS-WISE FACULTY SALARY DATA
+    # ==========================================
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    conn.row_factory = sqlite3.Row
+    c = conn.cursor()
+
+    class_salary_records = []
+
+    c.execute("""
+        SELECT
+            cs.id,
+            cb.class_name,
+            cb.course,
+            cs.month_key,
+            cs.total_collection_paise,
+            cs.salary_amount_paise,
+            cs.paid_amount_paise,
+            cs.pending_amount_paise,
+            cs.salary_status,
+            COALESCE(cs.approval_status, 'pending_review')
+                AS approval_status
+
+        FROM class_salary cs
+
+        INNER JOIN class_batches cb
+            ON cb.id = cs.class_id
+
+        WHERE cs.faculty_username = ?
+
+        ORDER BY cs.month_key DESC, cb.class_name
+    """, (username,))
+
+    salary_rows = c.fetchall()
+
+    class_salary_total = 0
+    class_salary_paid = 0
+    class_salary_pending = 0
+    class_salary_approved = 0
+
+    for row in salary_rows:
+
+        salary_id = row["id"]
+
+        collection = int(
+            row["total_collection_paise"] or 0
+        )
+
+        salary_amount = int(
+            row["salary_amount_paise"] or 0
+        )
+
+        paid_amount = int(
+            row["paid_amount_paise"] or 0
+        )
+
+        pending_amount = int(
+            row["pending_amount_paise"] or 0
+        )
+
+        approval_status = row["approval_status"]
+
+        if approval_status == "approved":
+            class_salary_approved += salary_amount
+
+        class_salary_total += salary_amount
+        class_salary_paid += paid_amount
+        class_salary_pending += pending_amount
+
+        # Individual payout history
+        c.execute("""
+            SELECT
+                amount_paise,
+                payment_method,
+                payment_date,
+                payment_reference,
+                payment_notes
+
+            FROM salary_payouts
+
+            WHERE salary_id=?
+              AND payout_status='completed'
+
+            ORDER BY payment_date DESC, id DESC
+        """, (salary_id,))
+
+        payout_rows = c.fetchall()
+
+        payout_history = []
+
+        for payment in payout_rows:
+
+            payout_history.append({
+                "amount": int(
+                    payment["amount_paise"] or 0
+                ) / 100,
+
+                "method": payment["payment_method"] or "",
+
+                "date": payment["payment_date"] or "",
+
+                "reference": payment["payment_reference"] or "",
+
+                "notes": payment["payment_notes"] or ""
+            })
+
+        class_salary_records.append({
+
+            "salary_id": salary_id,
+
+            "class_name": row["class_name"],
+
+            "course": row["course"],
+
+            "month": row["month_key"],
+
+            "collection": collection / 100,
+
+            "salary": salary_amount / 100,
+
+            "paid": paid_amount / 100,
+
+            "pending": pending_amount / 100,
+
+            "status": row["salary_status"],
+
+            "approval_status": approval_status,
+
+            "payments": payout_history
+        })
+
+    conn.close()
     return render_template(
         "teacher_Dashboard.html",
         teacher_name=username,
@@ -4281,7 +4415,8 @@ def admin_record_salary_payment():
                 faculty_username,
                 month_key,
                 salary_amount_paise,
-                paid_amount_paise
+                paid_amount_paise,
+                approval_status
             FROM class_salary
             WHERE id=?
         """, (salary_id,))
@@ -4297,8 +4432,18 @@ def admin_record_salary_payment():
             faculty_username,
             salary_month,
             salary_amount,
-            paid_amount
+            paid_amount,
+            approval_status
         ) = salary
+
+        # Salary payment is allowed only after admin approval
+        if approval_status != "approved":
+            conn.rollback()
+            return (
+                "Salary payment is blocked. "
+                "Admin approval is required first.",
+                403
+            )
 
         salary_amount = int(salary_amount or 0)
         paid_amount = int(paid_amount or 0)
