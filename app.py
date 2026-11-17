@@ -4869,6 +4869,11 @@ def admin_record_salary_payment():
 # ADMIN - REACTIVATE FACULTY
 # =====================================================
 
+
+# =====================================================
+# ADMIN - REACTIVATE FACULTY
+# =====================================================
+
 @app.route("/admin/faculty/<username>/reactivate", methods=["POST"])
 def reactivate_faculty(username):
 
@@ -4876,11 +4881,35 @@ def reactivate_faculty(username):
     if not session.get("admin"):
         return redirect("/admin")
 
-    # Check faculty account
     if username not in teachers:
         return "Faculty not found", 404
 
-    # Restore the same faculty account
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT active_status, status_reason
+        FROM faculty_status
+        WHERE username=?
+    """, (username,))
+
+    status_row = c.fetchone()
+    conn.close()
+
+    # Allow reactivation only for feedback-based deactivation
+    if not status_row:
+        return "Faculty status record not found.", 404
+
+    active_status, status_reason = status_row
+
+    if active_status:
+        return "Faculty is already active.", 400
+
+    if status_reason != "Automatic deactivation due to low feedback rating":
+        return "Reactivation is not permitted for this status.", 403
+
+    # Restore the same faculty account.
+    # Existing class assignment records remain unchanged.
     set_faculty_status(
         username,
         True,
@@ -4890,6 +4919,7 @@ def reactivate_faculty(username):
     print("FACULTY REACTIVATED:", username)
 
     return redirect("/admin-dashboard")
+
 
 
 @app.route("/admin-dashboard")
