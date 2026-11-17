@@ -292,6 +292,63 @@ fetch("/admin/students")
 });
 
 
+// Automatically refresh Seats Info every 15 seconds
+function refreshSeatsInfo() {
+
+    fetch("/admin/students", {
+        cache: "no-store"
+    })
+    .then(res => res.json())
+    .then(data => {
+
+        const sTable = document.getElementById("seatsTable");
+
+        let html = `
+            <tr>
+                <th>Course</th>
+                <th>Total</th>
+                <th>Booked</th>
+                <th>Available</th>
+                <th>Fill %</th>
+            </tr>
+        `;
+
+        for (let course in data.seats) {
+
+            let d = data.seats[course];
+
+            let fill = d.total > 0
+                ? Math.round((d.booked / d.total) * 100)
+                : 0;
+
+            let color = fill >= 80
+                ? "red"
+                : (fill >= 50 ? "orange" : "green");
+
+            html += `
+                <tr>
+                    <td>${course}</td>
+                    <td>${d.total}</td>
+                    <td>${d.booked}</td>
+                    <td>${d.available}</td>
+                    <td style="color:${color}; font-weight:bold">
+                        ${fill}%
+                    </td>
+                </tr>
+            `;
+        }
+
+        sTable.innerHTML = html;
+
+    })
+    .catch(error => {
+        console.error("Seats refresh error:", error);
+    });
+}
+
+// Refresh every 15 seconds
+setInterval(refreshSeatsInfo, 15000);
+
 // 🔥 RENDER TABLE
 function renderTable(students){
 
