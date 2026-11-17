@@ -6,74 +6,206 @@
 <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 
 <style>
+
+* {
+    box-sizing: border-box;
+}
+
 body {
-    font-family: Poppins;
-    background: linear-gradient(135deg,#eaf2ff,#f9fbff);
-    padding: 20px;
+    font-family: 'Poppins', sans-serif;
+    background: #f4f7fc;
+    padding: 24px;
+    margin: 0;
+    color: #1e293b;
 }
 
 h2 {
     text-align: center;
-    margin-bottom: 25px;
-    color: #0b5394;
+    color: #173b70;
+    font-size: 26px;
+    font-weight: 700;
+    margin: 12px 0 28px;
 }
 
 .card {
-    background: white;
-    padding: 20px;
-    border-radius: 14px;
-    box-shadow: 0 10px 30px rgba(0,0,0,0.08);
-    margin-bottom: 25px;
+    background: #ffffff;
+    padding: 26px;
+    border: 1px solid #e8edf5;
+    border-radius: 16px;
+    box-shadow: 0 5px 22px rgba(31, 55, 90, 0.06);
+    margin-bottom: 24px;
+    overflow-x: auto;
 }
 
+.card h3 {
+    color: #173b70;
+    font-size: 18px;
+    margin: 0 0 20px;
+    font-weight: 700;
+}
+
+/* CLASS TABS */
+.class-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin-bottom: 24px;
+}
+
+.class-tab {
+    padding: 10px 22px;
+    border: 1px solid #dce5f2;
+    border-radius: 9px;
+    background: #f4f7fc;
+    color: #334b6b;
+    font-family: inherit;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+}
+
+.class-tab:hover {
+    background: #e5efff;
+    border-color: #2563eb;
+    color: #1d4ed8;
+}
+
+.class-tab.active {
+    background: #1d4ed8;
+    color: #ffffff;
+    border-color: #1d4ed8;
+    box-shadow: 0 4px 10px rgba(37, 99, 235, 0.2);
+}
+
+/* TABLE */
 table {
     width: 100%;
-    border-collapse: collapse;
+    min-width: 850px;
+    border-collapse: separate;
+    border-spacing: 0;
+    font-size: 13px;
 }
 
 th {
-    background: linear-gradient(90deg,#0b5394,#1f7ae0);
-    color: white;
-}
-
-th, td {
-    padding: 12px;
+    background: #173f78;
+    color: #ffffff;
+    font-weight: 600;
+    padding: 15px 12px;
     text-align: center;
+    white-space: nowrap;
 }
 
+th:first-child {
+    border-radius: 8px 0 0 0;
+}
+
+th:last-child {
+    border-radius: 0 8px 0 0;
+}
+
+td {
+    padding: 14px 12px;
+    text-align: center;
+    border-bottom: 1px solid #edf1f7;
+    color: #475569;
+    background: #ffffff;
+}
+
+tbody tr:hover td {
+    background: #f7faff;
+}
+
+tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* STATUS BADGES */
 .badge {
+    display: inline-block;
     padding: 5px 12px;
     border-radius: 20px;
-    font-size: 12px;
+    font-size: 11px;
     font-weight: 600;
+    min-width: 48px;
 }
 
-.yes { background: #d4edda; color: green; }
-.no  { background: #f8d7da; color: red; }
+.yes {
+    background: #dcfce7;
+    color: #15803d;
+}
 
+.no {
+    background: #fee2e2;
+    color: #b91c1c;
+}
+
+/* ACTION BUTTONS */
+button {
+    font-family: inherit;
+}
+
+.reset-btn,
+.delete-btn {
+    padding: 7px 13px;
+    margin: 3px;
+    border: none;
+    border-radius: 7px;
+    color: white;
+    font-size: 11px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: 0.2s;
+}
+
+.reset-btn {
+    background: #2563eb;
+}
+
+.reset-btn:hover {
+    background: #1d4ed8;
+}
+
+.delete-btn {
+    background: #dc3545;
+}
+
+.delete-btn:hover {
+    background: #b91c1c;
+}
+
+/* EMPTY STATE */
 .empty {
     text-align: center;
-    padding: 20px;
-    color: #888;
+    padding: 35px !important;
+    color: #94a3b8;
+    font-size: 14px;
 }
 
-button {
-  padding:8px 14px;
-  margin:5px;
-  border:none;
-  border-radius:6px;
-  background:#0b5394;
-  color:white;
-  cursor:pointer;
+/* SEATS TABLE */
+#seatsTable th {
+    background: #173f78;
 }
 
-.reset-btn{
-  background:#3b82f6;
+#seatsTable td {
+    font-weight: 500;
 }
 
-.delete-btn{
-  background:#ef4444;
+@media (max-width: 768px) {
+    body {
+        padding: 12px;
+    }
+
+    .card {
+        padding: 15px;
+    }
+
+    h2 {
+        font-size: 21px;
+    }
 }
+
 </style>
 </head>
 
@@ -83,11 +215,12 @@ button {
 
 <div class="card">
 
-<div style="text-align:center; margin-bottom:15px;">
-    <button onclick="filterClass('cbse9', this)">Class 9</button>
-    <button onclick="filterClass('cbse10', this)">Class 10</button>
-    <button onclick="filterClass('cbse11', this)">Class 11</button>
-    <button onclick="filterClass('cbse12', this)">Class 12</button>
+<div class="class-tabs">
+    <button class="class-tab active" onclick="filterClass('all', this)">All Students</button>
+    <button class="class-tab" onclick="filterClass('cbse9', this)">Class 9</button>
+    <button class="class-tab" onclick="filterClass('cbse10', this)">Class 10</button>
+    <button class="class-tab" onclick="filterClass('cbse11', this)">Class 11</button>
+    <button class="class-tab" onclick="filterClass('cbse12', this)">Class 12</button>
 </div>
 
 <table>
