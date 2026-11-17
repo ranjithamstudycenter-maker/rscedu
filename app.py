@@ -5157,7 +5157,7 @@ def admin_dashboard():
                 COALESCE(cs.salary_amount_paise, 0),
                 COALESCE(cs.paid_amount_paise, 0),
                 COALESCE(cs.pending_amount_paise, 0),
-                COALESCE(cs.salary_status, 'not_generated')
+                COALESCE(cs.salary_status, 'not_generated'),
                 COALESCE(cs.approval_status, 'pending_review')
 
             FROM class_batches cb
