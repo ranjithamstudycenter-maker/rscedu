@@ -1254,6 +1254,23 @@ def init_faculty_salary_db():
                 )
             except sqlite3.OperationalError:
                 pass
+
+        # -------------------------------------------------
+        # 6B. SALARY APPROVAL STATUS MIGRATION
+        # -------------------------------------------------
+
+        c.execute("PRAGMA table_info(class_salary)")
+
+        salary_columns = [
+            row[1] for row in c.fetchall()
+        ]
+
+        if "approval_status" not in salary_columns:
+            c.execute("""
+                ALTER TABLE class_salary
+                ADD COLUMN approval_status
+                TEXT DEFAULT 'pending_review'
+            """)
         # -------------------------------------------------
         # 7. INDEXES FOR FASTER SEARCH
         # -------------------------------------------------
