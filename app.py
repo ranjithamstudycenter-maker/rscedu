@@ -5264,6 +5264,16 @@ def admin_dashboard():
             feedback = get_faculty_feedback_summary(username)
 
             c.execute("""
+                SELECT live
+                FROM live_classes
+                WHERE course=?
+            """, (course,))
+            
+            live_row = c.fetchone()
+            faculty_is_live = bool(
+                live_row and live_row["live"]
+            )
+            c.execute("""
                 SELECT status_reason
                 FROM faculty_status
                 WHERE username=?
@@ -5325,6 +5335,7 @@ def admin_dashboard():
                 "username": username,
                 "course": course,
                 "active": details.get("active", False),
+                "live": faculty_is_live,
                 "students": student_row[0] if student_row else 0,
             
                 "feedback_count": feedback["total_feedbacks"],
