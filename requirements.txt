@@ -5,3 +5,4 @@ openai
 PyPDF2
 pandas
 openpyxl
+reportlab
