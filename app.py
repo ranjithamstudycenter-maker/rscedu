@@ -4159,6 +4159,73 @@ def admin_generate_class_salary():
         print("MONTHLY SALARY GENERATION ERROR:", str(e))
         return "Salary generation failed. Check server logs.", 500
 
+# ==========================================
+# ADMIN - APPROVE / REJECT FACULTY SALARY
+# ==========================================
+
+@app.route("/admin/review-class-salary", methods=["POST"])
+def admin_review_class_salary():
+
+    if not session.get("admin"):
+        return redirect("/admin")
+
+    salary_id = request.form.get("salary_id", type=int)
+    decision = request.form.get("decision", "").strip()
+    month_key = request.form.get("month_key", "")
+
+    if not salary_id or decision not in ("approved", "rejected"):
+        return "Invalid salary approval request.", 400
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    try:
+        c.execute("BEGIN IMMEDIATE")
+
+        c.execute("""
+            SELECT id
+            FROM class_salary
+            WHERE id=?
+        """, (salary_id,))
+
+        if not c.fetchone():
+            conn.rollback()
+            return "Salary record not found.", 404
+
+        if decision == "approved":
+            c.execute("""
+                UPDATE class_salary
+                SET approval_status=?,
+                    approved_by=?,
+                    approved_at=CURRENT_TIMESTAMP
+                WHERE id=?
+            """, ("approved", "Admin", salary_id))
+
+        else:
+            c.execute("""
+                UPDATE class_salary
+                SET approval_status=?,
+                    approved_by='',
+                    approved_at=NULL
+                WHERE id=?
+            """, ("rejected", salary_id))
+
+        conn.commit()
+
+        return redirect(url_for(
+            "admin_dashboard",
+            tab="salary",
+            salary_month=month_key
+        ))
+
+    except Exception as e:
+        conn.rollback()
+        print("SALARY APPROVAL ERROR:", str(e))
+        return "Salary approval failed. Check server logs.", 500
+
+    finally:
+        conn.close()
+
 # =====================================================
 # ADMIN - RECORD MANUAL FACULTY SALARY PAYMENT
 # =====================================================
@@ -4627,6 +4694,7 @@ def admin_dashboard():
                 COALESCE(cs.paid_amount_paise, 0),
                 COALESCE(cs.pending_amount_paise, 0),
                 COALESCE(cs.salary_status, 'not_generated')
+                COALESCE(cs.approval_status, 'pending_review')
 
             FROM class_batches cb
 
@@ -4652,7 +4720,8 @@ def admin_dashboard():
                 salary_amount_paise,
                 paid_amount_paise,
                 pending_amount_paise,
-                salary_status
+                salary_status,
+                approval_status
             ) = row
 
             net_collection_paise = int(net_collection_paise or 0)
@@ -4712,6 +4781,7 @@ def admin_dashboard():
                 "paid": paid_paise / 100,
                 "pending": pending_paise / 100,
                 "status": salary_status,
+                "approval_status": approval_status,
                 "generated": bool(salary_id),
                 "salary_id": salary_id,
                 "payments": salary_payments
