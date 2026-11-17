@@ -1440,7 +1440,83 @@ iframe{
                                 </span>
 
                             {% endif %}
+                        {% if data.generated %}
 
+    <div style="margin-top:10px;">
+
+        {% if data.approval_status == "approved" %}
+
+            <span style="
+                background:#dcfce7;
+                color:#15803d;
+                padding:6px 10px;
+                border-radius:7px;
+                font-size:11px;
+                font-weight:700;
+            ">
+                ✓ APPROVED
+            </span>
+
+        {% elif data.approval_status == "rejected" %}
+
+            <span style="
+                background:#fee2e2;
+                color:#dc2626;
+                padding:6px 10px;
+                border-radius:7px;
+                font-size:11px;
+                font-weight:700;
+            ">
+                REJECTED
+            </span>
+
+            <form method="POST"
+                  action="/admin/review-class-salary"
+                  style="margin-top:7px;">
+
+                <input type="hidden" name="salary_id"
+                       value="{{ data.salary_id }}">
+
+                <input type="hidden" name="month_key"
+                       value="{{ salary_month_key }}">
+
+                <button name="decision" value="approved"
+                        style="background:#16a34a;color:white;border:0;padding:7px 10px;border-radius:7px;cursor:pointer;">
+                    Approve Now
+                </button>
+            </form>
+
+        {% else %}
+
+            <form method="POST"
+                  action="/admin/review-class-salary"
+                  style="display:flex;gap:6px;flex-wrap:wrap;">
+
+                <input type="hidden" name="salary_id"
+                       value="{{ data.salary_id }}">
+
+                <input type="hidden" name="month_key"
+                       value="{{ salary_month_key }}">
+
+                <button name="decision" value="approved"
+                        onclick="return confirm('Approve this faculty salary?');"
+                        style="background:#16a34a;color:white;border:0;padding:7px 10px;border-radius:7px;cursor:pointer;">
+                    ✓ Approve
+                </button>
+
+                <button name="decision" value="rejected"
+                        onclick="return confirm('Reject this faculty salary?');"
+                        style="background:#dc2626;color:white;border:0;padding:7px 10px;border-radius:7px;cursor:pointer;">
+                    ✕ Reject
+                </button>
+
+            </form>
+
+        {% endif %}
+
+    </div>
+
+{% endif %}
                         </td>
                     <td style="min-width:240px;">
 
