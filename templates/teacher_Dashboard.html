@@ -206,6 +206,199 @@ input:focus{
   color:#facc15;
   margin-top:10px;
 }
+
+/* =====================================
+   FACULTY SALARY DASHBOARD
+===================================== */
+
+.salary-section-title {
+    display:flex;
+    justify-content:space-between;
+    align-items:center;
+    flex-wrap:wrap;
+    gap:12px;
+    margin-bottom:22px;
+}
+
+.salary-section-title h2 {
+    margin:0;
+    color:#173b70;
+}
+
+.salary-subtitle {
+    color:#64748b;
+    font-size:13px;
+    margin-top:5px;
+}
+
+.salary-metrics {
+    display:grid;
+    grid-template-columns:repeat(4,minmax(0,1fr));
+    gap:15px;
+    margin:20px 0;
+}
+
+.salary-metric {
+    padding:20px;
+    border-radius:16px;
+    color:white;
+    min-width:0;
+    box-shadow:0 7px 18px rgba(15,23,42,0.10);
+}
+
+.salary-metric h3 {
+    font-size:25px;
+    margin:10px 0 5px;
+    overflow-wrap:anywhere;
+}
+
+.salary-metric p {
+    margin:0;
+    font-size:13px;
+    opacity:0.95;
+}
+
+.salary-metric span {
+    font-size:13px;
+    font-weight:600;
+}
+
+.salary-blue {
+    background:linear-gradient(135deg,#2563eb,#1e40af);
+}
+
+.salary-purple {
+    background:linear-gradient(135deg,#7c3aed,#5b21b6);
+}
+
+.salary-green {
+    background:linear-gradient(135deg,#16a34a,#15803d);
+}
+
+.salary-orange {
+    background:linear-gradient(135deg,#f59e0b,#c2410c);
+}
+
+.salary-table-wrap {
+    width:100%;
+    overflow-x:auto;
+    border-radius:12px;
+    border:1px solid #e2e8f0;
+}
+
+.salary-table {
+    width:100%;
+    min-width:850px;
+    border-collapse:collapse;
+    font-size:13px;
+}
+
+.salary-table th {
+    background:#173b70;
+    color:white;
+    padding:14px 12px;
+    text-align:center;
+    white-space:nowrap;
+}
+
+.salary-table td {
+    padding:14px 12px;
+    text-align:center;
+    border-bottom:1px solid #e8edf5;
+    color:#334155;
+}
+
+.salary-table tr:hover {
+    background:#f8faff;
+}
+
+.salary-amount {
+    font-weight:700;
+    color:#173b70;
+}
+
+.salary-badge {
+    display:inline-block;
+    padding:6px 11px;
+    border-radius:20px;
+    font-size:11px;
+    font-weight:700;
+    white-space:nowrap;
+}
+
+.badge-approved {
+    background:#dcfce7;
+    color:#15803d;
+}
+
+.badge-review {
+    background:#fef3c7;
+    color:#92400e;
+}
+
+.badge-rejected {
+    background:#fee2e2;
+    color:#b91c1c;
+}
+
+.badge-paid {
+    background:#dbeafe;
+    color:#1d4ed8;
+}
+
+.badge-pending {
+    background:#ffedd5;
+    color:#c2410c;
+}
+
+.payout-box {
+    margin-top:10px;
+    padding:14px;
+    background:#f8fafc;
+    border:1px solid #e2e8f0;
+    border-radius:12px;
+    text-align:left;
+}
+
+.payout-box h4 {
+    margin:0 0 10px;
+    color:#173b70;
+}
+
+.payout-item {
+    padding:10px 0;
+    border-bottom:1px dashed #cbd5e1;
+    font-size:12px;
+    line-height:1.8;
+}
+
+.payout-item:last-child {
+    border-bottom:none;
+}
+
+.salary-empty {
+    padding:30px;
+    text-align:center;
+    color:#64748b;
+    background:#f8fafc;
+    border-radius:12px;
+}
+
+@media(max-width:900px) {
+    .salary-metrics {
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+
+@media(max-width:500px) {
+    .salary-metrics {
+        grid-template-columns:1fr;
+    }
+
+    .salary-metric h3 {
+        font-size:23px;
+    }
+}
   
 </style>
 </head>
@@ -310,92 +503,244 @@ input:focus{
 </div>
 {% endif %}
 
-<!-- 💰 EARNINGS -->
+
+<!-- =====================================
+     FACULTY SALARY DASHBOARD
+===================================== -->
 
 <div class="card">
 
-  <h2>💰 Earnings Overview</h2>
+    <div class="salary-section-title">
+        <div>
+            <h2>💰 Faculty Salary Dashboard</h2>
+            <div class="salary-subtitle">
+                Monthly earnings, approval and payment details
+            </div>
+        </div>
 
-  <div class="grid">
-
-    <div class="metric">
-      <h1>₹{{ total_earnings }}</h1>
-      <p>Total Earnings</p>
+        <span class="salary-badge badge-approved">
+            CLASS-WISE SALARY
+        </span>
     </div>
 
-    <div class="metric">
-      <h1>₹{{ pending_salary }}</h1>
-      <p>Pending Salary</p>
+    <!-- SALARY SUMMARY -->
+
+    <div class="salary-metrics">
+
+        <div class="salary-metric salary-blue">
+            <span>📊 Total Salary Generated</span>
+            <h3>₹{{ "%.2f"|format(class_salary_total) }}</h3>
+            <p>All available salary records</p>
+        </div>
+
+        <div class="salary-metric salary-purple">
+            <span>✅ Approved Salary</span>
+            <h3>₹{{ "%.2f"|format(class_salary_approved) }}</h3>
+            <p>Admin-approved amount</p>
+        </div>
+
+        <div class="salary-metric salary-green">
+            <span>💳 Total Paid</span>
+            <h3>₹{{ "%.2f"|format(class_salary_paid) }}</h3>
+            <p>Payment recorded</p>
+        </div>
+
+        <div class="salary-metric salary-orange">
+            <span>⏳ Pending Amount</span>
+            <h3>₹{{ "%.2f"|format(class_salary_pending) }}</h3>
+            <p>Balance amount</p>
+        </div>
+
     </div>
 
-    <div class="metric">
-      <h1>₹{{ paid_salary }}</h1>
-      <p>Paid Salary</p>
+    <!-- CLASS-WISE MONTHLY SALARY -->
+
+    <h3 style="color:#173b70;margin:28px 0 15px;">
+        📅 Monthly Class-wise Salary Details
+    </h3>
+
+    {% if class_salary_records %}
+
+    <div class="salary-table-wrap">
+
+        <table class="salary-table">
+
+            <thead>
+                <tr>
+                    <th>Month</th>
+                    <th>Class</th>
+                    <th>Total Collection</th>
+                    <th>Your Share (60%)</th>
+                    <th>Paid</th>
+                    <th>Pending</th>
+                    <th>Approval</th>
+                    <th>Payment Status</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+                {% for s in class_salary_records %}
+
+                <tr>
+
+                    <td><b>{{ s.month }}</b></td>
+
+                    <td>{{ s.class_name }}</td>
+
+                    <td>
+                        ₹{{ "%.2f"|format(s.collection) }}
+                    </td>
+
+                    <td class="salary-amount">
+                        ₹{{ "%.2f"|format(s.salary) }}
+                    </td>
+
+                    <td style="color:#15803d;font-weight:600;">
+                        ₹{{ "%.2f"|format(s.paid) }}
+                    </td>
+
+                    <td style="color:#c2410c;font-weight:600;">
+                        ₹{{ "%.2f"|format(s.pending) }}
+                    </td>
+
+                    <td>
+
+                        {% if s.approval_status == "approved" %}
+
+                            <span class="salary-badge badge-approved">
+                                APPROVED
+                            </span>
+
+                        {% elif s.approval_status == "rejected" %}
+
+                            <span class="salary-badge badge-rejected">
+                                REJECTED
+                            </span>
+
+                        {% else %}
+
+                            <span class="salary-badge badge-review">
+                                UNDER REVIEW
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                    <td>
+
+                        {% if s.pending <= 0 and s.salary > 0 %}
+
+                            <span class="salary-badge badge-paid">
+                                FULLY PAID
+                            </span>
+
+                        {% elif s.paid > 0 %}
+
+                            <span class="salary-badge badge-pending">
+                                PARTIALLY PAID
+                            </span>
+
+                        {% else %}
+
+                            <span class="salary-badge badge-pending">
+                                NOT PAID
+                            </span>
+
+                        {% endif %}
+
+                    </td>
+
+                </tr>
+
+                <tr>
+                    <td colspan="8" style="text-align:left;background:#fbfdff;">
+
+                        <details>
+                            <summary style="
+                                cursor:pointer;
+                                color:#2563eb;
+                                font-weight:600;
+                                padding:5px;
+                            ">
+                                View Payment History – {{ s.class_name }} / {{ s.month }}
+                            </summary>
+
+                            {% if s.payments %}
+
+                                <div class="payout-box">
+
+                                    <h4>💳 Payout Transactions</h4>
+
+                                    {% for p in s.payments %}
+
+                                        <div class="payout-item">
+
+                                            <b>Amount:</b>
+                                            ₹{{ "%.2f"|format(p.amount) }}
+
+                                            <br>
+
+                                            <b>Payment Date:</b>
+                                            {{ p.date or "Not available" }}
+
+                                            <br>
+
+                                            <b>Method:</b>
+                                            {{ p.method or "Not available" }}
+
+                                            <br>
+
+                                            <b>Reference:</b>
+                                            {{ p.reference or "Not available" }}
+
+                                            {% if p.notes %}
+                                                <br>
+                                                <b>Notes:</b> {{ p.notes }}
+                                            {% endif %}
+
+                                        </div>
+
+                                    {% endfor %}
+
+                                </div>
+
+                            {% else %}
+
+                                <p style="color:#64748b;">
+                                    No completed payout transactions recorded yet.
+                                </p>
+
+                            {% endif %}
+
+                        </details>
+
+                    </td>
+                </tr>
+
+                {% endfor %}
+
+            </tbody>
+
+        </table>
+
     </div>
-
-  </div>
-
-</div>
-
-<div class="card">
-
-<h2>📜 Payment History</h2>
-
-<table style="width:100%;border-collapse:collapse;">
-
-<tr style="background:#0b5394;color:white;">
-
-  <th style="padding:12px;">Student</th>
-
-  <th>Course</th>
-
-  <th>Total</th>
-
-  <th>Your Share</th>
-
-  <th>Status</th>
-
-</tr>
-
-{% for s in salary_records %}
-
-<tr style="text-align:center;border-bottom:1px solid #ddd;">
-
-  <td style="padding:10px;">
-    {{ s.student }}
-  </td>
-
-  <td>{{ s.course }}</td>
-
-  <td>₹{{ s.amount }}</td>
-
-  <td>₹{{ s.faculty_share }}</td>
-
-  <td>
-
-    {% if s.paid_to_faculty %}
-
-      <span style="color:green;font-weight:bold;">
-        Paid
-      </span>
 
     {% else %}
 
-      <span style="color:orange;font-weight:bold;">
-        Pending
-      </span>
+        <div class="salary-empty">
+            <h3>📋 No Salary Records Available</h3>
+            <p>
+                Your class-wise salary details will appear here
+                after monthly salary generation by admin.
+            </p>
+        </div>
 
     {% endif %}
 
-  </td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-
 </div>
+
 
 <!-- 🔥 WAITING STUDENTS -->
 
