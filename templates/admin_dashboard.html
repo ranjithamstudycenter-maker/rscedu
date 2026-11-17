@@ -466,8 +466,20 @@ iframe{
 
 .faculty-box{
     display:grid;
-    grid-template-columns:repeat(auto-fit,minmax(280px,1fr));
-    gap:20px;
+    grid-template-columns:repeat(3,minmax(0,1fr));
+    gap:22px;
+}
+
+@media (max-width: 1050px){
+    .faculty-box{
+        grid-template-columns:repeat(2,minmax(0,1fr));
+    }
+}
+
+@media (max-width: 650px){
+    .faculty-box{
+        grid-template-columns:1fr;
+    }
 }
 
 .faculty-card{
@@ -789,12 +801,7 @@ iframe{
         Faculty performance, account status and class monitoring
     </p>
 
-    <div style="
-        display:grid;
-        grid-template-columns:repeat(auto-fit,minmax(270px,1fr));
-        gap:18px;
-        margin-bottom:35px;
-    ">
+    <div class="faculty-box" style="margin-bottom:35px;">
 
         {% for data in hr_faculty %}
 
