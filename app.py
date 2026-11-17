@@ -4728,20 +4728,75 @@ def admin_dashboard():
 
             student_row = c.fetchone()
 
+            
+            # ==========================================
+            # FACULTY-WISE MONTHLY SALARY SUMMARY
+            # ==========================================
+            
+            faculty_salary_classes = [
+                row for row in class_salary_rows
+                if row["faculty"] == username
+            ]
+            
+            total_faculty_collection = sum(
+                row["collection"]
+                for row in faculty_salary_classes
+            )
+            
+            total_faculty_share = sum(
+                row["faculty_share"]
+                for row in faculty_salary_classes
+            )
+            
+            total_faculty_paid = sum(
+                row["paid"]
+                for row in faculty_salary_classes
+            )
+            
+            total_faculty_pending = sum(
+                row["pending"]
+                for row in faculty_salary_classes
+            )
+            
+            generated_salary = sum(
+                row["faculty_share"]
+                for row in faculty_salary_classes
+                if row["generated"]
+            )
+            
+            not_generated_salary = sum(
+                row["faculty_share"]
+                for row in faculty_salary_classes
+                if not row["generated"]
+            )
+            
             hr_faculty.append({
                 "username": username,
                 "course": course,
                 "active": details.get("active", False),
                 "students": student_row[0] if student_row else 0,
+            
                 "feedback_count": feedback["total_feedbacks"],
                 "average_rating": feedback["average_rating"],
                 "low_count": feedback["low_count"],
                 "warning_msg": feedback["warning_msg"],
+            
                 "status_reason": (
                     status_row["status_reason"]
                     if status_row else ""
-                )
+                ),
+            
+                # Monthly salary summary
+                "salary_month": salary_month_label,
+                "salary_classes": faculty_salary_classes,
+                "salary_collection": total_faculty_collection,
+                "salary_share": total_faculty_share,
+                "salary_generated": generated_salary,
+                "salary_not_generated": not_generated_salary,
+                "salary_paid": total_faculty_paid,
+                "salary_pending": total_faculty_pending
             })
+
 
         # ==========================================
         # CLASS-WISE MONITORING
