@@ -344,19 +344,29 @@ function renderTable(students){
 }
 
 
-// 🔥 FILTER
-function filterClass(cls, btn){
 
-    // 🔥 highlight active button
-    document.querySelectorAll("button").forEach(b => b.style.background="#0b5394");
-    btn.style.background = "orange";
+function filterClass(cls, btn) {
 
-    let filtered = allStudents.filter(s => 
-        s.course && s.course.toLowerCase() === cls.toLowerCase()
-    );
+    document.querySelectorAll(".class-tab").forEach(tab => {
+        tab.classList.remove("active");
+    });
+
+    btn.classList.add("active");
+
+    let filtered;
+
+    if (cls === "all") {
+        filtered = allStudents;
+    } else {
+        filtered = allStudents.filter(s =>
+            s.course &&
+            s.course.toLowerCase() === cls.toLowerCase()
+        );
+    }
 
     renderTable(filtered);
 }
+
 
 
 // 🔥 RESET DEMO
