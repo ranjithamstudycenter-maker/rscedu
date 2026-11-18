@@ -3701,39 +3701,56 @@ function startTimer(){
   otpVerified = false;
 
 async function openDemoPopup(course){
-demoMsg =
-document.getElementById("statusMsg");
 
-otpInput =
-document.getElementById("otpInput");
+     // Reset previous class popup state
+    currentCourse = course;
+    step = 1;
+    otpVerified = false;
 
-mainBtn =
-document.getElementById("mainBtn");
+    // Stop previous OTP countdown
+    if (window.otpInterval) {
+        clearInterval(window.otpInterval);
+        window.otpInterval = null;
+    }
 
-otpStatus =
-document.getElementById("statusMsg");    
+    // Clear previous timer text
+    const otpTimer = document.getElementById("otpTimer");
+    if (otpTimer) {
+        otpTimer.innerHTML = "";
+    }
+    demoMsg =
+    document.getElementById("statusMsg");
     
-if(demoMsg){
-demoMsg.innerHTML="";
-demoMsg.style.display="none";
-}
-
-if(otpInput){
-otpInput.style.display="none";
-otpInput.value="";
-}
-
-if(mainBtn){
-mainBtn.style.display="block";
-mainBtn.innerHTML="Send OTP";
-}
-
-if(otpStatus){
-otpStatus.style.display="block";
-otpStatus.innerHTML="";
-}
-
-  currentCourse = course;
+    otpInput =
+    document.getElementById("otpInput");
+    
+    mainBtn =
+    document.getElementById("mainBtn");
+    
+    otpStatus =
+    document.getElementById("statusMsg");    
+        
+    if(demoMsg){
+    demoMsg.innerHTML="";
+    demoMsg.style.display="none";
+    }
+    
+    if(otpInput){
+    otpInput.style.display="none";
+    otpInput.value="";
+    }
+    
+    if(mainBtn){
+    mainBtn.style.display="block";
+    mainBtn.innerHTML="Send OTP";
+    }
+    
+    if(otpStatus){
+    otpStatus.style.display="block";
+    otpStatus.innerHTML="";
+    }
+    
+      currentCourse = course;
  
 
   
