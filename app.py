@@ -3584,7 +3584,8 @@ def start_class():
         for column, definition in [
             ("started_at", "REAL"),
             ("warning_sent", "INTEGER DEFAULT 0"),
-            ("ended_reason", "TEXT DEFAULT ''")
+            ("ended_reason", "TEXT DEFAULT ''"),
+            ("class_date", "TEXT DEFAULT ''")
         ]:
             if column not in existing_columns:
                 c.execute(
@@ -3593,13 +3594,28 @@ def start_class():
         class_start_timestamp = time.time()
 
         c.execute("""
-        INSERT OR REPLACE INTO live_classes
-        (course, meet_link, live, started_at, warning_sent, ended_reason)
-        VALUES (?, ?, 1, ?, 0, '')
+        class_start_timestamp = time.time()
+        class_start_date = (
+            datetime.utcnow() + timedelta(hours=5, minutes=30)
+        ).strftime("%Y-%m-%d")
+        
+        c.execute("""
+            INSERT OR REPLACE INTO live_classes
+            (
+                course,
+                meet_link,
+                live,
+                started_at,
+                warning_sent,
+                ended_reason,
+                class_date
+            )
+            VALUES (?, ?, 1, ?, 0, '', ?)
         """, (
             course,
             meet_link,
-            class_start_timestamp
+            class_start_timestamp,
+            class_start_date
         ))
 
         conn.commit()
@@ -3694,7 +3710,8 @@ def class_status():
     for column, definition in [
         ("started_at", "REAL"),
         ("warning_sent", "INTEGER DEFAULT 0"),
-        ("ended_reason", "TEXT DEFAULT ''")
+        ("ended_reason", "TEXT DEFAULT ''"),
+        ("class_date", "TEXT DEFAULT ''")
     ]:
         if column not in existing_columns:
             c.execute(
@@ -3704,13 +3721,43 @@ def class_status():
     conn.commit()
 
     c.execute("""
-        SELECT meet_link, live, started_at, ended_reason
+        SELECT meet_link, live, started_at, ended_reason, class_date
         FROM live_classes
         WHERE course=?
     """, (course,))
 
     row = c.fetchone()
-    conn.close()
+
+    today = (
+        datetime.utcnow() + timedelta(hours=5, minutes=30)
+    ).strftime("%Y-%m-%d")
+    
+    c.execute("""
+        SELECT live, started_at, warning_sent, class_date
+        FROM live_classes
+        WHERE course=?
+    """, (course,))
+    
+    row = c.fetchone()
+    
+    if row and row[3] and row[3] != today:
+    
+        c.execute("""
+            UPDATE live_classes
+            SET live=0,
+                meet_link='',
+                started_at=NULL,
+                warning_sent=0,
+                ended_reason='',
+                class_date=''
+            WHERE course=?
+        """, (course,))
+    
+        conn.commit()
+    
+        row = None
+    
+        conn.close()
 
     # Class record does not exist
     if not row:
@@ -3917,7 +3964,18 @@ def faculty_class_timer():
 
     conn = sqlite3.connect(DB_PATH, timeout=30)
     c = conn.cursor()
-
+    existing_columns = [
+    row[1] for row in c.execute(
+        "PRAGMA table_info(live_classes)"
+    ).fetchall()
+    ]
+    
+    if "class_date" not in existing_columns:
+        c.execute("""
+            ALTER TABLE live_classes
+            ADD COLUMN class_date TEXT DEFAULT ''
+        """)
+    conn.commit()
     c.execute("""
         SELECT live, started_at, warning_sent
         FROM live_classes
