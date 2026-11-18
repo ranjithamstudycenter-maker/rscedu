@@ -4707,6 +4707,12 @@ def admin_record_salary_payment():
     # Validate required fields
     if not salary_id or not amount_input or not payment_date:
         return "Salary ID, amount and payment date are required.", 400
+    
+    if not payment_reference:
+        return "Bank UTR / Transaction Reference is required.", 400
+    
+    if len(payment_reference) > 100:
+        return "Transaction reference is too long.", 400
 
     try:
         amount_paise = round(float(amount_input) * 100)
