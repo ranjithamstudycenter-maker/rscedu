@@ -3729,11 +3729,13 @@ def class_status():
             if started_at else 0
     })
 
+
 def finish_class_for_course(course, ended_reason="manual"):
 
-        conn = sqlite3.connect(DB_PATH, timeout=30)
-        c = conn.cursor()
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
 
+    try:
         # Atomically claim the class ending process.
         c.execute("""
             UPDATE live_classes
@@ -3756,6 +3758,8 @@ def finish_class_for_course(course, ended_reason="manual"):
 
         rows = c.fetchall()
 
+        class_attendance_recorded = False
+
         for phone, join_time, hours_used in rows:
 
             if join_time:
@@ -3764,7 +3768,6 @@ def finish_class_for_course(course, ended_reason="manual"):
                     time.time() - join_time
                 ) / 60
 
-                # Preserve existing 50-minute attendance rule.
                 if attended_minutes >= 50:
 
                     c.execute("""
@@ -3779,17 +3782,21 @@ def finish_class_for_course(course, ended_reason="manual"):
                         course
                     ))
 
-                    # Preserve existing salary count update.
-                    for s in salary_db:
+                    class_attendance_recorded = True
 
-                        if s["course"] == course:
+        # Update salary class count only once per class.
+        if class_attendance_recorded:
 
-                            s["class_count"] += 1
+            for s in salary_db:
 
-                            if "classes_per_month" in s:
+                if s["course"] == course:
 
-                                if s["class_count"] >= s["classes_per_month"]:
-                                    s["completed"] = True
+                    s["class_count"] += 1
+
+                    if "classes_per_month" in s:
+
+                        if s["class_count"] >= s["classes_per_month"]:
+                            s["completed"] = True
 
         # Reset student join times.
         c.execute("""
@@ -3797,15 +3804,6 @@ def finish_class_for_course(course, ended_reason="manual"):
             SET join_time=NULL
             WHERE course=?
         """, (course,))
-
-        # Close live class.
-        c.execute("""
-            UPDATE live_classes
-            SET live=0,
-                meet_link='',
-                ended_reason=?
-            WHERE course=?
-        """, (ended_reason, course))
 
         conn.commit()
 
@@ -3819,12 +3817,13 @@ def finish_class_for_course(course, ended_reason="manual"):
 
         return True
 
-        except Exception:
-            conn.rollback()
-            raise
-    
-        finally:
-            conn.close()
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        conn.close()
+
 
 
 @app.route("/end-class", methods=["POST"])
