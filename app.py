@@ -7450,7 +7450,7 @@ def download_salary_pdf():
 
     <p>Month: {month}</p>
 
-    <p>PDF generation next step la add pannalam ✅</p>
+    <p>PDF generation next step la add pannalam </p>
 
     """
 
