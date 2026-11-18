@@ -3731,8 +3731,8 @@ def class_status():
 
 def finish_class_for_course(course, ended_reason="manual"):
 
-    conn = sqlite3.connect(DB_PATH, timeout=30)
-    c = conn.cursor()
+        conn = sqlite3.connect(DB_PATH, timeout=30)
+        c = conn.cursor()
 
         # Atomically claim the class ending process.
         c.execute("""
