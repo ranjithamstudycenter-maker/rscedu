@@ -1778,124 +1778,104 @@ let mainBtn;
 
 const CLASS_DURATION = {
 
-  cbse9  : "",
-  cbse10 : "1.5 Hours",
-  cbse11 : "2 Hours",
-  cbse12 : "1 Hour",
+  cbse9  : "1.15 Hours",
+  cbse10 : "1.15 Hours",
+  cbse11 : "1.15 Hours",
+  cbse12 : "1.15 Hours",
 
-  engg1  : "1.5 Hours",
-  engg2  : "1.5 Hours",
-  engg3  : "2 Hours",
+  engg1  : "1.15 Hours",
+  engg2  : "1.15 Hours",
+  engg3  : "1.15 Hours",
 
-  control : "1 Hour",
-  AGS     : "1 Hour",
-  maths   : "1.5 Hours"
+  control : "1.15 Hours",
+  AGS     : "1.15 Hours",
+  maths   : "1.15 Hours"
 
 };
-function canStartClass(course){
 
-  const now = new Date();
+function getClassStartTime(course) {
 
-  const currentMinutes =
-      now.getHours() * 60 + now.getMinutes();
+  const classTime = CLASS_TIMINGS[course];
 
-  const classTime =
-      CLASS_TIMINGS[course];
-
-  if(!classTime) return true;
+  if (!classTime) return null;
 
   const [time, modifier] = classTime.split(" ");
-
   let [hours, minutes] = time.split(":").map(Number);
 
-  if(modifier === "PM" && hours !== 12){
-      hours += 12;
+  if (modifier === "PM" && hours !== 12) {
+    hours += 12;
   }
 
-  if(modifier === "AM" && hours === 12){
-      hours = 0;
+  if (modifier === "AM" && hours === 12) {
+    hours = 0;
   }
 
-  const classMinutes =
-      hours * 60 + minutes;
+  const start = new Date();
+  start.setHours(hours, minutes, 0, 0);
 
-  return currentMinutes >= classMinutes;
+  return start;
 }
 
-function updateClassCountdown(course){
 
-  const timerDiv =
-    document.getElementById("timer-" + course);
+function canStartClass(course) {
 
-  if(!timerDiv) return;
-    
+  const start = getClassStartTime(course);
+
+  if (!start) return true;
+
+  return new Date() >= start;
+}
+
+
+function updateClassCountdown(course) {
+
+  const timerDiv = document.getElementById("timer-" + course);
+
+  if (!timerDiv) return;
+
+  const start = getClassStartTime(course);
+
+  if (!start) return;
+
   const now = new Date();
+  const remaining = start.getTime() - now.getTime();
 
-  const currentMinutes =
-      now.getHours()*60 + now.getMinutes();
-
-  const classTime =
-      CLASS_TIMINGS[course];
-
-  if(!classTime) return;
-
-  const [time, modifier] =
-      classTime.split(" ");
-
-  let [hours, minutes] =
-      time.split(":").map(Number);
-
-  if(modifier === "PM" && hours !== 12){
-      hours += 12;
-  }
-
-  if(modifier === "AM" && hours === 12){
-      hours = 0;
-  }
-
-  const classMinutes =
-      hours*60 + minutes;
-
-  const remaining =
-      classMinutes - currentMinutes;
-
-  if(remaining <= 0){
-
-    timerDiv.innerHTML=
-    "⏳ Class Time Started";
-    
-    timerDiv.style.display=
-    "block";
-    
-    setTimeout(()=>{
-    
-    timerDiv.style.display=
-    "none";
-    
-    },300000);
-    
-    timerDiv.style.color = "#7c3aed";
-
-}
-else if(remaining >= 60){
-
-    const hrs =
-      Math.floor(remaining / 60);
+  if (remaining <= 0) {
 
     timerDiv.innerHTML =
-      "⏳ " + hrs + " hour remaining";
+      "⏳ Waiting for teacher to start class";
 
+    timerDiv.style.display = "block";
     timerDiv.style.color = "#7c3aed";
 
-}
-else{
+    return;
+  }
 
-    timerDiv.innerHTML =
-      "⏳ " + remaining + " min remaining";
+  const totalSeconds = Math.floor(remaining / 1000);
 
-    timerDiv.style.color = "#7c3aed";
+  const hrs = Math.floor(totalSeconds / 3600);
+  const mins = Math.floor((totalSeconds % 3600) / 60);
+  const secs = totalSeconds % 60;
+
+  let countdownText = "";
+
+  if (hrs > 0) {
+    countdownText += hrs + " hr ";
+  }
+
+  if (mins > 0 || hrs > 0) {
+    countdownText += mins + " min ";
+  }
+
+  countdownText += secs + " sec";
+
+  timerDiv.innerHTML =
+    "⏳ Class starts in " + countdownText;
+
+  timerDiv.style.display = "block";
+  timerDiv.style.color = "#7c3aed";
 }
-}
+
     
 /* ---- STATE ---- */
 let studentStatus  = null;
