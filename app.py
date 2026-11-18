@@ -3727,7 +3727,7 @@ def class_status():
 
     row = c.fetchone()
 
-        today = (
+    today = (
         datetime.utcnow() + timedelta(hours=5, minutes=30)
     ).strftime("%Y-%m-%d")
     
