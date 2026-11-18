@@ -14534,7 +14534,7 @@ learning website.
 Therefore the chapter structure must be:
 
 Chapter / Topic
-    ↓
+    
 Subtopics
 
 -----------------------------------------
