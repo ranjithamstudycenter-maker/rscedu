@@ -3739,7 +3739,7 @@ def class_status():
     
     row = c.fetchone()
     
-    if row and row[3] and row[3] != today:
+    if row and row[4] and row[4] != today:
     
         c.execute("""
             UPDATE live_classes
@@ -3756,7 +3756,7 @@ def class_status():
     
         row = None
     
-        conn.close()
+    conn.close()
 
     # Class record does not exist
     if not row:
@@ -3766,7 +3766,7 @@ def class_status():
             "class_over": False
         })
 
-    meet_link, live, started_at, ended_reason = row
+    meet_link, live, started_at, ended_reason, class_date = row
 
     # Class already ended
     if not live:
