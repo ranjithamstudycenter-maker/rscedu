@@ -3675,6 +3675,34 @@ def class_status():
     conn = sqlite3.connect(DB_PATH, timeout=30)
     c = conn.cursor()
 
+    # Ensure live_classes table exists
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS live_classes (
+            course TEXT PRIMARY KEY,
+            meet_link TEXT,
+            live INTEGER DEFAULT 0
+        )
+    """)
+
+    # Ensure timing columns exist
+    existing_columns = [
+        row[1] for row in c.execute(
+            "PRAGMA table_info(live_classes)"
+        ).fetchall()
+    ]
+
+    for column, definition in [
+        ("started_at", "REAL"),
+        ("warning_sent", "INTEGER DEFAULT 0"),
+        ("ended_reason", "TEXT DEFAULT ''")
+    ]:
+        if column not in existing_columns:
+            c.execute(
+                f"ALTER TABLE live_classes ADD COLUMN {column} {definition}"
+            )
+
+    conn.commit()
+
     c.execute("""
         SELECT meet_link, live, started_at, ended_reason
         FROM live_classes
