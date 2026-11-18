@@ -4104,7 +4104,7 @@ def teacher_dashboard():
         return redirect("/teacher-login")
 
     course = teacher.get("course", "")
-
+    feedbacks = get_faculty_feedback_list(username)
     summary = get_faculty_feedback_summary(username)
 
     avg_rating = summary["average_rating"]
