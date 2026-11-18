@@ -42,7 +42,70 @@ from PyPDF2 import PdfReader
 DATA_DIR = "/var/data"
 DB_PATH = os.path.join(DATA_DIR, "students.db")
 
+# =====================================================
+# CLASS SCHEDULE AND DEMO REGISTRATION CUTOFF
+# =====================================================
 
+CLASS_SCHEDULE = {
+    "cbse9": "09:40",
+    "cbse10": "19:00",
+    "cbse11": "20:00",
+    "cbse12": "21:00",
+
+    "engg1": "17:00",
+    "engg2": "18:30",
+    "engg3": "20:30",
+
+    "control": "10:00",
+    "AGS": "11:00",
+    "maths": "19:30"
+}
+
+
+CLASS_DURATION_MINUTES = 75
+
+
+def get_class_schedule_status(course):
+
+    # Current Indian time
+    now = datetime.utcnow() + timedelta(hours=5, minutes=30)
+
+    scheduled_time = CLASS_SCHEDULE.get(course)
+
+    if not scheduled_time:
+        return {
+            "schedule_available": False,
+            "waiting_for_teacher": False,
+            "registration_closed": False,
+            "teacher_not_started": False
+        }
+
+    hour, minute = map(int, scheduled_time.split(":"))
+
+    scheduled_start = now.replace(
+        hour=hour,
+        minute=minute,
+        second=0,
+        microsecond=0
+    )
+
+    registration_cutoff = (
+        scheduled_start +
+        timedelta(minutes=CLASS_DURATION_MINUTES)
+    )
+
+    return {
+        "schedule_available": True,
+        "scheduled_start": scheduled_start,
+        "registration_cutoff": registration_cutoff,
+        "waiting_for_teacher": now >= scheduled_start,
+        "registration_closed": now >= registration_cutoff,
+        "teacher_not_started": now >= registration_cutoff,
+        "remaining_seconds": max(
+            0,
+            int((scheduled_start - now).total_seconds())
+        )
+    }
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -2072,12 +2135,29 @@ def check_demo():
             "meet_link": meet_link
         })
 
-    # ✅ NORMAL RESPONSE
+    
+    # Check whether new demo registration is closed
+    schedule = get_class_schedule_status(course)
+
+    if schedule.get("registration_closed", False):
+
+        return jsonify({
+            "error": "Today's demo class is closed.",
+            "demo_done": False,
+            "meet_link": "",
+            "registration_closed": True,
+            "message": "Teacher Not Started the Class Today"
+                if schedule.get("teacher_not_started", False)
+                else "Today's demo class is closed."
+        }), 403
+
+    # Normal response
     return jsonify({
         "demo_done": False,
-        "meet_link": meet_link,
-        
+        "meet_link": "",
+        "registration_closed": False
     })
+
 
 
 @app.route("/api/demo-complete", methods=["POST"])
@@ -3675,6 +3755,7 @@ def get_active_meet_link(course):
     return None
     
 
+
 @app.route("/api/class-status")
 def class_status():
 
@@ -3687,10 +3768,12 @@ def class_status():
             "class_over": False
         })
 
+    # Get today's schedule and registration cutoff
+    schedule = get_class_schedule_status(course)
+
     conn = sqlite3.connect(DB_PATH, timeout=30)
     c = conn.cursor()
 
-    # Ensure live_classes table exists
     c.execute("""
         CREATE TABLE IF NOT EXISTS live_classes (
             course TEXT PRIMARY KEY,
@@ -3699,7 +3782,6 @@ def class_status():
         )
     """)
 
-    # Ensure timing columns exist
     existing_columns = [
         row[1] for row in c.execute(
             "PRAGMA table_info(live_classes)"
@@ -3730,9 +3812,10 @@ def class_status():
     today = (
         datetime.utcnow() + timedelta(hours=5, minutes=30)
     ).strftime("%Y-%m-%d")
-    
+
+    # Reset previous day's class record
     if row and row[4] and row[4] != today:
-    
+
         c.execute("""
             UPDATE live_classes
             SET live=0,
@@ -3743,36 +3826,81 @@ def class_status():
                 class_date=''
             WHERE course=?
         """, (course,))
-    
+
         conn.commit()
-    
         row = None
-    
+
     conn.close()
 
-    # Class record does not exist
+    # -------------------------------------------------
+    # NO CLASS RECORD / TEACHER HAS NOT STARTED
+    # -------------------------------------------------
+
     if not row:
+
+        if not schedule["schedule_available"]:
+            return jsonify({
+                "live": False,
+                "meet_link": "",
+                "class_over": False
+            })
+
+        if schedule["registration_closed"]:
+            return jsonify({
+                "live": False,
+                "meet_link": "",
+                "class_over": False,
+                "waiting_for_teacher": False,
+                "teacher_not_started": True,
+                "registration_closed": True,
+                "message": "Teacher Not Started the Class Today"
+            })
+
+        if schedule["waiting_for_teacher"]:
+            return jsonify({
+                "live": False,
+                "meet_link": "",
+                "class_over": False,
+                "waiting_for_teacher": True,
+                "teacher_not_started": False,
+                "registration_closed": False,
+                "message": "Waiting for teacher to start class"
+            })
+
         return jsonify({
             "live": False,
             "meet_link": "",
-            "class_over": False
+            "class_over": False,
+            "waiting_for_teacher": False,
+            "teacher_not_started": False,
+            "registration_closed": False,
+            "remaining_seconds": schedule["remaining_seconds"]
         })
 
     meet_link, live, started_at, ended_reason, class_date = row
 
-    # Class already ended
+    # -------------------------------------------------
+    # CLASS ALREADY ENDED
+    # -------------------------------------------------
+
     if not live:
 
         return jsonify({
             "live": False,
             "meet_link": "",
             "class_over": ended_reason in ("automatic", "manual"),
-            "message": "Class Time Over"
+            "waiting_for_teacher": False,
+            "teacher_not_started": False,
+            "registration_closed": schedule.get("registration_closed", False),
+            "message": "Class Over for Today"
                 if ended_reason in ("automatic", "manual")
                 else ""
         })
 
-    # Automatic end after 75 minutes
+    # -------------------------------------------------
+    # AUTOMATIC END AFTER 75 MINUTES FROM TEACHER START
+    # -------------------------------------------------
+
     if started_at and (time.time() - started_at) >= 75 * 60:
 
         finish_class_for_course(
@@ -3784,13 +3912,24 @@ def class_status():
             "live": False,
             "meet_link": "",
             "class_over": True,
-            "message": "Class Time Over"
+            "waiting_for_teacher": False,
+            "teacher_not_started": False,
+            "registration_closed": True,
+            "message": "Class Over for Today"
         })
+
+    # -------------------------------------------------
+    # CLASS IS LIVE
+    # Registration cutoff does not stop an active class.
+    # -------------------------------------------------
 
     return jsonify({
         "live": True,
         "meet_link": meet_link or "",
         "class_over": False,
+        "waiting_for_teacher": False,
+        "teacher_not_started": False,
+        "registration_closed": schedule.get("registration_closed", False),
         "elapsed_seconds": int(time.time() - started_at)
             if started_at else 0
     })
