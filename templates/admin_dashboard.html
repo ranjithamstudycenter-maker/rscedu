@@ -1518,7 +1518,7 @@ iframe{
                         </td>
                     <td style="min-width:240px;">
 
-    {% if data.generated and data.pending > 0 %}
+    {% if data.generated and data.pending > 0 and data.approval_status == "approved" %}
 
         <form method="POST"
               action="/admin/record-salary-payment"
