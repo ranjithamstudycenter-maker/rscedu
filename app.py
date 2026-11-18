@@ -3574,15 +3574,32 @@ def start_class():
             live INTEGER DEFAULT 0
         )
         """)
+        # Add class timing columns
+        existing_columns = [
+            row[1] for row in c.execute(
+                "PRAGMA table_info(live_classes)"
+            ).fetchall()
+        ]
+        
+        for column, definition in [
+            ("started_at", "REAL"),
+            ("warning_sent", "INTEGER DEFAULT 0"),
+            ("ended_reason", "TEXT DEFAULT ''")
+        ]:
+            if column not in existing_columns:
+                c.execute(
+                    f"ALTER TABLE live_classes ADD COLUMN {column} {definition}"
+                )
+        class_start_timestamp = time.time()
 
-        # 🔥 insert or update
         c.execute("""
         INSERT OR REPLACE INTO live_classes
-        (course, meet_link, live)
-        VALUES (?, ?, 1)
+        (course, meet_link, live, started_at, warning_sent, ended_reason)
+        VALUES (?, ?, 1, ?, 0, '')
         """, (
             course,
-            meet_link
+            meet_link,
+            class_start_timestamp
         ))
 
         conn.commit()
@@ -3649,21 +3666,166 @@ def class_status():
     course = request.args.get("course")
 
     if not course:
+        return jsonify({
+            "live": False,
+            "meet_link": "",
+            "class_over": False
+        })
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT meet_link, live, started_at, ended_reason
+        FROM live_classes
+        WHERE course=?
+    """, (course,))
+
+    row = c.fetchone()
+    conn.close()
+
+    # Class record does not exist
+    if not row:
+        return jsonify({
+            "live": False,
+            "meet_link": "",
+            "class_over": False
+        })
+
+    meet_link, live, started_at, ended_reason = row
+
+    # Class already ended
+    if not live:
 
         return jsonify({
             "live": False,
-            "meet_link": ""
+            "meet_link": "",
+            "class_over": ended_reason in ("automatic", "manual"),
+            "message": "Class Time Over"
+                if ended_reason in ("automatic", "manual")
+                else ""
         })
 
-    meet_link = get_active_meet_link(course)
+    # Automatic end after 75 minutes
+    if started_at and (time.time() - started_at) >= 75 * 60:
+
+        finish_class_for_course(
+            course,
+            "automatic"
+        )
+
+        return jsonify({
+            "live": False,
+            "meet_link": "",
+            "class_over": True,
+            "message": "Class Time Over"
+        })
 
     return jsonify({
-
-        "live": bool(meet_link),
-
-        "meet_link": meet_link or ""
-
+        "live": True,
+        "meet_link": meet_link or "",
+        "class_over": False,
+        "elapsed_seconds": int(time.time() - started_at)
+            if started_at else 0
     })
+
+def finish_class_for_course(course, ended_reason="manual"):
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+        # Atomically claim the class ending process.
+        c.execute("""
+            UPDATE live_classes
+            SET live=0,
+                meet_link='',
+                ended_reason=?
+            WHERE course=? AND live=1
+        """, (ended_reason, course))
+
+        if c.rowcount != 1:
+            conn.rollback()
+            return False
+
+        # Get enrolled students.
+        c.execute("""
+            SELECT phone, join_time, hours_used
+            FROM students
+            WHERE course=? AND enrolled=1
+        """, (course,))
+
+        rows = c.fetchall()
+
+        for phone, join_time, hours_used in rows:
+
+            if join_time:
+
+                attended_minutes = (
+                    time.time() - join_time
+                ) / 60
+
+                # Preserve existing 50-minute attendance rule.
+                if attended_minutes >= 50:
+
+                    c.execute("""
+                        UPDATE students
+                        SET hours_used=?,
+                            last_updated=?
+                        WHERE phone=? AND course=?
+                    """, (
+                        (hours_used or 0) + 1,
+                        datetime.now().strftime("%Y-%m-%d %H:%M"),
+                        phone,
+                        course
+                    ))
+
+                    # Preserve existing salary count update.
+                    for s in salary_db:
+
+                        if s["course"] == course:
+
+                            s["class_count"] += 1
+
+                            if "classes_per_month" in s:
+
+                                if s["class_count"] >= s["classes_per_month"]:
+                                    s["completed"] = True
+
+        # Reset student join times.
+        c.execute("""
+            UPDATE students
+            SET join_time=NULL
+            WHERE course=?
+        """, (course,))
+
+        # Close live class.
+        c.execute("""
+            UPDATE live_classes
+            SET live=0,
+                meet_link='',
+                ended_reason=?
+            WHERE course=?
+        """, (ended_reason, course))
+
+        conn.commit()
+
+        # Update faculty memory state.
+        for username, teacher in teachers.items():
+
+            if teacher.get("course") == course:
+
+                teacher["class_live"] = False
+                teacher["meet_link"] = ""
+
+        return True
+
+    except Exception:
+        conn.rollback()
+        raise
+
+    finally:
+        conn.close()
+
 
 @app.route("/end-class", methods=["POST"])
 def end_class():
@@ -3677,89 +3839,21 @@ def end_class():
 
         course = teachers[username]["course"]
 
-        conn = sqlite3.connect("/var/data/students.db")
-        c = conn.cursor()
+        ended = finish_class_for_course(
+            course,
+            "manual"
+        )
 
-        # 🔥 GET ENROLLED STUDENTS
-        c.execute("""
-        SELECT phone, join_time, hours_used
-        FROM students
-        WHERE course=? AND enrolled=1
-        """, (course,))
-
-        rows = c.fetchall()
-
-        for row in rows:
-
-            phone = row[0]
-            join_time = row[1]
-            hours_used = row[2] or 0
-
-            if join_time:
-
-                attended_minutes = (
-                    datetime.now().timestamp() - join_time
-                ) / 60
-
-                # ✅ minimum 50 mins
-                if attended_minutes >= 50:
-
-                    c.execute("""
-                    UPDATE students
-                    SET hours_used=?,
-                        last_updated=?
-                    WHERE phone=? AND course=?
-                    """, (
-                        hours_used + 1,
-                        datetime.now().strftime("%Y-%m-%d %H:%M"),
-                        phone,
-                        course
-                    ))
-
-                    # 🔥 salary update
-                    for s in salary_db:
-
-                        if s["course"] == course:
-
-                            s["class_count"] += 1
-
-                            if "classes_per_month" in s:
-
-                                if s["class_count"] >= s["classes_per_month"]:
-                                    s["completed"] = True
-
-        # 🔥 VERY IMPORTANT
-        # reset join time
-        c.execute("""
-        UPDATE students
-        SET join_time=NULL
-        WHERE course=?
-        """, (course,))
-
-        conn.commit()
-        conn.close()
-
-        # 🔥 CLASS OFF
-        teachers[username]["class_live"] = False
-        teachers[username]["meet_link"] = ""
-
-        # 🔥 UPDATE LIVE CLASS TABLE
-        conn = sqlite3.connect("/var/data/students.db")
-        c = conn.cursor()
-
-        c.execute("""
-        UPDATE live_classes
-        SET live=0,
-            meet_link=''
-        WHERE course=?
-        """, (course,))
-
-        conn.commit()
-        conn.close()
+        if not ended:
+            return jsonify({
+                "success": False,
+                "error": "Class is already ended."
+            }), 400
 
         return jsonify({
             "success": True,
-            "live": False
+            "live": False,
+            "message": "Class ended successfully."
         })
 
     except Exception as e:
@@ -3783,6 +3877,82 @@ def get_teacher():
             return jsonify({"teacher": name})
 
     return jsonify({"teacher": None})
+
+@app.route("/api/faculty/class-timer")
+def faculty_class_timer():
+
+    username = session.get("teacher")
+
+    if not username or username not in teachers:
+        return jsonify({"error": "Unauthorized"}), 403
+
+    course = teachers[username]["course"]
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT live, started_at, warning_sent
+        FROM live_classes
+        WHERE course=?
+    """, (course,))
+
+    row = c.fetchone()
+
+    if not row or not row[0] or not row[1]:
+        conn.close()
+        return jsonify({
+            "live": False,
+            "warning": False,
+            "ended": False
+        })
+
+    started_at = row[1]
+    warning_sent = row[2] or 0
+
+    elapsed = time.time() - started_at
+
+    # 75 minutes: Automatic class end
+    if elapsed >= 75 * 60:
+
+        conn.close()
+
+        finish_class_for_course(
+            course,
+            "automatic"
+        )
+
+        return jsonify({
+            "live": False,
+            "warning": False,
+            "ended": True,
+            "message": "Today's class completed."
+        })
+
+    # 70 minutes: Faculty warning
+    warning = elapsed >= 70 * 60
+
+    if warning and not warning_sent:
+
+        c.execute("""
+            UPDATE live_classes
+            SET warning_sent=1
+            WHERE course=? AND warning_sent=0
+        """, (course,))
+
+        conn.commit()
+
+    conn.close()
+
+    return jsonify({
+        "live": True,
+        "warning": warning,
+        "ended": False,
+        "remaining_seconds": max(
+            0,
+            int(75 * 60 - elapsed)
+        )
+    })
 
 # =====================================================
 # FACULTY - DOWNLOAD MONTHLY SALARY STATEMENT PDF
