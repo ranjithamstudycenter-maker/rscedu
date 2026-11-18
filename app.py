@@ -3819,12 +3819,12 @@ def finish_class_for_course(course, ended_reason="manual"):
 
         return True
 
-    except Exception:
-        conn.rollback()
-        raise
-
-    finally:
-        conn.close()
+        except Exception:
+            conn.rollback()
+            raise
+    
+        finally:
+            conn.close()
 
 
 @app.route("/end-class", methods=["POST"])
