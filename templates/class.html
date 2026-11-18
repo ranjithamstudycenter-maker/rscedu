@@ -2496,10 +2496,7 @@ fetch(`/api/check-demo?course=${course}&phone=${phone}`)
 .then(res=>res.json())
 .then(data=>{
 
-if(
-data.demo_done ||
-localStorage.getItem("demo_done_"+course)
-){
+if (data.demo_done) {
 
 const statusMsg =
 document.getElementById("statusMsg");
@@ -3355,13 +3352,7 @@ false;
       const res = await fetch("/api/check-demo?course=" + currentCourse + "&phone=" + phone);
       const data = await res.json();
 
-       if(
-        data.demo_done
-        ||
-        localStorage.getItem(
-        "demo_done_"+currentCourse
-        )
-        ){
+       if (data.demo_done) {
          document.getElementById(
         "otpBox"
         ).style.display="none";
