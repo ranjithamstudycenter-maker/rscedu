@@ -19002,7 +19002,7 @@ def ai_diagnostic_question():
         6. Only ONE option must be correct.
         
         7. The diagnostic test should measure
-           the student's understanding of the selected topic.
+           the students understanding of the selected topic.
         
         8. Use a mixture of difficulty across the
            10-question diagnostic test.
