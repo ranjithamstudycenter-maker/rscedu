@@ -8,412 +8,40 @@
 <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
 <style>
-body{
-  margin:0;
-  font-family:Poppins;
-  background:#f4f7fb;
-}
 
-/* HEADER */
-.header{
-  background:linear-gradient(135deg,#0b5394,#2563eb);
-  color:white;
-  padding:20px;
-  display:flex;
-  align-items:center;
-  gap:12px;
-  box-shadow:0 4px 15px rgba(0,0,0,0.15);
-}
-
-.header img{
-  width:45px;
-}
-
-/* CONTAINER */
-.container{
-  max-width:900px;
-  margin:30px auto;
-  padding:20px;
-}
-
-/* CARD */
-.card{
-  background:white;
-  padding:25px;
-  border-radius:20px;
-  margin-bottom:20px;
-  box-shadow:0 10px 25px rgba(0,0,0,0.08);
-  border:1px solid #eef2ff;
-}
-
-/* BUTTON */
-.btn{
-  padding:14px 24px;
-  border:none;
-  border-radius:12px;
-  font-weight:600;
-  cursor:pointer;
-  transition:0.3s;
-}
-
-.btn:hover{
-  transform:translateY(-2px);
-}
-  
-.start-btn{
-  background:linear-gradient(45deg,#28a745,#5cd67c);
-  color:white;
-}
-
-.end-btn{
-  background:linear-gradient(45deg,#e74c3c,#ff6b5c);
-  color:white;
-}
-
-
-/* INPUT */
-input{
-  width:100%;
-  padding:14px;
-  margin-bottom:18px;
-  border-radius:12px;
-  border:1px solid #dbeafe;
-  font-size:15px;
-}
-
-input:focus{
-  outline:none;
-  border-color:#2563eb;
-}
-
-/* STATUS */
-.status{
-  font-weight:bold;
-  margin-top:10px;
-}
-
-.live{
-  background:#dcfce7;
-  color:#15803d;
-  padding:10px 15px;
-  border-radius:10px;
-}
-
-.off{
-  background:#fee2e2;
-  color:#dc2626;
-  padding:10px 15px;
-  border-radius:10px;
-}
-
-/* STAR */
-.star{
-  font-size:22px;
-  cursor:pointer;
-  color:gray;
-}
-
-.star.active{
-  color:gold;
-}
-
-  /* 📌 INSTRUCTIONS */
-.instructions{
-  background:#fff8e1;
-  border-left:6px solid #ff9800;
-  padding:20px;
-  border-radius:12px;
-  max-height:400px;
-  overflow-y:auto;
-  line-height:1.8;
-}
-
-.instructions h3{
-  margin-top:15px;
-  color:#0b5394;
-}
-
-.instructions ul{
-  padding-left:20px;
-}
-
-.instructions li{
-  margin-bottom:8px;
-}
-
-.warning{
-  color:#d32f2f;
-  font-weight:bold;
-}
-
-  @media(max-width:768px){
-
-  .container{
-    padding:12px;
-  }
-
-  .btn{
-    width:100%;
-  }
-
-  .card{
-    padding:18px;
-  }
-
-  h2,h3{
-    font-size:20px;
-  }
-
-}
- .welcome-card{
-  background:linear-gradient(135deg,#0b5394,#2563eb);
-  color:white;
-}
-
-.live-card{
-  border-left:6px solid #22c55e;
-}
-
-.feedback-card{
-  border-left:6px solid #f59e0b;
-}
-
-.analytics-card{
-  border-left:6px solid #3b82f6;
-} 
-  .brand-title{
-  font-size:22px;
-  font-weight:700;
-}
-
-.brand-sub{
-  font-size:13px;
-  opacity:0.9;
-}
- .rating-box{
-  text-align:center;
-  padding:15px;
-}
-
-.rating-number{
-  font-size:34px;
-  font-weight:700;
-  color:#2563eb;
-}
-
-.rating-stars{
-  font-size:30px;
-  color:#facc15;
-  margin-top:10px;
-}
-
-/* =====================================
-   FACULTY SALARY DASHBOARD
-===================================== */
-
-.salary-section-title {
-    display:flex;
-    justify-content:space-between;
-    align-items:center;
-    flex-wrap:wrap;
-    gap:12px;
-    margin-bottom:22px;
-}
-
-.salary-section-title h2 {
-    margin:0;
-    color:#173b70;
-}
-
-.salary-subtitle {
-    color:#64748b;
-    font-size:13px;
-    margin-top:5px;
-}
-
-.salary-metrics {
-    display:grid;
-    grid-template-columns:repeat(4,minmax(0,1fr));
-    gap:15px;
-    margin:20px 0;
-}
-
-.salary-metric {
-    padding:20px;
-    border-radius:16px;
-    color:white;
-    min-width:0;
-    box-shadow:0 7px 18px rgba(15,23,42,0.10);
-}
-
-.salary-metric h3 {
-    font-size:25px;
-    margin:10px 0 5px;
-    overflow-wrap:anywhere;
-}
-
-.salary-metric p {
-    margin:0;
-    font-size:13px;
-    opacity:0.95;
-}
-
-.salary-metric span {
-    font-size:13px;
-    font-weight:600;
-}
-
-.salary-blue {
-    background:linear-gradient(135deg,#2563eb,#1e40af);
-}
-
-.salary-purple {
-    background:linear-gradient(135deg,#7c3aed,#5b21b6);
-}
-
-.salary-green {
-    background:linear-gradient(135deg,#16a34a,#15803d);
-}
-
-.salary-orange {
-    background:linear-gradient(135deg,#f59e0b,#c2410c);
-}
-
-.salary-table-wrap {
-    width:100%;
-    overflow-x:auto;
-    border-radius:12px;
-    border:1px solid #e2e8f0;
-}
-
-.salary-table {
-    width:100%;
-    min-width:850px;
-    border-collapse:collapse;
-    font-size:13px;
-}
-
-.salary-table th {
-    background:#173b70;
-    color:white;
-    padding:14px 12px;
-    text-align:center;
-    white-space:nowrap;
-}
-
-.salary-table td {
-    padding:14px 12px;
-    text-align:center;
-    border-bottom:1px solid #e8edf5;
-    color:#334155;
-}
-
-.salary-table tr:hover {
-    background:#f8faff;
-}
-
-.salary-amount {
-    font-weight:700;
-    color:#173b70;
-}
-
-.salary-badge {
-    display:inline-block;
-    padding:6px 11px;
-    border-radius:20px;
-    font-size:11px;
-    font-weight:700;
-    white-space:nowrap;
-}
-
-.badge-approved {
-    background:#dcfce7;
-    color:#15803d;
-}
-
-.badge-review {
-    background:#fef3c7;
-    color:#92400e;
-}
-
-.badge-rejected {
-    background:#fee2e2;
-    color:#b91c1c;
-}
-
-.badge-paid {
-    background:#dbeafe;
-    color:#1d4ed8;
-}
-
-.badge-pending {
-    background:#ffedd5;
-    color:#c2410c;
-}
-
-.payout-box {
-    margin-top:10px;
-    padding:14px;
-    background:#f8fafc;
-    border:1px solid #e2e8f0;
-    border-radius:12px;
-    text-align:left;
-}
-
-.payout-box h4 {
-    margin:0 0 10px;
-    color:#173b70;
-}
-
-.payout-item {
-    padding:10px 0;
-    border-bottom:1px dashed #cbd5e1;
-    font-size:12px;
-    line-height:1.8;
-}
-
-.payout-item:last-child {
-    border-bottom:none;
-}
-
-.salary-empty {
-    padding:30px;
-    text-align:center;
-    color:#64748b;
-    background:#f8fafc;
-    border-radius:12px;
-}
-.salary-pdf-btn {
-    display:inline-block;
-    background:#2563eb;
-    color:white;
-    padding:8px 13px;
-    border-radius:8px;
-    font-size:12px;
-    font-weight:600;
-    text-decoration:none;
-    white-space:nowrap;
-}
-
-.salary-pdf-btn:hover {
-    background:#1e40af;
-}
-@media(max-width:900px) {
-    .salary-metrics {
-        grid-template-columns:repeat(2,minmax(0,1fr));
-    }
-}
-
-@media(max-width:500px) {
-    .salary-metrics {
-        grid-template-columns:1fr;
-    }
-
-    .salary-metric h3 {
-        font-size:23px;
-    }
-}
-  
+:root{--navy:#142b4a;--blue:#2563eb;--muted:#64748b;--line:#e5eaf1;--surface:#ffffff;--page:#f5f7fb;--green:#15803d;--red:#dc2626}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;font-family:Poppins,Arial,sans-serif;background:var(--page);color:#1e293b;font-size:14px;line-height:1.6}
+.header{min-height:82px;background:#102744;color:#fff;padding:16px max(24px,calc((100% - 1180px)/2));display:flex;align-items:center;gap:14px;box-shadow:0 3px 14px rgba(15,23,42,.12)}
+.header img{width:48px;height:48px;object-fit:contain;border-radius:10px;background:#fff;padding:3px}
+.brand-title{font-size:20px;font-weight:700;letter-spacing:.1px}.brand-sub{font-size:12px;color:#cbd5e1;letter-spacing:.3px}
+.container{max-width:1220px;margin:28px auto 60px;padding:0 24px}
+.card{background:var(--surface);padding:25px 28px;border-radius:15px;margin:0 0 22px;box-shadow:0 3px 14px rgba(15,23,42,.045);border:1px solid var(--line)}
+.card h2{font-size:20px;color:var(--navy);margin:0 0 16px;font-weight:700}.card h3{font-size:17px;color:var(--navy);margin:0 0 14px}
+.welcome-card{background:#fff;color:var(--navy);border:1px solid #dce6f5;border-left:5px solid var(--blue);padding:22px 28px}
+.welcome-card h2{font-size:23px;margin-bottom:7px}.welcome-card p{margin:4px 0;color:#475569}
+/* Guidelines are intentionally unboxed */
+.instructions{background:transparent;border:0;box-shadow:none;border-radius:0;padding:4px 4px 12px;margin-bottom:14px;max-height:none;overflow:visible;line-height:1.75;color:#475569}
+.instructions h2{font-size:19px;color:var(--navy);margin:0 0 12px}.instructions h3{font-size:14px;color:#1d4ed8;margin:13px 0 3px}.instructions ul{padding-left:20px;margin:3px 0 8px}.instructions li{margin:2px 0}.warning{color:#b91c1c;font-weight:600;margin-top:12px}
+.btn{padding:12px 20px;border:0;border-radius:9px;font-weight:600;cursor:pointer;transition:background .2s,transform .2s;font-family:inherit}.btn:hover{transform:translateY(-1px)}
+.start-btn{background:#15803d;color:#fff}.start-btn:hover{background:#166534}.end-btn{background:#dc2626;color:#fff}.end-btn:hover{background:#b91c1c}
+input{width:100%;padding:12px 14px;margin:0 0 15px;border-radius:9px;border:1px solid #cbd5e1;font-size:14px;font-family:inherit;background:#fff}input:focus{outline:none;border-color:#2563eb;box-shadow:0 0 0 3px rgba(37,99,235,.1)}
+.status{display:inline-flex;align-items:center;font-weight:700;margin:18px 0 0;padding:8px 13px;border-radius:999px;font-size:13px}.live{background:#dcfce7;color:#15803d}.off{background:#fee2e2;color:#b91c1c}
+.star{font-size:22px;cursor:pointer;color:#94a3b8}.star.active{color:#eab308}
+.live-card{border-top:3px solid #16a34a}.feedback-card{border-top:3px solid #f59e0b}.analytics-card{border-top:3px solid #3b82f6}
+.dashboard-grid{display:grid;gap:22px;margin-bottom:22px}.dashboard-grid-two{grid-template-columns:1fr 1fr}.dashboard-grid-three{grid-template-columns:repeat(3,minmax(0,1fr))}.dashboard-grid>.card{margin:0;min-width:0}
+.salary-section-title{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;margin-bottom:20px}.salary-section-title h2{margin:0;color:var(--navy)}.salary-subtitle{color:var(--muted);font-size:13px;margin-top:4px}
+.salary-metrics{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin:18px 0 26px}.salary-metric{padding:19px 20px;border-radius:12px;color:#fff;min-width:0;box-shadow:none}.salary-metric h3{font-size:25px;margin:8px 0 3px;color:#fff;overflow-wrap:anywhere}.salary-metric p{margin:0;font-size:12px;opacity:.9}.salary-metric span{font-size:12px;font-weight:600}.salary-blue{background:#2456a6}.salary-purple{background:#6843a8}.salary-green{background:#16794b}.salary-orange{background:#b96a16}
+.salary-table-wrap{width:100%;overflow-x:auto;border-radius:11px;border:1px solid var(--line)}.salary-table{width:100%;min-width:850px;border-collapse:collapse;font-size:13px}.salary-table th{background:#f1f5f9;color:#334155;padding:13px 12px;text-align:center;white-space:nowrap;font-weight:700}.salary-table td{padding:13px 12px;text-align:center;border-bottom:1px solid #edf1f5;color:#334155}.salary-table tr:hover{background:#f8fafc}.salary-amount{font-weight:700;color:var(--navy)}
+.salary-badge{display:inline-block;padding:5px 10px;border-radius:20px;font-size:10px;font-weight:700;white-space:nowrap;letter-spacing:.3px}.badge-approved{background:#dcfce7;color:#15803d}.badge-review{background:#fef3c7;color:#92400e}.badge-rejected{background:#fee2e2;color:#b91c1c}.badge-paid{background:#dbeafe;color:#1d4ed8}.badge-pending{background:#ffedd5;color:#c2410c}
+.payout-box{margin-top:10px;padding:14px;background:#f8fafc;border:1px solid var(--line);border-radius:10px;text-align:left}.payout-box h4{margin:0 0 10px;color:var(--navy)}.payout-item{padding:10px 0;border-bottom:1px dashed #cbd5e1;font-size:12px;line-height:1.8}.payout-item:last-child{border-bottom:0}.salary-empty{padding:28px;text-align:center;color:var(--muted);background:#f8fafc;border-radius:10px}.salary-pdf-btn{display:inline-block;background:#2563eb;color:#fff;padding:8px 12px;border-radius:7px;font-size:11px;font-weight:600;text-decoration:none;white-space:nowrap}.salary-pdf-btn:hover{background:#1e40af}
+/* Tables in student area */
+.card table:not(.salary-table){width:100%;border-collapse:collapse;font-size:13px}.card table:not(.salary-table) th{padding:11px 9px;background:#f1f5f9;color:#334155;text-align:center}.card table:not(.salary-table) td{padding:11px 9px;border-bottom:1px solid var(--line);text-align:center}
+details summary{cursor:pointer;color:#2563eb;font-weight:600;padding:7px 0}canvas{max-height:260px}
+@media(max-width:950px){.salary-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}.dashboard-grid-three{grid-template-columns:1fr 1fr}}
+@media(max-width:700px){.container{padding:0 13px;margin:16px auto 35px}.header{padding:13px 16px}.card{padding:19px 17px;margin-bottom:16px}.dashboard-grid-two,.dashboard-grid-three{grid-template-columns:1fr}.salary-metrics{grid-template-columns:1fr 1fr;gap:10px}.salary-metric{padding:15px}.salary-metric h3{font-size:21px}.salary-section-title{align-items:flex-start}.btn{width:100%}.live-card input{margin-bottom:12px}}
+@media(max-width:420px){.salary-metrics{grid-template-columns:1fr}.brand-title{font-size:17px}}
 </style>
 </head>
 
@@ -436,7 +64,7 @@ input:focus{
 </div>
   
 <div class="container">
-<div class="card instructions">
+<div class="instructions">
 
 <h2>📌 Teacher Guidelines & Instructions</h2>
 
@@ -764,6 +392,8 @@ input:focus{
 </div>
 
 
+<div class="dashboard-grid dashboard-grid-two">
+
 <!-- 🔥 WAITING STUDENTS -->
 
 <div class="card">
@@ -877,6 +507,9 @@ No waiting students
   </p>
 </div>
   
+</div>
+
+<div class="dashboard-grid dashboard-grid-three">
 <!-- ⭐ FEEDBACK -->
 <div class="card feedback-card">
   <h3>Feedback Summary</h3>
@@ -909,6 +542,8 @@ No waiting students
 <div class="card analytics-card">
   <h3>Performance Graph</h3>
   <canvas id="chart"></canvas>
+</div>
+
 </div>
 
 <!-- FEEDBACK -->
