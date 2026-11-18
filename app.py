@@ -3727,17 +3727,9 @@ def class_status():
 
     row = c.fetchone()
 
-    today = (
+        today = (
         datetime.utcnow() + timedelta(hours=5, minutes=30)
     ).strftime("%Y-%m-%d")
-    
-    c.execute("""
-        SELECT live, started_at, warning_sent, class_date
-        FROM live_classes
-        WHERE course=?
-    """, (course,))
-    
-    row = c.fetchone()
     
     if row and row[4] and row[4] != today:
     
