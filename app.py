@@ -3593,8 +3593,7 @@ def start_class():
                 )
         class_start_timestamp = time.time()
 
-        c.execute("""
-        class_start_timestamp = time.time()
+       
         class_start_date = (
             datetime.utcnow() + timedelta(hours=5, minutes=30)
         ).strftime("%Y-%m-%d")
@@ -14079,13 +14078,12 @@ def contact():
         message = request.form["message"]
 
         body = f"""
-New Enquiry:
-
-Name: {name}
-Email: {email}
-Phone: {phone}
-Message: {message}
-"""
+        New Enquiry:
+        Name: {name}
+        Email: {email}
+        Phone: {phone}
+        Message: {message}
+        """
 
         msg = MIMEText(body)
         msg["Subject"] = "New Enquiry from Website - RSC"
@@ -14141,8 +14139,7 @@ def add_header(response):
     return response
 
      
-
-        
+     
 if __name__ == "__main__":
     _load_feedback()
     port = int(os.environ.get("PORT", 10000))
