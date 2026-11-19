@@ -3191,6 +3191,23 @@ if (res.status === 403 && data.registration_closed) {
 
     return;
 }
+// CHECK WHETHER DEMO IS ALREADY COMPLETED
+if (data.demo_done) {
+
+    document.getElementById("otpBox").style.display = "none";
+    document.getElementById("otpStatus").style.display = "none";
+    document.getElementById("mainBtn").style.display = "none";
+
+    const demoMsg = document.getElementById("demoMsg");
+
+    demoMsg.innerHTML =
+        "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
+
+    demoMsg.style.display = "block";
+    demoMsg.style.color = "red";
+
+    return;
+}
 // =====================================
 // REUSE EXISTING OTP VERIFICATION
 // =====================================
