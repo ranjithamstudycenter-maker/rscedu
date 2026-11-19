@@ -2159,107 +2159,77 @@ def check_demo():
     })
 
 
-
 @app.route("/api/demo-complete", methods=["POST"])
 def demo_complete():
-    data = request.json
+
+    data = request.get_json(silent=True) or {}
 
     phone = data.get("phone") or session.get("phone")
     course = data.get("course")
-    demo_stage = data.get("demo")  # 🔥 new
-    
+    demo_stage = data.get("demo")
+
     if not phone:
         return jsonify({"error": "Unauthorized"}), 401
-    
+
     if not course:
         return jsonify({"error": "Course missing"}), 400
-        
-    user = get_user(phone)
-    # 🔥 DOUBLE PROTECTION
-    if user["demo_done"].get(course):
-        return jsonify({"error": "Already completed"}), 400
 
-    user["demo_done"][course] = True
+    # This API is ONLY for starting a demo.
+    # Completion must happen through verified attendance.
+    if demo_stage != "start":
+        return jsonify({
+            "error": "Demo completion is controlled by attendance."
+        }), 403
 
     conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
-    # 🔍 check existing record
-    c.execute("SELECT demo_done FROM students WHERE phone=? AND course=?", (phone, course))
-    row = c.fetchone()
-
-    # =====================================================
-    # 🔥 1. FREE DEMO CLICK → INSERT (NO)
-    # =====================================================
-    if demo_stage == "start":
-
-        if row:
-            # already exists → do nothing
-            return jsonify({"status": "exists"})
-
+    try:
         c.execute("""
-        INSERT INTO students 
-        (phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-        """, (
-            phone,
-            course,
-            "",
-            0,   # ❌ demo not completed
-            0,
-            0,
-            0,
-            0,
-            datetime.now().strftime("%Y-%m-%d %H:%M")
-        ))
+            SELECT demo_done, otp_verified, demo_allowed
+            FROM students
+            WHERE phone=? AND course=?
+        """, (phone, course))
 
-        conn.commit()
-        conn.close()
-        
+        row = c.fetchone()
 
-    # =====================================================
-    # 🔥 2. DEMO COMPLETE → UPDATE (YES)
-    # =====================================================
-    else:
+        if not row:
+            return jsonify({
+                "error": "Student record not found. Please verify OTP first."
+            }), 404
 
-        if row:
-            # already completed?
-            if row[0] == 1:
-                return jsonify({"error": "Already completed"}), 400
+        demo_done, otp_verified, demo_allowed = row
 
-            # update to YES
-            c.execute("""
-            UPDATE students 
-            SET demo_done = 1, last_updated = ?
-            WHERE phone = ? AND course = ?
-            """, (
-                datetime.now().strftime("%Y-%m-%d %H:%M"),
-                phone,
-                course
-            ))
+        if not otp_verified or not demo_allowed:
+            return jsonify({
+                "error": "Demo access not authorized."
+            }), 403
 
-        else:
-            # row இல்லனா direct insert as completed
-            c.execute("""
-            INSERT INTO students 
-            (phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-            """, (
-                phone,
-                course,
-                "",
-                1,   # ✅ completed
-                0,
-                0,
-                0,
-                0,
-                datetime.now().strftime("%Y-%m-%d %H:%M")
-            ))
+        if demo_done:
+            return jsonify({
+                "error": "Demo already completed.",
+                "demo_done": True
+            }), 400
 
-        conn.commit()
+        # Demo is registered, but NOT completed.
+        return jsonify({
+            "status": "ready",
+            "demo_done": False,
+            "message": "Demo start request accepted."
+        })
+
+    except Exception as e:
+        print("DEMO START ERROR:", e)
+
+        return jsonify({
+            "error": "Unable to start demo."
+        }), 500
+
+    finally:
         conn.close()
 
-        return jsonify({"status": "completed"})
+
+
 
 
 @app.before_request
@@ -3988,6 +3958,45 @@ def finish_class_for_course(course, ended_reason="manual"):
                     ))
 
                     class_attendance_recorded = True
+        
+        # =========================================
+        # FREE DEMO STUDENT ATTENDANCE
+        # Same 50-minute threshold as paid students
+        # =========================================
+
+        c.execute("""
+            SELECT phone, join_time
+            FROM students
+            WHERE course=?
+              AND enrolled=0
+              AND demo_done=0
+              AND otp_verified=1
+              AND demo_allowed=1
+              AND join_time IS NOT NULL
+        """, (course,))
+
+        demo_rows = c.fetchall()
+
+        for phone, join_time in demo_rows:
+
+            attended_minutes = (
+                time.time() - join_time
+            ) / 60
+
+            if attended_minutes >= 50:
+
+                c.execute("""
+                    UPDATE students
+                    SET demo_done=1,
+                        last_updated=?
+                    WHERE phone=?
+                      AND course=?
+                      AND enrolled=0
+                """, (
+                    datetime.now().strftime("%Y-%m-%d %H:%M"),
+                    phone,
+                    course
+                ))
 
         # Update salary class count only once per class.
         if class_attendance_recorded:
