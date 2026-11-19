@@ -2970,7 +2970,13 @@ status.style.color =
 
 // 🔥 UPDATE COURSE BUTTONS
 updateUI(course);
+// HIDE WAITING MESSAGE WHEN CLASS IS LIVE
+const timerDiv = document.getElementById("timer-" + course);
 
+if (timerDiv && data.live) {
+    timerDiv.innerHTML = "";
+    timerDiv.style.display = "none";
+}
 
 // 🔥 CARD MESSAGE
 if(msg){
