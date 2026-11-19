@@ -3806,6 +3806,31 @@ def class_status():
             conn.commit()
             row = None
 
+            # RESET OLD SAME-DAY CLASS RECORD
+        # This handles a schedule time changed on the same day.
+
+        if (
+            row
+            and not row[1]
+            and row[3] in ("automatic", "manual")
+            and row[2]
+            and row[2] < schedule["scheduled_start"].timestamp()
+        ):
+
+            c.execute("""
+                UPDATE live_classes
+                SET live=0,
+                    meet_link='',
+                    started_at=NULL,
+                    warning_sent=0,
+                    ended_reason='',
+                    class_date=?
+                WHERE course=?
+            """, (today, course))
+
+            conn.commit()
+            row = None
+
     finally:
         conn.close()
 
