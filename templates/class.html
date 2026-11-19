@@ -2972,8 +2972,13 @@ if (timerDiv && data.live) {
     timerDiv.style.display = "none";
 }
 
+
 // 🔥 CARD MESSAGE
-if(msg){
+if(
+    msg &&
+    !(msg.dataset.messageId &&
+      msg.innerHTML.includes("Class Ended for Today"))
+){
 
 const isPaid =
 studentStatus?.enrolled?.[course];
@@ -3083,16 +3088,23 @@ function showMessage(msg) {
   setTimeout(() => box.remove(), 3500);
 }
 
- function showCourseMessage(course, msg) {
-  let el = document.getElementById("msg-" + course);
-  if (!el) return;
+ function showCourseMessage(course, msg, duration = 4000) {
 
-  el.innerHTML = msg;
-  el.style.display = "block";
+    let el = document.getElementById("msg-" + course);
+    if (!el) return;
 
-  setTimeout(() => {
-    el.innerHTML = "";
-  }, 4000);
+    el.innerHTML = msg;
+    el.style.display = "block";
+
+    const messageId = Date.now() + Math.random();
+    el.dataset.messageId = messageId;
+
+    setTimeout(() => {
+        if (el.dataset.messageId == messageId) {
+            el.innerHTML = "";
+            el.dataset.messageId = "";
+        }
+    }, duration);
 }
 
 async function handleOTP(){
@@ -3122,6 +3134,11 @@ const classRes = await fetch(
 const classData = await classRes.json();
 
 if(classData.class_over){
+    showCourseMessage(
+    currentCourse,
+    "✅ Class Ended for Today",
+    10000
+);
 
     msg.innerHTML = "✅ Class Ended for Today";
     msg.style.color = "red";
@@ -3137,6 +3154,11 @@ const data=await res.json();
 
 // Registration cutoff check — Firebase OTP must not be sent after cutoff
 if (res.status === 403 && data.registration_closed) {
+    showCourseMessage(
+    currentCourse,
+    "✅ Class Ended for Today",
+    10000
+);
     msg.innerHTML = "Today's class registration is closed.";
     msg.style.color = "red";
 
