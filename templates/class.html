@@ -2974,6 +2974,14 @@ if (timerDiv && data.live) {
 
 
 // 🔥 CARD MESSAGE
+const todayIST = new Date().toLocaleDateString(
+    "en-CA",
+    { timeZone: "Asia/Kolkata" }
+);
+
+const statusViewed =
+    localStorage.getItem("class_status_viewed_" + course)
+    === todayIST;    
 if(
     msg &&
     !(msg.dataset.messageId &&
@@ -3011,8 +3019,7 @@ msg.innerHTML =
 }
 
 }
-else if(data.class_over){
-
+else if(data.class_over && statusViewed){
     // LIVE badge OFF
     if(badge){
         badge.style.display = "none";
@@ -3033,7 +3040,7 @@ else if(data.class_over){
     }
 
 }
-else if(data.teacher_not_started){
+else if(data.teacher_not_started && statusViewed){
 
     msg.innerHTML = "Class Not Started for Today";
     msg.style.color = "red";
@@ -3214,6 +3221,12 @@ if (data.demo_done) {
 if (data.otp_verified === true) {
 
     otpVerified = true;
+    localStorage.setItem(
+        "class_status_viewed_" + currentCourse,
+        new Date().toLocaleDateString("en-CA", {
+            timeZone: "Asia/Kolkata"
+        })
+    );
 
     // Restore student session
     await fetch("/save-user", {
@@ -3505,6 +3518,12 @@ false;
 
       // 👇 PASTE HERE
     otpVerified = true;
+    localStorage.setItem(
+        "class_status_viewed_" + currentCourse,
+        new Date().toLocaleDateString("en-CA", {
+            timeZone: "Asia/Kolkata"
+        })
+    );
     btn.textContent =
     "Proceed for Demo";
     step = 3;
