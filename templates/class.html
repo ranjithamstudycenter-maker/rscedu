@@ -3113,6 +3113,25 @@ async function handleOTP(){
  // STEP 1 → SEND OTP
 if(step===1){
 
+// CHECK CLASS STATUS ONLY AFTER SEND OTP CLICK
+
+const classRes = await fetch(
+    `/api/class-status?course=${encodeURIComponent(currentCourse)}`
+);
+
+const classData = await classRes.json();
+
+if(classData.class_over){
+
+    msg.innerHTML = "✅ Class Ended for Today";
+    msg.style.color = "red";
+
+    btn.disabled = false;
+    btn.textContent = "Send OTP";
+
+    return;
+}
+
 const res=await fetch(`/api/check-demo?course=${currentCourse}&phone=${phone}`);
 const data=await res.json();
 
