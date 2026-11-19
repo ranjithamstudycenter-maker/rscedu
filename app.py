@@ -2143,6 +2143,20 @@ def check_demo():
         return jsonify({"error": "Phone required"}), 401
 
     user = get_user(phone)
+        # CHECK EXISTING OTP VERIFICATION
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT otp_verified
+        FROM students
+        WHERE phone = ? AND course = ?
+    """, (phone, course))
+
+    otp_row = c.fetchone()
+    otp_verified = bool(otp_row and otp_row[0] == 1)
+
+    conn.close()
 
     # ✅ GET LIVE MEET LINK
     meet_link = get_active_meet_link(course)
@@ -2152,8 +2166,8 @@ def check_demo():
     if user["demo_done"].get(course):
 
         return jsonify({
-            "error": "Demo already completed",
             "demo_done": True,
+            "otp_verified": otp_verified,
             "meet_link": meet_link
         })
 
@@ -2166,6 +2180,7 @@ def check_demo():
         return jsonify({
             "error": "Today's demo class is closed.",
             "demo_done": False,
+            "otp_verified": otp_verified,
             "meet_link": "",
             "registration_closed": True,
             "message": "Teacher Not Started the Class Today"
@@ -2176,10 +2191,12 @@ def check_demo():
     # Normal response
     return jsonify({
         "demo_done": False,
+        "otp_verified": otp_verified,
         "meet_link": "",
         "registration_closed": False
+       
+   
     })
-
 
 @app.route("/api/demo-complete", methods=["POST"])
 def demo_complete():
@@ -3512,6 +3529,18 @@ def join_class_api():
                 "error": "Plan completed. Please re-enroll."
             }), 403
 
+       # =================================
+    # CHECK LIVE CLASS FIRST
+    # =================================
+
+    meet_link = get_active_meet_link(course)
+
+    if not meet_link:
+        conn.close()
+        return jsonify({
+            "error": "Class not started yet"
+        }), 404
+
     # =================================
     # SAVE JOIN TIME
     # =================================
@@ -3526,7 +3555,6 @@ def join_class_api():
     except:
         pass
 
-    
     c.execute("""
         UPDATE students
         SET join_time = COALESCE(join_time, ?),
@@ -3541,26 +3569,6 @@ def join_class_api():
 
     conn.commit()
     conn.close()
-
-    # =================================
-    # LIVE CLASS
-    # =================================
-
-    meet_link = get_active_meet_link(course)
-
-    if not meet_link:
-        return jsonify({
-            "error": "Class not started yet"
-        }), 404
-
-    return jsonify({
-        "status": "ok",
-        "meet_link": meet_link,
-        "redirect_url": f"/join-live/{course}",
-        "hours_used": user["hours_used"].get(course, 0),
-        "hours_remaining": user["max_hours"].get(course, classes_per_month)
-                             - user["hours_used"].get(course, 0)
-    })
     
 @app.route("/join-live/<course>")
 def join_live(course):
