@@ -3693,6 +3693,146 @@ def start_class():
         }), 500
 
 
+def finish_class_for_course(course, reason="automatic"):
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    try:
+        # Check whether the class is currently live
+        c.execute("""
+            SELECT live
+            FROM live_classes
+            WHERE course=?
+        """, (course,))
+
+        live_row = c.fetchone()
+
+        if not live_row or not live_row[0]:
+            return False
+
+        # Get students who joined this course
+        c.execute("""
+            SELECT
+                phone,
+                join_time,
+                enrolled,
+                demo_done,
+                otp_verified,
+                demo_allowed,
+                hours_used
+            FROM students
+            WHERE course=?
+              AND join_time IS NOT NULL
+        """, (course,))
+
+        students = c.fetchall()
+
+        current_time = time.time()
+        updated_at = datetime.now().strftime("%Y-%m-%d %H:%M")
+
+        for student in students:
+
+            (
+                phone,
+                join_time,
+                enrolled,
+                demo_done,
+                otp_verified,
+                demo_allowed,
+                hours_used
+            ) = student
+
+            attended_minutes = (
+                current_time - join_time
+            ) / 60
+
+            # Minimum attendance: 50 minutes
+            if attended_minutes >= 50:
+
+                # PAID / ENROLLED STUDENT
+                if enrolled:
+
+                    c.execute("""
+                        UPDATE students
+                        SET hours_used = COALESCE(hours_used, 0) + 1,
+                            last_updated = ?
+                        WHERE phone=? AND course=? AND enrolled=1
+                    """, (
+                        updated_at,
+                        phone,
+                        course
+                    ))
+
+                # FREE DEMO STUDENT
+                elif (
+                    not demo_done
+                    and otp_verified
+                    and demo_allowed
+                ):
+
+                    c.execute("""
+                        UPDATE students
+                        SET demo_done=1,
+                            last_updated=?
+                        WHERE phone=?
+                          AND course=?
+                          AND enrolled=0
+                          AND demo_done=0
+                    """, (
+                        updated_at,
+                        phone,
+                        course
+                    ))
+
+            # Clear attendance timestamp after processing
+            c.execute("""
+                UPDATE students
+                SET join_time=NULL
+                WHERE phone=? AND course=?
+            """, (phone, course))
+
+        # Mark class as ended
+        c.execute("""
+            UPDATE live_classes
+            SET live=0,
+                meet_link='',
+                warning_sent=0,
+                ended_reason=?,
+                class_date=?
+            WHERE course=?
+        """, (
+            reason,
+            (
+                datetime.utcnow() + timedelta(hours=5, minutes=30)
+            ).strftime("%Y-%m-%d"),
+            course
+        ))
+
+        conn.commit()
+
+        # Update faculty memory state
+        for username, teacher in teachers.items():
+
+            if teacher.get("course") == course:
+                teacher["class_live"] = False
+                teacher["meet_link"] = ""
+
+        print(
+            f"CLASS ENDED: {course} | Reason: {reason}"
+        )
+
+        return True
+
+    except Exception as e:
+
+        conn.rollback()
+        print("FINISH CLASS ERROR:", str(e))
+        raise
+
+    finally:
+        conn.close()
+
 def get_active_meet_link(course):
 
     conn = sqlite3.connect("/var/data/students.db")
