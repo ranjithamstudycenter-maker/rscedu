@@ -491,12 +491,14 @@ No waiting students
 
   <div style="display:flex;gap:15px;flex-wrap:wrap;">
 
-    <button class="btn start-btn"
-            onclick="startClass()">
+    <button id="startClassBtn"
+        class="btn start-btn"
+        onclick="startClass()">
       ▶ Start Class
     </button>
-
-    <button class="btn end-btn"
+    
+    <button id="endClassBtn"
+            class="btn end-btn"
             onclick="endClass()">
       ⛔ End Class
     </button>
@@ -740,6 +742,80 @@ function endClass() {
   });
 
 }
+
+// =====================================
+// AUTOMATIC CLASS STATUS CHECK
+// =====================================
+
+async function checkFacultyClassStatus() {
+
+    try {
+
+        const response = await fetch(
+            "/api/faculty/class-timer",
+            { cache: "no-store" }
+        );
+
+        if (!response.ok) return;
+
+        const data = await response.json();
+
+        const statusText =
+            document.getElementById("statusText");
+
+        const startBtn =
+            document.getElementById("startClassBtn");
+
+        const endBtn =
+            document.getElementById("endClassBtn");
+
+        if (!statusText) return;
+
+        if (data.live) {
+
+            statusText.innerHTML = "🟢 Class Live";
+            statusText.className = "status live";
+
+            if (startBtn) startBtn.disabled = true;
+            if (endBtn) endBtn.disabled = false;
+
+        }
+
+        else if (data.ended) {
+
+            statusText.innerHTML =
+                "🔴 Class Ended (75 Minutes Completed)";
+
+            statusText.className = "status off";
+
+            if (startBtn) startBtn.disabled = true;
+            if (endBtn) endBtn.disabled = true;
+
+        }
+
+        else {
+
+            statusText.innerHTML = "🔴 Class Offline";
+            statusText.className = "status off";
+
+            if (startBtn) startBtn.disabled = false;
+            if (endBtn) endBtn.disabled = true;
+
+        }
+
+    }
+
+    catch (error) {
+        console.error("Class status check error:", error);
+    }
+
+}
+
+// Check immediately when dashboard opens
+checkFacultyClassStatus();
+
+// Automatically check every 5 seconds
+setInterval(checkFacultyClassStatus, 5000);
 // 📊 GRAPH
 const ratings = {{ feedbacks | map(attribute='rating') | list | tojson }};
 
