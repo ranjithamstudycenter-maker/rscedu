@@ -4050,9 +4050,11 @@ def end_class():
 
         if not ended:
             return jsonify({
-                "success": False,
-                "error": "Class is already ended."
-            }), 400
+                "success": True,
+                "live": False,
+                "ended": True,
+                "message": "Today Class over."
+            }), 200
 
         return jsonify({
             "success": True,
