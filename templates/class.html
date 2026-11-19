@@ -3167,7 +3167,46 @@ if (res.status === 403 && data.registration_closed) {
 
     return;
 }
+// =====================================
+// REUSE EXISTING OTP VERIFICATION
+// =====================================
+if (data.otp_verified === true) {
 
+    otpVerified = true;
+
+    // Restore student session
+    await fetch("/save-user", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: name,
+            phone: phone,
+            email: email,
+            course: currentCourse
+        })
+    });
+
+    // Skip OTP and move to Proceed stage
+    step = 3;
+
+    document.getElementById("nameInput").style.display = "none";
+    document.getElementById("emailInput").style.display = "none";
+    document.getElementById("phoneInput").style.display = "none";
+    document.getElementById("otpInput").style.display = "none";
+
+    document.getElementById("resendBtn").style.display = "none";
+
+    btn.textContent = "Proceed for Demo";
+    btn.style.background = "green";
+    btn.disabled = false;
+
+    msg.innerHTML = "✅ Already Verified. You can proceed.";
+    msg.style.color = "green";
+
+    return;
+}
 const key="demo_running_"+currentCourse;
 
 const joinBtn=document.getElementById("popupJoinBtn");
