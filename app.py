@@ -2052,55 +2052,77 @@ def available_seats(course):
 @app.route("/save-user", methods=["POST"])
 def save_user():
 
-    data = request.json
+    data = request.get_json(silent=True) or {}
 
-    phone = data.get("phone")
-    name  = data.get("name")
-    course = data.get("course")
+    phone = (data.get("phone") or "").strip()
+    name = (data.get("name") or "").strip()
+    course = (data.get("course") or "").strip()
+
+    if not phone or not name or not course:
+        return jsonify({
+            "error": "Name, phone and course are required."
+        }), 400
 
     session["phone"] = phone
-    user = get_user(phone)
 
-    # 🔥 INSERT BASE RECORD (if not exists)
-    conn = sqlite3.connect("/var/data/students.db")
+    conn = sqlite3.connect(DB_PATH, timeout=30)
     c = conn.cursor()
 
-    c.execute("""
-    INSERT OR REPLACE INTO students
-    (
-        name,
-        phone,
-        course,
-        otp_verified,
-        demo_allowed,
-        demo_done,
-        enrolled,
-        hours_used,
-        max_hours,
-        payment_amount,
-        last_updated
-     
-    )
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        name,
-        phone,
-        course,
-        1,
-        1,
-        0,
-        0,
-        0,
-        0,
-        0,
-        datetime.now().strftime("%Y-%m-%d %H:%M"),
-       
-    ))
+    try:
 
-    conn.commit()
-    conn.close()
+        # New student: create initial record.
+        # Existing student: update only verified details.
+        # Preserve demo_done, enrolled, hours_used,
+        # max_hours, payment_amount and join_time.
 
-    return jsonify({"status": "ok"})
+        c.execute("""
+            INSERT INTO students (
+                name,
+                phone,
+                course,
+                otp_verified,
+                demo_allowed,
+                demo_done,
+                enrolled,
+                hours_used,
+                max_hours,
+                payment_amount,
+                last_updated
+            )
+            VALUES (?, ?, ?, 1, 1, 0, 0, 0, 0, 0, ?)
+
+            ON CONFLICT(phone, course)
+            DO UPDATE SET
+                name = excluded.name,
+                otp_verified = 1,
+                demo_allowed = 1,
+                last_updated = excluded.last_updated
+        """, (
+            name,
+            phone,
+            course,
+            datetime.now().strftime("%Y-%m-%d %H:%M")
+        ))
+
+        conn.commit()
+
+        return jsonify({
+            "status": "ok",
+            "otp_verified": True,
+            "demo_allowed": True
+        })
+
+    except Exception as e:
+
+        conn.rollback()
+        print("SAVE USER ERROR:", str(e))
+
+        return jsonify({
+            "error": "Unable to save student details."
+        }), 500
+
+    finally:
+        conn.close()
 
 # -------------------- DEMO --------------------
 
@@ -3504,10 +3526,12 @@ def join_class_api():
     except:
         pass
 
+    
     c.execute("""
-    UPDATE students
-    SET join_time=?, last_updated=?
-    WHERE phone=? AND course=?
+        UPDATE students
+        SET join_time = COALESCE(join_time, ?),
+            last_updated = ?
+        WHERE phone = ? AND course = ?
     """, (
         join_time,
         datetime.now().strftime("%Y-%m-%d %H:%M"),
