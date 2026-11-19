@@ -3865,6 +3865,7 @@ def get_active_meet_link(course):
     return None
     
 
+
 @app.route("/api/class-status")
 def class_status():
 
@@ -3929,7 +3930,7 @@ def class_status():
             datetime.utcnow() + timedelta(hours=5, minutes=30)
         ).strftime("%Y-%m-%d")
 
-        # Reset previous-day or legacy records.
+        # Reset previous-day class records
         if row and row[4] != today:
 
             c.execute("""
@@ -3946,9 +3947,7 @@ def class_status():
             conn.commit()
             row = None
 
-            # RESET OLD SAME-DAY CLASS RECORD
-        # This handles a schedule time changed on the same day.
-
+        # Reset old same-day records if schedule was changed
         if (
             row
             and not row[1]
@@ -3974,34 +3973,37 @@ def class_status():
     finally:
         conn.close()
 
-    # MASTER END TIME: Scheduled start + 75 minutes
-    if schedule["registration_closed"]:
-
-        if row and row[1]:
-            finish_class_for_course(course, "automatic")
-
-        return jsonify({
-            "live": False,
-            "meet_link": "",
-            "class_over": True,
-            "waiting_for_teacher": False,
-            "teacher_not_started": False,
-            "registration_closed": True,
-            "message": "Class Over for Today"
-        })
-
-    # No teacher-started class yet
+    # -------------------------------------------------
+    # NO CLASS RECORD / TEACHER HAS NOT STARTED
+    # -------------------------------------------------
     if not row or not row[1]:
 
+        # Class was already manually or automatically ended
         if row and row[3] in ("automatic", "manual"):
             return jsonify({
                 "live": False,
                 "meet_link": "",
                 "class_over": True,
-                "message": "Class Over for Today",
-                "registration_closed": False
+                "waiting_for_teacher": False,
+                "teacher_not_started": False,
+                "registration_closed": schedule["registration_closed"],
+                "message": "Class Over for Today"
             })
 
+        # Scheduled start + 75 minutes passed,
+        # but faculty never started the class
+        if schedule["registration_closed"]:
+            return jsonify({
+                "live": False,
+                "meet_link": "",
+                "class_over": False,
+                "waiting_for_teacher": False,
+                "teacher_not_started": True,
+                "registration_closed": True,
+                "message": "Class Not Started for Today"
+            })
+
+        # Scheduled time reached; waiting for faculty
         if schedule["waiting_for_teacher"]:
             return jsonify({
                 "live": False,
@@ -4013,6 +4015,7 @@ def class_status():
                 "message": "Waiting for teacher to start class"
             })
 
+        # Before scheduled time
         return jsonify({
             "live": False,
             "meet_link": "",
@@ -4023,15 +4026,37 @@ def class_status():
             "remaining_seconds": schedule["remaining_seconds"]
         })
 
+    # -------------------------------------------------
+    # CLASS HAS BEEN STARTED BY FACULTY
+    # -------------------------------------------------
     meet_link, live, started_at, ended_reason, class_date = row
 
+    # Automatic end: 75 minutes from actual faculty start time
+    if started_at and (time.time() - started_at) >= CLASS_DURATION_MINUTES * 60:
+
+        finish_class_for_course(course, "automatic")
+
+        return jsonify({
+            "live": False,
+            "meet_link": "",
+            "class_over": True,
+            "waiting_for_teacher": False,
+            "teacher_not_started": False,
+            "registration_closed": True,
+            "message": "Class Over for Today"
+        })
+
+    # Class is still live.
+    # Scheduled registration cutoff must not end an active class.
     return jsonify({
         "live": True,
         "meet_link": meet_link or "",
         "class_over": False,
         "waiting_for_teacher": False,
         "teacher_not_started": False,
-        "registration_closed": False
+        "registration_closed": schedule["registration_closed"],
+        "elapsed_seconds": int(time.time() - started_at)
+            if started_at else 0
     })
 
 
