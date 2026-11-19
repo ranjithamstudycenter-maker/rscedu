@@ -2175,7 +2175,7 @@ def check_demo():
     # Check whether new demo registration is closed
     schedule = get_class_schedule_status(course)
 
-    if schedule.get("registration_closed", False):
+    if schedule.get("registration_closed", False) and not meet_link:
 
         return jsonify({
             "error": "Today's demo class is closed.",
