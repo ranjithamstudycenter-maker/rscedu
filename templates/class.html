@@ -3006,10 +3006,20 @@ msg.innerHTML =
 }
 
 }
+else if(data.class_over){
+
+msg.innerHTML = "✅ Class Ended for Today";
+msg.style.color = "red";
+
+// LIVE badge OFF
+if(badge){
+    badge.style.display = "none";
+}
+
+}
 else{
 
-msg.innerHTML =
-"";
+msg.innerHTML = "";
 
 }
 
