@@ -3011,20 +3011,44 @@ msg.innerHTML =
 }
 
 }
-else if(data.class_over || data.teacher_not_started){
+else if(data.class_over){
 
-msg.innerHTML = "✅ Class Ended for Today";
-msg.style.color = "red";
+    // LIVE badge OFF
+    if(badge){
+        badge.style.display = "none";
+    }
 
-// LIVE badge OFF
-if(badge){
-    badge.style.display = "none";
+    // Show Class Over message only once
+    if(!msg.dataset.classOverShown){
+
+        msg.dataset.classOverShown = "true";
+        msg.innerHTML = "✅ Class over for today";
+        msg.style.color = "red";
+
+        setTimeout(() => {
+
+            msg.innerHTML = "";
+            
+        }, 5000);
+    }
+
 }
+else if(data.teacher_not_started){
+
+    msg.innerHTML = "Class Not Started for Today";
+    msg.style.color = "red";
+
+    if(badge){
+        badge.style.display = "none";
+    }
 
 }
 else{
 
 msg.innerHTML = "";
+
+// Reset Class Over flag for the next class day
+msg.dataset.classOverShown = "";
 
 }
 
