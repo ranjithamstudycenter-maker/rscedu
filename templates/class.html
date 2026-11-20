@@ -3055,7 +3055,7 @@ else if(data.class_over && statusViewed){
     }
 
 }
-else if(data.teacher_not_started && statusViewed){
+else if(data.teacher_not_started && statusViewed && !isDemo && !isPaid){
 
     msg.innerHTML = "Class Not Started for Today";
     msg.style.color = "red";
