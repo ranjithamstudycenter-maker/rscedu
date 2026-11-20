@@ -1330,7 +1330,7 @@ html, body{
     <p class="days">📅 Tue • Thur • Sat</p>
     <div class="actions">
        <!-- Enroll for DEMO -->
-          {% if student.demo_done.get('cbse9') %}
+          {% if demo_done %}
            <button class="btn btn-demo-done">Demo Completed</button>
          {% else %}
           <button id="demoBtn-cbse9" class="btn btn-demo" onclick="openDemoPopup('cbse9')"> Free Demo </button>
@@ -1342,8 +1342,8 @@ html, body{
             <button class="btn btn-registered">Registered</button>
           {% else %}
             <button id="enrollBtn-cbse9"
-class="btn btn-enroll"
-onclick="enroll('cbse9')"> Pay for month </button>
+                class="btn btn-enroll"
+                onclick="enroll('cbse9')"> Pay for month </button>
           {% endif %}
         
           <!-- JOIN -->
@@ -2621,10 +2621,15 @@ function enroll(course) {
   let el = document.getElementById("msg-" + course);
   if(el) el.innerHTML = "";
 
-  if (!(studentStatus?.demo_done || {})[course]) {
+ if (
+    !(
+        studentStatus?.demo_done?.[course] ||
+        studentStatus?.is_demo_user?.[course]
+    )
+ ) {
     showCourseMessage(course, "⚠️ Attend Free Demo first");
     return;
-  }
+ }
 
   const seats = (studentStatus.available_seats || {})[course];
   if (seats !== undefined && seats <= 0) {
