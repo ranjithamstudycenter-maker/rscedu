@@ -3224,17 +3224,20 @@ if (res.status === 403 && data.registration_closed) {
 // CHECK WHETHER DEMO IS ALREADY COMPLETED
 if (data.demo_done) {
 
-    document.getElementById("otpBox").style.display = "none";
-    document.getElementById("otpStatus").style.display = "none";
-    document.getElementById("mainBtn").style.display = "none";
+    const otpBox = document.getElementById("otpBox");
+    const otpStatus = document.getElementById("statusMsg");
+    const mainBtn = document.getElementById("mainBtn");
 
-    const demoMsg = document.getElementById("demoMsg");
+    if (otpBox) otpBox.style.display = "none";
+    if (mainBtn) mainBtn.style.display = "none";
 
-    demoMsg.innerHTML =
-        "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
+    if (otpStatus) {
+        otpStatus.innerHTML =
+            "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
 
-    demoMsg.style.display = "block";
-    demoMsg.style.color = "red";
+        otpStatus.style.display = "block";
+        otpStatus.style.color = "red";
+    }
 
     return;
 }
