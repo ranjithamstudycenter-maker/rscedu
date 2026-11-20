@@ -47,7 +47,7 @@ DB_PATH = os.path.join(DATA_DIR, "students.db")
 # =====================================================
 
 CLASS_SCHEDULE = {
-    "cbse9": "13:40",
+    "cbse9": "09:00",
     "cbse10": "19:00",
     "cbse11": "20:00",
     "cbse12": "21:00",
