@@ -2994,7 +2994,12 @@ const isPaid =
 studentStatus?.enrolled?.[course];
 
 const isDemo =
-studentStatus?.demo_done?.[course];
+    studentStatus?.demo_done?.[course] ||
+    studentStatus?.is_demo_user?.[course] ||
+    !!document.querySelector(
+        "#card-" + course + " .btn-demo-done"
+    ) ||
+    localStorage.getItem("demo_done_" + course) === "yes";
 
 msg.style.color =
 "green";
