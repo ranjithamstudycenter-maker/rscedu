@@ -3569,6 +3569,11 @@ def join_class_api():
 
     conn.commit()
     conn.close()
+
+    return jsonify({
+        "success": True,
+        "meet_link": meet_link
+    })
     
 @app.route("/join-live/<course>")
 def join_live(course):
