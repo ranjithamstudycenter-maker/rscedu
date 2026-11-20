@@ -1350,6 +1350,24 @@ html, body{
     </div>
            
    <div id="msg-cbse9" class="course-msg"></div>
+     <div id="msg-cbse9" class="course-msg"></div>
+
+<div id="redemo-cbse9"
+     style="display:none; margin:10px 0; padding:12px;
+            background:#fff7ed; border:1px solid #fdba74;
+            border-radius:8px; text-align:center;">
+
+    <p style="color:#c2410c; font-weight:bold;">
+        Demo already completed.
+    </p>
+
+    <button type="button"
+            class="btn btn-demo"
+            disabled
+            style="opacity:0.7; cursor:not-allowed;">
+        Pay ₹100 for Re-Demo
+    </button>
+</div>
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
             <p class="offer">🔥 50% OFF for first 10 seats</p>
@@ -1376,7 +1394,13 @@ html, body{
           {% if demo_done %}
            <button class="btn btn-demo-done">Demo Completed</button>
          {% else %}
-          <button class="btn btn-demo" onclick="openDemoPopup('cbse10')">  Free Demo </button>
+          <!-- FREE DEMO -->
+        <button
+            id="demoBtn-cbse10"
+            class="btn btn-demo"
+            onclick="openDemoPopup('cbse10')">
+            Free Demo
+        </button>
          {% endif %}
              
        
@@ -1420,7 +1444,13 @@ html, body{
           {% if demo_done %}
            <button class="btn btn-demo-done">Demo Completed</button>
          {% else %}
-          <button class="btn btn-demo" onclick="openDemoPopup('cbse11')">  Free Demo </button>
+          <!-- FREE DEMO -->
+        <button
+            id="demoBtn-cbse11"
+            class="btn btn-demo"
+            onclick="openDemoPopup('cbse11')">
+            Free Demo
+        </button>
          {% endif %}
              
        
@@ -1461,7 +1491,13 @@ html, body{
           {% if demo_done %}
            <button class="btn btn-demo-done">Demo Completed</button>
          {% else %}
-          <button class="btn btn-demo" onclick="openDemoPopup('cbse12')">  Free Demo </button>
+          <!-- FREE DEMO -->
+        <button
+            id="demoBtn-cbse12"
+            class="btn btn-demo"
+            onclick="openDemoPopup('cbse12')">
+            Free Demo
+        </button>
          {% endif %}
              
        
@@ -1966,6 +2002,17 @@ studentStatus || {};
 
 const demoDone =
 (s.demo_done || {})[course] || false;
+
+// RE-DEMO PAYMENT DISPLAY
+const redemoBox = document.getElementById(
+    "redemo-" + course
+);
+
+if (redemoBox) {
+    redemoBox.style.display = demoDone
+        ? "block"
+        : "none";
+}
 
 const enrolled =
 (s.enrolled || {})[course] || false;
