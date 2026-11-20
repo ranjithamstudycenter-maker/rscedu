@@ -2761,7 +2761,9 @@ async function joinClass(course) {
   }
 
   try {
-    const res = await fetch("/api/join-class?course=" + encodeURIComponent(currentCourse))
+    const res = await fetch(
+        "/api/join-class?course=" + encodeURIComponent(course)
+    );
     const data = await res.json();
 
     if (data.show_feedback) {
@@ -3017,6 +3019,19 @@ msg.innerHTML =
 "⏳ Class Live";
 
 }
+
+}
+
+else if(data.waiting_for_teacher && statusViewed){
+
+    msg.innerHTML =
+        "⏳ Waiting for teacher to start the class";
+
+    msg.style.color = "orange";
+
+    if(badge){
+        badge.style.display = "none";
+    }
 
 }
 else if(data.class_over && statusViewed){
