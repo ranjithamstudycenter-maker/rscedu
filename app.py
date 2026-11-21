@@ -3613,7 +3613,7 @@ def student_status():
             booked = d.get("booked", 0)
             discounts[course] = booked < 10
 
-       return jsonify({
+        return jsonify({
             "logged_in": True,
             "phone": phone,
             "name": user.get("name", ""),
