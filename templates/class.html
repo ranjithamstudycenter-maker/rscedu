@@ -1370,6 +1370,7 @@ html, body{
            
    
      <div id="msg-cbse9" class="course-msg"></div>
+{% if student.demo_done.get('cbse9') %}
 
 <div id="redemo-cbse9"
      style="display:none;
@@ -1403,7 +1404,7 @@ html, body{
     </button>
 
 </div>
-
+{% endif %}
 
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
