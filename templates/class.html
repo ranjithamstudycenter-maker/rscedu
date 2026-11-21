@@ -1331,7 +1331,22 @@ html, body{
     <div class="actions">
        <!-- Enroll for DEMO -->
           
-          <button id="demoBtn-cbse9" class="btn btn-demo" onclick="openDemoPopup('cbse9')"> Free Demo </button>
+          {% if student.demo_done.get('cbse9', false) %}
+
+            <button class="btn btn-demo-done" disabled>
+                Demo Completed ✓
+            </button>
+
+        {% else %}
+
+            <button
+                id="demoBtn-cbse9"
+                class="btn btn-demo"
+                onclick="openDemoPopup('cbse9')">
+                Free Demo
+            </button>
+
+        {% endif %}
         
              
        
@@ -1352,22 +1367,42 @@ html, body{
    
      <div id="msg-cbse9" class="course-msg"></div>
 
-<div id="redemo-cbse9"
-     style="display:none; margin:10px 0; padding:12px;
-            background:#fff7ed; border:1px solid #fdba74;
-            border-radius:8px; text-align:center;">
+{% if student.demo_done.get('cbse9', false) %}
 
-    <p style="color:#c2410c; font-weight:bold;">
-        Demo already completed.
+<div id="redemo-cbse9"
+     style="display:block;
+            margin:12px 0;
+            padding:15px;
+            background:#fff7ed;
+            border:1px solid #fdba74;
+            border-radius:10px;
+            text-align:center;">
+
+    <p style="color:#c2410c;
+              font-weight:700;
+              margin-bottom:8px;">
+        ⚠️ Demo Already Completed
+    </p>
+
+    <p style="color:#444;
+              font-size:13px;
+              margin-bottom:12px;">
+        You have already attended the free demo class.
+        Re-demo access is available for ₹100.
     </p>
 
     <button type="button"
             class="btn btn-demo"
-            disabled
-            style="opacity:0.7; cursor:not-allowed;">
+            style="background:#f59e0b;
+                   color:white;
+                   width:100%;
+                   cursor:pointer;">
         Pay ₹100 for Re-Demo
     </button>
+
 </div>
+
+{% endif %}
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
             <p class="offer">🔥 50% OFF for first 10 seats</p>
@@ -2520,14 +2555,10 @@ if (data.demo_done) {
 const statusMsg =
 document.getElementById("statusMsg");
 
-statusMsg.style.display =
-"block";
-
-statusMsg.innerHTML =
-"⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
-
-statusMsg.style.color =
-"red";
+if (statusMsg) {
+    statusMsg.innerHTML = "";
+    statusMsg.style.display = "none";
+}
 
 if(window.otpInterval){
 
@@ -3279,13 +3310,9 @@ if (data.demo_done) {
     if (mainBtn) mainBtn.style.display = "none";
 
     if (otpStatus) {
-        otpStatus.innerHTML =
-            "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
-
-        otpStatus.style.display = "block";
-        otpStatus.style.color = "red";
+        otpStatus.innerHTML = "";
+        otpStatus.style.display = "none";
     }
-
     return;
 }
 // =====================================
@@ -3574,14 +3601,10 @@ false;
         "demoMsg"
         );
         
-        demoMsg.innerHTML=
-        "⚠️ Demo already completed.<br><br>For re-demo access, pay ₹100 and share payment screenshot.";
-        
-        demoMsg.style.display=
-        "block";
-        
-        demoMsg.style.color=
-        "red";
+        if (demoMsg) {
+            demoMsg.innerHTML = "";
+            demoMsg.style.display = "none";
+        }
         
         return;
         
