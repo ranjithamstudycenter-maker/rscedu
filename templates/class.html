@@ -3942,6 +3942,13 @@ try {
 
 async function openDemoPopup(course){
 
+    // Stop popup if demo is already completed
+    const demoDone =
+        (studentStatus?.demo_done || {})[course] || false;
+
+    if (demoDone) {
+        return;
+    }
      // Reset previous class popup state
     currentCourse = course;
     step = 1;
