@@ -1335,22 +1335,12 @@ html, body{
     <div class="actions">
        <!-- Enroll for DEMO -->
           
-          {% if student.demo_done.get('cbse9') %}
-
-            <button class="btn btn-demo-done" disabled>
-                Demo Completed ✓
-            </button>
-
-        {% else %}
-
-            <button
-                id="demoBtn-cbse9"
-                class="btn btn-demo"
-                onclick="openDemoPopup('cbse9')">
-                Free Demo
-            </button>
-
-        {% endif %}
+          <button
+    id="demoBtn-cbse9"
+    class="btn btn-demo"
+    onclick="openDemoPopup('cbse9')">
+    Free Demo
+        </button>
         
              
        
@@ -1370,7 +1360,6 @@ html, body{
            
    
      <div id="msg-cbse9" class="course-msg"></div>
-{% if student.demo_done.get('cbse9') %}
 
 <div id="redemo-cbse9"
      style="display:none;
@@ -1404,7 +1393,6 @@ html, body{
     </button>
 
 </div>
-{% endif %}
 
       <div class="notice">
             <p class="seats">🎯 Available Seats: 30</p>
@@ -1429,17 +1417,12 @@ html, body{
     <p class="days">📅 Tue • Thur • Sat</p>
     <div class="actions">
        <!-- FREE DEMO -->
-          {% if demo_done %}
-           <button class="btn btn-demo-done">Demo Completed</button>
-         {% else %}
-          <!-- FREE DEMO -->
-        <button
-            id="demoBtn-cbse10"
-            class="btn btn-demo"
-            onclick="openDemoPopup('cbse10')">
-            Free Demo
+          <button
+    id="demoBtn-cbse10"
+    class="btn btn-demo"
+    onclick="openDemoPopup('cbse10')">
+    Free Demo
         </button>
-         {% endif %}
              
        
           <!-- ENROLL -->
@@ -1479,18 +1462,12 @@ html, body{
     <p class="days">📅 Tue • Thur • Sat</p>
     <div class="actions">
        <!-- FREE DEMO -->
-          {% if demo_done %}
-           <button class="btn btn-demo-done">Demo Completed</button>
-         {% else %}
-          <!-- FREE DEMO -->
-        <button
-            id="demoBtn-cbse11"
-            class="btn btn-demo"
-            onclick="openDemoPopup('cbse11')">
-            Free Demo
+          <button
+    id="demoBtn-cbse11"
+    class="btn btn-demo"
+    onclick="openDemoPopup('cbse11')">
+    Free Demo
         </button>
-         {% endif %}
-             
        
           <!-- ENROLL -->
           {% if registered %}
@@ -1526,18 +1503,12 @@ html, body{
     <p class="days">📅 Tue • Thur • Sat</p>
     <div class="actions">
        <!-- FREE DEMO -->
-          {% if demo_done %}
-           <button class="btn btn-demo-done">Demo Completed</button>
-         {% else %}
-          <!-- FREE DEMO -->
-        <button
-            id="demoBtn-cbse12"
-            class="btn btn-demo"
-            onclick="openDemoPopup('cbse12')">
-            Free Demo
+         <button
+    id="demoBtn-cbse12"
+    class="btn btn-demo"
+    onclick="openDemoPopup('cbse12')">
+    Free Demo
         </button>
-         {% endif %}
-             
        
           <!-- ENROLL -->
           {% if registered %}
@@ -2075,8 +2046,7 @@ if(demoBtn){
 
 if(demoDone){
 
-demoBtn.textContent =
-"Demo Done ✓";
+demoBtn.textContent = "Demo Completed ✓";
 
 demoBtn.style.background =
 "#16a34a";
@@ -2093,8 +2063,7 @@ demoBtn.style.opacity =
 }
 else{
 
-demoBtn.textContent =
-"Enroll for Demo";
+demoBtn.textContent = "Attend Free Demo";
 
 demoBtn.style.background =
 "#fff3b0";
