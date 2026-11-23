@@ -3274,6 +3274,23 @@ if (res.status === 403 && data.registration_closed) {
 // CHECK WHETHER DEMO IS ALREADY COMPLETED
 if (data.demo_done) {
 
+    // Restore student session
+    await fetch("/save-user", {
+        method: "POST",
+        headers: {
+            "Content-Type": "application/json"
+        },
+        body: JSON.stringify({
+            name: name,
+            phone: phone,
+            email: email,
+            course: currentCourse
+        })
+    });
+
+    // Refresh student status
+    await refreshStatus();
+
     const otpBox = document.getElementById("otpBox");
     const otpStatus = document.getElementById("statusMsg");
     const mainBtn = document.getElementById("mainBtn");
@@ -3285,6 +3302,7 @@ if (data.demo_done) {
         otpStatus.innerHTML = "";
         otpStatus.style.display = "none";
     }
+
     return;
 }
 // =====================================
