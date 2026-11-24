@@ -166,10 +166,10 @@ def init_db():
         pass
 
     try:
-    c.execute("""
-        ALTER TABLE students
-        ADD COLUMN redemo_paid INTEGER DEFAULT 0
-    """)
+        c.execute("""
+            ALTER TABLE students
+            ADD COLUMN redemo_paid INTEGER DEFAULT 0
+        """)
     except sqlite3.OperationalError:
         pass
         
