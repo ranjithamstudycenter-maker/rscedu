@@ -1367,13 +1367,14 @@ html, body{
             text-align:center;">
 
     <button type="button"
-            class="btn btn-demo"
-            style="background:#f59e0b;
-                   color:white;
-                   width:100%;
-                   cursor:pointer;">
-        Pay ₹100 for Re-Demo
-    </button>
+        class="btn btn-demo"
+        onclick="startRedemoPayment('cbse9')"
+        style="background:#f59e0b;
+               color:white;
+               width:100%;
+               cursor:pointer;">
+    Pay ₹100 for Re-Demo
+   </button>
 
 </div>
 
@@ -1993,7 +1994,10 @@ const s =
 studentStatus || {};
 
 const demoDone =
-(s.demo_done || {})[course] || false;
+    (s.demo_done || {})[course] || false;
+
+const redemoPaid =
+    (s.redemo_paid || {})[course] || false;
 
 // RE-DEMO PAYMENT DISPLAY
 const redemoBox = document.getElementById(
@@ -2711,6 +2715,142 @@ async function payNow() {
   showMessage("📌 Payment marked. Admin will verify.");
   closeEnroll();
 } 
+
+/* ======================================
+   RE-DEMO PAYMENT – ₹100
+====================================== */
+
+async function startRedemoPayment(course) {
+
+    try {
+
+        const res = await fetch(
+            "/api/redemo/create-order",
+            {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json"
+                },
+                body: JSON.stringify({
+                    course: course
+                })
+            }
+        );
+
+        const data = await res.json();
+
+        if (!res.ok || data.error) {
+            showMessage("❌ " + (data.error || "Payment failed"));
+            return;
+        }
+
+        const options = {
+
+            key: data.razorpay_key,
+
+            amount: data.amount,
+
+            currency: "INR",
+
+            name: "Ranjitham Study Center",
+
+            description: "Re-Demo Fee",
+
+            order_id: data.order_id,
+
+            prefill: {
+                name: data.name,
+                contact: studentStatus.phone || ""
+            },
+
+            theme: {
+                color: "#1e3a8a"
+            },
+
+            handler: async function(response) {
+
+                try {
+
+                    const verifyRes = await fetch(
+                        "/api/redemo/payment-success",
+                        {
+                            method: "POST",
+
+                            headers: {
+                                "Content-Type": "application/json"
+                            },
+
+                            body: JSON.stringify({
+
+                                course: course,
+
+                                order_id:
+                                    response.razorpay_order_id,
+
+                                payment_id:
+                                    response.razorpay_payment_id,
+
+                                signature:
+                                    response.razorpay_signature
+
+                            })
+                        }
+                    );
+
+                    const result = await verifyRes.json();
+
+                    if (result.status === "success") {
+
+                        showMessage(
+                            "🎉 Re-Demo Payment Successful! Attend Free Demo again."
+                        );
+
+                        await refreshStatus();
+
+                        updateAllCourseUI();
+
+                    } else {
+
+                        showMessage(
+                            "⚠️ " + (result.error || "Payment verification failed")
+                        );
+
+                    }
+
+                } catch (error) {
+
+                    showMessage(
+                        "⚠️ Payment verification error. Contact support."
+                    );
+
+                }
+
+            }
+
+        };
+
+        const rzp = new Razorpay(options);
+
+        rzp.on("payment.failed", function(response) {
+
+            showMessage(
+                "❌ Payment failed: " +
+                response.error.description
+            );
+
+        });
+
+        rzp.open();
+
+    } catch (error) {
+
+        console.error("RE-DEMO PAYMENT ERROR:", error);
+
+        showMessage("❌ Unable to start Re-Demo payment.");
+
+    }
+
+}
 /* ======================================
    JOIN CLASS
 ====================================== */
@@ -3865,13 +4005,27 @@ try {
 
 async function openDemoPopup(course){
 
-    // Stop popup if demo is already completed
     const demoDone =
         (studentStatus?.demo_done || {})[course] || false;
 
+    const redemoPaid =
+        (studentStatus?.redemo_paid || {})[course] || false;
+    
+    // PAID RE-DEMO: Skip OTP popup
+    if (redemoPaid) {
+    
+        currentCourse = course;
+    
+        startDemoSession(course);
+    
+        return;
+    }
+    
+    // ORIGINAL COMPLETED DEMO
     if (demoDone) {
         return;
     }
+    
      // Reset previous class popup state
     currentCourse = course;
     step = 1;
