@@ -3651,79 +3651,63 @@ def join_class_api():
 
     user = get_user(phone)
 
+     
     # =================================
-    # DB CHECK
+    # STUDENT ACCESS VALIDATION
     # =================================
-
-    conn = sqlite3.connect("/var/data/students.db")
+    
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
-
+    
     c.execute("""
-    SELECT otp_verified, demo_allowed, demo_done
-    FROM students
-    WHERE phone=? AND course=?
+        SELECT
+            otp_verified,
+            demo_allowed,
+            demo_done,
+            enrolled,
+            redemo_paid
+        FROM students
+        WHERE phone=? AND course=?
     """, (phone, course))
-
+    
     row = c.fetchone()
-
-    # ❌ no record
+    
     if not row:
         conn.close()
         return jsonify({
             "error": "Register first"
         }), 403
-
-    # ❌ OTP not verified
-    if row[0] != 1:
+    
+    otp_verified, demo_allowed, demo_done_db, enrolled_db, redemo_paid = row
+    
+    # Demo / Re-Demo eligibility
+    demo_access = (
+        otp_verified == 1
+        and demo_done_db == 0
+        and (
+            demo_allowed == 1
+            or redemo_paid == 1
+        )
+    )
+    
+    # Regular paid class eligibility
+    enrolled = bool(enrolled_db)
+    
+    # Either valid demo access OR paid enrollment
+    allow_join = demo_access or enrolled
+    
+    if not allow_join:
         conn.close()
         return jsonify({
-            "error": "OTP verification required"
+            "error": "Join not allowed"
         }), 403
-
-    # ❌ demo not allowed
-    if row[1] != 1:
-        conn.close()
-        return jsonify({
-            "error": "Attend free demo registration first"
-        }), 403
-
+    
     # =================================
     # USER STATUS
     # =================================
+    
+    demo_done = bool(demo_done_db)
 
-    demo_done = user["demo_done"].get(course, False)
-    enrolled  = user["enrolled"].get(course, False)
-
-    
-    
-    otp_verified = row[0]
-
-    demo_allowed = row[1]
-    
-    # 🔥 allow:
-    # 1 verified demo student
-    # 2 enrolled student
-    
-    allow_join = (
-    (
-    otp_verified==1
-    and
-    demo_allowed==1
-    )
-    or
-    enrolled
-    )
-    
-    if not allow_join:
-    
-        conn.close()
-    
-        return jsonify({
-    
-          "error":
-          "Join not allowed"
-    
-        }),403
 
     # =================================
     # ENROLLED HOURS CHECK
