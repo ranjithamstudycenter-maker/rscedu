@@ -2450,7 +2450,7 @@ def redemo_payment_success():
 
         if (
             payment.get("order_id") != order_id
-            or int(payment.get("amount", 0)) != 10000
+            or int(payment.get("amount", 0)) != 100
             or payment.get("status") != "captured"
         ):
             return jsonify({
