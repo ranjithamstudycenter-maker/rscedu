@@ -1322,11 +1322,7 @@ html, body{
  
 <!-- ========== CBSE 9 ========== -->
  <div class="card" id="card-cbse9" data-category="school" data-mode="india">
-     <p style="color:red;">
-    DEBUG DEMO STATUS:
-    {{ student.demo_done.get('cbse9', false) }}
-</p>
-    <h2>CBSE Maths – Class 9 <span class="live-badge" id="live-cbse9">🔴 LIVE</span></h2>
+        <h2>CBSE Maths – Class 9 <span class="live-badge" id="live-cbse9">🔴 LIVE</span></h2>
     <div class="price-box">
       <p class="price">₹250 / hour</p>
       <p id="duration-cbse9"></p>
@@ -2140,72 +2136,22 @@ enrollBtn.style.pointerEvents =
 }
 
 
-/* JOIN BUTTON */
-const joinBtn =
-document.getElementById(
-"joinBtn-" + course
+/* REGULAR CLASS JOIN BUTTON */
+
+const joinBtn = document.getElementById(
+    "joinBtn-" + course
 );
 
-if(joinBtn){
+if (joinBtn) {
 
-const live =
-liveStatus[course] || false;
+    joinBtn.style.display = "inline-block";
+    joinBtn.style.opacity = "1";
+    joinBtn.style.pointerEvents = "auto";
 
-const enrolled =
-(s.enrolled || {})[course]
-|| false;
+    // Always keep regular class button separate
+    joinBtn.textContent = "Join Now";
 
-const demoDone =
-(s.demo_done || {})[course]
-|| false;
-
-
-// DEFAULT → ALWAYS SHOW
-joinBtn.style.display =
-"inline-block";
-
-joinBtn.style.opacity =
-"1";
-
-joinBtn.style.pointerEvents =
-"auto";
-
-
-// PAID USER
-if(enrolled){
-
-joinBtn.textContent =
-"Join Now";
-
-joinBtn.onclick =
-()=>joinClass(course);
-
-}
-
-// DEMO USER
-else if(demoDone){
-
-joinBtn.textContent =
-live
-?
-"Join Class"
-:
-"Wait for Class";
-
-joinBtn.onclick =
-live
-?
-()=>joinClass(course)
-:
-null;
-
-if(!live){
-
-joinBtn.style.opacity =
-"0.5";
-
-}
-
+    joinBtn.onclick = () => joinClass(course);
 }
 
 // NOT REGISTERED
