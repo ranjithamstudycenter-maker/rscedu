@@ -4041,22 +4041,22 @@ def finish_class_for_course(course, reason="automatic"):
             # PAID RE-DEMO STUDENT
             # ==========================================
             
-            if redemo_paid and not demo_done:
-            
-                c.execute("""
-                    UPDATE students
-                    SET demo_done=1,
-                        redemo_paid=0,
-                        last_updated=?
-                    WHERE phone=?
-                      AND course=?
-                      AND demo_done=0
-                      AND redemo_paid=1
-                """, (
-                    updated_at,
-                    phone,
-                    course
-                ))
+                if redemo_paid and not demo_done:
+                
+                    c.execute("""
+                        UPDATE students
+                        SET demo_done=1,
+                            redemo_paid=0,
+                            last_updated=?
+                        WHERE phone=?
+                          AND course=?
+                          AND demo_done=0
+                          AND redemo_paid=1
+                    """, (
+                        updated_at,
+                        phone,
+                        course
+                    ))
             
             # ==========================================
             # PAID / ENROLLED STUDENT
