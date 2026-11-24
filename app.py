@@ -164,6 +164,14 @@ def init_db():
         """)
     except:
         pass
+
+    try:
+    c.execute("""
+        ALTER TABLE students
+        ADD COLUMN redemo_paid INTEGER DEFAULT 0
+    """)
+    except sqlite3.OperationalError:
+        pass
         
      # 🔥 ADD THIS NEW TABLE
     c.execute("""
@@ -1305,7 +1313,7 @@ def init_faculty_salary_db():
         )
         """)
 
-                # -------------------------------------------------
+        # -------------------------------------------------
         # 6A. MANUAL BANK PAYMENT DETAILS
         # -------------------------------------------------
 
@@ -2022,21 +2030,30 @@ def get_user(phone):
         "enrolled": {},
         "hours_used": {},
         "max_hours": {},
+        "redemo_paid": {},
     }
 
     # 🔥 ALWAYS LOAD FROM DB
     conn = sqlite3.connect("/var/data/students.db")
     c = conn.cursor()
 
-    c.execute("SELECT * FROM students WHERE phone=?", (phone,))
+    c.execute("""
+        SELECT course, demo_done, enrolled,
+               hours_used, max_hours, redemo_paid
+        FROM students
+        WHERE phone=?
+    """, (phone,))
+
     rows = c.fetchall()
 
     for r in rows:
-        course = r[2]
-        user["demo_done"][course] = bool(r[5])
-        user["enrolled"][course] = bool(r[6])
-        user["hours_used"][course] = r[7]
-        user["max_hours"][course] = r[8]
+        course = r[0]
+    
+        user["demo_done"][course] = bool(r[1])
+        user["enrolled"][course] = bool(r[2])
+        user["hours_used"][course] = r[3]
+        user["max_hours"][course] = r[4]
+        user["redemo_paid"][course] = bool(r[5])
 
     conn.close()
 
@@ -2234,7 +2251,8 @@ def demo_complete():
             SELECT
                 demo_done,
                 otp_verified,
-                demo_allowed
+                demo_allowed,
+                redemo_paid
             FROM students
             WHERE phone=? AND course=?
         """, (phone, course))
@@ -2251,13 +2269,21 @@ def demo_complete():
                 "error": "Student record not found. Please verify OTP first."
             }), 404
 
-        demo_done, otp_verified, demo_allowed = row
+        demo_done, otp_verified, demo_allowed, redemo_paid = row
 
         # ==========================================
         # 3. OTP AND DEMO ACCESS VALIDATION
         # ==========================================
 
-        if not otp_verified or not demo_allowed:
+        # First free demo: OTP required.
+        # Paid Re-Demo: previous payment authorizes access.
+        
+        if not redemo_paid and (
+            not otp_verified or not demo_allowed
+        ):
+            return jsonify({
+                "error": "Demo access not authorized."
+            }), 403
 
             return jsonify({
                 "error": "Demo access not authorized."
@@ -2297,6 +2323,195 @@ def demo_complete():
 
     finally:
         conn.close()
+        
+@app.route("/api/redemo/create-order", methods=["POST"])
+def create_redemo_order():
+
+    phone = session.get("phone")
+
+    if not phone:
+        return jsonify({"error": "Not logged in"}), 401
+
+    data = request.get_json() or {}
+    course = data.get("course")
+
+    if course not in price_per_hour:
+        return jsonify({"error": "Invalid course"}), 400
+
+    conn = sqlite3.connect(DB_PATH)
+    c = conn.cursor()
+
+    c.execute("""
+        SELECT name, demo_done, redemo_paid
+        FROM students
+        WHERE phone=? AND course=?
+    """, (phone, course))
+
+    row = c.fetchone()
+    conn.close()
+
+    if not row:
+        return jsonify({"error": "Student not found"}), 404
+
+    name, demo_done, redemo_paid = row
+
+    if not demo_done:
+        return jsonify({"error": "Demo is not completed"}), 403
+
+    if redemo_paid:
+        return jsonify({"error": "Re-Demo already paid"}), 400
+
+    try:
+        with open("admin.json") as f:
+            keys = json.load(f)
+
+        client = razorpay.Client(
+            auth=(
+                keys["razorpay_key"],
+                keys["razorpay_secret"]
+            )
+        )
+
+        order = client.order.create({
+            "amount": 10000,
+            "currency": "INR",
+            "payment_capture": 1,
+            "notes": {
+                "purpose": "RE_DEMO",
+                "course": course,
+                "phone": phone
+            }
+        })
+
+        session["pending_redemo_course"] = course
+        session["pending_redemo_order"] = order["id"]
+
+        return jsonify({
+            "order_id": order["id"],
+            "amount": 10000,
+            "razorpay_key": keys["razorpay_key"],
+            "name": name
+        })
+
+    except Exception as e:
+
+        print("RE-DEMO ORDER ERROR:", str(e))
+
+        return jsonify({
+            "error": "Unable to start payment"
+        }), 500
+
+@app.route(
+    "/api/redemo/payment-success",
+    methods=["POST"]
+)
+def redemo_payment_success():
+
+    phone = session.get("phone")
+
+    if not phone:
+        return jsonify({"error": "Unauthorized"}), 401
+
+    data = request.get_json() or {}
+
+    course = session.get("pending_redemo_course")
+    order_id = data.get("order_id")
+    payment_id = data.get("payment_id")
+    signature = data.get("signature")
+
+    if not course or course not in price_per_hour:
+        return jsonify({"error": "Invalid course"}), 400
+
+    if order_id != session.get("pending_redemo_order"):
+        return jsonify({"error": "Invalid order"}), 400
+
+    if not payment_id or not signature:
+        return jsonify({"error": "Invalid payment details"}), 400
+
+    try:
+
+        with open("admin.json") as f:
+            keys = json.load(f)
+
+        client = razorpay.Client(
+            auth=(
+                keys["razorpay_key"],
+                keys["razorpay_secret"]
+            )
+        )
+
+        client.utility.verify_payment_signature({
+            "razorpay_order_id": order_id,
+            "razorpay_payment_id": payment_id,
+            "razorpay_signature": signature
+        })
+
+        payment = client.payment.fetch(payment_id)
+
+        if (
+            payment.get("order_id") != order_id
+            or int(payment.get("amount", 0)) != 10000
+            or payment.get("status") != "captured"
+        ):
+            return jsonify({
+                "error": "Payment not captured"
+            }), 400
+
+    except Exception as e:
+
+        print("RE-DEMO PAYMENT VERIFICATION ERROR:", str(e))
+
+        return jsonify({
+            "error": "Payment verification failed"
+        }), 400
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    try:
+
+        c.execute("""
+            UPDATE students
+            SET demo_done=0,
+                redemo_paid=1,
+                last_updated=?
+            WHERE phone=?
+              AND course=?
+              AND demo_done=1
+              AND redemo_paid=0
+        """, (
+            datetime.now().strftime("%Y-%m-%d %H:%M"),
+            phone,
+            course
+        ))
+
+        if c.rowcount != 1:
+            conn.rollback()
+            return jsonify({
+                "error": "Student demo status changed. Contact support."
+            }), 409
+
+        conn.commit()
+
+    except Exception as e:
+
+        conn.rollback()
+        print("RE-DEMO DATABASE ERROR:", str(e))
+
+        return jsonify({"error": "Unable to update demo"}), 500
+
+    finally:
+        conn.close()
+
+    session.pop("pending_redemo_course", None)
+    session.pop("pending_redemo_order", None)
+
+    return jsonify({
+        "status": "success",
+        "payment_status": "Paid",
+        "demo_done": False,
+        "redemo_paid": True
+    })
 
 @app.before_request
 def force_https():
@@ -3620,6 +3835,7 @@ def student_status():
         
             "demo_done": user.get("demo_done", {}),
             "is_demo_user": user.get("demo_done", {}),
+            "redemo_paid": user.get("redemo_paid", {}),
         
             "enrolled": user.get("enrolled", {}),
             "is_enrolled_user": user.get("enrolled", {}),
@@ -3790,6 +4006,7 @@ def finish_class_for_course(course, reason="automatic"):
                 demo_done,
                 otp_verified,
                 demo_allowed,
+                redemo_paid,
                 hours_used
             FROM students
             WHERE course=?
@@ -3810,6 +4027,7 @@ def finish_class_for_course(course, reason="automatic"):
                 demo_done,
                 otp_verified,
                 demo_allowed,
+                redemo_paid,
                 hours_used
             ) = student
 
@@ -3819,7 +4037,67 @@ def finish_class_for_course(course, reason="automatic"):
 
             # Minimum attendance: 50 minutes
             if attended_minutes >= 50:
-
+            # ==========================================
+            # PAID RE-DEMO STUDENT
+            # ==========================================
+            
+            if redemo_paid and not demo_done:
+            
+                c.execute("""
+                    UPDATE students
+                    SET demo_done=1,
+                        redemo_paid=0,
+                        last_updated=?
+                    WHERE phone=?
+                      AND course=?
+                      AND demo_done=0
+                      AND redemo_paid=1
+                """, (
+                    updated_at,
+                    phone,
+                    course
+                ))
+            
+            # ==========================================
+            # PAID / ENROLLED STUDENT
+            # ==========================================
+            
+            elif enrolled:
+            
+                c.execute("""
+                    UPDATE students
+                    SET hours_used = COALESCE(hours_used, 0) + 1,
+                        last_updated = ?
+                    WHERE phone=? AND course=? AND enrolled=1
+                """, (
+                    updated_at,
+                    phone,
+                    course
+                ))
+            
+            # ==========================================
+            # ORIGINAL FREE DEMO STUDENT
+            # ==========================================
+            
+            elif (
+                not demo_done
+                and otp_verified
+                and demo_allowed
+            ):
+            
+                c.execute("""
+                    UPDATE students
+                    SET demo_done=1,
+                        last_updated=?
+                    WHERE phone=?
+                      AND course=?
+                      AND enrolled=0
+                      AND demo_done=0
+                """, (
+                    updated_at,
+                    phone,
+                    course
+                ))
                 # PAID / ENROLLED STUDENT
                 if enrolled:
 
