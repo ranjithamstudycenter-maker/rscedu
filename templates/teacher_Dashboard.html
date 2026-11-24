@@ -397,87 +397,68 @@ details summary{cursor:pointer;color:#2563eb;font-weight:600;padding:7px 0}canva
 
 <!-- 🔥 WAITING STUDENTS -->
 
+
+<!-- STUDENTS WAITING FOR ADMISSION -->
+
 <div class="card">
 
-<h2>🧑‍🎓 Waiting Demo Students</h2>
+    <h2>🧑‍🎓 Students Waiting for Admission</h2>
 
-{% if waiting_students %}
+    {% if waiting_students %}
 
-<table style="width:100%;border-collapse:collapse;">
+    <div style="overflow-x:auto;">
 
-<tr style="background:#0b5394;color:white;">
-<th>Name</th>
-<th>Phone</th>
-<th>OTP</th>
-<th>Demo</th>
-<th>Enrolled</th>
-</tr>
+        <table style="width:100%;border-collapse:collapse;">
 
-{% for s in waiting_students %}
+            <tr style="background:#0b5394;color:white;">
+                <th>Name</th>
+                <th>Phone</th>
+                <th>OTP</th>
+                <th>Enrolled</th>
+            </tr>
 
-<tr style="text-align:center;border-bottom:1px solid #ddd;">
+            {% for s in waiting_students %}
 
-<td>{{ s.name }}</td>
+            <tr style="text-align:center;border-bottom:1px solid #ddd;">
 
-<td>{{ s.phone }}</td>
+                <td>{{ s.name }}</td>
 
-<td>
+                <td>{{ s.phone }}</td>
 
-{% if s.otp_verified %}
+                <td>
+                    {% if s.otp_verified %}
+                        <span style="color:green;">✅</span>
+                    {% else %}
+                        <span style="color:red;">❌</span>
+                    {% endif %}
+                </td>
 
-✅
+                <td>
+                    {% if s.enrolled %}
+                        <span style="color:green;">✅</span>
+                    {% else %}
+                        <span style="color:red;">❌</span>
+                    {% endif %}
+                </td>
 
-{% else %}
+            </tr>
 
-❌
+            {% endfor %}
 
-{% endif %}
+        </table>
 
-</td>
+    </div>
 
-<td>
+    {% else %}
 
-{% if s.demo_allowed %}
+        <p style="color:#666;">
+            No students waiting for admission.
+        </p>
 
-✅
-
-{% else %}
-
-❌
-
-{% endif %}
-
-</td>
-
-<td>
-
-{% if s.enrolled %}
-
-✅
-
-{% else %}
-
-❌
-
-{% endif %}
-
-</td>
-
-</tr>
-
-{% endfor %}
-
-</table>
-  
-{% else %}
-
-<p style="color:#666;">
-No waiting students
-</p>
-
-{% endif %}
+    {% endif %}
 
 </div>
+
 <!-- 🔥 LIVE CLASS CONTROL -->
 <div class="card live-card">
   <h2>🎥 Live Class Control</h2>
