@@ -5176,22 +5176,33 @@ def teacher_dashboard():
             pending_salary += s["faculty_share"]
     
     # =========================================
-    # 🔥 WAITING DEMO STUDENTS
+    # STUDENTS WAITING FOR FACULTY ADMISSION
     # =========================================
     
-    conn = sqlite3.connect("/var/data/students.db")
+    conn = sqlite3.connect(DB_PATH)
     c = conn.cursor()
     
     c.execute("""
-    SELECT name, phone, course,
-           otp_verified,
-           demo_allowed,
-           demo_done
-    FROM students
-    WHERE course=?
-    AND otp_verified=1
-    AND demo_allowed=1
-    AND demo_done=0
+        SELECT
+            name,
+            phone,
+            course,
+            otp_verified,
+            enrolled
+        FROM students
+        WHERE course=?
+          AND (
+                (
+                    otp_verified=1
+                    AND demo_done=0
+                    AND (
+                        demo_allowed=1
+                        OR redemo_paid=1
+                    )
+                )
+                OR enrolled=1
+          )
+        ORDER BY name
     """, (course,))
     
     rows = c.fetchall()
@@ -5199,19 +5210,16 @@ def teacher_dashboard():
     waiting_students = []
     
     for r in rows:
-    
         waiting_students.append({
-    
             "name": r[0],
             "phone": r[1],
             "course": r[2],
-    
             "otp_verified": bool(r[3]),
-            "demo_allowed": bool(r[4]),
-            "demo_done": bool(r[5])
-    
+            "enrolled": bool(r[4])
         })
+    
     conn.close()
+
     
     conn = sqlite3.connect("/var/data/students.db")
     conn.row_factory = sqlite3.Row
