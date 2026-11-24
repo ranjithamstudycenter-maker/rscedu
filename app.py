@@ -2373,7 +2373,7 @@ def create_redemo_order():
         )
 
         order = client.order.create({
-            "amount": 10000,
+            "amount": 100,
             "currency": "INR",
             "payment_capture": 1,
             "notes": {
