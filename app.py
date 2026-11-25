@@ -5516,21 +5516,120 @@ def get_feedback():
 
 @app.route("/submit-teacher-feedback", methods=["POST"])
 def submit_teacher_feedback():
-    teacher  = request.form.get("teacher")
-    rating   = int(request.form.get("rating", 0))
-    comment  = request.form.get("comment", "").strip()
-    course   = request.form.get("course", "")
+
+    phone = session.get("phone")
+    teacher = request.form.get("teacher", "").strip()
+    course = request.form.get("course", "").strip()
+    comment = request.form.get("comment", "").strip()
+
+    try:
+        rating = int(request.form.get("rating", 0))
+    except (ValueError, TypeError):
+        rating = 0
+
+    if not phone:
+        return jsonify({"error": "Please login first"}), 401
+
+    if not teacher or not course or rating not in range(1, 6) or not comment:
+        return jsonify({"error": "Please provide rating and feedback"}), 400
+
+    # Verify assigned active teacher
+    assigned_teacher = next(
+        (
+            name for name, data in teachers.items()
+            if data.get("course") == course
+            and data.get("active", True)
+        ),
+        None
+    )
+
+    if teacher != assigned_teacher:
+        return jsonify({"error": "Invalid teacher for this course"}), 400
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT enrolled, hours_used, max_hours, plan_cycle
+            FROM students
+            WHERE phone=? AND course=?
+        """, (phone, course))
+
+        student = c.fetchone()
+
+        if not student:
+            return jsonify({"error": "Student record not found"}), 404
+
+        enrolled, hours_used, max_hours, plan_cycle = student
+        plan_cycle = int(plan_cycle or 1)
+
+        if not enrolled or hours_used < max_hours:
+            return jsonify({
+                "error": "Feedback is available after monthly classes are completed."
+            }), 403
+
+        submitted_at = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+
+        c.execute("""
+            INSERT INTO monthly_teacher_feedback
+            (phone, course, plan_cycle, teacher, rating, comment, submitted_at)
+            VALUES (?, ?, ?, ?, ?, ?, ?)
+        """, (
+            phone, course, plan_cycle,
+            teacher, rating, comment, submitted_at
+        ))
+
+        conn.commit()
+
+    except sqlite3.IntegrityError:
+        return jsonify({
+            "error": "Feedback already submitted for this monthly plan."
+        }), 409
+
+    except Exception as e:
+        conn.rollback()
+        print("MONTHLY FEEDBACK ERROR:", e)
+        return jsonify({"error": "Unable to save feedback"}), 500
+
+    finally:
+        conn.close()
+
+    # Keep existing admin/faculty feedback display
     if teacher not in feedback_db:
         feedback_db[teacher] = []
+
     feedback_db[teacher].append({
+        "phone": phone,
         "rating": rating,
         "comment": comment,
         "course": course,
         "time": datetime.now().strftime("%d-%m-%Y %H:%M"),
         "approved": False
     })
+
     _save_feedback()
-    return jsonify({"status": "submitted"})
+
+    # Check faculty performance using existing feedback rules
+    summary = get_faculty_feedback_summary(teacher)
+
+    if summary["deactivate"]:
+        set_faculty_status(
+            teacher,
+            False,
+            "Automatic deactivation due to low feedback rating"
+        )
+
+    return jsonify({
+        "status": "submitted",
+        "plan_cycle": plan_cycle,
+        "next_month_payment_enabled": True,
+        "average_rating": summary["average_rating"],
+        "total_feedbacks": summary["total_feedbacks"],
+        "warning": summary["warning_msg"],
+        "deactivated": summary["deactivate"]
+    })
+    
 
 
 def _save_feedback():
