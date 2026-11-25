@@ -2616,9 +2616,73 @@ def create_order():
     if not user["demo_done"].get(course) and not is_admin_phone(phone):
         return jsonify({"error": "Attend demo first"}), 403
 
-    # Check seats
-    if available_seats(course) <= 0:
-        return jsonify({"error": "Seats full"}), 403
+    # ==========================================
+    # MONTHLY RENEWAL VALIDATION
+    # ==========================================
+
+    is_renewal = False
+    current_plan_cycle = 1
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT enrolled, hours_used, max_hours, plan_cycle
+            FROM students
+            WHERE phone=? AND course=?
+        """, (phone, course))
+
+        student = c.fetchone()
+
+        if student:
+            enrolled, hours_used, max_hours, plan_cycle = student
+
+            current_plan_cycle = int(plan_cycle or 1)
+
+            if enrolled:
+                if hours_used < max_hours:
+                    conn.close()
+                    return jsonify({
+                        "error": "Your current monthly plan is still active."
+                    }), 403
+
+                is_renewal = True
+
+                # Verify feedback for the current plan cycle
+                c.execute("""
+                    SELECT 1
+                    FROM monthly_teacher_feedback
+                    WHERE phone=?
+                      AND course=?
+                      AND plan_cycle=?
+                    LIMIT 1
+                """, (
+                    phone,
+                    course,
+                    current_plan_cycle
+                ))
+
+                if not c.fetchone():
+                    conn.close()
+                    return jsonify({
+                        "error": "Please submit teacher feedback before renewing."
+                    }), 403
+
+        # Seat check only for new enrolments
+        if not is_renewal and available_seats(course) <= 0:
+            conn.close()
+            return jsonify({"error": "Seats full"}), 403
+
+    except Exception as e:
+        conn.close()
+        print("MONTHLY RENEWAL VALIDATION ERROR:", e)
+
+        return jsonify({
+            "error": "Unable to validate monthly plan."
+        }), 500
+
+    conn.close()
 
    # 50% OFF for first 10 students
     booked = seat_data.get(course, {}).get("booked", 0)
@@ -2648,6 +2712,8 @@ def create_order():
     session["pending_course"] = course
     session["pending_order_id"] = order["id"]
     session["pending_amount"] = amount
+    session["pending_plan_cycle"] = current_plan_cycle
+    session["pending_is_renewal"] = is_renewal
 
     return jsonify({
         "order_id": order["id"],
@@ -2710,35 +2776,158 @@ def payment_success_api():
     except Exception as e:
         print("RAZORPAY SIGNATURE VERIFICATION ERROR:", str(e))
         return jsonify({"error": "Payment verification failed"}), 400
-    
+
+        # ==========================================
+    # VERIFY MONTHLY PLAN CYCLE
+    # ==========================================
+
+    pending_cycle = session.get("pending_plan_cycle")
+    is_renewal = session.get("pending_is_renewal", False)
+
+    if pending_cycle is None:
+        return jsonify({
+            "error": "Payment plan information missing."
+        }), 400
+
+    conn = sqlite3.connect(DB_PATH, timeout=30)
+    c = conn.cursor()
+
+    try:
+        c.execute("""
+            SELECT enrolled, hours_used, max_hours, plan_cycle
+            FROM students
+            WHERE phone=? AND course=?
+        """, (phone, course))
+
+        student = c.fetchone()
+
+        if is_renewal:
+
+            if not student:
+                return jsonify({
+                    "error": "Student record not found."
+                }), 404
+
+            enrolled, hours_used, max_hours, current_cycle = student
+            current_cycle = int(current_cycle or 1)
+
+            if current_cycle != int(pending_cycle):
+                return jsonify({
+                    "error": "This payment order belongs to an old plan cycle."
+                }), 409
+
+            if not enrolled or hours_used < max_hours:
+                return jsonify({
+                    "error": "Current monthly plan is not completed."
+                }), 403
+
+            c.execute("""
+                SELECT 1
+                FROM monthly_teacher_feedback
+                WHERE phone=?
+                  AND course=?
+                  AND plan_cycle=?
+                LIMIT 1
+            """, (phone, course, current_cycle))
+
+            if not c.fetchone():
+                return jsonify({
+                    "error": "Teacher feedback is required before renewal."
+                }), 403
+
+        elif student and student[0]:
+            return jsonify({
+                "error": "An active enrolment already exists."
+            }), 409
+
+    except Exception as e:
+        print("PAYMENT CYCLE VALIDATION ERROR:", e)
+
+        return jsonify({
+            "error": "Unable to verify monthly plan."
+        }), 500
+
+    finally:
+        conn.close()
     user = get_user(phone)
   
-    # Mark enrolled + set hours
+       # ==========================================
+    # ACTIVATE NEXT MONTHLY PLAN
+    # ==========================================
+
+    new_plan_cycle = (
+        int(pending_cycle) + 1
+        if is_renewal
+        else int(pending_cycle)
+    )
+
     user["enrolled"][course] = True
     user["hours_used"][course] = 0
-    user["max_hours"][course] = classes_per_month  # 24 classes
+    user["max_hours"][course] = classes_per_month
 
-    conn = sqlite3.connect("/var/data/students.db")
+    conn = sqlite3.connect(DB_PATH, timeout=30)
     c = conn.cursor()
-    
-    c.execute("""
-    INSERT OR REPLACE INTO students 
-    (phone, course, name, demo_done, enrolled, hours_used, max_hours, payment_amount, last_updated)
-    VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)
-    """, (
-        phone,
-        course,
-        user.get("name", ""),
-        1,   # demo done
-        1,   # ✅ enrolled TRUE
-        0,
-        classes_per_month,
-        amount,
-        datetime.now().strftime("%Y-%m-%d %H:%M")
-    ))
-        
-    conn.commit()
-    conn.close()
+
+    try:
+
+        c.execute("""
+            UPDATE students
+            SET name=?,
+                demo_done=1,
+                enrolled=1,
+                hours_used=0,
+                max_hours=?,
+                payment_amount=?,
+                plan_cycle=?,
+                last_updated=?
+            WHERE phone=? AND course=?
+        """, (
+            user.get("name", ""),
+            classes_per_month,
+            amount,
+            new_plan_cycle,
+            datetime.now().strftime("%Y-%m-%d %H:%M"),
+            phone,
+            course
+        ))
+
+        # Insert only if student record does not exist
+        if c.rowcount == 0:
+
+            c.execute("""
+                INSERT INTO students (
+                    phone, course, name,
+                    demo_done, enrolled,
+                    hours_used, max_hours,
+                    payment_amount, plan_cycle,
+                    last_updated
+                )
+                VALUES (?, ?, ?, 1, 1, 0, ?, ?, ?, ?)
+            """, (
+                phone,
+                course,
+                user.get("name", ""),
+                classes_per_month,
+                amount,
+                new_plan_cycle,
+                datetime.now().strftime("%Y-%m-%d %H:%M")
+            ))
+
+        conn.commit()
+
+        user["plan_cycle"][course] = new_plan_cycle
+
+    except Exception as e:
+
+        conn.rollback()
+        print("MONTHLY PLAN UPDATE ERROR:", e)
+
+        return jsonify({
+            "error": "Unable to activate monthly plan."
+        }), 500
+
+    finally:
+        conn.close()
 
     
     # ==========================================
@@ -2825,8 +3014,8 @@ def payment_success_api():
                 str(e)
             )
 
-    # Increment seat count
-    if course in seat_data:
+    # Increment seat count only for new enrolments
+    if not is_renewal and course in seat_data:
         seat_data[course]["booked"] = min(
             seat_data[course]["booked"] + 1,
             seat_data[course]["total"]
@@ -2885,10 +3074,22 @@ def payment_success_api():
         "date" : str(datetime.now())
 
     })
+    # ==========================================
+    # CLEAR COMPLETED PAYMENT SESSION
+    # ==========================================
+
+    session.pop("pending_course", None)
+    session.pop("pending_order_id", None)
+    session.pop("pending_amount", None)
+    session.pop("pending_plan_cycle", None)
+    session.pop("pending_is_renewal", None)
+    
     return jsonify({
         "status": "success",
         "enrolled": True,
-        "hours_remaining": user["max_hours"][course]
+        "hours_remaining": user["max_hours"][course],
+        "plan_cycle": new_plan_cycle,
+        "is_renewal": is_renewal
     })
 
 # =====================================================
