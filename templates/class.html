@@ -2606,10 +2606,31 @@ function enroll(course) {
     return;
  }
 
-  const seats = (studentStatus.available_seats || {})[course];
-  if (seats !== undefined && seats <= 0) {
-    showMessage("❌ Seats Full");
-    return;
+  const enrolled = (studentStatus?.enrolled || {})[course] || false;
+
+  const hoursUsed = (studentStatus?.hours_used || {})[course] || 0;
+
+  const maxHours = (studentStatus?.max_hours || {})[course] || CLASSES_PER_MONTH;
+
+  const planDone = enrolled && hoursUsed >= maxHours;
+
+  const feedbackSubmitted =
+      (studentStatus?.monthly_feedback_submitted || {})[course] || false;
+
+  // Monthly renewal: feedback is mandatory before payment
+  if (planDone && !feedbackSubmitted) {
+      openFeedbackPopup(course);
+      return;
+  }
+
+  // Seat check applies only to new enrolments
+  if (!planDone) {
+      const seats = (studentStatus.available_seats || {})[course];
+
+      if (seats !== undefined && seats <= 0) {
+          showMessage("❌ Seats Full");
+          return;
+      }
   }
 
   selectedCourse = course;
@@ -2881,12 +2902,6 @@ async function joinClass(course) {
         "/api/join-class?course=" + encodeURIComponent(course)
     );
     const data = await res.json();
-
-    if (data.show_feedback) {
-      openFeedbackPopup(course);
-      showCourseMessage(course, "📚 Monthly classes completed! Please Re-enroll.");
-      return;
-    }
 
     if (data.error) {
       showMessage("❌ " + data.error);
