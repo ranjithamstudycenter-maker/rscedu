@@ -2022,6 +2022,9 @@ const maxHours =
 const planDone =
 enrolled && hoursUsed >= maxHours;
 
+const feedbackSubmitted =
+    (s.monthly_feedback_submitted || {})[course] || false;
+
 
 /* DEMO BUTTON */
 const demoBtn =
@@ -2081,6 +2084,7 @@ if(enrollBtn){
 if(planDone){
 
 enrollBtn.textContent =
+feedbackSubmitted ? "Pay Next Month" : "Submit Feedback";
 "Re-Pay";
 
 enrollBtn.style.background =
@@ -2972,7 +2976,12 @@ async function submitTeacherFeedback(){
       document.getElementById("feedbackRating").value;
 
    const comment =
-      document.getElementById("feedbackComment").value;
+      document.getElementById("feedbackComment").value.trim();
+
+   if (!comment) {
+      alert("Please enter your feedback.");
+      return;
+   }
 
    const formData = new FormData();
 
@@ -2981,15 +2990,38 @@ async function submitTeacherFeedback(){
    formData.append("rating", rating);
    formData.append("comment", comment);
 
-   await fetch("/submit-teacher-feedback", {
-      method: "POST",
-      body: formData
-   });
+   try {
 
-   alert("Feedback submitted successfully");
+      const res = await fetch("/submit-teacher-feedback", {
+         method: "POST",
+         body: formData
+      });
 
-   document.getElementById("feedbackPopup").style.display =
-      "none";
+      const data = await res.json();
+
+      if (!res.ok) {
+         alert(data.error || "Unable to submit feedback.");
+         return;
+      }
+
+      document.getElementById("feedbackPopup").style.display =
+         "none";
+
+      document.getElementById("feedbackComment").value = "";
+
+      await refreshStatus();
+
+      updateUI(course);
+
+      alert("Feedback submitted successfully! You can now pay for the next month.");
+
+   } catch (error) {
+
+      console.error("FEEDBACK SUBMISSION ERROR:", error);
+
+      alert("Unable to submit feedback. Please try again.");
+
+   }
 }
 /* ======================================
    LIVE POPUP
