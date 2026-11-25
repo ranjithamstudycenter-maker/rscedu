@@ -172,7 +172,33 @@ def init_db():
         """)
     except sqlite3.OperationalError:
         pass
-        
+
+    # ==========================================
+    # MONTHLY FEEDBACK - PLAN CYCLE
+    # ==========================================
+
+    try:
+        c.execute("""
+            ALTER TABLE students
+            ADD COLUMN plan_cycle INTEGER DEFAULT 1
+        """)
+    except sqlite3.OperationalError:
+        pass
+
+    # Store one feedback per student per monthly plan
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS monthly_teacher_feedback (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            phone TEXT NOT NULL,
+            course TEXT NOT NULL,
+            plan_cycle INTEGER NOT NULL,
+            teacher TEXT NOT NULL,
+            rating INTEGER NOT NULL,
+            comment TEXT NOT NULL,
+            submitted_at TEXT NOT NULL,
+            UNIQUE(phone, course, plan_cycle)
+        )
+    """)
      # 🔥 ADD THIS NEW TABLE
     c.execute("""
     CREATE TABLE IF NOT EXISTS class_links (
@@ -2031,6 +2057,8 @@ def get_user(phone):
         "hours_used": {},
         "max_hours": {},
         "redemo_paid": {},
+        "plan_cycle": {},
+        "monthly_feedback_submitted": {},
     }
 
     # 🔥 ALWAYS LOAD FROM DB
@@ -2039,7 +2067,8 @@ def get_user(phone):
 
     c.execute("""
         SELECT course, demo_done, enrolled,
-               hours_used, max_hours, redemo_paid
+               hours_used, max_hours, redemo_paid,
+               plan_cycle, name
         FROM students
         WHERE phone=?
     """, (phone,))
@@ -2054,6 +2083,24 @@ def get_user(phone):
         user["hours_used"][course] = r[3]
         user["max_hours"][course] = r[4]
         user["redemo_paid"][course] = bool(r[5])
+        user["plan_cycle"][course] = int(r[6] or 1)
+        user["name"] = r[7] or user["name"]
+
+    # Check whether feedback is submitted for current plan cycle
+    for course, cycle in user["plan_cycle"].items():
+
+        c.execute("""
+            SELECT 1
+            FROM monthly_teacher_feedback
+            WHERE phone = ?
+              AND course = ?
+              AND plan_cycle = ?
+            LIMIT 1
+        """, (phone, course, cycle))
+
+        user["monthly_feedback_submitted"][course] = (
+            c.fetchone() is not None
+        )
 
     conn.close()
 
@@ -3826,7 +3873,12 @@ def student_status():
         
             "hours_used": user.get("hours_used", {}),
             "max_hours": user.get("max_hours", {}),
-        
+
+            "plan_cycle": user.get("plan_cycle", {}),
+            "monthly_feedback_submitted": user.get(
+                "monthly_feedback_submitted", {}
+            ),
+
             "available_seats": seats,
             "discounts": discounts
         })
